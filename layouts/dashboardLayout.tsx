@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import SpinLoading from "../components/loadings/spinLoading";
-import { TawkInterface, User } from "../interfaces";
+import { TawkInterface, User } from "../models";
 import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
 import DashboardNavbar from "../components/navbars/dashboardNavbar";
 

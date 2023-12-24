@@ -5,11 +5,8 @@ import { setCookie } from "nookies";
 import { Alert, Snackbar, TextField } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { Message } from "../../models";
 
-interface Message {
-  status: "success" | "error";
-  message: string;
-}
 function SignIn() {
   const router = useRouter();
   const [triggerRedirect, setTriggerRedirect] = useState(false);

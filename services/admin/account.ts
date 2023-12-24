@@ -1,23 +1,10 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
+import { User } from "../../models";
 
-interface ResponseGetAllAccountByPageService {
-  accounts: {
-    id: string;
-    createAt: Date;
-    updateAt: Date;
-    email: string;
-    hash: string;
-    name: string;
-    image: string;
-    provider: string;
-    role: string;
-    isDeleted: boolean;
-    resetToken: string;
-    resetTokenExpiresAt: Date;
-    IsResetPassword: boolean;
-  }[];
+export interface ResponseGetAllAccountByPageService {
+  accounts: User[];
   totalPages: number;
   currentPage: number;
 }

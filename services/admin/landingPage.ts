@@ -1,24 +1,26 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { LandingPage } from "../../interfaces";
+import { Domain, LandingPage, Language } from "../../models";
 
-interface InputCreateLandingPageService {
+export interface InputCreateLandingPageService {
   title: string;
   domainId?: string | null;
   html: string;
-  json: JSON;
+  json: string;
   backgroundImage: string;
-  language: "en" | "es" | "fr" | "de";
+  language: Language;
   mainButton: string;
   name: string;
   popUpUnder: string;
-  icon: string;
+  icon?: string | null;
   description: string;
+  googleAnalyticsId?: string | null;
 }
 export async function CreateLandingPageService(
   input: InputCreateLandingPageService
 ): Promise<LandingPage> {
+  console.log(input);
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
@@ -43,17 +45,19 @@ export async function CreateLandingPageService(
 }
 
 interface InputUpdateLandingPageService {
+  landingPageId: string;
   title: string;
   domainId?: string | null;
   html: string;
-  json: JSON;
+  json: string;
   backgroundImage: string;
-  language: "en" | "es" | "fr" | "de";
+  language: Language;
   mainButton: string;
   name: string;
   popUpUnder: string;
-  icon: string;
+  icon?: string | null;
   description: string;
+  googleAnalyticsId: string;
 }
 export async function UpdateLandingPageService(
   input: InputUpdateLandingPageService
@@ -122,29 +126,16 @@ export async function GetAllLandingPageService(
     throw new Error(err);
   }
 }
-
-interface ResponseGetLandingPageService {
-  landingPages: {
-    id: string;
-    createAt: string;
-    updateAt: string;
-    name: string;
-    language: string;
-    html: string;
-    domain: {
-      id: string;
-      name: string;
-    };
-  }[];
-  totalPages: number;
-  currentPage: number;
+interface ResponseGetLandingPageService extends LandingPage {
+  domain: Domain;
 }
+
 interface InputGetLandingPageService {
   landingPageId: string;
 }
-export async function GetLandingPageService(
-  input: InputGetLandingPageService
-): Promise<ResponseGetLandingPageService> {
+export async function GetLandingPageService({
+  landingPageId,
+}: InputGetLandingPageService): Promise<ResponseGetLandingPageService> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
@@ -152,7 +143,7 @@ export async function GetLandingPageService(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/get`,
       {
         params: {
-          ...input,
+          landingPageId,
         },
         headers: {
           Authorization: "Bearer " + access_token,
@@ -175,11 +166,10 @@ interface ResponseUploadURLSingtureFavorIconService {
 interface InputUploadURLSingtureFavorIconService {
   formFiles: FormData;
 }
-export async function UploadURLSingtureFavorIconService(
-  input: InputUploadURLSingtureFavorIconService
-): Promise<ResponseUploadURLSingtureFavorIconService> {
+export async function UploadURLSingtureFavorIconService({
+  formFiles,
+}: InputUploadURLSingtureFavorIconService): Promise<ResponseUploadURLSingtureFavorIconService> {
   try {
-    const { formFiles } = input;
     const heic2any = (await import("heic2any")).default;
     const filesOld: any = formFiles.get("file");
     let newFile: any = "";

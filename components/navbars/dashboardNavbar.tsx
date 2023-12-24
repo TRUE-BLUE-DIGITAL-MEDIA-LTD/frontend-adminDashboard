@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { User } from "../../interfaces";
+import { User } from "../../models";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 import { destroyCookie } from "nookies";

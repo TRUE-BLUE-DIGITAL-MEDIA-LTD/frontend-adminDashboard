@@ -25,7 +25,7 @@ interface InputGetEmailsByPageService {
   orderBy: "email" | "createAt";
   isAsc: boolean;
 }
-export async function ResponseGetEmailsByPageService(
+export async function GetEmailsByPageService(
   input: InputGetEmailsByPageService
 ): Promise<ResponseGetEmailsByPageService> {
   try {

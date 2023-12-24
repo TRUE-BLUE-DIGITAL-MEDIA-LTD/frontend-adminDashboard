@@ -32,7 +32,7 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
   }
 }
 
-interface ResponseGetAllDomainsByPage {
+export interface ResponseGetAllDomainsByPage {
   domains: {
     id: string;
     createAt: string;
@@ -71,7 +71,7 @@ export async function GetAllDomainsByPage(
   }
 }
 
-interface ResponseGetDomainService {
+export interface ResponseGetDomainService {
   domain: {
     id: string;
     createAt: string;
@@ -148,20 +148,26 @@ export async function CreateDomainService(
   }
 }
 
-interface ResponseCreateDomainService {
+interface ResponseUpdateDomainService {
   id: string;
   createAt: string;
   updateAt: string;
   name: string;
   googleAnalyticsId: string | null;
 }
-interface InputCreateDomainService {
+export interface InputUpdateDomainService {
   name: string;
   domainNameId: string;
-  landingPages: string;
   googleAnalyticsId?: string | null;
+  landingPages: {
+    name?: string;
+    id: string;
+    percent: number;
+  }[];
 }
-export async function UpdateDomainService(input: InputCreateDomainService) {
+export async function UpdateDomainService(
+  input: InputUpdateDomainService
+): Promise<ResponseUpdateDomainService> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
