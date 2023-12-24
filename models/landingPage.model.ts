@@ -8,7 +8,7 @@ export interface LandingPage {
   backgroundImage: string;
   icon: string | null;
   googleAnalyticsId: string | null;
-  language: string;
+  language: Language;
   html: string;
   json: string;
   viewCount: number | null;
@@ -19,3 +19,5 @@ export interface LandingPage {
   creatorId: string;
   domainId: string | null;
 }
+
+export type Language = "en" | "es" | "fr" | "de";

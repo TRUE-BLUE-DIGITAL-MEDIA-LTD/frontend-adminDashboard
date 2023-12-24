@@ -6,7 +6,7 @@ export interface User {
   name: string;
   image: string; // Assuming this is a base64-encoded image string
   provider: string;
-  role: string;
+  role: "admin" | "editor";
   isDeleted: boolean;
   resetToken: string | null;
   resetTokenExpiresAt: string | null;

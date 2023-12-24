@@ -2,7 +2,7 @@ import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
 
-interface ResponseGetProvincesInCountryService {
+export interface ResponseGetProvincesInCountryService {
   query: {
     country: string;
   };
@@ -38,12 +38,26 @@ export async function GetProvincesInCountryService(
   }
 }
 
-interface ResponseGetPostalCodesByStateService {
+export interface ResponseGetPostalCodesByStateService {
   query: {
     code: [];
     country: string;
   };
-  results: {};
+  results: {
+    [key: string]: {
+      postal_code: string;
+      country_code: string;
+      latitude: string;
+      longitude: string;
+      city: string;
+      state: string;
+      city_en: string;
+      state_en: string;
+      state_code: string | null;
+      province: string | null;
+      province_code: string | null;
+    };
+  };
 }
 interface InputGetPostalCodesByStateService {
   state_name: string;

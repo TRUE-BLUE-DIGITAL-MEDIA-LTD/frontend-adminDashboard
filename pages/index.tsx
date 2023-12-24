@@ -11,7 +11,7 @@ import {
 } from "../services/admin/landingPage";
 import Swal from "sweetalert2";
 import DashboardLayout from "../layouts/dashboardLayout";
-import { User } from "../interfaces";
+import { User } from "../models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { GetUser } from "../services/admin/user";
