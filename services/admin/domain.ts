@@ -17,7 +17,7 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/get-all`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/get-all`,
       {
         headers: {
           Authorization: "Bearer " + access_token,
@@ -53,7 +53,7 @@ export async function GetAllDomainsByPage(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/page/get-all`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/page/get-all`,
       {
         params: {
           ...input,
@@ -95,7 +95,7 @@ export async function GetDomainService(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/get`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/get`,
       {
         params: {
           ...input,
@@ -130,7 +130,7 @@ export async function CreateDomainService(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.post(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/create`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/create`,
       {
         ...input,
       },
@@ -172,7 +172,7 @@ export async function UpdateDomainService(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.put(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/update`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/update`,
       {
         ...input,
       },
@@ -203,7 +203,7 @@ export async function DeleteDomainNameService(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.delete(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/domain/delete`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/delete`,
       {
         params: {
           ...input,

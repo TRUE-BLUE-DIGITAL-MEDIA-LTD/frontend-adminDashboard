@@ -16,6 +16,7 @@ export interface LandingPage {
   backClick: number | null;
   popUpUnder: string;
   percent: number;
+  categoryId: string | null;
   creatorId: string;
   domainId: string | null;
 }

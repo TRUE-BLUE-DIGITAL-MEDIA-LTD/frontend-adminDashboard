@@ -1,313 +1,139 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  DeleteLandingPageService,
-  DuplicateLandingPageService,
-  GetAllLandingPageService,
-  RemoveDomainNameFromLandingPageService,
-} from "../services/admin/landingPage";
-import Swal from "sweetalert2";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/dashboardLayout";
-import { User } from "../models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { GetUser } from "../services/admin/user";
-import Link from "next/link";
-import { loadingNumber } from "../data/loadingNumber";
-import { Pagination, Skeleton } from "@mui/material";
-import SpinLoading from "../components/loadings/spinLoading";
-import { BiCopyAlt, BiSolidMessageSquareEdit } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
+import { Language, User } from "../models";
+import Searchbar from "../components/category/searchbar";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { GetAllDomains } from "../services/admin/domain";
+import { Skeleton } from "@mui/material";
 import { languages } from "../data/languages";
+import { GetAllCategories } from "../services/admin/categories";
+import Image from "next/image";
+import Link from "next/link";
+import { GetAllLandingPageService } from "../services/admin/landingPage";
+import LandingPageLists from "../components/landingPages/landingPageLists";
 
-const inter = Inter({ subsets: ["latin"] });
-interface handleRemoveDomainNameParams {
-  landingPageId: string;
-}
-interface handleDuplicateLandingPageParam {
-  landingPageId: string;
-}
-interface handleDeleteLandingPageParams {
-  landingPageId: string;
-}
-export default function Home({ user }: { user: User }) {
+export type QueryFilterLandingPages = {
+  categoryId?: string;
+  domainId?: string;
+  language?: Language | string;
+};
+function Index({ user }: { user: User }) {
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const landingPages = useQuery({
-    queryKey: ["landingPages", page],
-    queryFn: () => GetAllLandingPageService({ page: page }),
-    placeholderData: keepPreviousData,
+  const [queryFilterLandingPages, setQueryFilterLandingPages] =
+    useState<QueryFilterLandingPages>({});
+  const domains = useQuery({
+    queryKey: ["domains"],
+    queryFn: () =>
+      GetAllDomains().then((res) => {
+        const newFormat = res.map((domain) => {
+          return { option: domain.name, id: domain.id };
+        });
+        return newFormat;
+      }),
   });
 
-  // handle delete landingpage
-  const handleDeleteLandingPage = async ({
-    landingPageId,
-  }: handleDeleteLandingPageParams) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          setIsLoading(() => true);
-          const deleteLandingPage = await DeleteLandingPageService({
-            landingPageId: landingPageId,
-          });
-          Swal.fire("Deleted!", deleteLandingPage.message, "success");
-          landingPages.refetch();
-          setIsLoading(() => false);
-        } catch (err: any) {
-          setIsLoading(() => false);
-          console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
-        }
-      }
-    });
-  };
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      GetAllCategories().then((res) => {
+        const newFormat = res.map((category) => {
+          return {
+            option: category.title,
+            id: category.id,
+            description: category?.description,
+            background: category.background,
+          };
+        });
+        return newFormat;
+      }),
+  });
+  const newFormatLanguage = languages.map((language) => {
+    return { option: language.name, id: language.value };
+  });
 
-  //handle remove domain name from landing page
-  const handleRemoveDomainName = ({
-    landingPageId,
-  }: handleRemoveDomainNameParams) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          setIsLoading(() => true);
-          await RemoveDomainNameFromLandingPageService({
-            landingPageId: landingPageId,
-          });
-          Swal.fire(
-            "Deleted!",
-            "Domain has been unlinked to this landing page",
-            "success"
-          );
-          landingPages.refetch();
-          setIsLoading(() => false);
-        } catch (err: any) {
-          setIsLoading(() => false);
-          console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
-        }
-      }
-    });
-  };
-
-  const handleDuplicateLandingPage = async ({
-    landingPageId,
-  }: handleDuplicateLandingPageParam) => {
-    try {
-      setIsLoading(() => true);
-      await DuplicateLandingPageService({
-        landingPageId: landingPageId,
-      });
-      Swal.fire(
-        "Duplicated!!",
-        "Landing Page Successfully Duplicated",
-        "success"
-      );
-      setIsLoading(() => false);
-      landingPages.refetch();
-    } catch (err: any) {
-      setIsLoading(() => false);
-      console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
-    }
-  };
   return (
     <DashboardLayout user={user}>
-      <div className="bg-gradient-to-b font-Poppins pt-20  h-full">
-        <header className="w-full flex flex-col items-center text-center  gap-7 justify-center mt-20">
-          <h1
-            className="font-bold text-transparent text-6xl py-10 text-center font-Poppins
-           bg-clip-text  animate-gradient"
-          >
-            Landing Page
-          </h1>
-          <Link
-            href={"/create-landingpage"}
-            className="text-white text-xl hover:bg-blue-700 transition duration-150 active:scale-105 font-semibold bg-main-color px-20 py-2 rounded-full"
-          >
-            Create
-          </Link>
-        </header>
-        <main className="w-full mt-10 flex justify-center items-center gap-5 pb-20 flex-col  ">
-          <div className="lg:w-10/12 xl:w-9/12 ">
-            <table className="table-auto w-full border-collapse">
-              <thead className="border-b-2 h-14 font-bold drop-shadow-md text-blue-700   border-black ">
-                <tr className="sticky top-0 z-40 bg-white ">
-                  <td className=" px-5">Name</td>
-                  <td>Domain</td>
-                  <td>Language</td>
-                  <td>Created At</td>
-                  <td>Updated At</td>
-                  <td>Options</td>
-                </tr>
-              </thead>
-              <tbody className="">
-                {landingPages.isLoading
-                  ? loadingNumber.map((list, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton />
-                          </td>
-                        </tr>
-                      );
-                    })
-                  : landingPages?.data?.landingPages?.map((list, index) => {
-                      const createAt = new Date(list?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        }
-                      );
-                      const updateAt = new Date(list?.updateAt);
-                      const formattedDateupdateAt = updateAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        }
-                      );
-                      const language = languages.find(
-                        (language) => language.value === list.language
-                      );
-                      return (
-                        <tr className="h-14 " key={index}>
-                          <td>
-                            {landingPages.isFetching ? (
-                              <Skeleton animation="wave" />
-                            ) : (
-                              list?.name
-                            )}
-                          </td>
-                          {list?.domain?.name ? (
-                            <td
-                              onClick={() => {
-                                handleRemoveDomainName({
-                                  landingPageId: list.id,
-                                });
-                              }}
-                              className="hover:line-through cursor-pointer"
-                            >
-                              {landingPages.isFetching ? (
-                                <Skeleton />
-                              ) : (
-                                list?.domain?.name
-                              )}
-                            </td>
-                          ) : (
-                            <td className="hover:line-through cursor-pointer">
-                              -
-                            </td>
-                          )}
-                          <td>{language?.name}</td>
-                          <td>{formattedDatecreateAt}</td>
-                          <td>{formattedDateupdateAt}</td>
-                          {isLoading ? (
-                            <td className="flex h-14 justify-center w-20 items-center gap-2">
-                              <SpinLoading />
-                            </td>
-                          ) : (
-                            <td className="flex h-14 justify-center w-20 items-center gap-2">
-                              <button
-                                onClick={() =>
-                                  handleDuplicateLandingPage({
-                                    landingPageId: list.id,
-                                  })
-                                }
-                                className="text-3xl text-green-700 hover:scale-105 active:text-green-900 transition duration-100"
-                              >
-                                <BiCopyAlt />
-                              </button>
-                              <Link
-                                href={`/landingpage/${list.id}`}
-                                className="text-3xl text-blue-700 hover:scale-105 active:text-blue-900 transition duration-100"
-                              >
-                                <BiSolidMessageSquareEdit />
-                              </Link>
-
-                              <button
-                                onClick={() =>
-                                  handleDeleteLandingPage({
-                                    landingPageId: list.id,
-                                  })
-                                }
-                                className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
-                              >
-                                <MdDelete />
-                              </button>
-                            </td>
-                          )}
-                        </tr>
-                      );
-                    })}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            onChange={(e, page) => setPage(page)}
-            count={landingPages?.data?.totalPages}
-            color="primary"
+      <header className="w-full mt-20  p-10 h-max flex flex-col justify-center gap-4 items-start">
+        <h1 className="text-7xl font-Poppins font-semibold">
+          <span className="text-icon-color">C</span>
+          <span>ategories</span>
+        </h1>
+        <section className="flex gap-5 border-b-2 pb-5 justify-start items-end   h-20 w-full ">
+          {categories.isLoading ? (
+            <Skeleton width={200} height={60} animation="wave" />
+          ) : (
+            <Searchbar
+              items={categories.data || []}
+              title="Categories"
+              setQueryFilterLandingPages={setQueryFilterLandingPages}
+            />
+          )}
+          {domains.isLoading ? (
+            <Skeleton width={200} height={60} animation="wave" />
+          ) : (
+            <Searchbar
+              items={domains.data || []}
+              title="Domains"
+              setQueryFilterLandingPages={setQueryFilterLandingPages}
+            />
+          )}
+          <Searchbar
+            items={newFormatLanguage}
+            title="Languages"
+            setQueryFilterLandingPages={setQueryFilterLandingPages}
           />
-        </main>
-      </div>
+          <Link
+            href={{
+              pathname: "/landingPages",
+              query: {
+                ...queryFilterLandingPages,
+              },
+            }}
+            className="buttonSuccess py-2 px-10"
+          >
+            Enter
+          </Link>
+        </section>
+      </header>
+      <main className="p-10 grid grid-cols-3 gap-10">
+        {categories.data?.map((category) => {
+          return (
+            <Link
+              href={{
+                pathname: "/landingPages",
+                query: {
+                  categoryId: category.id,
+                },
+              }}
+              key={category.id}
+              className="flex no-underline justify-center overflow-hidden cursor-pointer group bg-white drop-shadow-md h-40 relative font-Poppins font-semibold items-center "
+            >
+              <h3
+                style={{ backgroundImage: `url(${category.background})` }}
+                className={`relative z-20 drop-shadow-lg text-5xl  bg-clip-text text-transparent`}
+              >
+                {category.option}
+              </h3>
+              <Image
+                src={category.background}
+                fill
+                quality={10}
+                className="object-cover group-hover:scale-125 duration-700 transition"
+                alt="image cover"
+              />
+            </Link>
+          );
+        })}
+      </main>
+      <footer></footer>
     </DashboardLayout>
   );
 }
 
+export default Index;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {

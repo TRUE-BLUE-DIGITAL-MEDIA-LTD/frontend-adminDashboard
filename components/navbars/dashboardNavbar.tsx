@@ -8,7 +8,8 @@ import Image from "next/image";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 
 const menus = [
-  { title: "Landing Page", url: "/" },
+  { title: "Categories", url: "/" },
+  { title: "Landing Pages", url: "/landingPages" },
   { title: "Domain", url: "/domain" },
   { title: "Email", url: "/email" },
   { title: "Account Management", url: "/manage-account" },
@@ -24,16 +25,18 @@ function DashboardNavbar({ user }: { user: User }) {
   const lastRoute = pathname.split("/").pop();
 
   useEffect(() => {
-    if (lastRoute === "domain") {
-      setCurrentMenuIndex(() => 1);
-    } else if (lastRoute === "") {
+    if (lastRoute === "") {
       setCurrentMenuIndex(() => 0);
-    } else if (lastRoute === "email") {
+    } else if (lastRoute === "landingPages") {
+      setCurrentMenuIndex(() => 1);
+    } else if (lastRoute === "domain") {
       setCurrentMenuIndex(() => 2);
-    } else if (lastRoute === "manage-account") {
+    } else if (lastRoute === "email") {
       setCurrentMenuIndex(() => 3);
-    } else if (lastRoute === "tools") {
+    } else if (lastRoute === "manage-account") {
       setCurrentMenuIndex(() => 4);
+    } else if (lastRoute === "tools") {
+      setCurrentMenuIndex(() => 5);
     }
   }, [lastRoute]);
 
@@ -49,7 +52,7 @@ function DashboardNavbar({ user }: { user: User }) {
     <nav className="w-full absolute bg-white drop-shadow-md font-Poppins top-0 h-20 z-50 flex items-center justify-between ">
       <Link
         href="/"
-        className="w-60 h-20 ml-2 relative rounded-r-md overflow-hidden"
+        className="w-40 h-20 ml-2 relative rounded-r-md overflow-hidden"
       >
         <Image
           src="/faviconFull.png"

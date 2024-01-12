@@ -34,7 +34,7 @@ function Index({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const domains = useQuery({
-    queryKey: ["domains", page],
+    queryKey: ["domains-byPage", page],
     queryFn: () => GetAllDomainsByPage({ page: page }),
     placeholderData: keepPreviousData,
   });
