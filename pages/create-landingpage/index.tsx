@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import { languages } from "../../data/languages";
 import { BiUpload } from "react-icons/bi";
 import Image, { ImageLoaderProps } from "next/image";
+import { GetAllCategories } from "../../services/admin/categories";
 const EmailEditor: any = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -29,6 +30,7 @@ interface CreateLandingPageData {
   mainButton: string;
   popUpUnder: string;
   domainId?: string;
+  categoryId?: string;
   googleAnalyticsId?: string | null;
   language: Language;
 }
@@ -44,6 +46,12 @@ function Index({ user }: { user: User }) {
     queryKey: ["domains"],
     queryFn: () => GetAllDomains(),
   });
+
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => GetAllCategories(),
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<Message>({
     status: "success",
@@ -60,6 +68,7 @@ function Index({ user }: { user: User }) {
       mainButton: "",
       popUpUnder: "",
       domainId: "",
+      categoryId: "",
       googleAnalyticsId: "",
       language: "en",
     }
@@ -108,6 +117,9 @@ function Index({ user }: { user: User }) {
         };
         if (landingPageData.domainId) {
           createLandingPageData.domainId = landingPageData.domainId;
+        }
+        if (landingPageData.categoryId) {
+          createLandingPageData.categoryId = landingPageData.categoryId;
         }
         const { design, html } = data;
         const json = JSON.stringify(design);
@@ -353,16 +365,37 @@ function Index({ user }: { user: User }) {
               onChange={handleChangeLandingPageData}
               helperText="Please select your domain name"
             >
-              {domains?.data?.map((option) => {
+              {domains?.data?.map((domain) => {
                 return (
-                  <MenuItem key={option.id} value={option.id}>
+                  <MenuItem key={domain.id} value={domain.id}>
                     <div className="flex justify-start items-center gap-2">
-                      <span>{option.name}</span>
-                      {option.landingPages.length > 0 && (
-                        <span className="w-max h-max p-1 px-4 bg-main-color text-white rounded-md">
-                          own
-                        </span>
-                      )}
+                      <span>{domain.name}</span>
+                    </div>
+                  </MenuItem>
+                );
+              })}
+            </TextField>
+          )}
+          {categories.isLoading ? (
+            <div>
+              <Skeleton height={70} />
+              <span className="animate-pulse">Domain Is Loading ..</span>
+            </div>
+          ) : (
+            <TextField
+              required
+              id="outlined-select-currency"
+              select
+              name="categoryId"
+              label="Select"
+              onChange={handleChangeLandingPageData}
+              helperText="Please select your category here"
+            >
+              {categories?.data?.map((category) => {
+                return (
+                  <MenuItem key={category.id} value={category.id}>
+                    <div className="flex justify-start items-center gap-2">
+                      <span>{category.title}</span>
                     </div>
                   </MenuItem>
                 );

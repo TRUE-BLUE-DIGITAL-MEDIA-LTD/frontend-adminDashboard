@@ -20,6 +20,7 @@ import { BiUpload } from "react-icons/bi";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { EmailEditorProps } from "react-email-editor";
+import { GetAllCategories } from "../../services/admin/categories";
 const EmailEditor: any = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -33,6 +34,7 @@ interface UpdateLandingPageData {
   popUnder: string;
   domainId: string;
   language: Language;
+  categoryId: string;
   googleAnalyticsId: string | null;
 }
 
@@ -45,6 +47,11 @@ function Index({ user }: { user: User }) {
   const domains = useQuery({
     queryKey: ["domains"],
     queryFn: () => GetAllDomains(),
+  });
+
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => GetAllCategories(),
   });
 
   const landingPage = useQuery({
@@ -76,6 +83,7 @@ function Index({ user }: { user: User }) {
       mainButton: "",
       popUnder: "",
       domainId: "",
+      categoryId: "",
       language: "en",
       googleAnalyticsId: "",
     }
@@ -100,6 +108,7 @@ function Index({ user }: { user: User }) {
           popUnder: landingPage.data.popUpUnder,
           domainId: landingPage?.data?.domain?.id as string,
           language: landingPage?.data?.language,
+          categoryId: landingPage.data?.categoryId as string,
           googleAnalyticsId: landingPage?.data?.googleAnalyticsId as string,
         };
       });
@@ -148,6 +157,7 @@ function Index({ user }: { user: User }) {
           popUpUnder: landingPageData.popUnder,
           name: landingPageData.name,
           icon: icon,
+          categoryId: landingPageData.categoryId,
           language: landingPageData.language,
           description: landingPageData.description,
           googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
@@ -230,9 +240,9 @@ function Index({ user }: { user: User }) {
         </Alert>
       </Snackbar>
       {(landingPage.isLoading || isLoadingEditor) && <FullLoading />}
-      <div className="w-full flex justify-start bg-white">
+      <div className="w-full mt-20 flex justify-start bg-white">
         <div className="ml-20 text-2xl pt-20 pb-2 font-bold border-b-2 w-full">
-          Update Landing Page
+          <span className="text-icon-color">U</span>pdate Landing Page
         </div>
       </div>
       <main className="font-Poppins relative my-10">
@@ -401,7 +411,7 @@ function Index({ user }: { user: User }) {
       </div>
       <div className="w-full flex justify-start">
         <div className="ml-20 text-2xl pb-2 font-bold border-b-2 w-full">
-          Domain Name
+          Others
         </div>
       </div>
       <div className="w-full py-5 flex gap-5 flex-col justify-center items-center">
@@ -421,7 +431,7 @@ function Index({ user }: { user: User }) {
               value={landingPageData.domainId}
               helperText="Please select your domain name"
             >
-              {domains?.data?.map((option) => {
+              {domains?.data?.map((domain) => {
                 return (
                   <MenuItem
                     onClick={(e) => {
@@ -432,16 +442,48 @@ function Index({ user }: { user: User }) {
                         };
                       });
                     }}
-                    key={option.id}
-                    value={option.id}
+                    key={domain.id}
+                    value={domain.id}
                   >
                     <div className="flex  justify-start items-center gap-2">
-                      <span>{option.name}</span>
-                      {option.landingPages.length > 0 && (
-                        <span className="w-max h-max p-1 px-4 bg-main-color text-white rounded-md">
-                          own
-                        </span>
-                      )}
+                      <span>{domain.name}</span>
+                    </div>
+                  </MenuItem>
+                );
+              })}
+            </TextField>
+          )}
+          {domains.isLoading ? (
+            <div>
+              <Skeleton height={70} />
+              <span className="animate-pulse">Domain Is Loading</span>
+            </div>
+          ) : (
+            <TextField
+              required
+              id="outlined-select-currency"
+              select
+              name="categoryId"
+              label="Select"
+              value={landingPageData.categoryId}
+              helperText="Please select your category here"
+            >
+              {categories?.data?.map((category) => {
+                return (
+                  <MenuItem
+                    onClick={(e) => {
+                      setLandingPageData((prev) => {
+                        return {
+                          ...prev,
+                          categoryId: e.currentTarget.dataset.value as string,
+                        };
+                      });
+                    }}
+                    key={category.id}
+                    value={category.id}
+                  >
+                    <div className="flex  justify-start items-center gap-2">
+                      <span>{category.title}</span>
                     </div>
                   </MenuItem>
                 );
