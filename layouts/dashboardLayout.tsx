@@ -33,13 +33,13 @@ export default function DashboardLayout({
           <SpinLoading />
         </div>
       )}
-      {/* <TawkMessengerReact
+      <TawkMessengerReact
         onBeforeLoad={onBeforeLoad}
         onLoad={onLoad}
         ref={tawkMessengerRef}
         propertyId={process.env.NEXT_PUBLIC_PROPERTY_ID}
         widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
-      /> */}
+      />
       <DashboardNavbar user={user} />
       <main>{children}</main>
     </>
