@@ -21,6 +21,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { EmailEditorProps } from "react-email-editor";
 import { GetAllCategories } from "../../services/admin/categories";
+import { MdDomainVerification } from "react-icons/md";
 const EmailEditor: any = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -97,7 +98,7 @@ function Index({ user }: { user: User }) {
   }, [router.isReady]);
 
   useEffect(() => {
-    if (landingPage.data && landingPage.isSuccess && !isLoadingEditor) {
+    if (landingPage.data && isLoadingEditor === false) {
       setLandingPageData(() => {
         return {
           name: landingPage.data.name,
@@ -114,9 +115,10 @@ function Index({ user }: { user: User }) {
       });
       setIcon(() => landingPage?.data?.icon);
       const json = JSON.parse(landingPage?.data?.json);
+
       emailEditorRef?.current?.loadDesign(json);
     }
-  }, [landingPage.isSuccess, landingPage.data, isLoadingEditor]);
+  }, [landingPage.isSuccess, isLoadingEditor]);
 
   const onReady = (unlayer: UnlayerMethods) => {
     emailEditorRef.current = unlayer;
@@ -275,7 +277,6 @@ function Index({ user }: { user: User }) {
           />
           <TextField
             required
-            id="outlined-select-currency"
             select
             name="language"
             label="Select"
@@ -424,7 +425,6 @@ function Index({ user }: { user: User }) {
           ) : (
             <TextField
               required
-              id="outlined-select-currency"
               select
               name="domainId"
               label="Select"
@@ -445,8 +445,13 @@ function Index({ user }: { user: User }) {
                     key={domain.id}
                     value={domain.id}
                   >
-                    <div className="flex  justify-start items-center gap-2">
+                    <div className="flex justify-between w-full items-center gap-2">
                       <span>{domain.name}</span>
+                      {domain.landingPages.length > 0 && (
+                        <span className="flex items-center justify-center gap-1 rounded-sm px-5 bg-icon-color text-white">
+                          own <MdDomainVerification />
+                        </span>
+                      )}
                     </div>
                   </MenuItem>
                 );
@@ -461,7 +466,6 @@ function Index({ user }: { user: User }) {
           ) : (
             <TextField
               required
-              id="outlined-select-currency"
               select
               name="categoryId"
               label="Select"

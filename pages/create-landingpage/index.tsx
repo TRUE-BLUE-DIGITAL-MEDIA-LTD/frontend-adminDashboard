@@ -18,7 +18,9 @@ import { languages } from "../../data/languages";
 import { BiUpload } from "react-icons/bi";
 import Image, { ImageLoaderProps } from "next/image";
 import { GetAllCategories } from "../../services/admin/categories";
-const EmailEditor: any = dynamic(() => import("react-email-editor"), {
+import { MdDomainVerification } from "react-icons/md";
+import { Editor, EditorRef, EmailEditorProps } from "react-email-editor";
+const EmailEditor = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
 
@@ -36,7 +38,7 @@ interface CreateLandingPageData {
 }
 
 function Index({ user }: { user: User }) {
-  const emailEditorRef = useRef<UnlayerMethods>();
+  const emailEditorRef = useRef<EditorRef | null>(null);
   const router = useRouter();
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
@@ -79,8 +81,8 @@ function Index({ user }: { user: User }) {
     document.body.style.overflow = "hidden";
   }, []);
 
-  const onReady = (unlayer: UnlayerMethods) => {
-    emailEditorRef.current = unlayer;
+  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
+    emailEditorRef.current = { editor: unlayer };
     unlayer.exportHtml((data) => {
       const { design, html } = data;
     });
@@ -103,7 +105,8 @@ function Index({ user }: { user: User }) {
 
   const handleCrateLandingPage = async () => {
     setIsLoading(() => true);
-    emailEditorRef?.current?.exportHtml(async (data) => {
+    if (!emailEditorRef?.current?.editor) return null;
+    emailEditorRef?.current?.editor.exportHtml(async (data) => {
       try {
         const createLandingPageData: CreateLandingPageData = {
           title: landingPageData.title,
@@ -195,7 +198,7 @@ function Index({ user }: { user: User }) {
         </Alert>
       </Snackbar>
       {isLoadingEditor && <FullLoading />}
-      <div className="w-full flex justify-start bg-white">
+      <div className="w-full mt-5 flex justify-start bg-white">
         <div className="ml-20 text-2xl pt-20 pb-2 font-bold border-b-2 w-full">
           Create Landing Page
         </div>
@@ -203,7 +206,7 @@ function Index({ user }: { user: User }) {
       <main className="font-Poppins relative my-10">
         <EmailEditor
           ref={emailEditorRef}
-          onReady={onReady}
+          onReady={handleOnReadyEmailEditor}
           options={{ displayMode: "web" }}
         />
       </main>
@@ -224,7 +227,6 @@ function Index({ user }: { user: User }) {
           />
           <TextField
             required
-            id="outlined-select-currency"
             select
             name="language"
             label="Select"
@@ -358,7 +360,6 @@ function Index({ user }: { user: User }) {
           ) : (
             <TextField
               required
-              id="outlined-select-currency"
               select
               name="domainId"
               label="Select"
@@ -368,8 +369,13 @@ function Index({ user }: { user: User }) {
               {domains?.data?.map((domain) => {
                 return (
                   <MenuItem key={domain.id} value={domain.id}>
-                    <div className="flex justify-start items-center gap-2">
+                    <div className="flex justify-between w-full items-center gap-2">
                       <span>{domain.name}</span>
+                      {domain.landingPages.length > 0 && (
+                        <span className="flex items-center justify-center gap-1 rounded-sm px-5 bg-icon-color text-white">
+                          own <MdDomainVerification />
+                        </span>
+                      )}
                     </div>
                   </MenuItem>
                 );
@@ -384,7 +390,6 @@ function Index({ user }: { user: User }) {
           ) : (
             <TextField
               required
-              id="outlined-select-currency"
               select
               name="categoryId"
               label="Select"
