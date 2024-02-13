@@ -1,5 +1,6 @@
 import { IconType } from "react-icons";
 import { BsFillSignpost2Fill } from "react-icons/bs";
+import { MdDataExploration } from "react-icons/md";
 
 interface ToolsData {
   title: string;
@@ -8,8 +9,14 @@ interface ToolsData {
 }
 export const toolsData: ToolsData[] = [
   {
-    title: "postcode",
+    title: "Partners' Perfomance",
+    icon: MdDataExploration,
+    description:
+      "Check the perfomance of your partners in a specific date range!",
+  },
+  {
+    title: "Postcode",
     icon: BsFillSignpost2Fill,
-    description: "look up for postcode in any country around the world!",
+    description: "Look up for postcode in any country around the world!",
   },
 ];

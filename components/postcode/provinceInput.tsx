@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
-import { Country } from "../../pages/tools";
 import { DefinedQueryObserverResult } from "@tanstack/react-query";
 import { ResponseGetProvincesInCountryService } from "../../services/tools/postcode";
 import { Combobox, Transition } from "@headlessui/react";
 import { FaAngleDown, FaCheck } from "react-icons/fa6";
+import { Country } from "./postcode";
 interface ProvinceInput {
   handleChangeQueryPostcode: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setQueryPostcode: React.Dispatch<

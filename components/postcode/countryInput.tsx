@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { Country } from "../../pages/tools";
 import { Combobox, Transition } from "@headlessui/react";
 import { FaAngleDown, FaCheck } from "react-icons/fa6";
+import { Country } from "./postcode";
 
 interface CountryInput {
   handleChangeQueryPostcode: (e: React.ChangeEvent<HTMLInputElement>) => void;
