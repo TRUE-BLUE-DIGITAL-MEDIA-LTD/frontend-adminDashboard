@@ -42,6 +42,7 @@ function ParterReport() {
         endDate: moment(dates?.[1]).toISOString(),
       }),
   });
+  console.log();
   return (
     <div className="w-full flex flex-col pb-20 items-center gap-5">
       <div
@@ -56,6 +57,11 @@ function ParterReport() {
           selectionMode="range"
         />
       </div>
+      {paterPerfomaces.error && (
+        <h2 className="font-semibold text-red-600">
+          {paterPerfomaces.error?.message}
+        </h2>
+      )}
       <div className="overflow-x">
         <table className="table-auto overflow-scroll w-full">
           <thead className="w-full sticky top-0">
