@@ -4,25 +4,39 @@ import React, { useState } from "react";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
-import { GetParterPerfomacesByDate } from "../../services/everflow/partner";
+import {
+  GetParterPerfomacesByDate,
+  GetSummaryParterReportService,
+} from "../../services/everflow/partner";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 import { LuArrowDownUp } from "react-icons/lu";
+import { User } from "../../models";
+import SummaryReport from "./summaryReport";
+import TbodyForEditor from "./tbodyForEditor";
+import TbodyForAdmin from "./tbodyForAdmin";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
   { title: "Affilate Name", sort: "up" || "down" },
+  { title: "Media Buying Cost", sort: "up" || "down", admin: true },
   { title: "Gross Clicks", sort: "up" || "down" },
   { title: "Total Clicks", sort: "up" || "down" },
   { title: "Unique Clicks", sort: "up" || "down" },
   { title: "Duplicate Clicks", sort: "up" || "down" },
   { title: "Invalid Clicks", sort: "up" || "down" },
+  { title: "Total CV", sort: "up" || "down", admin: true },
   { title: "CV", sort: "up" || "down" },
   { title: "CVR", sort: "up" || "down" },
   { title: "CPC", sort: "up" || "down" },
   { title: "CPA", sort: "up" || "down" },
+  { title: "RPC", sort: "up" || "down", admin: true },
+  { title: "RPA", sort: "up" || "down", admin: true },
+  { title: "Revenue", sort: "up" || "down", admin: true },
   { title: "Payout", sort: "up" || "down" },
-] as const;
-function ParterReport() {
+  { title: "Profit", sort: "up" || "down", admin: true },
+  { title: "Margin", sort: "up" || "down", admin: true },
+];
+function ParterReport({ user }: { user: User }) {
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const yesterday = moment().subtract(1, "day").format("YYYY-MM-DD");
     return [moment(yesterday).toDate(), moment(yesterday).toDate()];
@@ -42,7 +56,15 @@ function ParterReport() {
         endDate: moment(dates?.[1]).toISOString(),
       }),
   });
-  console.log();
+
+  const summary = useQuery({
+    queryKey: ["summary", dates],
+    queryFn: () =>
+      GetSummaryParterReportService({
+        startDate: moment(dates?.[0]).toISOString(),
+        endDate: moment(dates?.[1]).toISOString(),
+      }),
+  });
   return (
     <div className="w-full flex flex-col pb-20 items-center gap-5">
       <div
@@ -57,39 +79,67 @@ function ParterReport() {
           selectionMode="range"
         />
       </div>
+      {user.role === "editor" && (
+        <div>
+          <h2 className="text-xs font-semibold w-max">PAYOUT</h2>
+          {summary.isLoading ? (
+            <div className="w-full h-5 bg-gray-300 animate-pulse "></div>
+          ) : (
+            <p className="text-base text-slate-600 font-semibold w-max">
+              ${summary.data?.payout.toLocaleString()}
+            </p>
+          )}
+        </div>
+      )}
+      {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
         <h2 className="font-semibold text-red-600">
           {paterPerfomaces.error?.message}
         </h2>
       )}
-      <div className="overflow-x">
-        <table className="table-auto overflow-scroll w-full">
-          <thead className="w-full sticky top-0">
-            <tr className="h-16 drop-shadow-sm bg-white">
-              {menuTables.map((menu, index) => {
-                return (
-                  <th
-                    onClick={() => {
-                      setQuerySort(() => {
-                        return {
-                          title: menu.title,
-                          sort:
-                            querySort.title === menu.title &&
-                            querySort.sort === "up"
-                              ? "down"
-                              : "up",
-                        };
-                      });
-                    }}
-                    className="text-sm p-2 cursor-pointer hover:scale-105 active:scale-110 transition duration-100 "
-                    key={index}
-                  >
-                    <button className="flex justify-center  items-center gap-1">
-                      {menu.title} <LuArrowDownUp />
-                    </button>
-                  </th>
-                );
-              })}
+      <div className=" w-10/12 ring-1 ring-black rounded-lg  h-96 overflow-auto bg-slate-200">
+        <table className="overflow-scroll table-auto w-full">
+          <thead className=" sticky top-0 z-40">
+            <tr className="h-16 w-full  drop-shadow-sm bg-white">
+              {menuTables
+                .filter((list) => {
+                  if (user.role === "admin") {
+                    return list;
+                  } else {
+                    return list.admin !== true;
+                  }
+                })
+                .map((menu, index) => {
+                  return (
+                    <th
+                      onClick={() => {
+                        setQuerySort(() => {
+                          return {
+                            title: menu.title,
+                            sort:
+                              querySort.title === menu.title &&
+                              querySort.sort === "up"
+                                ? "down"
+                                : "up",
+                          };
+                        });
+                      }}
+                      className={`text-xs ${
+                        menu.title === "Network Affliate ID" &&
+                        "sticky left-0 bg-white "
+                      }  ${
+                        menu.title === "Affilate Name" &&
+                        "sticky left-[6.9rem] bg-white "
+                      }  p-2 cursor-pointer hover:scale-105
+                       active:scale-110 transition duration-100 `}
+                      key={index}
+                    >
+                      <button className="flex  justify-center  items-center gap-1">
+                        {menu.title} <LuArrowDownUp />
+                      </button>
+                    </th>
+                  );
+                })}
             </tr>
           </thead>
           <tbody className="">
@@ -152,6 +202,23 @@ function ParterReport() {
                         return a.reporting.cpa - b.reporting.cpa;
                       } else if (querySort.title === "Payout") {
                         return a.reporting.payout - b.reporting.payout;
+                      } else if (querySort.title === "RPC") {
+                        return a.reporting.rpc - b.reporting.rpc;
+                      } else if (querySort.title === "RPA") {
+                        return a.reporting.rpa - b.reporting.rpa;
+                      } else if (querySort.title === "Revenue") {
+                        return a.reporting.revenue - b.reporting.revenue;
+                      } else if (querySort.title === "Profit") {
+                        return a.reporting.profit - b.reporting.profit;
+                      } else if (querySort.title === "Margin") {
+                        return a.reporting.margin - b.reporting.margin;
+                      } else if (querySort.title === "Total CV") {
+                        return a.reporting.total_cv - b.reporting.total_cv;
+                      } else if (querySort.title === "Media Buying Cost") {
+                        return (
+                          a.reporting.media_buying_cost -
+                          b.reporting.media_buying_cost
+                        );
                       }
                     } else if (querySort.sort === "down") {
                       if (querySort.title === "Network Affliate ID") {
@@ -191,47 +258,38 @@ function ParterReport() {
                         return b.reporting.cpa - a.reporting.cpa;
                       } else if (querySort.title === "Payout") {
                         return b.reporting.payout - a.reporting.payout;
+                      } else if (querySort.title === "RPC") {
+                        return b.reporting.rpc - a.reporting.rpc;
+                      } else if (querySort.title === "RPA") {
+                        return b.reporting.rpa - a.reporting.rpa;
+                      } else if (querySort.title === "Revenue") {
+                        return b.reporting.revenue - a.reporting.revenue;
+                      } else if (querySort.title === "Profit") {
+                        return b.reporting.profit - a.reporting.profit;
+                      } else if (querySort.title === "Margin") {
+                        return b.reporting.margin - a.reporting.margin;
+                      } else if (querySort.title === "Total CV") {
+                        return b.reporting.total_cv - a.reporting.total_cv;
+                      } else if (querySort.title === "Media Buying Cost") {
+                        return (
+                          b.reporting.media_buying_cost -
+                          a.reporting.media_buying_cost
+                        );
                       }
                     }
                     return a.columns[0].id.localeCompare(b.columns[0].id);
                   })
                   .map((item, index) => {
                     const odd = index % 2;
-                    return (
-                      <tr
-                        key={index}
-                        className={`w-full hover:bg-icon-color transition  text-sm h-10 ${
-                          odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
-                        }`}
-                      >
-                        <td className="text-center">{item.columns[0].id}</td>
-                        <td className="text-xs text-left max-w-40 truncate">
-                          {item.columns[0].label}
-                        </td>
-                        <td>{item.reporting.gross_click.toLocaleString()}</td>
-                        <td>{item.reporting.total_click.toLocaleString()}</td>
-                        <td>{item.reporting.unique_click.toLocaleString()}</td>
-                        <td>
-                          {item.reporting.duplicate_click.toLocaleString()}
-                        </td>
-                        <td>{item.reporting.invalid_click.toLocaleString()}</td>
-                        <td className="w-max px-3">
-                          {item.reporting.cv.toLocaleString()}
-                        </td>
-                        <td className="w-max px-3">
-                          {item.reporting.cvr.toLocaleString()}
-                        </td>
-                        <td className="w-max px-3">
-                          {item.reporting.cpc.toLocaleString()}
-                        </td>
-                        <td className="w-max px-3">
-                          {item.reporting.cpa.toLocaleString()}
-                        </td>
-                        <td className="w-max px-3">
-                          {item.reporting.payout.toLocaleString()} $
-                        </td>
-                      </tr>
-                    );
+                    if (user.role === "editor") {
+                      return (
+                        <TbodyForEditor key={index} odd={odd} item={item} />
+                      );
+                    } else if (user.role === "admin") {
+                      return (
+                        <TbodyForAdmin key={index} odd={odd} item={item} />
+                      );
+                    }
                   })}
           </tbody>
         </table>

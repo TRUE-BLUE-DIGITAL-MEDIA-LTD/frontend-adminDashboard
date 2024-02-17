@@ -45,7 +45,7 @@ function Index({ user }: { user: User }) {
         </ul>
       </header>
       <main className="w-full flex justify-center mt-20">
-        {selectMenu === 0 && <ParterReport />}
+        {selectMenu === 0 && <ParterReport user={user} />}
         {selectMenu === 1 && <Postcode />}
       </main>
     </DashboardLayout>

@@ -9,7 +9,7 @@ export type ResponseRequestGetParterPerfomacesByDate = {
   table: TableEntry[];
 };
 
-interface TableEntry {
+export interface TableEntry {
   columns: Column[];
   reporting: Reporting;
   usm_columns: any[]; // Replace 'any' with a more specific type if possible
@@ -22,7 +22,7 @@ interface Column {
   label: string;
 }
 
-interface Reporting {
+export interface Reporting {
   imp: number;
   total_click: number;
   unique_click: number;
@@ -55,11 +55,35 @@ interface Reporting {
   media_buying_cost: number;
 }
 
+export async function GetSummaryParterReportService(
+  input: RequestGetParterPerfomacesByDate
+): Promise<Reporting> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const summary = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-summary/by-date`,
+      {
+        params: {
+          ...input,
+        },
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      }
+    );
+
+    return summary.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export async function GetParterPerfomacesByDate(
   input: RequestGetParterPerfomacesByDate
 ): Promise<ResponseRequestGetParterPerfomacesByDate> {
   try {
-    console.log(input);
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const partner = await axios.get(
