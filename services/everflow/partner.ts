@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 import { parseCookies } from "nookies";
 
 type RequestGetParterPerfomacesByDate = {
@@ -59,6 +60,7 @@ export async function GetSummaryParterReportService(
   input: RequestGetParterPerfomacesByDate
 ): Promise<Reporting> {
   try {
+    console.log(moment(input.startDate).format("YYYY-MM-DD"));
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const summary = await axios.get(
