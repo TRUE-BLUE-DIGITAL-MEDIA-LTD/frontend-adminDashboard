@@ -3,8 +3,8 @@ import moment from "moment";
 import { parseCookies } from "nookies";
 
 type RequestGetParterPerfomacesByDate = {
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
 };
 export type ResponseRequestGetParterPerfomacesByDate = {
   table: TableEntry[];
@@ -60,14 +60,17 @@ export async function GetSummaryParterReportService(
   input: RequestGetParterPerfomacesByDate
 ): Promise<Reporting> {
   try {
-    console.log(moment(input.startDate).format("YYYY-MM-DD"));
+    if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
+      throw new Error("Invalid date");
+    }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const summary = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-summary/by-date`,
       {
         params: {
-          ...input,
+          startDate: moment(input.startDate).format("YYYY-MM-DD"),
+          endDate: moment(input.endDate).format("YYYY-MM-DD"),
         },
         headers: {
           Authorization: "Bearer " + access_token,
@@ -86,13 +89,17 @@ export async function GetParterPerfomacesByDate(
   input: RequestGetParterPerfomacesByDate
 ): Promise<ResponseRequestGetParterPerfomacesByDate> {
   try {
+    if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
+      throw new Error("Invalid date");
+    }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const partner = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/by-date`,
       {
         params: {
-          ...input,
+          startDate: moment(input.startDate).format("YYYY-MM-DD"),
+          endDate: moment(input.endDate).format("YYYY-MM-DD"),
         },
         headers: {
           Authorization: "Bearer " + access_token,

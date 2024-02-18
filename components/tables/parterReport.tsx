@@ -52,8 +52,8 @@ function ParterReport({ user }: { user: User }) {
     queryKey: ["partnerPerfomaces", dates],
     queryFn: () =>
       GetParterPerfomacesByDate({
-        startDate: moment(dates?.[0]).toISOString(),
-        endDate: moment(dates?.[1]).toISOString(),
+        startDate: moment(dates?.[0]).toDate(),
+        endDate: moment(dates?.[1]).toDate(),
       }),
   });
 
@@ -61,8 +61,8 @@ function ParterReport({ user }: { user: User }) {
     queryKey: ["summary", dates],
     queryFn: () =>
       GetSummaryParterReportService({
-        startDate: moment(dates?.[0]).toISOString(),
-        endDate: moment(dates?.[1]).toISOString(),
+        startDate: moment(dates?.[0]).toDate(),
+        endDate: moment(dates?.[1]).toDate(),
       }),
   });
   return (
