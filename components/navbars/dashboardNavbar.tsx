@@ -76,7 +76,7 @@ function DashboardNavbar({ user }: { user: User }) {
           </Link>
 
           {menus.map((list, index) => {
-            if (user?.role !== "admin" && (index == 2 || index == 3)) {
+            if (user?.role !== "admin" && (index == 4 || index == 3)) {
               return null;
             }
             return (
