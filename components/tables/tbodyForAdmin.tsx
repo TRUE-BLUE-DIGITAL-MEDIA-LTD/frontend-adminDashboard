@@ -8,19 +8,19 @@ type TbodyForEditorProps = {
 function TbodyForAdmin({ odd, item }: TbodyForEditorProps) {
   return (
     <tr
-      className={`w-full hover:bg-icon-color transition  text-sm h-10 ${
+      className={`h-10 w-full text-sm  transition hover:bg-icon-color ${
         odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
       }`}
     >
       <td
-        className={`text-center sticky left-0 z-10 px-10  ${
+        className={`left-0 z-10 px-10 text-center md:sticky  ${
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
         {item.columns[0].id}
       </td>
       <td
-        className={`text-xs text-left sticky left-[6.9rem] z-10 max-w-60 px-5 truncate  ${
+        className={`sticky left-0 z-10 max-w-60 truncate px-5 text-left text-xs md:left-[6.9rem]  ${
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >

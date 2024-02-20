@@ -6,6 +6,7 @@ import { destroyCookie } from "nookies";
 import Link from "next/link";
 import Image from "next/image";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
+import { IoMenu } from "react-icons/io5";
 
 const menus = [
   { title: "Categories", url: "/" },
@@ -23,7 +24,7 @@ function DashboardNavbar({ user }: { user: User }) {
   const [triggerAccountMenu, setTriggerAccountMenu] = useState(false);
   const pathname = router.pathname; // e.g. "/classroom/setting"
   const lastRoute = pathname.split("/").pop();
-
+  const [triggerMenubar, setTriggerMenubar] = useState(false);
   useEffect(() => {
     if (lastRoute === "") {
       setCurrentMenuIndex(() => 0);
@@ -49,67 +50,153 @@ function DashboardNavbar({ user }: { user: User }) {
     });
   };
   return (
-    <nav className="w-full absolute bg-white drop-shadow-md font-Poppins top-0 h-20 z-50 flex items-center justify-between ">
-      <Link
-        href="/"
-        className="w-40 h-20 ml-2 relative rounded-r-md overflow-hidden"
+    <div className="">
+      <div
+        onClick={() => setTriggerMenubar((prev) => !prev)}
+        className="fixed left-2 top-2 z-[90] m-auto flex h-max w-max items-center
+       justify-center rounded-full bg-icon-color p-3 text-xl text-black md:hidden"
       >
-        <Image
-          src="/faviconFull.png"
-          fill
-          className="object-contain"
-          alt="favicon"
-        />
-      </Link>
-      <ul className="w-max mx-10 flex font-semibold items-center justify-center gap-10">
-        {menus.map((list, index) => {
-          if (user?.role !== "admin" && (index == 2 || index == 3)) {
-            return null;
-          }
-          return (
-            <li
-              key={index}
-              className={`hover:text-blue-800 ${
-                currentMenuIndex === index ? "text-blue-800" : "text-main-color"
-              } transition duration-150 active:scale-105`}
-            >
-              <Link href={list.url}>{list.title}</Link>
-            </li>
-          );
-        })}
-        <li
-          onMouseEnter={() => setTriggerAccountMenu(() => true)}
-          onMouseLeave={() => setTriggerAccountMenu(() => false)}
-          className={`flex ${
-            triggerAccountMenu && "top-5 bg-white"
-          } relative hover:ring-2 ring-black rounded-lg 
-      transition duration-100 p-2 cursor-pointer select-none flex-col justify-center gap-2 items-center`}
+        <IoMenu />
+      </div>
+      {triggerMenubar && (
+        <div
+          className="fixed bottom-0  left-0 right-0 top-0 z-[80] m-auto flex h-screen
+         w-screen flex-col items-center justify-center bg-icon-color"
         >
-          {user && (
-            <div className="flex justify-center items-center gap-2">
-              <div className="w-10 h-10 relative overflow-hidden rounded-full bg-slate-300">
-                <Image
-                  src={user.image}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw"
-                  alt="user image picture"
-                />
-              </div>
-              <span>{user?.name}</span>
-              <div>{triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}</div>
-            </div>
-          )}
-          {triggerAccountMenu && (
-            <ul className="w-full flex flex-col justify-center items-start gap-2 ">
-              <li onClick={signOut} className="w-full hover:font-bold">
-                Sign Out
+          <Link
+            href="/"
+            className="relative ml-2 h-20 w-40 overflow-hidden rounded-r-md"
+          >
+            <Image
+              src="/faviconFull.png"
+              fill
+              className="object-contain"
+              alt="favicon"
+            />
+          </Link>
+
+          {menus.map((list, index) => {
+            if (user?.role !== "admin" && (index == 2 || index == 3)) {
+              return null;
+            }
+            return (
+              <li
+                key={index}
+                className={`hover:text-blue-800 ${
+                  currentMenuIndex === index
+                    ? "text-blue-800"
+                    : "text-main-color"
+                } text-xs transition duration-150 active:scale-105 xl:text-lg`}
+              >
+                <Link href={list.url}>{list.title}</Link>
               </li>
-            </ul>
-          )}
-        </li>
-      </ul>
-    </nav>
+            );
+          })}
+          <li
+            onMouseEnter={() => setTriggerAccountMenu(() => true)}
+            onMouseLeave={() => setTriggerAccountMenu(() => false)}
+            className={`flex ${
+              triggerAccountMenu && "top-5 bg-white"
+            } relative cursor-pointer select-none flex-col 
+      items-center justify-center gap-2 rounded-lg p-2 ring-black transition duration-100 hover:ring-2`}
+          >
+            {user && (
+              <div className="flex items-center justify-center gap-2">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-300">
+                  <Image
+                    src={user.image}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw"
+                    alt="user image picture"
+                  />
+                </div>
+                <span>{user?.name}</span>
+                <div>
+                  {triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}
+                </div>
+              </div>
+            )}
+            {triggerAccountMenu && (
+              <ul className="flex w-40 flex-col items-start justify-center gap-2 ">
+                <li onClick={signOut} className="w-full hover:font-bold">
+                  Sign Out
+                </li>
+              </ul>
+            )}
+          </li>
+        </div>
+      )}
+
+      <nav
+        className="bg fixed top-0  z-50 hidden h-20 w-full items-center justify-between bg-white 
+    font-Poppins drop-shadow-md md:flex "
+      >
+        <Link
+          href="/"
+          className="relative ml-2 h-20 w-40 overflow-hidden rounded-r-md"
+        >
+          <Image
+            src="/faviconFull.png"
+            fill
+            className="object-contain"
+            alt="favicon"
+          />
+        </Link>
+        <ul className="mx-10 flex w-8/12 items-center justify-between gap-10 text-sm font-semibold">
+          {menus.map((list, index) => {
+            if (user?.role !== "admin" && (index == 2 || index == 3)) {
+              return null;
+            }
+            return (
+              <li
+                key={index}
+                className={`hover:text-blue-800 ${
+                  currentMenuIndex === index
+                    ? "text-blue-800"
+                    : "text-main-color"
+                } text-xs transition duration-150 active:scale-105 xl:text-lg`}
+              >
+                <Link href={list.url}>{list.title}</Link>
+              </li>
+            );
+          })}
+          <li
+            onMouseEnter={() => setTriggerAccountMenu(() => true)}
+            onMouseLeave={() => setTriggerAccountMenu(() => false)}
+            className={`flex ${
+              triggerAccountMenu && "top-5 bg-white"
+            } relative cursor-pointer select-none flex-col 
+      items-center justify-center gap-2 rounded-lg p-2 ring-black transition duration-100 hover:ring-2`}
+          >
+            {user && (
+              <div className="flex items-center justify-center gap-2">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-300">
+                  <Image
+                    src={user.image}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw"
+                    alt="user image picture"
+                  />
+                </div>
+                <span>{user?.name}</span>
+                <div>
+                  {triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}
+                </div>
+              </div>
+            )}
+            {triggerAccountMenu && (
+              <ul className="flex w-40 flex-col items-start justify-center gap-2 ">
+                <li onClick={signOut} className="w-full hover:font-bold">
+                  Sign Out
+                </li>
+              </ul>
+            )}
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
 }
 

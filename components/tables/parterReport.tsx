@@ -66,14 +66,14 @@ function ParterReport({ user }: { user: User }) {
       }),
   });
   return (
-    <div className="w-full flex flex-col pb-20 items-center gap-5">
+    <div className="flex w-full flex-col items-center gap-5 pb-20">
       <div
-        className="flex p-5  mb-5  justify-center items-center
-         gap-4 font-semibold text-base"
+        className="mb-5 flex flex-col items-center  justify-center  gap-4 p-5
+         text-base font-semibold md:flex-row"
       >
         <label>Pick Up Date</label>
         <Calendar
-          className="w-96"
+          className="w-60 xl:w-96"
           value={dates}
           onChange={(e) => setDates(e.value)}
           selectionMode="range"
@@ -81,11 +81,11 @@ function ParterReport({ user }: { user: User }) {
       </div>
       {user.role === "editor" && (
         <div>
-          <h2 className="text-xs font-semibold w-max">PAYOUT</h2>
+          <h2 className="w-max text-xs font-semibold">PAYOUT</h2>
           {summary.isLoading ? (
-            <div className="w-full h-5 bg-gray-300 animate-pulse "></div>
+            <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
           ) : (
-            <p className="text-base text-slate-600 font-semibold w-max">
+            <p className="w-max text-base font-semibold text-slate-600">
               ${summary.data?.payout.toLocaleString()}
             </p>
           )}
@@ -97,10 +97,10 @@ function ParterReport({ user }: { user: User }) {
           {paterPerfomaces.error?.message}
         </h2>
       )}
-      <div className=" w-10/12 ring-1 ring-black rounded-lg  h-96 overflow-auto bg-slate-200">
-        <table className="overflow-scroll table-auto w-full">
+      <div className=" h-96 w-11/12 overflow-auto rounded-lg bg-slate-200  ring-1 ring-black md:w-10/12">
+        <table className="w-full table-auto overflow-scroll">
           <thead className=" sticky top-0 z-40">
-            <tr className="h-16 w-full  drop-shadow-sm bg-white">
+            <tr className="h-16 w-full  bg-white drop-shadow-sm">
               {menuTables
                 .filter((list) => {
                   if (user.role === "admin") {
@@ -126,15 +126,15 @@ function ParterReport({ user }: { user: User }) {
                       }}
                       className={`text-xs ${
                         menu.title === "Network Affliate ID" &&
-                        "sticky left-0 bg-white "
+                        "left-0 bg-white md:sticky "
                       }  ${
                         menu.title === "Affilate Name" &&
-                        "sticky left-[6.9rem] bg-white "
-                      }  p-2 cursor-pointer hover:scale-105
-                       active:scale-110 transition duration-100 `}
+                        "sticky left-0 bg-white md:left-[6.9rem] "
+                      }  cursor-pointer p-2 transition
+                       duration-100 hover:scale-105 active:scale-110 `}
                       key={index}
                     >
-                      <button className="flex  justify-center  items-center gap-1">
+                      <button className="flex  items-center  justify-center gap-1">
                         {menu.title} <LuArrowDownUp />
                       </button>
                     </th>
@@ -147,18 +147,18 @@ function ParterReport({ user }: { user: User }) {
               ? [...new Array(10)].map((item, index) => {
                   return (
                     <tr key={index} className="gap-5 border-y-8 border-white">
-                      <td className="w-32 h-8  bg-gray-400 animate-pulse rounded-lg"></td>
-                      <td className="w-40 h-8  bg-gray-100 animate-pulse rounded-lg"></td>
-                      <td className="w-20 h-8  bg-gray-200 animate-pulse rounded-lg"></td>
-                      <td className="w-32 h-8  bg-gray-50 animate-pulse rounded-lg"></td>
-                      <td className="w-32 h-8  bg-gray-200 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-200 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-200 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-50 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-200 animate-pulse rounded-lg"></td>
-                      <td className="w-20 h-8  bg-gray-400 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-100 animate-pulse rounded-lg"></td>
-                      <td className="w-10 h-8  bg-gray-300 animate-pulse rounded-lg"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
+                      <td className="h-8 w-40  animate-pulse rounded-lg bg-gray-100"></td>
+                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-50"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-50"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-400"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-100"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-300"></td>
                     </tr>
                   );
                 })
@@ -169,7 +169,7 @@ function ParterReport({ user }: { user: User }) {
                         return a.columns[0].id.localeCompare(b.columns[0].id);
                       } else if (querySort.title === "Affilate Name") {
                         return a.columns[0].label.localeCompare(
-                          b.columns[0].label
+                          b.columns[0].label,
                         );
                       } else if (querySort.title === "Gross Clicks") {
                         return (
@@ -225,7 +225,7 @@ function ParterReport({ user }: { user: User }) {
                         return b.columns[0].id.localeCompare(a.columns[0].id);
                       } else if (querySort.title === "Affilate Name") {
                         return b.columns[0].label.localeCompare(
-                          a.columns[0].label
+                          a.columns[0].label,
                         );
                       } else if (querySort.title === "Gross Clicks") {
                         return (
