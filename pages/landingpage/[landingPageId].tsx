@@ -87,7 +87,7 @@ function Index({ user }: { user: User }) {
       categoryId: "",
       language: "en",
       googleAnalyticsId: "",
-    }
+    },
   );
 
   // start fetching landingpage when rounter is ready
@@ -130,7 +130,7 @@ function Index({ user }: { user: User }) {
   };
 
   const handleChangeLandingPageData = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setLandingPageData((prev) => {
@@ -171,7 +171,7 @@ function Index({ user }: { user: User }) {
           };
         });
         const domain = domains?.data?.filter(
-          (list) => list.id === landingPageData.domainId
+          (list) => list.id === landingPageData.domainId,
         );
 
         Swal.fire({
@@ -185,7 +185,7 @@ function Index({ user }: { user: User }) {
         setIsLoading(() => false);
         setOpen(() => true);
       } catch (err: any) {
-        if (err?.props?.response?.data?.message === "Unauthorized") {
+        if (err.message === "Unauthorized") {
           location.reload();
         }
         console.log(err);
@@ -194,8 +194,8 @@ function Index({ user }: { user: User }) {
         setMessage(() => {
           return {
             status: "error",
-            message: err?.props?.response?.data?.message?.toString()
-              ? err?.props?.response?.data?.message?.toString()
+            message: err.message?.toString()
+              ? err.message?.toString()
               : "something went worng",
           };
         });
@@ -212,7 +212,7 @@ function Index({ user }: { user: User }) {
 
   //handle icon image update
   const handleFileInputChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
       setIsLoadingUploadIcon(() => true);
@@ -242,14 +242,14 @@ function Index({ user }: { user: User }) {
         </Alert>
       </Snackbar>
       {(landingPage.isLoading || isLoadingEditor) && <FullLoading />}
-      <div className="w-full mt-20 flex justify-start bg-white">
-        <div className="ml-20 text-2xl pt-20 pb-2 font-bold border-b-2 w-full">
+      <div className="mt-20 flex w-full justify-start bg-white">
+        <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
           <span className="text-icon-color">U</span>pdate Landing Page
         </div>
       </div>
-      <main className="font-Poppins relative my-10">
+      <main className="relative my-10 font-Poppins">
         {isLoadingEditor && (
-          <div className="w-full h-full absolute bg-second-color text-black font-semibold text-xl animate-pulse flex justify-center items-center">
+          <div className="absolute flex h-full w-full animate-pulse items-center justify-center bg-second-color text-xl font-semibold text-black">
             <span className="animate-bounce">Editor Is Loading ...</span>
           </div>
         )}
@@ -260,13 +260,13 @@ function Index({ user }: { user: User }) {
           options={{ displayMode: "web" }}
         />
       </main>
-      <div className="w-full flex justify-start">
-        <div className="ml-20 text-2xl pb-2 font-bold border-b-2 w-full">
+      <div className="flex w-full justify-start">
+        <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
           General Information
         </div>
       </div>
-      <div className="w-full py-5 flex gap-5 flex-col justify-center items-center">
-        <div className="grid grid-cols-3 w-10/12 gap-5">
+      <div className="flex w-full flex-col items-center justify-center gap-5 py-5">
+        <div className="grid w-10/12 grid-cols-3 gap-5">
           <TextField
             onChange={handleChangeLandingPageData}
             name="name"
@@ -287,7 +287,7 @@ function Index({ user }: { user: User }) {
             {languages?.map((option) => {
               return (
                 <MenuItem key={option.value} value={option.value}>
-                  <div className="flex justify-start items-center gap-2">
+                  <div className="flex items-center justify-start gap-2">
                     <span>{option.name}</span>
                   </div>
                 </MenuItem>
@@ -296,13 +296,13 @@ function Index({ user }: { user: User }) {
           </TextField>
         </div>
       </div>
-      <div className="w-full flex justify-start">
-        <div className="ml-20 text-2xl pb-2 font-bold border-b-2 w-full">
+      <div className="flex w-full justify-start">
+        <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
           SEO Information
         </div>
       </div>
-      <div className="w-full py-5 flex gap-5 justify-center items-center">
-        <div className="grid grid-cols-3 w-10/12 gap-5">
+      <div className="flex w-full items-center justify-center gap-5 py-5">
+        <div className="grid w-10/12 grid-cols-3 gap-5">
           <TextField
             onChange={handleChangeLandingPageData}
             name="title"
@@ -331,8 +331,8 @@ function Index({ user }: { user: User }) {
             <div className="flex w-full  flex-col gap-1">
               <label
                 htmlFor="dropzone-file"
-                className="w-full px-2 h-10 bg-white hover:scale-105 cursor-pointer
-         transition duration-100 ring-2 gap-2 ring-black text-xl flex items-center justify-center rounded-md "
+                className="flex h-10 w-full cursor-pointer items-center justify-center
+         gap-2 rounded-md bg-white px-2 text-xl ring-2 ring-black transition duration-100 hover:scale-105 "
               >
                 <BiUpload />
                 <input
@@ -349,11 +349,11 @@ function Index({ user }: { user: User }) {
               </span>
             </div>
             {icon ? (
-              <div className="h-full w-20 ring-2 ring-black overflow-hidden rounded-lg flex items-center justify-center">
+              <div className="flex h-full w-20 items-center justify-center overflow-hidden rounded-lg ring-2 ring-black">
                 {isLoadingUploadIcon ? (
-                  <div className="w-full h-full bg-blue-500 animate-pulse"></div>
+                  <div className="h-full w-full animate-pulse bg-blue-500"></div>
                 ) : (
-                  <div className="w-10 h-10 relative  bg-transparent">
+                  <div className="relative h-10 w-10  bg-transparent">
                     <Image
                       src={icon}
                       fill
@@ -371,13 +371,13 @@ function Index({ user }: { user: User }) {
               </div>
             ) : (
               <div
-                className="h-full w-20 ring-2 ring-black overflow-hidden
-           rounded-lg flex items-center justify-center"
+                className="flex h-full w-20 items-center justify-center
+           overflow-hidden rounded-lg ring-2 ring-black"
               >
                 {isLoadingUploadIcon ? (
-                  <div className="w-full h-full bg-blue-500 animate-pulse"></div>
+                  <div className="h-full w-full animate-pulse bg-blue-500"></div>
                 ) : (
-                  <div className="w-10 h-10 relative  bg-transparent"></div>
+                  <div className="relative h-10 w-10  bg-transparent"></div>
                 )}
               </div>
             )}
@@ -385,13 +385,13 @@ function Index({ user }: { user: User }) {
         </div>
       </div>
 
-      <div className="w-full flex justify-start">
-        <div className="ml-20 text-2xl pb-2 font-bold border-b-2 w-full">
+      <div className="flex w-full justify-start">
+        <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
           Affiliate Link
         </div>
       </div>
-      <div className="w-full py-5 flex-wrap flex gap-5 flex-col justify-center items-center">
-        <div className="grid grid-cols-3 w-10/12 gap-5">
+      <div className="flex w-full flex-col flex-wrap items-center justify-center gap-5 py-5">
+        <div className="grid w-10/12 grid-cols-3 gap-5">
           <TextField
             onChange={handleChangeLandingPageData}
             name="mainButton"
@@ -410,13 +410,13 @@ function Index({ user }: { user: User }) {
           />
         </div>
       </div>
-      <div className="w-full flex justify-start">
-        <div className="ml-20 text-2xl pb-2 font-bold border-b-2 w-full">
+      <div className="flex w-full justify-start">
+        <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
           Others
         </div>
       </div>
-      <div className="w-full py-5 flex gap-5 flex-col justify-center items-center">
-        <div className="grid grid-cols-3 w-10/12 gap-5">
+      <div className="flex w-full flex-col items-center justify-center gap-5 py-5">
+        <div className="grid w-10/12 grid-cols-3 gap-5">
           {domains.isLoading ? (
             <div>
               <Skeleton height={70} />
@@ -445,10 +445,10 @@ function Index({ user }: { user: User }) {
                     key={domain.id}
                     value={domain.id}
                   >
-                    <div className="flex justify-between w-full items-center gap-2">
+                    <div className="flex w-full items-center justify-between gap-2">
                       <span>{domain.name}</span>
-                      {domain.landingPages.length > 0 && (
-                        <span className="flex items-center justify-center gap-1 rounded-sm px-5 bg-icon-color text-white">
+                      {domain?.landingPages?.length > 0 && (
+                        <span className="flex items-center justify-center gap-1 rounded-sm bg-icon-color px-5 text-white">
                           own <MdDomainVerification />
                         </span>
                       )}
@@ -486,7 +486,7 @@ function Index({ user }: { user: User }) {
                     key={category.id}
                     value={category.id}
                   >
-                    <div className="flex  justify-start items-center gap-2">
+                    <div className="flex  items-center justify-start gap-2">
                       <span>{category.title}</span>
                     </div>
                   </MenuItem>
@@ -496,15 +496,15 @@ function Index({ user }: { user: User }) {
           )}
         </div>
       </div>
-      <div className="w-full flex justify-center pb-10">
+      <div className="flex w-full justify-center pb-10">
         {isLoading || isLoadingEditor ? (
-          <div className="w-40 py-2 text-center animate-pulse text-white rounded-full font-Poppins text-lg bg-main-color">
+          <div className="w-40 animate-pulse rounded-full bg-main-color py-2 text-center font-Poppins text-lg text-white">
             loading ...
           </div>
         ) : (
           <button
             onClick={handleCrateLandingPage}
-            className="w-40 py-2 text-white rounded-full hover:scale-105 transition duration-150 active:bg-blue-700 font-Poppins text-lg bg-main-color"
+            className="w-40 rounded-full bg-main-color py-2 font-Poppins text-lg text-white transition duration-150 hover:scale-105 active:bg-blue-700"
           >
             update
           </button>
@@ -517,7 +517,7 @@ function Index({ user }: { user: User }) {
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

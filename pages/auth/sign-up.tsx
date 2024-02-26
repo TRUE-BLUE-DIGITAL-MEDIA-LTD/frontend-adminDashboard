@@ -52,18 +52,14 @@ function SignUp() {
       setIsLoading(() => false);
     } catch (err: any) {
       setIsLoading(() => false);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (
-    event: React.ChangeEvent | MouseEvent<HTMLButtonElement>
+    event: React.ChangeEvent | MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
@@ -149,7 +145,7 @@ function SignUp() {
     }
   };
   return (
-    <div className="bg-gradient-to-b py-10 from-second-color  to-supper-main-color">
+    <div className="bg-gradient-to-b from-second-color to-supper-main-color  py-10">
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
@@ -158,7 +154,7 @@ function SignUp() {
             alignItems: "center",
           }}
         >
-          <div className="w-10 h-10 rounded-full relative bg-black overflow-hidden">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
             <Image
               alt="logo"
               src="/faviconOxy.png"
@@ -265,9 +261,9 @@ function SignUp() {
             </Grid>
             {isLoading ? (
               <div
-                className="bg-blue-500 text-center animate-pulse text-lg active:scale-110 hover:bg-blue-600
-         hover:ring-2 ring-blue-200 transition duration-150
-      font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+                className="animate-pulse rounded-lg bg-blue-500 px-20 py-2 text-center
+         font-Poppins text-lg font-semibold text-white
+      ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
               >
                 loading...
               </div>
@@ -276,23 +272,23 @@ function SignUp() {
               validateData.email ||
               validateData.password ? (
               <div
-                className=" bg-slate-500 text-center
-        ring-blue-200 transition duration-150
-     font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+                className=" rounded-lg bg-slate-500
+        px-20 py-2 text-center
+     font-Poppins font-semibold text-white ring-blue-200 transition duration-150"
               >
                 register
               </div>
             ) : (
               <button
-                className="bg-blue-500 text-lg active:scale-110 hover:bg-blue-600
-           hover:ring-2 ring-blue-200 transition duration-150
-        font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+                className="rounded-lg bg-blue-500 px-20 py-2
+           font-Poppins text-lg font-semibold text-white
+        ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
               >
                 register
               </button>
             )}
 
-            <section className="flex justify-center gap-2 font-medium mt-2">
+            <section className="mt-2 flex justify-center gap-2 font-medium">
               <span> Already have an account? </span>
               <Link
                 href="/auth/sign-in"

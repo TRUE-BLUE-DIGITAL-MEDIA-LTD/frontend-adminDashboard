@@ -66,32 +66,28 @@ function Index({ user }: { user: User }) {
         } catch (err: any) {
           setIsLoading(() => false);
           console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
+          Swal.fire("error!", err.message?.toString(), "error");
         }
       }
     });
   };
   return (
     <DashboardLayout user={user}>
-      <header className="mt-28 flex flex-col justify-center items-center">
+      <header className="mt-28 flex flex-col items-center justify-center">
         <h1
-          className="font-bold text-transparent text-6xl py-10 text-center font-Poppins
-       bg-clip-text  animate-gradient"
+          className="animate-gradient bg-clip-text py-10 text-center font-Poppins text-6xl
+       font-bold  text-transparent"
         >
           Customer&apos;s Email
         </h1>
       </header>
-      <main className="w-full mt-10 flex justify-center items-center gap-5 pb-20 flex-col  ">
-        <div className="lg:w-10/12 xl:w-8/12 flex flex-col items-center ">
+      <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+        <div className="flex flex-col items-center lg:w-10/12 xl:w-8/12 ">
           <div className="w-full">
-            <table className="table-auto w-full border-collapse">
-              <thead className="border-b-2 h-14 font-bold drop-shadow-md text-blue-700   border-black ">
+            <table className="w-full table-auto border-collapse">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white  ">
-                  <td className="flex gap-2 h-14 group  items-center">
+                  <td className="group flex h-14 items-center  gap-2">
                     <span>Email</span>
                     <div
                       className={`flex items-center ${
@@ -106,7 +102,7 @@ function Index({ user }: { user: User }) {
                             setOrderBy(() => "email");
                             setIsAsc(() => false);
                           }}
-                          className="flex justify-center hover:scale-105 transition duration-100 items-center "
+                          className="flex items-center justify-center transition duration-100 hover:scale-105 "
                         >
                           <BsFillCaretDownFill />
                         </button>
@@ -117,7 +113,7 @@ function Index({ user }: { user: User }) {
                               setOrderBy(() => "email");
                               setIsAsc(() => true);
                             }}
-                            className="flex justify-center hover:scale-105 transition duration-100 items-center "
+                            className="flex items-center justify-center transition duration-100 hover:scale-105 "
                           >
                             <BsFillCaretUpFill />
                           </button>
@@ -127,7 +123,7 @@ function Index({ user }: { user: User }) {
                   </td>
                   <td>Name</td>
                   <td>Landing Page</td>
-                  <td className="flex gap-2 group">
+                  <td className="group flex gap-2">
                     <span>Create At</span>
                     <div
                       className={`flex items-center ${
@@ -142,7 +138,7 @@ function Index({ user }: { user: User }) {
                             setOrderBy(() => "createAt");
                             setIsAsc(() => false);
                           }}
-                          className="flex justify-center hover:scale-105 transition duration-100 items-center "
+                          className="flex items-center justify-center transition duration-100 hover:scale-105 "
                         >
                           <BsFillCaretDownFill />
                         </button>
@@ -153,7 +149,7 @@ function Index({ user }: { user: User }) {
                               setOrderBy(() => "createAt");
                               setIsAsc(() => true);
                             }}
-                            className="flex justify-center hover:scale-105 transition duration-100 items-center "
+                            className="flex items-center justify-center transition duration-100 hover:scale-105 "
                           >
                             <BsFillCaretUpFill />
                           </button>
@@ -198,7 +194,7 @@ function Index({ user }: { user: User }) {
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: true,
-                        }
+                        },
                       );
                       return (
                         <tr className="h-14 hover:bg-blue-50 " key={index}>
@@ -226,14 +222,14 @@ function Index({ user }: { user: User }) {
 
                           <td>{formattedDatecreateAt}</td>
 
-                          <td className="flex h-14 justify-center w-20 items-center gap-2">
+                          <td className="flex h-14 w-20 items-center justify-center gap-2">
                             <button
                               onClick={() =>
                                 handleDeleteCustomerEmail({
                                   emailId: list.id,
                                 })
                               }
-                              className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
+                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
                             >
                               <MdDelete />
                             </button>
@@ -257,7 +253,7 @@ function Index({ user }: { user: User }) {
 
 export default Index;
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

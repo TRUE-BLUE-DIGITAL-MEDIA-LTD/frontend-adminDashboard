@@ -23,7 +23,7 @@ function Index({ user }: { user: User }) {
   return (
     <DashboardLayout user={user}>
       <header className="mt-40 flex w-full  items-center justify-center gap-10 font-Poppins">
-        <ul className="grid w-11/12 grid-cols-1 place-items-center items-center justify-center gap-10 border-b-2 border-icon-color pb-10 md:grid-cols-2">
+        <ul className="grid w-8/12 grid-cols-1 place-items-center items-center justify-center gap-10 border-b-2 border-icon-color pb-10 md:grid-cols-2">
           {toolsData.map((tool, index) => {
             return (
               <li

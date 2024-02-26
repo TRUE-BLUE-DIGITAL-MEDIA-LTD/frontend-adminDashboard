@@ -91,17 +91,13 @@ function CreateAccount({ setTriggerCreateAccount, accounts }: CreateAccount) {
       }
     } catch (err: any) {
       console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
-    <div className="z-50 w-screen h-screen fixed top-0 bottom-0 right-0 left-0 m-auto flex items-center justify-center">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center">
       <form
-        className="w-96 h-max p-7 bg-white rounded-xl flex flex-col justify-start items-center gap-4"
+        className="flex h-max w-96 flex-col items-center justify-start gap-4 rounded-xl bg-white p-7"
         onSubmit={handleSubmit}
       >
         <TextField
@@ -171,7 +167,7 @@ function CreateAccount({ setTriggerCreateAccount, accounts }: CreateAccount) {
           document.body.style.overflow = "auto";
           setTriggerCreateAccount(false);
         }}
-        className="w-screen h-screen fixed right-0 left-0 top-0 bottom-0 m-auto -z-10 bg-black/30"
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen bg-black/30"
       ></footer>
     </div>
   );

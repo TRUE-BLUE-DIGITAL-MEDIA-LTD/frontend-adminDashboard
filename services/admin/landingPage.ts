@@ -19,7 +19,7 @@ export interface InputCreateLandingPageService {
   googleAnalyticsId?: string | null;
 }
 export async function CreateLandingPageService(
-  input: InputCreateLandingPageService
+  input: InputCreateLandingPageService,
 ): Promise<LandingPage> {
   console.log(input);
   try {
@@ -35,13 +35,13 @@ export async function CreateLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -62,7 +62,7 @@ interface InputUpdateLandingPageService {
   googleAnalyticsId: string;
 }
 export async function UpdateLandingPageService(
-  input: InputUpdateLandingPageService
+  input: InputUpdateLandingPageService,
 ): Promise<LandingPage> {
   try {
     const cookies = parseCookies();
@@ -76,13 +76,13 @@ export async function UpdateLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -108,7 +108,7 @@ interface InputGetAllLandingPageService {
   };
 }
 export async function GetAllLandingPageService(
-  input: InputGetAllLandingPageService
+  input: InputGetAllLandingPageService,
 ): Promise<ResponseGetAllLandingPageService> {
   try {
     const cookies = parseCookies();
@@ -122,13 +122,13 @@ export async function GetAllLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 interface ResponseGetLandingPageService extends LandingPage {
@@ -153,13 +153,13 @@ export async function GetLandingPageService({
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -210,7 +210,7 @@ export async function UploadURLSingtureFavorIconService({
             Authorization: "Bearer " + access_token,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
     await fetch(response.data.signURL, {
       method: "PUT",
@@ -219,13 +219,13 @@ export async function UploadURLSingtureFavorIconService({
       },
       body: newFile.file,
     }).catch((err) => {
-      throw new Error(err);
+      throw err.response.data;
     });
 
     return response.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -233,7 +233,7 @@ interface InputDuplicateLandingPageService {
   landingPageId: string;
 }
 export async function DuplicateLandingPageService(
-  input: InputDuplicateLandingPageService
+  input: InputDuplicateLandingPageService,
 ): Promise<LandingPage> {
   try {
     const cookies = parseCookies();
@@ -245,13 +245,13 @@ export async function DuplicateLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -262,7 +262,7 @@ interface InputDeleteLandingPageService {
   landingPageId: string;
 }
 export async function DeleteLandingPageService(
-  input: InputDeleteLandingPageService
+  input: InputDeleteLandingPageService,
 ): Promise<ResponseDeleteLandingPageService> {
   try {
     const cookies = parseCookies();
@@ -276,13 +276,13 @@ export async function DeleteLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -290,7 +290,7 @@ interface InputRemoveDomainNameFromLandingPageService {
   landingPageId: string;
 }
 export async function RemoveDomainNameFromLandingPageService(
-  input: InputRemoveDomainNameFromLandingPageService
+  input: InputRemoveDomainNameFromLandingPageService,
 ): Promise<LandingPage> {
   try {
     const cookies = parseCookies();
@@ -304,12 +304,12 @@ export async function RemoveDomainNameFromLandingPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return landingPage.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

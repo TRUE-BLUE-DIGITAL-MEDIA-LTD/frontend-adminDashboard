@@ -8,7 +8,7 @@ interface InputNewPasswordService {
 }
 
 export async function NewPasswordService(
-  input: InputNewPasswordService
+  input: InputNewPasswordService,
 ): Promise<User> {
   try {
     const resetPassword = await axios.put(
@@ -20,11 +20,11 @@ export async function NewPasswordService(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return resetPassword.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

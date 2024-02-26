@@ -83,11 +83,7 @@ function Index({ user }: { user: User }) {
         domains.refetch();
       } catch (err: any) {
         console.log(err);
-        Swal.fire(
-          "error!",
-          err?.props?.response?.data?.message?.toString(),
-          "error"
-        );
+        Swal.fire("error!", err.message?.toString(), "error");
       }
     }
   };
@@ -108,10 +104,10 @@ function Index({ user }: { user: User }) {
           domains={domains}
         />
       )}
-      <header className="mt-28 flex flex-col justify-center items-center">
+      <header className="mt-28 flex flex-col items-center justify-center">
         <h1
-          className="font-bold text-transparent text-6xl py-10 text-center font-Poppins
-       bg-clip-text  animate-gradient"
+          className="animate-gradient bg-clip-text py-10 text-center font-Poppins text-6xl
+       font-bold  text-transparent"
         >
           Domains
         </h1>
@@ -121,19 +117,19 @@ function Index({ user }: { user: User }) {
               document.body.style.overflow = "hidden";
               setTriggerCreateDomain(() => true);
             }}
-            className="text-white text-xl hover:bg-blue-700 transition 
-    duration-150 active:scale-105 font-semibold bg-main-color px-20 py-2 
-    rounded-full"
+            className="rounded-full bg-main-color px-20 py-2 
+    text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 
+    active:scale-105"
           >
             Create
           </button>
         )}
       </header>
-      <main className="w-full mt-10 flex justify-center items-center gap-5 pb-20 flex-col  ">
-        <div className="lg:w-10/12 xl:w-8/12 flex flex-col items-center ">
+      <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+        <div className="flex flex-col items-center lg:w-10/12 xl:w-8/12 ">
           <div className="w-full">
-            <table className="table-auto w-full border-collapse">
-              <thead className="border-b-2 h-14 font-bold drop-shadow-md text-blue-700   border-black ">
+            <table className="w-full table-auto border-collapse">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className=" px-5">Domain Name</td>
 
@@ -176,7 +172,7 @@ function Index({ user }: { user: User }) {
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: true,
-                        }
+                        },
                       );
                       const updateAt = new Date(list?.updateAt);
                       const formattedDateupdateAt = updateAt.toLocaleDateString(
@@ -188,21 +184,21 @@ function Index({ user }: { user: User }) {
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: true,
-                        }
+                        },
                       );
                       return (
                         <tr className="h-14 hover:bg-blue-50 " key={index}>
                           <td>{list?.name}</td>
                           <td>{formattedDatecreateAt}</td>
                           <td>{formattedDateupdateAt}</td>
-                          <td className="flex h-14 justify-center w-20 items-center gap-2">
+                          <td className="flex h-14 w-20 items-center justify-center gap-2">
                             <button
                               onClick={() => {
                                 setTriggerUpdateDomain(() => true);
                                 setCurrentUpdateDomain(() => list as Domain);
                                 document.body.style.overflow = "hidden";
                               }}
-                              className="text-3xl text-blue-700 hover:scale-105 active:text-blue-900 transition duration-100"
+                              className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
                             >
                               <BiSolidMessageSquareEdit />
                             </button>
@@ -217,7 +213,7 @@ function Index({ user }: { user: User }) {
                                       name: list.name,
                                     })
                                   }
-                                  className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
+                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
                                 >
                                   <MdDelete />
                                 </button>
@@ -244,7 +240,7 @@ function Index({ user }: { user: User }) {
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

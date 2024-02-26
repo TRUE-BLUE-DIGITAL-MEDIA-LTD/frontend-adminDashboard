@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import React, { useState } from "react";
-import { GetUser } from "../../services/admin/user";
+import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
 import { User } from "../../models";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
@@ -13,13 +13,15 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import CreateAccount from "../../components/forms/accounts/createAccount";
 import EditAccount from "../../components/forms/accounts/editAccount";
 import ResetPassword from "../../components/forms/accounts/reset-password";
-import { FaUserPlus } from "react-icons/fa6";
+import { FaUser, FaUserPlus } from "react-icons/fa6";
 import Image from "next/image";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { Pagination } from "@mui/material";
+import { useRouter } from "next/router";
 
 function Index({ user }: { user: User }) {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [triggerCreateAccount, setTriggerCreateAccount] = useState(false);
   const [triggerResetPassword, setTriggerResetPassword] = useState(false);
@@ -77,12 +79,36 @@ function Index({ user }: { user: User }) {
         Swal.fire("Deleted!", "Successfully Deleted Account", "success");
       } catch (err: any) {
         console.log(err);
-        Swal.fire(
-          "error!",
-          err?.props?.response?.data?.message?.toString(),
-          "error"
-        );
+        Swal.fire("error!", err.message?.toString(), "error");
       }
+    }
+  };
+
+  const handleSignInAsAnotherUser = async ({ email }: { email: string }) => {
+    try {
+      Swal.fire({
+        title: "Trying To Delete",
+        html: "Loading....",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const user = await SignInAsAnoterUserService({ email });
+      setCookie(null, "access_token", user.access_token, {
+        maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
+        path: "/", // Cookie path (can be adjusted based on your needs)
+      });
+      window.location.reload();
+      Swal.fire({
+        title: "Success",
+        html: `Successfully Signed In As ${user.user.name}`,
+        icon: "success",
+      });
+    } catch (err: any) {
+      console.log(err);
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
@@ -106,9 +132,9 @@ function Index({ user }: { user: User }) {
           selectAccount={selectAccount as User}
         />
       )}
-      <main className="w-full flex font-Poppins mt-40 mb-20 flex-col justify-start items-center">
-        <section className="w-10/12 gap-5 h-max p-7 rounded-lg ring-2 ring-slate-300 flex flex-col justify-start items-center">
-          <header className="flex justify-between items-center w-full">
+      <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start font-Poppins">
+        <section className="flex h-max flex-col items-center justify-start gap-5 rounded-lg p-7 ring-2 ring-slate-300 lg:w-11/12 xl:w-9/12">
+          <header className="flex w-full items-center justify-between">
             <h1 className="text-3xl font-bold">Account Management</h1>
             <div className="flex items-center justify-center gap-2">
               <button
@@ -116,24 +142,25 @@ function Index({ user }: { user: User }) {
                   document.body.style.overflow = "hidden";
                   setTriggerCreateAccount(() => true);
                 }}
-                className="flex items-center justify-center gap-2 bg-green-400 p-3 rounded-xl hover:bg-green-500
-           transition duration-150 ease-in active:scale-105 active:ring-2 ring-black active:drop-shadow-sm  "
+                className="flex items-center justify-center gap-2 rounded-xl bg-green-400 p-3 ring-black
+           transition duration-150 ease-in hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm  "
               >
                 <FaUserPlus />
                 create user
               </button>
             </div>
           </header>
-          <div className="h-96 relative overflow-auto">
-            <table className=" mt-5">
-              <thead className="sticky top-0   bg-white z-20">
-                <tr className="flex  font-normal text-slate-600 justify-start w-full h-20 border-y-2 gap-10 items-center">
-                  <td className="w-10">Photo</td>
-                  <td className="w-60">Email</td>
-                  <td className="w-10">Role</td>
-                  <td className="w-48">Created At</td>
-                  <td className="w-32">Reset Password</td>
-                  <td className="w-20">Options</td>
+          <div className="relative h-96 w-full overflow-auto">
+            <table className=" mt-5 w-full table-auto border-separate">
+              <thead className="sticky top-0   z-20 bg-gray-200">
+                <tr className=" h-14 border-y-2 border-slate-400 font-normal  text-slate-600">
+                  <th className="w-20">Photo</th>
+                  <th className="">Email</th>
+                  <th className="">Role</th>
+                  <th className="">Created At</th>
+                  <th className="">Login As</th>
+                  <th className="">Reset Password</th>
+                  <th className="">Options</th>
                 </tr>
               </thead>
               <tbody>
@@ -148,14 +175,11 @@ function Index({ user }: { user: User }) {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: true,
-                    }
+                    },
                   );
                   return (
-                    <tr
-                      className="flex justify-start items-center gap-10"
-                      key={account.id}
-                    >
-                      <td className="w-10 h-10 my-2 relative">
+                    <tr className="" key={account.id}>
+                      <td className="relative my-2 h-20 w-10 border-4 border-transparent ">
                         <Image
                           src={account.image}
                           fill
@@ -163,37 +187,48 @@ function Index({ user }: { user: User }) {
                           className="object-contain"
                         />
                       </td>
-                      <td className="w-60 truncate font-semibold text-black">
+                      <td className="  truncate border-4 border-transparent font-semibold text-black">
                         {account.email}
                       </td>
-                      <td className="w-10">{account.role}</td>
-                      <td
-                        className="w-48
-                "
-                      >
+                      <td className=" border-4 border-transparent">
+                        {account.role}
+                      </td>
+                      <td className=" border-4 border-transparent ">
                         {formattedDatecreateAt}
                       </td>
-                      <td className="w-32">
+                      <td className=" border-4 border-transparent">
+                        <button
+                          onClick={() =>
+                            handleSignInAsAnotherUser({ email: account.email })
+                          }
+                          className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
+                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                        >
+                          <FaUser />
+                          sign in
+                        </button>
+                      </td>
+                      <td className=" border-4 border-transparent">
                         <button
                           onClick={() => {
                             setSelectAccount(() => account);
                             setTriggerResetPassword(() => true);
                             document.body.style.overflow = "hidden";
                           }}
-                          className="w-full h- hover:bg-red-700 transition duration-150 ease-linear
-                   active:ring-2 ring-black active:drop-shadow-sm active:scale-105 bg-red-600 text-white rounded-xl p-2"
+                          className=" w-full rounded-xl bg-red-600 p-2 text-white
+                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-red-700 active:ring-2 active:drop-shadow-sm"
                         >
                           RESET
                         </button>
                       </td>
-                      <td className="flex justify-center w-20 items-center gap-2">
+                      <td className="  gap-2 border-4 border-transparent">
                         <button
                           onClick={() => {
                             setSelectAccount(() => account);
                             setTriggerEditAccount(() => true);
                             document.body.style.overflow = "hidden";
                           }}
-                          className="text-3xl text-blue-700 hover:scale-105 active:text-blue-900 transition duration-100"
+                          className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
                         >
                           <BiSolidMessageSquareEdit />
                         </button>
@@ -205,7 +240,7 @@ function Index({ user }: { user: User }) {
                               email: account.email,
                             })
                           }
-                          className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
+                          className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
                         >
                           <MdDelete />
                         </button>
@@ -230,7 +265,7 @@ function Index({ user }: { user: User }) {
 export default Index;
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

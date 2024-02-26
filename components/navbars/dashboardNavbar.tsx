@@ -43,7 +43,7 @@ function DashboardNavbar({ user }: { user: User }) {
 
   const signOut = () => {
     destroyCookie(null, "access_token", { path: "/" });
-    // queryClient.removeQueries("user");
+    queryClient.removeQueries();
 
     router.push({
       pathname: "/auth/sign-in",
@@ -76,7 +76,7 @@ function DashboardNavbar({ user }: { user: User }) {
           </Link>
 
           {menus.map((list, index) => {
-            if (user?.role !== "admin" && (index == 4 || index == 3)) {
+            if (user?.role !== "admin" && (index === 4 || index === 3)) {
               return null;
             }
             return (
@@ -143,9 +143,9 @@ function DashboardNavbar({ user }: { user: User }) {
             alt="favicon"
           />
         </Link>
-        <ul className="mx-10 flex w-8/12 items-center justify-between gap-10 text-sm font-semibold">
+        <ul className="mx-10 flex w-9/12 items-center justify-end text-sm font-semibold lg:gap-5 xl:gap-10">
           {menus.map((list, index) => {
-            if (user?.role !== "admin" && (index == 2 || index == 3)) {
+            if (user?.role !== "admin" && (index == 3 || index == 4)) {
               return null;
             }
             return (

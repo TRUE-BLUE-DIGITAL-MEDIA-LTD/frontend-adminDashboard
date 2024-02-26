@@ -25,7 +25,7 @@ interface InputSignUpService {
   confirmPassword: string;
 }
 export async function SignUpService(
-  input: InputSignUpService
+  input: InputSignUpService,
 ): Promise<ResponseSignUpService> {
   try {
     const signUp = await axios.post(
@@ -37,11 +37,11 @@ export async function SignUpService(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return signUp.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

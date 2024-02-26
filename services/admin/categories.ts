@@ -21,12 +21,12 @@ export async function GetAllCategories(): Promise<ResponseGetAllCategories[]> {
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return categories.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

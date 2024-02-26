@@ -46,7 +46,7 @@ function NewPassword({ user }: { user: User }) {
       setMessage(() => {
         return {
           status: "error",
-          message: err?.props?.response?.data?.message?.toString(),
+          message: err.message?.toString(),
         };
       });
     }
@@ -60,9 +60,9 @@ function NewPassword({ user }: { user: User }) {
     setOpen(false);
   };
   return (
-    <div className="bg-gradient-to-b from-second-color w-screen flex items-center justify-center h-screen to-supper-main-color">
+    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-second-color to-supper-main-color">
       {triggerRedirect && (
-        <div className="w-screen animate-pulse h-screen bg-blue-300/80 backdrop-blur-sm absolute top-0 bottom-0 right-0 left-0 m-auto z-40"></div>
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-40 m-auto h-screen w-screen animate-pulse bg-blue-300/80 backdrop-blur-sm"></div>
       )}
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert variant="filled" severity={message?.status}>
@@ -70,14 +70,14 @@ function NewPassword({ user }: { user: User }) {
         </Alert>
       </Snackbar>
 
-      <div className="flex flex-col items-center justify-center gap-2 w-8/12">
+      <div className="flex w-8/12 flex-col items-center justify-center gap-2">
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Enter New Password
         </Typography>
-        <form className="flex flex-col w-96" onSubmit={handleSubmit}>
+        <form className="flex w-96 flex-col" onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             required
@@ -98,17 +98,17 @@ function NewPassword({ user }: { user: User }) {
           />
           {isLoading ? (
             <div
-              className="bg-blue-500 text-center animate-pulse text-lg active:scale-110 hover:bg-blue-600
-         hover:ring-2 ring-blue-200 transition duration-150
-      font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+              className="animate-pulse rounded-lg bg-blue-500 px-20 py-2 text-center
+         font-Poppins text-lg font-semibold text-white
+      ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
             >
               loading...
             </div>
           ) : (
             <button
-              className="bg-blue-500 text-lg active:scale-110 hover:bg-blue-600
-           hover:ring-2 ring-blue-200 transition duration-150
-        font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+              className="rounded-lg bg-blue-500 px-20 py-2
+           font-Poppins text-lg font-semibold text-white
+        ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
             >
               enter
             </button>
@@ -122,7 +122,7 @@ function NewPassword({ user }: { user: User }) {
 export default NewPassword;
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

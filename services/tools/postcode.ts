@@ -13,7 +13,7 @@ interface InputGetProvincesInCountryService {
   countryCode: string;
 }
 export async function GetProvincesInCountryService(
-  input: InputGetProvincesInCountryService
+  input: InputGetProvincesInCountryService,
 ): Promise<ResponseGetProvincesInCountryService> {
   try {
     const cookies = parseCookies();
@@ -28,13 +28,13 @@ export async function GetProvincesInCountryService(
           Authorization: "Bearer " + access_token,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     return provinces.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -64,7 +64,7 @@ interface InputGetPostalCodesByStateService {
   country: string;
 }
 export async function GetPostalCodesByStateService(
-  input: InputGetPostalCodesByStateService
+  input: InputGetPostalCodesByStateService,
 ): Promise<ResponseGetPostalCodesByStateService> {
   try {
     const cookies = parseCookies();
@@ -80,11 +80,11 @@ export async function GetPostalCodesByStateService(
           Authorization: "Bearer " + access_token,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return postalCodes.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

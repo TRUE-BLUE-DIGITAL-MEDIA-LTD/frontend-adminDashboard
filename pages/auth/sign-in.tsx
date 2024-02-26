@@ -56,7 +56,7 @@ function SignIn() {
       setMessage(() => {
         return {
           status: "error",
-          message: err?.props?.response?.data?.message?.toString(),
+          message: err.message?.toString(),
         };
       });
     }
@@ -71,7 +71,7 @@ function SignIn() {
   };
 
   const handleChangeInputLogin = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = event.target;
     event.preventDefault();
@@ -83,9 +83,9 @@ function SignIn() {
     });
   };
   return (
-    <div className="bg-gradient-to-b from-second-color w-screen flex flex-col  items-center justify-between h-screen to-supper-main-color">
+    <div className="flex h-screen w-screen flex-col items-center  justify-between bg-gradient-to-b from-second-color to-supper-main-color">
       {triggerRedirect && (
-        <div className="w-screen animate-pulse h-screen bg-blue-300/80 backdrop-blur-sm absolute top-0 bottom-0 right-0 left-0 m-auto z-40"></div>
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-40 m-auto h-screen w-screen animate-pulse bg-blue-300/80 backdrop-blur-sm"></div>
       )}
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert variant="filled" severity={message.status || "success"}>
@@ -93,8 +93,8 @@ function SignIn() {
         </Alert>
       </Snackbar>
 
-      <div className="flex flex-col mt-32 items-center justify-center gap-2 w-8/12">
-        <div className="w-10 h-10 rounded-full relative bg-black overflow-hidden">
+      <div className="mt-32 flex w-8/12 flex-col items-center justify-center gap-2">
+        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
           <Image
             src="/favicon.ico"
             fill
@@ -105,10 +105,10 @@ function SignIn() {
         <h1 className="font-Poppins text-3xl font-semibold">
           Welcome to OxyClick
         </h1>
-        <h1 className="font-Poppins text-icon-color text-lg font-medium">
+        <h1 className="font-Poppins text-lg font-medium text-icon-color">
           Sign In To Enter Dashboard
         </h1>
-        <form className="flex flex-col w-96" onSubmit={handleSubmit}>
+        <form className="flex w-96 flex-col" onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             required
@@ -134,26 +134,26 @@ function SignIn() {
           />
           {isLoading ? (
             <div
-              className="bg-blue-500 text-center animate-pulse text-lg active:scale-110 hover:bg-blue-600
-         hover:ring-2 ring-blue-200 transition duration-150
-      font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+              className="animate-pulse rounded-lg bg-blue-500 px-20 py-2 text-center
+         font-Poppins text-lg font-semibold text-white
+      ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
             >
               loading...
             </div>
           ) : (
             <button
-              className="bg-blue-500 text-lg active:scale-110 hover:bg-blue-600
-           hover:ring-2 ring-blue-200 transition duration-150
-        font-Poppins font-semibold text-white px-20 rounded-lg py-2"
+              className="rounded-lg bg-blue-500 px-20 py-2
+           font-Poppins text-lg font-semibold text-white
+        ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
             >
               sign in
             </button>
           )}
-          <section className="flex justify-center gap-2 font-medium mt-2">
+          <section className="mt-2 flex justify-center gap-2 font-medium">
             <span>Don&apos;t have an account?</span>
             <Link
               href="/auth/sign-up"
-              className="cursor-pointer underline text-blue-600"
+              className="cursor-pointer text-blue-600 underline"
             >
               Sign Up
             </Link>
@@ -161,18 +161,18 @@ function SignIn() {
         </form>
       </div>
       <footer className="mb-4 font-Poppins text-xs text-icon-color">
-        <section className="flex justify-center h-5  items-center gap-1">
-          <span className="text-center text">Oxyclick.com</span>
-          <div className="w-1 h-1 bg-icon-color rounded-full"></div>
-          <span className="text-center text">Support</span>
-          <div className="w-1 h-1 bg-icon-color rounded-full"></div>
-          <span className="text-center text">Guide</span>
-          <div className="w-1 h-1 bg-icon-color rounded-full"></div>
-          <span className="text-center text">Pricing</span>
-          <div className="w-1 h-1 bg-icon-color rounded-full"></div>
-          <span className="text-center text">Term</span>
-          <div className="w-1 h-1 bg-icon-color rounded-full"></div>
-          <span className="text-center text">Privacy</span>
+        <section className="flex h-5 items-center  justify-center gap-1">
+          <span className="text text-center">Oxyclick.com</span>
+          <div className="h-1 w-1 rounded-full bg-icon-color"></div>
+          <span className="text text-center">Support</span>
+          <div className="h-1 w-1 rounded-full bg-icon-color"></div>
+          <span className="text text-center">Guide</span>
+          <div className="h-1 w-1 rounded-full bg-icon-color"></div>
+          <span className="text text-center">Pricing</span>
+          <div className="h-1 w-1 rounded-full bg-icon-color"></div>
+          <span className="text text-center">Term</span>
+          <div className="h-1 w-1 rounded-full bg-icon-color"></div>
+          <span className="text text-center">Privacy</span>
         </section>
       </footer>
     </div>

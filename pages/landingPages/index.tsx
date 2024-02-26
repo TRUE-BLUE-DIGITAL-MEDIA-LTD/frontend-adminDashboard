@@ -74,11 +74,7 @@ export default function Home({ user }: { user: User }) {
         } catch (err: any) {
           setIsLoading(() => false);
           console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
+          Swal.fire("error!", err.message?.toString(), "error");
         }
       }
     });
@@ -106,18 +102,14 @@ export default function Home({ user }: { user: User }) {
           Swal.fire(
             "Deleted!",
             "Domain has been unlinked to this landing page",
-            "success"
+            "success",
           );
           landingPages.refetch();
           setIsLoading(() => false);
         } catch (err: any) {
           setIsLoading(() => false);
           console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
+          Swal.fire("error!", err.message?.toString(), "error");
         }
       }
     });
@@ -134,39 +126,35 @@ export default function Home({ user }: { user: User }) {
       Swal.fire(
         "Duplicated!!",
         "Landing Page Successfully Duplicated",
-        "success"
+        "success",
       );
       setIsLoading(() => false);
       landingPages.refetch();
     } catch (err: any) {
       setIsLoading(() => false);
       console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
     <DashboardLayout user={user}>
-      <div className="bg-gradient-to-b font-Poppins pt-20  h-full">
-        <header className="w-full flex flex-col items-center text-center  gap-7 justify-center mt-20">
-          <h1 className="text-7xl font-Poppins font-semibold">
+      <div className="h-full bg-gradient-to-b pt-20  font-Poppins">
+        <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
+          <h1 className="font-Poppins text-7xl font-semibold">
             <span className="text-icon-color">L</span>
             <span>anding Pages</span>
           </h1>
           <Link
             href={"/create-landingpage"}
-            className="text-white text-xl hover:bg-blue-700 transition duration-150 active:scale-105 font-semibold bg-main-color px-20 py-2 rounded-full"
+            className="rounded-full bg-main-color px-20 py-2 text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 active:scale-105"
           >
             Create
           </Link>
         </header>
-        <main className="w-full mt-10 flex justify-center items-center gap-5 pb-20 flex-col  ">
+        <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className="lg:w-10/12 xl:w-9/12 ">
-            <table className="table-auto w-full border-collapse">
-              <thead className="border-b-2 h-14 font-bold drop-shadow-md text-blue-700   border-black ">
+            <table className="w-full table-auto border-collapse">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className=" px-5">Name</td>
                   <td>Domain</td>
@@ -213,7 +201,7 @@ export default function Home({ user }: { user: User }) {
                           });
 
                         const language = languages.find(
-                          (language) => language.value === landingPage.language
+                          (language) => language.value === landingPage.language,
                         );
                         return (
                           <tr className="h-14 " key={index}>
@@ -231,7 +219,7 @@ export default function Home({ user }: { user: User }) {
                                     landingPageId: landingPage.id,
                                   });
                                 }}
-                                className="hover:line-through cursor-pointer"
+                                className="cursor-pointer hover:line-through"
                               >
                                 {landingPages.isFetching ? (
                                   <Skeleton />
@@ -240,7 +228,7 @@ export default function Home({ user }: { user: User }) {
                                 )}
                               </td>
                             ) : (
-                              <td className="hover:line-through cursor-pointer">
+                              <td className="cursor-pointer hover:line-through">
                                 -
                               </td>
                             )}
@@ -248,24 +236,24 @@ export default function Home({ user }: { user: User }) {
                             <td>{landingPage?.category?.title}</td>
                             <td>{formattedDatecreateAt}</td>
                             {isLoading ? (
-                              <td className="flex h-14 justify-center w-20 items-center gap-2">
+                              <td className="flex h-14 w-20 items-center justify-center gap-2">
                                 <SpinLoading />
                               </td>
                             ) : (
-                              <td className="flex h-14 justify-center w-20 items-center gap-2">
+                              <td className="flex h-14 w-20 items-center justify-center gap-2">
                                 <button
                                   onClick={() =>
                                     handleDuplicateLandingPage({
                                       landingPageId: landingPage.id,
                                     })
                                   }
-                                  className="text-3xl text-green-700 hover:scale-105 active:text-green-900 transition duration-100"
+                                  className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
                                 >
                                   <BiCopyAlt />
                                 </button>
                                 <Link
                                   href={`/landingpage/${landingPage.id}`}
-                                  className="text-3xl text-blue-700 hover:scale-105 active:text-blue-900 transition duration-100"
+                                  className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
                                 >
                                   <BiSolidMessageSquareEdit />
                                 </Link>
@@ -276,7 +264,7 @@ export default function Home({ user }: { user: User }) {
                                       landingPageId: landingPage.id,
                                     })
                                   }
-                                  className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
+                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
                                 >
                                   <MdDelete />
                                 </button>
@@ -284,7 +272,7 @@ export default function Home({ user }: { user: User }) {
                             )}
                           </tr>
                         );
-                      }
+                      },
                     )}
               </tbody>
             </table>
@@ -301,7 +289,7 @@ export default function Home({ user }: { user: User }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

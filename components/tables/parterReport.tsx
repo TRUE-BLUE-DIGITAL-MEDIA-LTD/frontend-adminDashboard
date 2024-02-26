@@ -14,6 +14,7 @@ import { User } from "../../models";
 import SummaryReport from "./summaryReport";
 import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
+import BonusCaluator from "./bonusCaluator";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -79,18 +80,8 @@ function ParterReport({ user }: { user: User }) {
           selectionMode="range"
         />
       </div>
-      {user.role === "editor" && (
-        <div>
-          <h2 className="w-max text-xs font-semibold">PAYOUT</h2>
-          {summary.isLoading ? (
-            <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-          ) : (
-            <p className="w-max text-base font-semibold text-slate-600">
-              ${summary.data?.payout.toLocaleString()}
-            </p>
-          )}
-        </div>
-      )}
+      <BonusCaluator summary={summary} />
+
       {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
         <h2 className="font-semibold text-red-600">

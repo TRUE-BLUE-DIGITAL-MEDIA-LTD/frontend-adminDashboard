@@ -56,12 +56,12 @@ function Index({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <header className="w-full mt-20  p-10 h-max flex flex-col justify-center gap-4 items-start">
-        <h1 className="text-7xl font-Poppins font-semibold">
+      <header className="mt-20 flex  h-max w-full flex-col items-start justify-center gap-4 p-10">
+        <h1 className="font-Poppins text-7xl font-semibold">
           <span className="text-icon-color">C</span>
           <span>ategories</span>
         </h1>
-        <section className="flex gap-5 border-b-2 pb-5 justify-start items-end   h-20 w-full ">
+        <section className="flex h-20 w-full items-end justify-start gap-5   border-b-2 pb-5 ">
           {categories.isLoading ? (
             <Skeleton width={200} height={60} animation="wave" />
           ) : (
@@ -92,13 +92,13 @@ function Index({ user }: { user: User }) {
                 ...queryFilterLandingPages,
               },
             }}
-            className="buttonSuccess py-2 px-10"
+            className="buttonSuccess px-10 py-2"
           >
             Enter
           </Link>
         </section>
       </header>
-      <main className="p-10 grid grid-cols-3 gap-10">
+      <main className="grid grid-cols-3 gap-10 p-10">
         {categories.data?.map((category) => {
           return (
             <Link
@@ -109,11 +109,11 @@ function Index({ user }: { user: User }) {
                 },
               }}
               key={category.id}
-              className="flex no-underline justify-center overflow-hidden cursor-pointer group bg-white drop-shadow-md h-40 relative font-Poppins font-semibold items-center "
+              className="group relative flex h-40 cursor-pointer items-center justify-center overflow-hidden bg-white font-Poppins font-semibold no-underline drop-shadow-md "
             >
               <h3
                 style={{ backgroundImage: `url(${category.background})` }}
-                className={`relative z-20 drop-shadow-lg text-5xl  bg-clip-text text-transparent`}
+                className={`relative z-20 bg-clip-text text-5xl  text-transparent drop-shadow-lg`}
               >
                 {category.option}
               </h3>
@@ -121,7 +121,7 @@ function Index({ user }: { user: User }) {
                 src={category.background}
                 fill
                 quality={10}
-                className="object-cover group-hover:scale-125 duration-700 transition"
+                className="object-cover transition duration-700 group-hover:scale-125"
                 alt="image cover"
               />
             </Link>
@@ -135,7 +135,7 @@ function Index({ user }: { user: User }) {
 
 export default Index;
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   try {
     const cookies = parseCookies(context);

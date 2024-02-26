@@ -94,16 +94,12 @@ function DomainUpdate({
     } catch (err: any) {
       setIsLoading(() => false);
       console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
-    <div className="w-screen font-Poppins h-screen fixed top-0 bottom-0 right-0 left-0 m-auto z-50 flex items-center justify-center">
-      <main className="w-max max-w-2xl h-max max-h-5/6  flex flex-col gap-5  justify-start items-center p-10 rounded-lg bg-white">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
+      <main className="max-h-5/6 flex h-max w-max  max-w-2xl flex-col items-center  justify-start gap-5 rounded-lg bg-white p-10">
         {domainUpdate.isFetching ? (
           <Skeleton width={400} height={60} />
         ) : (
@@ -145,17 +141,17 @@ function DomainUpdate({
               <h3 className="text-xl font-bold text-main-color">
                 Probability - setting
               </h3>
-              <ul className="flex flex-col gap-4 h-72 overflow-auto p-5 ">
+              <ul className="flex h-72 flex-col gap-4 overflow-auto p-5 ">
                 {domainData?.landingPages?.map((landingPage) => {
                   return (
                     <li
-                      className="flex justify-between border-b-2 border-slate-400 px-5 py-3  items-center gap-5"
+                      className="flex items-center justify-between gap-5 border-b-2 border-slate-400  px-5 py-3"
                       key={landingPage.id}
                     >
                       <Link
                         target="_blank"
                         href={`/landingpage/${landingPage.id}`}
-                        className="w-96 text-blue-600 underline truncate font-bold"
+                        className="w-96 truncate font-bold text-blue-600 underline"
                       >
                         {landingPage.name}
                       </Link>
@@ -168,7 +164,7 @@ function DomainUpdate({
                             const landingPages = [...prev?.landingPages]; // Create a new array to avoid mutating the original state
 
                             const index = landingPages.findIndex(
-                              (list) => list.id === landingPage.id
+                              (list) => list.id === landingPage.id,
                             );
 
                             if (index !== -1) {
@@ -203,13 +199,13 @@ function DomainUpdate({
         ) : isVaildDomain ? (
           <button
             onClick={handleCreateDomain}
-            className="px-5 py-1 rounded-full text-white font-normal text-lg bg-blue-500 hover:bg-blue-700
-     transition duration-150 active:scale-110"
+            className="rounded-full bg-blue-500 px-5 py-1 text-lg font-normal text-white transition
+     duration-150 hover:bg-blue-700 active:scale-110"
           >
             Update
           </button>
         ) : (
-          <button className="px-5 py-1 rounded-full text-white font-normal text-lg bg-slate-500">
+          <button className="rounded-full bg-slate-500 px-5 py-1 text-lg font-normal text-white">
             Update
           </button>
         )}
@@ -219,7 +215,7 @@ function DomainUpdate({
           setTriggerUpdateDomain(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="w-screen h-screen fixed right-0 left-0 top-0 bottom-0 m-auto -z-10 bg-black/30 "
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen bg-black/30 "
       ></footer>
     </div>
   );

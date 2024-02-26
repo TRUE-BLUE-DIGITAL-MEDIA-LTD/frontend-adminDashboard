@@ -23,7 +23,7 @@ export interface InputSignInService {
   password: string;
 }
 export async function signInService(
-  input: InputSignInService
+  input: InputSignInService,
 ): Promise<ResponseSignInService> {
   try {
     const signIn = await axios.post(
@@ -35,11 +35,11 @@ export async function signInService(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return signIn.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

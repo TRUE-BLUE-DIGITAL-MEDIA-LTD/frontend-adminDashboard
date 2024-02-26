@@ -61,11 +61,7 @@ export default function LandingPageLists() {
         } catch (err: any) {
           setIsLoading(() => false);
           console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
+          Swal.fire("error!", err.message?.toString(), "error");
         }
       }
     });
@@ -93,18 +89,14 @@ export default function LandingPageLists() {
           Swal.fire(
             "Deleted!",
             "Domain has been unlinked to this landing page",
-            "success"
+            "success",
           );
           landingPages.refetch();
           setIsLoading(() => false);
         } catch (err: any) {
           setIsLoading(() => false);
           console.log(err);
-          Swal.fire(
-            "error!",
-            err?.props?.response?.data?.message?.toString(),
-            "error"
-          );
+          Swal.fire("error!", err.message?.toString(), "error");
         }
       }
     });
@@ -121,34 +113,30 @@ export default function LandingPageLists() {
       Swal.fire(
         "Duplicated!!",
         "Landing Page Successfully Duplicated",
-        "success"
+        "success",
       );
       setIsLoading(() => false);
       landingPages.refetch();
     } catch (err: any) {
       setIsLoading(() => false);
       console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
     <div className="">
-      <header className="w-full flex flex-col items-center text-center  gap-7 justify-center mt-20">
+      <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
         <Link
           href={"/create-landingpage"}
-          className="text-white text-xl hover:bg-blue-700 transition duration-150 active:scale-105 font-semibold bg-main-color px-20 py-2 rounded-full"
+          className="rounded-full bg-main-color px-20 py-2 text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 active:scale-105"
         >
           Create
         </Link>
       </header>
-      <main className="w-full mt-10 flex justify-center items-center gap-5 pb-20 flex-col  ">
+      <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
         <div className="lg:w-10/12 xl:w-9/12 ">
-          <table className="table-auto w-full border-collapse">
-            <thead className="border-b-2 h-14 font-bold drop-shadow-md text-blue-700   border-black ">
+          <table className="w-full table-auto border-collapse">
+            <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
               <tr className="sticky top-0 z-40 bg-white ">
                 <td className=" px-5">Name</td>
                 <td>Domain</td>
@@ -192,7 +180,7 @@ export default function LandingPageLists() {
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: true,
-                      }
+                      },
                     );
                     const updateAt = new Date(list?.updateAt);
                     const formattedDateupdateAt = updateAt.toLocaleDateString(
@@ -204,10 +192,10 @@ export default function LandingPageLists() {
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: true,
-                      }
+                      },
                     );
                     const language = languages.find(
-                      (language) => language.value === list.language
+                      (language) => language.value === list.language,
                     );
                     return (
                       <tr className="h-14 " key={index}>
@@ -225,7 +213,7 @@ export default function LandingPageLists() {
                                 landingPageId: list.id,
                               });
                             }}
-                            className="hover:line-through cursor-pointer"
+                            className="cursor-pointer hover:line-through"
                           >
                             {landingPages.isFetching ? (
                               <Skeleton />
@@ -234,7 +222,7 @@ export default function LandingPageLists() {
                             )}
                           </td>
                         ) : (
-                          <td className="hover:line-through cursor-pointer">
+                          <td className="cursor-pointer hover:line-through">
                             -
                           </td>
                         )}
@@ -242,24 +230,24 @@ export default function LandingPageLists() {
                         <td>{formattedDatecreateAt}</td>
                         <td>{formattedDateupdateAt}</td>
                         {isLoading ? (
-                          <td className="flex h-14 justify-center w-20 items-center gap-2">
+                          <td className="flex h-14 w-20 items-center justify-center gap-2">
                             <SpinLoading />
                           </td>
                         ) : (
-                          <td className="flex h-14 justify-center w-20 items-center gap-2">
+                          <td className="flex h-14 w-20 items-center justify-center gap-2">
                             <button
                               onClick={() =>
                                 handleDuplicateLandingPage({
                                   landingPageId: list.id,
                                 })
                               }
-                              className="text-3xl text-green-700 hover:scale-105 active:text-green-900 transition duration-100"
+                              className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
                             >
                               <BiCopyAlt />
                             </button>
                             <Link
                               href={`/landingpage/${list.id}`}
-                              className="text-3xl text-blue-700 hover:scale-105 active:text-blue-900 transition duration-100"
+                              className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
                             >
                               <BiSolidMessageSquareEdit />
                             </Link>
@@ -270,7 +258,7 @@ export default function LandingPageLists() {
                                   landingPageId: list.id,
                                 })
                               }
-                              className="text-3xl text-red-700 hover:scale-105 active:text-red-900 transition duration-100"
+                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
                             >
                               <MdDelete />
                             </button>

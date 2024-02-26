@@ -13,7 +13,7 @@ interface InputGetAllAccountByPageService {
 }
 
 export async function GetAllAccountByPageService(
-  input: InputGetAllAccountByPageService
+  input: InputGetAllAccountByPageService,
 ): Promise<ResponseGetAllAccountByPageService> {
   try {
     const cookies = parseCookies();
@@ -27,13 +27,13 @@ export async function GetAllAccountByPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return users.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -58,7 +58,7 @@ interface InputCreateAccountService {
   role: "admin" | "editor";
 }
 export async function CreateAccountService(
-  input: InputCreateAccountService
+  input: InputCreateAccountService,
 ): Promise<ResponseCreateAccountService> {
   try {
     const cookies = parseCookies();
@@ -70,13 +70,13 @@ export async function CreateAccountService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return user.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -101,7 +101,7 @@ interface InputEditAccountService {
   userId: string;
 }
 export async function EditAccountService(
-  input: InputEditAccountService
+  input: InputEditAccountService,
 ): Promise<ResponseEditAccountService> {
   try {
     const cookies = parseCookies();
@@ -114,13 +114,13 @@ export async function EditAccountService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return user.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -143,7 +143,7 @@ interface InputResetPasswordAccountService {
   userId: string;
 }
 export async function ResetPasswordAccountService(
-  input: InputResetPasswordAccountService
+  input: InputResetPasswordAccountService,
 ): Promise<ResponseResetPasswordAccountService> {
   try {
     const cookies = parseCookies();
@@ -155,13 +155,13 @@ export async function ResetPasswordAccountService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return user.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -172,7 +172,7 @@ interface InputDeleteAccountService {
   userId: string;
 }
 export async function DeleteAccountService(
-  input: InputDeleteAccountService
+  input: InputDeleteAccountService,
 ): Promise<ResponseDeleteAccountService> {
   try {
     const cookies = parseCookies();
@@ -186,12 +186,12 @@ export async function DeleteAccountService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return user.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

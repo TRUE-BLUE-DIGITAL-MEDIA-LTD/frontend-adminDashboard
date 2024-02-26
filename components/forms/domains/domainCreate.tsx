@@ -43,16 +43,12 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
     } catch (err: any) {
       setIsLoading(() => false);
       console.log(err);
-      Swal.fire(
-        "error!",
-        err?.props?.response?.data?.message?.toString(),
-        "error"
-      );
+      Swal.fire("error!", err.message?.toString(), "error");
     }
   };
   return (
-    <div className="w-screen font-Poppins h-screen fixed top-0 bottom-0 right-0 left-0 m-auto z-50 flex items-center justify-center">
-      <main className="w-96 h-max flex flex-col gap-5  justify-start items-center p-4 rounded-lg bg-white">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
+      <main className="flex h-max w-96 flex-col items-center  justify-start gap-5 rounded-lg bg-white p-4">
         <h3 className="text-lg font-bold text-main-color">Fill Information</h3>
         <TextField
           onChange={handleChange}
@@ -69,13 +65,13 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
         ) : isVaildDomain ? (
           <button
             onClick={handleCreateDomain}
-            className="px-5 py-1 rounded-full text-white font-normal text-lg bg-blue-500 hover:bg-blue-700
-     transition duration-150 active:scale-110"
+            className="rounded-full bg-blue-500 px-5 py-1 text-lg font-normal text-white transition
+     duration-150 hover:bg-blue-700 active:scale-110"
           >
             Create
           </button>
         ) : (
-          <button className="px-5 py-1 rounded-full text-white font-normal text-lg bg-slate-500">
+          <button className="rounded-full bg-slate-500 px-5 py-1 text-lg font-normal text-white">
             Create
           </button>
         )}
@@ -85,7 +81,7 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
           setTriggerCreateDomain(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="w-screen h-screen fixed right-0 left-0 top-0 bottom-0 m-auto -z-10 bg-black/30 "
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen bg-black/30 "
       ></footer>
     </div>
   );

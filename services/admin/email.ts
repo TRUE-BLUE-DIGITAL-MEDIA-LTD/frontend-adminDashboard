@@ -26,7 +26,7 @@ interface InputGetEmailsByPageService {
   isAsc: boolean;
 }
 export async function GetEmailsByPageService(
-  input: InputGetEmailsByPageService
+  input: InputGetEmailsByPageService,
 ): Promise<ResponseGetEmailsByPageService> {
   try {
     const cookies = parseCookies();
@@ -40,13 +40,13 @@ export async function GetEmailsByPageService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return emails.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -58,7 +58,7 @@ interface InputDeleteCustomerEmailService {
   emailId: string;
 }
 export async function DeleteCustomerEmailService(
-  input: InputDeleteCustomerEmailService
+  input: InputDeleteCustomerEmailService,
 ): Promise<ResponseDeleteCustomerEmailService> {
   try {
     const cookies = parseCookies();
@@ -72,12 +72,12 @@ export async function DeleteCustomerEmailService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return emails.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }

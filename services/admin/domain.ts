@@ -22,13 +22,13 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -47,7 +47,7 @@ interface InputGetAllDomainsByPage {
   page: number;
 }
 export async function GetAllDomainsByPage(
-  input: InputGetAllDomainsByPage
+  input: InputGetAllDomainsByPage,
 ): Promise<ResponseGetAllDomainsByPage> {
   try {
     const cookies = parseCookies();
@@ -61,13 +61,13 @@ export async function GetAllDomainsByPage(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -89,7 +89,7 @@ interface InputGetDomainService {
   domainId: string;
 }
 export async function GetDomainService(
-  input: InputGetDomainService
+  input: InputGetDomainService,
 ): Promise<ResponseGetDomainService> {
   try {
     const cookies = parseCookies();
@@ -103,13 +103,13 @@ export async function GetDomainService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -124,7 +124,7 @@ interface InputCreateDomainService {
   domainName: string;
 }
 export async function CreateDomainService(
-  input: InputCreateDomainService
+  input: InputCreateDomainService,
 ): Promise<ResponseCreateDomainService> {
   try {
     const cookies = parseCookies();
@@ -138,13 +138,13 @@ export async function CreateDomainService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -166,7 +166,7 @@ export interface InputUpdateDomainService {
   }[];
 }
 export async function UpdateDomainService(
-  input: InputUpdateDomainService
+  input: InputUpdateDomainService,
 ): Promise<ResponseUpdateDomainService> {
   try {
     const cookies = parseCookies();
@@ -180,13 +180,13 @@ export async function UpdateDomainService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
 
@@ -197,7 +197,7 @@ interface InputDeleteDomainNameService {
   domainNameId: string;
 }
 export async function DeleteDomainNameService(
-  input: InputDeleteDomainNameService
+  input: InputDeleteDomainNameService,
 ): Promise<ResponseDeleteDomainNameService> {
   try {
     const cookies = parseCookies();
@@ -211,12 +211,12 @@ export async function DeleteDomainNameService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw new Error(err);
+    throw err.response.data;
   }
 }
