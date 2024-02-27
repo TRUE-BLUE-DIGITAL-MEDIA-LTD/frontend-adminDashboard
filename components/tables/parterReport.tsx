@@ -80,7 +80,10 @@ function ParterReport({ user }: { user: User }) {
         <Calendar
           className="w-60 xl:w-96"
           value={dates}
-          onChange={(e) => setDates(e.value)}
+          onChange={(e) => {
+            setTotalBonus(() => 0);
+            setDates(e.value);
+          }}
           selectionMode="range"
         />
       </div>
