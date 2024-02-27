@@ -87,7 +87,7 @@ function Index({ user }: { user: User }) {
   const handleSignInAsAnotherUser = async ({ email }: { email: string }) => {
     try {
       Swal.fire({
-        title: "Trying To Delete",
+        title: "Trying To Sign In",
         html: "Loading....",
         allowEscapeKey: false,
         allowOutsideClick: false,
