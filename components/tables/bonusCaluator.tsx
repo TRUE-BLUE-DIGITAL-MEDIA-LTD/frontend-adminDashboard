@@ -9,42 +9,9 @@ import NumberRunning from "../animations/numberRunning";
 
 type BonusRateProps = {
   summary: UseQueryResult<Reporting, Error>;
+  totalBonus: number;
 };
-function BonusCaluator({ summary }: BonusRateProps) {
-  const [targetBonusRate, setTargetBonusRate] = useState<number>(0);
-  const [bonus, setBonus] = useState<number>(0);
-  const calculateBonus = ({
-    payout,
-  }: {
-    payout: number;
-  }): { bonus: number; targetRate: number } => {
-    let bonus: number = 0;
-    let targetRate: number = 0;
-    for (const rate of bonusRate) {
-      if (payout >= rate.from && payout <= rate.to) {
-        bonus = payout * rate.rate;
-        targetRate = rate.rate;
-        break;
-      }
-    }
-
-    if (payout > 500) {
-      bonus = payout * 0.5;
-      targetRate = 0.5;
-    }
-    return { bonus, targetRate };
-  };
-
-  useEffect(() => {
-    if (summary.isSuccess) {
-      const { bonus, targetRate } = calculateBonus({
-        payout: summary.data?.payout as number,
-      });
-      setBonus(bonus);
-      setTargetBonusRate(targetRate);
-    }
-  }, [summary.data]);
-
+function BonusCaluator({ summary, totalBonus }: BonusRateProps) {
   return (
     <div className="flex h-max w-10/12 min-w-96 flex-col items-center justify-center gap-5 rounded-lg p-5 font-Poppins">
       <table className="w-96 table-auto border-collapse">
@@ -64,10 +31,7 @@ function BonusCaluator({ summary }: BonusRateProps) {
         <tbody>
           {bonusRate.map((rate, index) => {
             return (
-              <tr
-                className={`${targetBonusRate === rate.rate ? " bg-yellow-500" : "bg-gray-200"}`}
-                key={index}
-              >
+              <tr className="bg-gray-200" key={index}>
                 <td className="border border-white  text-center text-lg font-normal text-black ">
                   ${rate.from}
                 </td>
@@ -116,7 +80,7 @@ function BonusCaluator({ summary }: BonusRateProps) {
          bg-green-700 px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
           >
             <GrMoney />
-            <NumberRunning n={bonus} />$
+            <NumberRunning n={totalBonus} />$
             <span className="text-lg font-normal text-green-300">
               Total Bonus
             </span>

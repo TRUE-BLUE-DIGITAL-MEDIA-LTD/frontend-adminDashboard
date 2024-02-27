@@ -15,6 +15,7 @@ import SummaryReport from "./summaryReport";
 import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
 import BonusCaluator from "./bonusCaluator";
+import { bonusRate } from "../../data/bonusRate";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -38,6 +39,8 @@ const menuTables = [
   { title: "Margin", sort: "up" || "down", admin: true },
 ];
 function ParterReport({ user }: { user: User }) {
+  const [totalBonus, setTotalBonus] = useState<number>(0);
+
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const yesterday = moment().subtract(1, "day").format("YYYY-MM-DD");
     return [moment(yesterday).toDate(), moment(yesterday).toDate()];
@@ -66,6 +69,7 @@ function ParterReport({ user }: { user: User }) {
         endDate: moment(dates?.[1]).toDate(),
       }),
   });
+
   return (
     <div className="flex w-full flex-col items-center gap-5 pb-20">
       <div
@@ -80,7 +84,7 @@ function ParterReport({ user }: { user: User }) {
           selectionMode="range"
         />
       </div>
-      <BonusCaluator summary={summary} />
+      <BonusCaluator totalBonus={totalBonus} summary={summary} />
 
       {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
@@ -131,6 +135,16 @@ function ParterReport({ user }: { user: User }) {
                     </th>
                   );
                 })}
+              <th
+                className={`left-0 
+                cursor-pointer bg-white p-2  
+                text-xs transition duration-100
+                  hover:scale-105 active:scale-110 md:sticky `}
+              >
+                <button className="flex  items-center  justify-center gap-1">
+                  bonus
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody className="">
@@ -274,11 +288,21 @@ function ParterReport({ user }: { user: User }) {
                     const odd = index % 2;
                     if (user.role === "editor") {
                       return (
-                        <TbodyForEditor key={index} odd={odd} item={item} />
+                        <TbodyForEditor
+                          setTotalBonus={setTotalBonus}
+                          key={index}
+                          odd={odd}
+                          item={item}
+                        />
                       );
                     } else if (user.role === "admin") {
                       return (
-                        <TbodyForAdmin key={index} odd={odd} item={item} />
+                        <TbodyForAdmin
+                          setTotalBonus={setTotalBonus}
+                          key={index}
+                          odd={odd}
+                          item={item}
+                        />
                       );
                     }
                   })}

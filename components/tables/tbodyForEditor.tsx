@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TableEntry } from "../../services/everflow/partner";
+import { useCalculateBonus } from "../../utils/useCaluateBonus";
 
 type TbodyForEditorProps = {
   odd: number;
   item: TableEntry;
+  setTotalBonus: React.Dispatch<React.SetStateAction<number>>;
 };
-function TbodyForEditor({ odd, item }: TbodyForEditorProps) {
+function TbodyForEditor({ odd, item, setTotalBonus }: TbodyForEditorProps) {
+  const bonous = useCalculateBonus({ payout: item.reporting.payout });
+
+  useEffect(() => {
+    setTotalBonus((prev) => prev + bonous);
+  }, []);
+
   return (
     <tr
       className={`h-10 w-full text-sm  transition hover:bg-icon-color ${
@@ -41,6 +49,9 @@ function TbodyForEditor({ odd, item }: TbodyForEditorProps) {
       <td className="px-5 ">${item.reporting.cpa.toLocaleString()}</td>
 
       <td className="px-5 ">${item.reporting.payout.toLocaleString()}</td>
+      <td className="px-5 font-bold text-yellow-600 ">
+        ${bonous.toLocaleString()}
+      </td>
     </tr>
   );
 }

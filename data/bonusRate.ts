@@ -21,7 +21,7 @@ export const bonusRate = [
   },
   {
     from: 150,
-    to: 254.99,
+    to: 249.99,
     rate: 0.4,
   },
   {
