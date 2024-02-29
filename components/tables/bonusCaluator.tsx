@@ -9,9 +9,23 @@ import NumberRunning from "../animations/numberRunning";
 
 type BonusRateProps = {
   summary: UseQueryResult<Reporting, Error>;
-  totalBonus: number;
+
+  partnerPerformanceDayByDay: UseQueryResult<
+    {
+      partner: {
+        id: string;
+        bonus: number;
+      }[];
+      totalBonus: number;
+    },
+    Error
+  >;
 };
-function BonusCaluator({ summary, totalBonus }: BonusRateProps) {
+function BonusCaluator({
+  summary,
+
+  partnerPerformanceDayByDay,
+}: BonusRateProps) {
   return (
     <div className="flex h-max w-10/12 min-w-96 flex-col items-center justify-center gap-5 rounded-lg p-5 font-Poppins">
       <table className="w-96 table-auto border-collapse">
@@ -49,7 +63,7 @@ function BonusCaluator({ summary, totalBonus }: BonusRateProps) {
         </tbody>
       </table>
       <div className="flex w-full items-center justify-center gap-5">
-        {summary.isLoading ? (
+        {partnerPerformanceDayByDay.isLoading ? (
           <div
             className="flex h-9 min-w-96 animate-pulse items-center justify-center gap-2
          rounded-lg bg-gray-400  px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
@@ -69,7 +83,7 @@ function BonusCaluator({ summary, totalBonus }: BonusRateProps) {
 
         <FaLongArrowAltRight className="text-2xl text-green-700" />
 
-        {summary.isLoading ? (
+        {partnerPerformanceDayByDay.isLoading ? (
           <div
             className="flex h-9 min-w-96 animate-pulse items-center justify-center gap-2
          rounded-lg bg-gray-400  px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
@@ -80,7 +94,10 @@ function BonusCaluator({ summary, totalBonus }: BonusRateProps) {
          bg-green-700 px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
           >
             <GrMoney />
-            <NumberRunning n={totalBonus} />$
+            <NumberRunning
+              n={partnerPerformanceDayByDay.data?.totalBonus as number}
+            />
+            $
             <span className="text-lg font-normal text-green-300">
               Total Bonus
             </span>

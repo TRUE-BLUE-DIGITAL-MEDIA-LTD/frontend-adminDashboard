@@ -6,6 +6,7 @@ import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import {
   GetParterPerfomacesByDate,
+  GetParterPerfomacesByDayByDayService,
   GetSummaryParterReportService,
 } from "../../services/everflow/partner";
 import { FaArrowAltCircleDown } from "react-icons/fa";
@@ -16,6 +17,7 @@ import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
 import BonusCaluator from "./bonusCaluator";
 import { bonusRate } from "../../data/bonusRate";
+import { useCalculateBonus } from "../../utils/useCaluateBonus";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -39,7 +41,12 @@ const menuTables = [
   { title: "Margin", sort: "up" || "down", admin: true },
 ];
 function ParterReport({ user }: { user: User }) {
-  const [totalBonus, setTotalBonus] = useState<number>(0);
+  const [partnerBonus, setPartnerBonus] = useState<
+    {
+      id: string;
+      bonus: number;
+    }[]
+  >();
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const yesterday = moment().subtract(1, "day").format("YYYY-MM-DD");
@@ -58,6 +65,43 @@ function ParterReport({ user }: { user: User }) {
       GetParterPerfomacesByDate({
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
+      }),
+  });
+
+  const partnerPerformanceDayByDay = useQuery({
+    queryKey: ["partnerPerformanceDayByDay", dates],
+    queryFn: () =>
+      GetParterPerfomacesByDayByDayService({
+        startDate: moment(dates?.[0]).toDate(),
+        endDate: moment(dates?.[1]).toDate(),
+      }).then((data) => {
+        const allBonus = data.map((table) => {
+          return table.table.map((item) => {
+            const bonus = useCalculateBonus({ payout: item.reporting.payout });
+            return {
+              id: item.columns[0].id,
+              bonus: bonus,
+            };
+          });
+        });
+        const flatBonus = allBonus.flat();
+        const groupBy = flatBonus.reduce(
+          (acc, item) => {
+            if (!acc[item.id]) {
+              acc[item.id] = 0;
+            }
+            acc[item.id] += item.bonus;
+
+            return acc;
+          },
+          {} as { [key: string]: number },
+        );
+        const result = Object.entries(groupBy).map(([id, bonus]) => ({
+          id: id, // Convert id back to number if necessary
+          bonus: bonus,
+        }));
+        const totalBonus = result.reduce((acc, item) => acc + item.bonus, 0);
+        return { partner: result, totalBonus: totalBonus };
       }),
   });
 
@@ -81,13 +125,15 @@ function ParterReport({ user }: { user: User }) {
           className="w-60 xl:w-96"
           value={dates}
           onChange={(e) => {
-            setTotalBonus(() => 0);
             setDates(e.value);
           }}
           selectionMode="range"
         />
       </div>
-      <BonusCaluator totalBonus={totalBonus} summary={summary} />
+      <BonusCaluator
+        summary={summary}
+        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+      />
 
       {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
@@ -292,7 +338,9 @@ function ParterReport({ user }: { user: User }) {
                     if (user.role === "editor") {
                       return (
                         <TbodyForEditor
-                          setTotalBonus={setTotalBonus}
+                          partnerPerformanceDayByDay={
+                            partnerPerformanceDayByDay
+                          }
                           key={index}
                           odd={odd}
                           item={item}
@@ -301,7 +349,9 @@ function ParterReport({ user }: { user: User }) {
                     } else if (user.role === "admin") {
                       return (
                         <TbodyForAdmin
-                          setTotalBonus={setTotalBonus}
+                          partnerPerformanceDayByDay={
+                            partnerPerformanceDayByDay
+                          }
                           key={index}
                           odd={odd}
                           item={item}

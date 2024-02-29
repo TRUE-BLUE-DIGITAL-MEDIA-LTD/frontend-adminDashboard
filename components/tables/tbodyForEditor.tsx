@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { TableEntry } from "../../services/everflow/partner";
 import { useCalculateBonus } from "../../utils/useCaluateBonus";
+import { UseQueryResult } from "@tanstack/react-query";
 
 type TbodyForEditorProps = {
   odd: number;
   item: TableEntry;
-  setTotalBonus: React.Dispatch<React.SetStateAction<number>>;
+  partnerPerformanceDayByDay: UseQueryResult<
+    {
+      partner: {
+        id: string;
+        bonus: number;
+      }[];
+      totalBonus: number;
+    },
+    Error
+  >;
 };
-function TbodyForEditor({ odd, item, setTotalBonus }: TbodyForEditorProps) {
-  const bonous = useCalculateBonus({ payout: item.reporting.payout });
-
-  useEffect(() => {
-    setTotalBonus((prev) => prev + bonous);
-  }, []);
+function TbodyForEditor({
+  odd,
+  item,
+  partnerPerformanceDayByDay,
+}: TbodyForEditorProps) {
+  const bonos = partnerPerformanceDayByDay.data?.partner.find(
+    (list) => list.id === item.columns[0].id,
+  );
 
   return (
     <tr
@@ -49,9 +61,15 @@ function TbodyForEditor({ odd, item, setTotalBonus }: TbodyForEditorProps) {
       <td className="px-5 ">${item.reporting.cpa.toLocaleString()}</td>
 
       <td className="px-5 ">${item.reporting.payout.toLocaleString()}</td>
-      <td className="px-5 font-bold text-yellow-600 ">
-        ${bonous.toLocaleString()}
-      </td>
+      {partnerPerformanceDayByDay.isLoading ? (
+        <td className="animate-pulse px-5 font-bold text-yellow-600">
+          loading..
+        </td>
+      ) : (
+        <td className="px-5 font-bold text-yellow-600 ">
+          ${bonos?.bonus.toLocaleString()}
+        </td>
+      )}
     </tr>
   );
 }

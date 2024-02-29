@@ -57,7 +57,7 @@ export interface Reporting {
 }
 
 export async function GetSummaryParterReportService(
-  input: RequestGetParterPerfomacesByDate
+  input: RequestGetParterPerfomacesByDate,
 ): Promise<Reporting> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
@@ -75,7 +75,7 @@ export async function GetSummaryParterReportService(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
     );
 
     return summary.data;
@@ -86,7 +86,7 @@ export async function GetSummaryParterReportService(
 }
 
 export async function GetParterPerfomacesByDate(
-  input: RequestGetParterPerfomacesByDate
+  input: RequestGetParterPerfomacesByDate,
 ): Promise<ResponseRequestGetParterPerfomacesByDate> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
@@ -104,7 +104,36 @@ export async function GetParterPerfomacesByDate(
         headers: {
           Authorization: "Bearer " + access_token,
         },
-      }
+      },
+    );
+
+    return partner.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function GetParterPerfomacesByDayByDayService(
+  input: RequestGetParterPerfomacesByDate,
+): Promise<ResponseRequestGetParterPerfomacesByDate[]> {
+  try {
+    if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
+      throw new Error("Invalid date");
+    }
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const partner = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/day-by-day`,
+      {
+        params: {
+          startDate: moment(input.startDate).format("YYYY-MM-DD"),
+          endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        },
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
     );
 
     return partner.data;
