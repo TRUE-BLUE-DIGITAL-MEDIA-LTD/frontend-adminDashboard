@@ -23,7 +23,6 @@ type BonusRateProps = {
 };
 function BonusCaluator({
   summary,
-
   partnerPerformanceDayByDay,
 }: BonusRateProps) {
   return (

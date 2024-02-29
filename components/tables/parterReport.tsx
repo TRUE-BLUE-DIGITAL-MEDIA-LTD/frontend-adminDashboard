@@ -17,7 +17,7 @@ import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
 import BonusCaluator from "./bonusCaluator";
 import { bonusRate } from "../../data/bonusRate";
-import { useCalculateBonus } from "../../utils/useCaluateBonus";
+import { CalculateBonus } from "../../utils/useCaluateBonus";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -59,6 +59,7 @@ function ParterReport({ user }: { user: User }) {
     title: "Network Affliate ID",
     sort: "up",
   });
+
   const paterPerfomaces = useQuery({
     queryKey: ["partnerPerfomaces", dates],
     queryFn: () =>
@@ -77,7 +78,7 @@ function ParterReport({ user }: { user: User }) {
       }).then((data) => {
         const allBonus = data.map((table) => {
           return table.table.map((item) => {
-            const bonus = useCalculateBonus({ payout: item.reporting.payout });
+            const bonus = CalculateBonus({ payout: item.reporting.payout });
             return {
               id: item.columns[0].id,
               bonus: bonus,

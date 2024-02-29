@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { TableEntry } from "../../services/everflow/partner";
-import { useCalculateBonus } from "../../utils/useCaluateBonus";
 import { UseQueryResult } from "@tanstack/react-query";
 
 type TbodyForEditorProps = {
