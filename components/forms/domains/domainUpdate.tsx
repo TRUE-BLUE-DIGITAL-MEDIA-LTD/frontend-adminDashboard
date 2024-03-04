@@ -40,7 +40,7 @@ function DomainUpdate({
   const domainPattern = /^(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const [isLoading, setIsLoading] = useState(false);
   const domainUpdate = useQuery({
-    queryKey: ["domain-update"],
+    queryKey: ["domain", domain.id],
     queryFn: () => GetDomainService({ domainId: domain.id }),
   });
 
@@ -60,24 +60,6 @@ function DomainUpdate({
     });
   }, [domainUpdate.data]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event?.target?.value;
-    setDomainData((prev) => {
-      return {
-        ...prev,
-        name: inputValue,
-      };
-    });
-
-    if (domainPattern.test(inputValue)) {
-      setIsVildDomain(() => true);
-      // Input is a valid domain with "www"
-    } else {
-      setIsVildDomain(() => false);
-      // Input is not a valid domain with "www"
-    }
-  };
-
   const handleCreateDomain = async () => {
     try {
       setIsLoading(() => true);
@@ -87,8 +69,7 @@ function DomainUpdate({
         landingPages: domainData.landingPages,
         googleAnalyticsId: domainData?.googleAnalyticsId,
       });
-
-      await domains.refetch();
+      domainUpdate.refetch();
       Swal.fire("success", "create domain successfully", "success");
       setIsLoading(() => false);
     } catch (err: any) {
@@ -103,19 +84,7 @@ function DomainUpdate({
         {domainUpdate.isFetching ? (
           <Skeleton width={400} height={60} />
         ) : (
-          <section className="grid grid-cols-2 gap-5">
-            <TextField
-              onChange={handleChange}
-              name="domain"
-              className="w-60"
-              value={domainData?.name}
-              color={isVaildDomain ? "success" : "warning"}
-              helperText={isVaildDomain ? "" : "Invalid domain"}
-              placeholder="www.example.com"
-              label="domain name"
-              id="fullWidth"
-            />
-
+          <section className="grid grid-cols-1 gap-5">
             <TextField
               onChange={(e) =>
                 setDomainData((prev) => {
