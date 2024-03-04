@@ -1,6 +1,7 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
+import { Domain, SiteBuild } from "../../models";
 
 interface ResponseGetAllDomains {
   id: string;
@@ -33,13 +34,7 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
 }
 
 export interface ResponseGetAllDomainsByPage {
-  domains: {
-    id: string;
-    createAt: string;
-    updateAt: string;
-    name: string;
-    googleAnalyticsId: string | null;
-  }[];
+  domains: (Domain & { siteBuild?: SiteBuild | null })[];
   totalPages: number;
   currentPage: number;
 }

@@ -1,6 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetUser } from "../../services/admin/user";
 import { useRouter } from "next/router";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -10,14 +10,16 @@ import {
 } from "../../services/admin/domain";
 import Swal from "sweetalert2";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Domain, User } from "../../models";
+import { Domain, SiteBuild, User } from "../../models";
 import { loadingNumber } from "../../data/loadingNumber";
 import { Pagination, Skeleton } from "@mui/material";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import SpinLoading from "../../components/loadings/spinLoading";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdViewTimeline } from "react-icons/md";
 import DomainCreate from "../../components/forms/domains/domainCreate";
 import DomainUpdate from "../../components/forms/domains/domainUpdate";
+import VerifyDomain from "../../components/domain/verifyDomain";
+import moment from "moment";
 
 interface HandleDeleteDomain {
   domainNameId: string;
@@ -37,6 +39,8 @@ function Index({ user }: { user: User }) {
     queryKey: ["domains-byPage", page],
     queryFn: () => GetAllDomainsByPage({ page: page }),
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5,
   });
 
   // handle delete domain
@@ -79,12 +83,36 @@ function Index({ user }: { user: User }) {
         await DeleteDomainNameService({
           domainNameId: domainNameId,
         });
+        await domains.refetch();
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
-        domains.refetch();
       } catch (err: any) {
         console.log(err);
         Swal.fire("error!", err.message?.toString(), "error");
       }
+    }
+  };
+
+  const handleViewNameServer = ({
+    nameServer,
+    domain,
+  }: {
+    nameServer: string[];
+    domain: string;
+  }) => {
+    if (nameServer.length === 0) {
+      Swal.fire({
+        title: `Nameserver of ${domain}`,
+        html: `No Nameserver Found`,
+      });
+    } else {
+      Swal.fire({
+        title: `Nameserver of ${domain}`,
+        html: `${nameServer
+          .map((list, index) => {
+            return `<div>${list}</div>`;
+          })
+          .join("")}`,
+      });
     }
   };
 
@@ -133,8 +161,10 @@ function Index({ user }: { user: User }) {
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className=" px-5">Domain Name</td>
 
-                  <td>Created At</td>
                   <td>Updated At</td>
+                  <td>Site Status</td>
+                  <td>DNS Status</td>
+                  <td>Nameserver</td>
                   <td>Options</td>
                 </tr>
               </thead>
@@ -161,37 +191,57 @@ function Index({ user }: { user: User }) {
                         </tr>
                       );
                     })
-                  : domains?.data?.domains?.map((list, index) => {
-                      const createAt = new Date(list?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        },
-                      );
-                      const updateAt = new Date(list?.updateAt);
-                      const formattedDateupdateAt = updateAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        },
-                      );
+                  : domains.data?.domains.map((list, index) => {
                       return (
                         <tr className="h-14 hover:bg-blue-50 " key={index}>
                           <td>{list?.name}</td>
-                          <td>{formattedDatecreateAt}</td>
-                          <td>{formattedDateupdateAt}</td>
-                          <td className="flex h-14 w-20 items-center justify-center gap-2">
+                          <td>
+                            {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
+                          </td>
+                          <td>
+                            {list.siteBuild?.deploy_state === "ready" ? (
+                              <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+                                READY
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "building" ? (
+                              <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
+                                Building
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "error" ? (
+                              <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
+                                Error
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "enqueued" ? (
+                              <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+                                enqueued
+                              </div>
+                            ) : (
+                              <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
+                                Unknow Status
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            <VerifyDomain domainName={list.name} />
+                          </td>
+                          <td>
+                            <button
+                              onClick={() =>
+                                handleViewNameServer({
+                                  nameServer: list.dns_servers,
+                                  domain: list.name,
+                                })
+                              }
+                              className=" flex w-max items-center justify-center rounded-lg
+                            bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 drop-shadow-md transition duration-100 
+                              hover:scale-105"
+                            >
+                              {" "}
+                              <MdViewTimeline />
+                              View
+                            </button>
+                          </td>
+                          <td className="flex h-14 w-20 gap-2">
                             <button
                               onClick={() => {
                                 setTriggerUpdateDomain(() => true);

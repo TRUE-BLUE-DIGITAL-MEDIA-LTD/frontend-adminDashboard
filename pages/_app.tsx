@@ -7,7 +7,17 @@ import { useState } from "react";
 import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 60, // 1 hour in ms
+            refetchOnWindowFocus: false, // Disables automatic refetching when browser window is focused.
+          },
+        },
+      }),
+  );
   return (
     <QueryClientProvider client={queryClient}>
       <NextTopLoader
