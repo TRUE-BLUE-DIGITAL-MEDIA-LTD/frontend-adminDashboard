@@ -40,6 +40,7 @@ export interface ResponseGetAllDomainsByPage {
 }
 interface InputGetAllDomainsByPage {
   page: number;
+  domainName?: string;
 }
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
