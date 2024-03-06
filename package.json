@@ -27,6 +27,7 @@
     "nookies": "^2.5.2",
     "primereact": "^10.5.0",
     "react": "^18",
+    "react-aria-components": "^1.1.1",
     "react-dom": "^18",
     "react-email-editor": "^1.7.9",
     "react-icons": "^4.12.0",
