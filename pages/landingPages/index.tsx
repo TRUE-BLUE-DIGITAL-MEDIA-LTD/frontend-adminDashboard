@@ -138,9 +138,9 @@ export default function Home({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
-      <div className="h-full bg-gradient-to-b pt-20  font-Poppins">
+      <div className="h-full w-full  bg-gradient-to-b pt-10 font-Poppins">
         <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
-          <h1 className="font-Poppins text-7xl font-semibold">
+          <h1 className="font-Poppins text-5xl font-semibold">
             <span className="text-icon-color">L</span>
             <span>anding Pages</span>
           </h1>
@@ -151,16 +151,16 @@ export default function Home({ user }: { user: User }) {
             Create
           </Link>
         </header>
-        <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className="lg:w-10/12 xl:w-9/12 ">
-            <table className="w-full table-auto border-collapse">
+        <main className=" flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          <div className=" w-[45rem] justify-center  overflow-auto p-5 2xl:w-[60rem] ">
+            <table className="w-max table-auto border-collapse ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
-                  <td className=" px-5">Name</td>
+                  <td className="">Name</td>
                   <td>Domain</td>
                   <td>Language</td>
                   <td>Category</td>
-                  <td>Created At</td>
+
                   <td>Options</td>
                 </tr>
               </thead>
@@ -205,7 +205,7 @@ export default function Home({ user }: { user: User }) {
                         );
                         return (
                           <tr className="h-14 " key={index}>
-                            <td>
+                            <td className="px-2">
                               {landingPages.isFetching ? (
                                 <Skeleton animation="wave" />
                               ) : (
@@ -232,42 +232,46 @@ export default function Home({ user }: { user: User }) {
                                 -
                               </td>
                             )}
-                            <td>{language?.name}</td>
-                            <td>{landingPage?.category?.title}</td>
-                            <td>{formattedDatecreateAt}</td>
+                            <td className="px-2">{language?.name}</td>
+                            <td className="px-2">
+                              {landingPage?.category?.title}
+                            </td>
+
                             {isLoading ? (
-                              <td className="flex h-14 w-20 items-center justify-center gap-2">
+                              <td className="flex  items-center justify-center gap-2">
                                 <SpinLoading />
                               </td>
                             ) : (
-                              <td className="flex h-14 w-20 items-center justify-center gap-2">
-                                <button
-                                  onClick={() =>
-                                    handleDuplicateLandingPage({
-                                      landingPageId: landingPage.id,
-                                    })
-                                  }
-                                  className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
-                                >
-                                  <BiCopyAlt />
-                                </button>
-                                <Link
-                                  href={`/landingpage/${landingPage.id}`}
-                                  className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                                >
-                                  <BiSolidMessageSquareEdit />
-                                </Link>
+                              <td className="">
+                                <div className="flex  items-center justify-center gap-2">
+                                  <button
+                                    onClick={() =>
+                                      handleDuplicateLandingPage({
+                                        landingPageId: landingPage.id,
+                                      })
+                                    }
+                                    className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
+                                  >
+                                    <BiCopyAlt />
+                                  </button>
+                                  <Link
+                                    href={`/landingpage/${landingPage.id}`}
+                                    className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                                  >
+                                    <BiSolidMessageSquareEdit />
+                                  </Link>
 
-                                <button
-                                  onClick={() =>
-                                    handleDeleteLandingPage({
-                                      landingPageId: landingPage.id,
-                                    })
-                                  }
-                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                                >
-                                  <MdDelete />
-                                </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteLandingPage({
+                                        landingPageId: landingPage.id,
+                                      })
+                                    }
+                                    className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                                  >
+                                    <MdDelete />
+                                  </button>
+                                </div>
                               </td>
                             )}
                           </tr>
