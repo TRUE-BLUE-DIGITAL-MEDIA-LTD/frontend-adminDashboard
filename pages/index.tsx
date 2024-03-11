@@ -99,7 +99,7 @@ function Index({ user }: { user: User }) {
             </Link>
           </section>
         </header>
-        <main className="grid grid-cols-3 gap-10 p-10">
+        <main className="grid grid-cols-2 gap-10 p-10 2xl:grid-cols-3">
           {categories.data?.map((category) => {
             return (
               <Link
