@@ -153,7 +153,7 @@ export default function Home({ user }: { user: User }) {
         </header>
         <main className=" flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className=" w-[45rem] justify-center  overflow-auto p-5 2xl:w-[60rem] ">
-            <table className="w-max table-auto border-collapse ">
+            <table className="min-w-full max-w-max border-collapse ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className="">Name</td>

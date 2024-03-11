@@ -43,7 +43,7 @@ export default function DashboardLayout({
         widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
       />
       <DashboardNavbar user={user} />
-      <div className="flex w-full">
+      <div className="flex">
         <SidebarDashboard user={user} />
         {children}
       </div>

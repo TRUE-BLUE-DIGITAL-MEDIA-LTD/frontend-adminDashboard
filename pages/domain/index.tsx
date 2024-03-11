@@ -171,12 +171,12 @@ function Index({ user }: { user: User }) {
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className="flex flex-col items-center lg:w-11/12 xl:w-11/12 ">
-            <div className=" w-[45rem] justify-center  overflow-auto p-5 2xl:w-[60rem] ">
-              <table className="w-max table-auto border-collapse ">
+            <div className="  w-[45rem]  overflow-auto p-5 2xl:w-[60rem] ">
+              <table className="min-w-full max-w-max border-collapse ">
                 <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                   <tr className="sticky top-0 z-40 bg-white ">
                     <td className=" px-5">Domain Name</td>
-                    <td>Updated At</td>
+                    <td className="">Updated At</td>
                     <td>Site Status</td>
                     <td>DNS Status</td>
                     <td>Nameserver</td>
@@ -219,7 +219,7 @@ function Index({ user }: { user: User }) {
                               list?.name
                             )}
                           </td>
-                          <td className="px-2">
+                          <td className=" px-2">
                             {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
                           </td>
                           <td className="px-2">
