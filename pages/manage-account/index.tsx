@@ -133,7 +133,7 @@ function Index({ user }: { user: User }) {
         />
       )}
       <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start font-Poppins">
-        <section className="flex h-max flex-col items-center justify-start gap-5 rounded-lg p-7 ring-2 ring-slate-300 lg:w-11/12 xl:w-9/12">
+        <section className="flex h-max w-max flex-col items-center justify-start gap-5 rounded-lg p-7 ring-2 ring-slate-300">
           <header className="flex w-full items-center justify-between">
             <h1 className="text-3xl font-bold">Account Management</h1>
             <div className="flex items-center justify-center gap-2">
@@ -150,10 +150,10 @@ function Index({ user }: { user: User }) {
               </button>
             </div>
           </header>
-          <div className="relative h-96 w-full overflow-auto">
-            <table className=" mt-5 w-full table-auto border-separate">
+          <div className=" h-96 w-[45rem] justify-center  overflow-auto 2xl:w-[60rem] ">
+            <table className="w-max table-auto border-collapse ">
               <thead className="sticky top-0   z-20 bg-gray-200">
-                <tr className=" h-14 border-y-2 border-slate-400 font-normal  text-slate-600">
+                <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
                   <th className="w-20">Photo</th>
                   <th className="">Email</th>
                   <th className="">Role</th>
@@ -179,7 +179,7 @@ function Index({ user }: { user: User }) {
                   );
                   return (
                     <tr className="" key={account.id}>
-                      <td className="relative my-2 h-20 w-10 border-4 border-transparent ">
+                      <td className="relative  h-20 w-10 border-4 border-transparent ">
                         <Image
                           src={account.image}
                           fill

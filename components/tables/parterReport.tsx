@@ -116,7 +116,11 @@ function ParterReport({ user }: { user: User }) {
   });
 
   return (
-    <div className="flex w-full flex-col items-center gap-5 pb-20">
+    <div className="flex w-full flex-col items-center gap-5 py-10 pt-20">
+      <BonusCaluator
+        summary={summary}
+        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+      />
       <div
         className="mb-5 flex flex-col items-center  justify-center  gap-4 p-5
          text-base font-semibold md:flex-row"
@@ -131,21 +135,16 @@ function ParterReport({ user }: { user: User }) {
           selectionMode="range"
         />
       </div>
-      <BonusCaluator
-        summary={summary}
-        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
-      />
-
       {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
         <h2 className="font-semibold text-red-600">
           {paterPerfomaces.error?.message}
         </h2>
       )}
-      <div className=" h-96 w-11/12 overflow-auto rounded-lg bg-slate-200  ring-1 ring-black md:w-10/12">
-        <table className="w-full table-auto overflow-scroll">
-          <thead className=" sticky top-0 z-40">
-            <tr className="h-16 w-full  bg-white drop-shadow-sm">
+      <div className=" h-96 w-[40rem] justify-center  overflow-auto 2xl:w-[60rem] ">
+        <table className="w-max table-auto overflow-scroll">
+          <thead className="sticky top-0 z-40 ">
+            <tr className=" h-16   bg-white drop-shadow-sm">
               {menuTables
                 .filter((list) => {
                   if (user.role === "admin") {
@@ -197,7 +196,7 @@ function ParterReport({ user }: { user: User }) {
               </th>
             </tr>
           </thead>
-          <tbody className="">
+          <tbody>
             {paterPerfomaces.isLoading
               ? [...new Array(10)].map((item, index) => {
                   return (

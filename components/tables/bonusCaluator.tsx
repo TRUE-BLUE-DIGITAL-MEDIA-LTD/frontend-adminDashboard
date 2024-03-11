@@ -26,8 +26,8 @@ function BonusCaluator({
   partnerPerformanceDayByDay,
 }: BonusRateProps) {
   return (
-    <div className="flex h-max w-10/12 min-w-96 flex-col items-center justify-center gap-5 rounded-lg p-5 font-Poppins">
-      <table className="w-96 table-auto border-collapse">
+    <div className="flex h-max w-10/12 min-w-60 flex-col items-center justify-center gap-5 rounded-lg p-5 font-Poppins">
+      <table className="w-60 table-auto border-collapse">
         <thead>
           <tr>
             <th className="border border-white bg-icon-color text-lg font-medium text-black ">
@@ -64,17 +64,17 @@ function BonusCaluator({
       <div className="flex w-full items-center justify-center gap-5">
         {partnerPerformanceDayByDay.isLoading ? (
           <div
-            className="flex h-9 min-w-96 animate-pulse items-center justify-center gap-2
+            className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2
          rounded-lg bg-gray-400  px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
           ></div>
         ) : (
           <div
-            className="flex min-w-96 items-center  justify-center gap-2 rounded-lg
+            className="flex min-w-60 items-center  justify-center gap-2 rounded-lg
          bg-green-300 px-5 py-1 text-2xl font-semibold text-green-700 drop-shadow"
           >
             <RiMoneyDollarCircleFill />
             {summary.data?.payout.toLocaleString()}
-            <span className="text-lg font-normal text-green-700">
+            <span className="text-sm  font-normal text-green-700">
               Total Payout
             </span>
           </div>
@@ -84,12 +84,12 @@ function BonusCaluator({
 
         {partnerPerformanceDayByDay.isLoading ? (
           <div
-            className="flex h-9 min-w-96 animate-pulse items-center justify-center gap-2
+            className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2
          rounded-lg bg-gray-400  px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
           ></div>
         ) : (
           <div
-            className="flex min-w-96 items-center justify-center gap-2 rounded-lg
+            className="flex min-w-60 items-center justify-center gap-2 rounded-lg
          bg-green-700 px-5 py-1 text-2xl font-semibold text-green-300 drop-shadow"
           >
             <GrMoney />
@@ -97,7 +97,7 @@ function BonusCaluator({
               n={partnerPerformanceDayByDay.data?.totalBonus as number}
             />
             $
-            <span className="text-lg font-normal text-green-300">
+            <span className="text-sm font-normal text-green-300">
               Total Bonus
             </span>
           </div>

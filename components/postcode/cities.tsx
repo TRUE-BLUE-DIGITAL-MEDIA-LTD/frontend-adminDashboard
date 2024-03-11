@@ -3,12 +3,12 @@ import { ResponseGetPostalCodesByStateService } from "../../services/tools/postc
 
 function Cities({ cities }: { cities: ResponseGetPostalCodesByStateService }) {
   return (
-    <ul className="w-10/12  grid grid-cols-5 gap-5 mt-5">
+    <ul className="mt-5  grid w-10/12 grid-cols-3 gap-5 2xl:grid-cols-5">
       {Object.values(cities.results)
         .flat()
         .map((city, index) => (
           <li
-            className=" bg-blue-100 hover:bg-blue-200 transition duration-100 hover:ring-2 ring-blue-900  p-5 rounded-md flex flex-col justify-center items-start"
+            className=" flex flex-col items-start justify-center rounded-md bg-blue-100  p-5 ring-blue-900 transition duration-100 hover:bg-blue-200 hover:ring-2"
             key={index}
           >
             <span>

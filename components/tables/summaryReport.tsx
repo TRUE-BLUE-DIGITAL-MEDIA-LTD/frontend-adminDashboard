@@ -9,7 +9,7 @@ type SummaryReportProps = {
 };
 function SummaryReport({ summary }: SummaryReportProps) {
   return (
-    <section className="grid h-max w-10/12 grid-cols-2 gap-5 rounded-lg p-5 ring-1 ring-black md:grid-cols-8">
+    <section className="grid h-max w-10/12 grid-cols-2 gap-5 rounded-lg p-5 ring-1 ring-black md:grid-cols-6 2xl:grid-cols-8">
       <div>
         <h2 className="w-max text-xs font-semibold">MEDIA BUYING COST</h2>
         {summary.isLoading ? (

@@ -135,181 +135,180 @@ function Index({ user }: { user: User }) {
           domains={domains}
         />
       )}
-      <header className="mt-28 flex flex-col items-center justify-center gap-3">
-        <h1
-          className="animate-gradient bg-clip-text py-10 text-center font-Poppins text-6xl
-       font-bold  text-transparent"
-        >
-          Domains
-        </h1>
-        {user.role === "admin" && (
-          <button
-            onClick={() => {
-              document.body.style.overflow = "hidden";
-              setTriggerCreateDomain(() => true);
-            }}
-            className="rounded-full bg-main-color px-20 py-2 
+      <div className="w-full">
+        <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
+          <h1 className="font-Poppins text-5xl font-semibold">
+            <span className="text-icon-color">D</span>
+            <span>omains</span>
+          </h1>
+          {user.role === "admin" && (
+            <button
+              onClick={() => {
+                document.body.style.overflow = "hidden";
+                setTriggerCreateDomain(() => true);
+              }}
+              className="rounded-full bg-main-color px-20 py-2 
     text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 
     active:scale-105"
+            >
+              Create
+            </button>
+          )}
+          <SearchField
+            value={domainName}
+            onChange={(e) => {
+              setDoaminName(() => e);
+            }}
+            className="relative mt-10 flex w-96 flex-col"
           >
-            Create
-          </button>
-        )}
-        <SearchField
-          value={domainName}
-          onChange={(e) => {
-            setDoaminName(() => e);
-          }}
-          className="relative mt-10 flex w-96 flex-col"
-        >
-          <Input
-            placeholder="Search Domain Name"
-            className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
-          />
-          <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-        </SearchField>
-      </header>
+            <Input
+              placeholder="Search Domain Name"
+              className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+            />
+            <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+          </SearchField>
+        </header>
 
-      <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-        <div className="flex flex-col items-center lg:w-10/12 xl:w-8/12 ">
-          <div className="w-full">
-            <table className="w-full table-auto border-collapse">
-              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-                <tr className="sticky top-0 z-40 bg-white ">
-                  <td className=" px-5">Domain Name</td>
-
-                  <td>Updated At</td>
-                  <td>Site Status</td>
-                  <td>DNS Status</td>
-                  <td>Nameserver</td>
-                  <td>Options</td>
-                </tr>
-              </thead>
-              <tbody className="">
-                {domains.isLoading ? (
-                  loadingNumber.map((list, index) => {
-                    return (
-                      <tr key={index}>
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : domains.isError ? (
-                  <tr>NO domain Found</tr>
-                ) : (
-                  domains.data?.domains.map((list, index) => {
-                    return (
-                      <tr className="h-14 hover:bg-blue-50 " key={index}>
-                        <td>
-                          {domains.isFetching ? (
-                            <div className="h-5 w-full animate-pulse bg-gray-400"></div>
-                          ) : (
-                            list?.name
-                          )}
-                        </td>
-                        <td>
-                          {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
-                        </td>
-                        <td>
-                          {list.siteBuild?.deploy_state === "ready" ? (
-                            <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
-                              READY
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "building" ? (
-                            <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
-                              Building
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "error" ? (
-                            <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
-                              Error
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "enqueued" ? (
-                            <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                              enqueued
-                            </div>
-                          ) : (
-                            <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
-                              Unknow Status
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <VerifyDomain domainName={list.name} />
-                        </td>
-                        <td>
-                          <button
-                            onClick={() =>
-                              handleViewNameServer({
-                                nameServer: list.dns_servers,
-                                domain: list.name,
-                              })
-                            }
-                            className=" flex w-max items-center justify-center rounded-lg
+        <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          <div className="flex flex-col items-center lg:w-11/12 xl:w-11/12 ">
+            <div className=" w-[45rem] justify-center  overflow-auto p-5 2xl:w-[60rem] ">
+              <table className="w-max table-auto border-collapse ">
+                <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
+                  <tr className="sticky top-0 z-40 bg-white ">
+                    <td className=" px-5">Domain Name</td>
+                    <td>Updated At</td>
+                    <td>Site Status</td>
+                    <td>DNS Status</td>
+                    <td>Nameserver</td>
+                    <td>Options</td>
+                  </tr>
+                </thead>
+                <tbody className="">
+                  {domains.isLoading ? (
+                    loadingNumber.map((list, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>
+                            <Skeleton />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : domains.isError ? (
+                    <tr>NO domain Found</tr>
+                  ) : (
+                    domains.data?.domains.map((list, index) => {
+                      return (
+                        <tr className="h-14 hover:bg-blue-50 " key={index}>
+                          <td className="px-2">
+                            {domains.isFetching ? (
+                              <div className="h-5 w-full animate-pulse bg-gray-400"></div>
+                            ) : (
+                              list?.name
+                            )}
+                          </td>
+                          <td className="px-2">
+                            {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
+                          </td>
+                          <td className="px-2">
+                            {list.siteBuild?.deploy_state === "ready" ? (
+                              <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+                                READY
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "building" ? (
+                              <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
+                                Building
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "error" ? (
+                              <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
+                                Error
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "enqueued" ? (
+                              <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+                                enqueued
+                              </div>
+                            ) : (
+                              <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
+                                Unknow Status
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-2">
+                            <VerifyDomain domainName={list.name} />
+                          </td>
+                          <td className="px-2">
+                            <button
+                              onClick={() =>
+                                handleViewNameServer({
+                                  nameServer: list.dns_servers,
+                                  domain: list.name,
+                                })
+                              }
+                              className=" flex w-max items-center justify-center rounded-lg
                             bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 drop-shadow-md transition duration-100 
                               hover:scale-105"
-                          >
-                            {" "}
-                            <MdViewTimeline />
-                            View
-                          </button>
-                        </td>
-                        <td className="flex h-14 w-20 gap-2">
-                          <button
-                            onClick={() => {
-                              setTriggerUpdateDomain(() => true);
-                              setCurrentUpdateDomain(() => list as Domain);
-                              document.body.style.overflow = "hidden";
-                            }}
-                            className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                          >
-                            <BiSolidMessageSquareEdit />
-                          </button>
-                          {isLoading ? (
-                            <SpinLoading />
-                          ) : (
-                            user.role === "admin" && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteDomain({
-                                    domainNameId: list.id,
-                                    name: list.name,
-                                  })
-                                }
-                                className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                              >
-                                <MdDelete />
-                              </button>
-                            )
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                            >
+                              {" "}
+                              <MdViewTimeline />
+                              View
+                            </button>
+                          </td>
+                          <td className="flex h-14 w-20 gap-2">
+                            <button
+                              onClick={() => {
+                                setTriggerUpdateDomain(() => true);
+                                setCurrentUpdateDomain(() => list as Domain);
+                                document.body.style.overflow = "hidden";
+                              }}
+                              className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                            >
+                              <BiSolidMessageSquareEdit />
+                            </button>
+                            {isLoading ? (
+                              <SpinLoading />
+                            ) : (
+                              user.role === "admin" && (
+                                <button
+                                  onClick={() =>
+                                    handleDeleteDomain({
+                                      domainNameId: list.id,
+                                      name: list.name,
+                                    })
+                                  }
+                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                                >
+                                  <MdDelete />
+                                </button>
+                              )
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              onChange={(e, page) => setPage(page)}
+              count={domains?.data?.totalPages}
+              color="primary"
+            />
           </div>
-          <Pagination
-            onChange={(e, page) => setPage(page)}
-            count={domains?.data?.totalPages}
-            color="primary"
-          />
-        </div>
-      </main>
+        </main>
+      </div>
     </DashboardLayout>
   );
 }

@@ -3,6 +3,7 @@ import SpinLoading from "../components/loadings/spinLoading";
 import { TawkInterface, User } from "../models";
 import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
 import DashboardNavbar from "../components/navbars/dashboardNavbar";
+import SidebarDashboard from "../components/sidebars/sidebarDashboard";
 
 export default function DashboardLayout({
   children,
@@ -15,6 +16,7 @@ export default function DashboardLayout({
   const tawkMessengerRef = useRef<TawkInterface>();
   const onLoad = () => {
     setLoadingChat(() => false);
+    if (JSON.stringify(tawkMessengerRef.current) === "{}") return;
     tawkMessengerRef.current?.minimize();
     tawkMessengerRef.current?.setAttributes({
       name: user.name,
@@ -41,7 +43,10 @@ export default function DashboardLayout({
         widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
       />
       <DashboardNavbar user={user} />
-      <main>{children}</main>
+      <div className="flex w-full">
+        <SidebarDashboard user={user} />
+        {children}
+      </div>
     </>
   );
 }

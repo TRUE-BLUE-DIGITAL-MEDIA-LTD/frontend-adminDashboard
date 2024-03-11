@@ -72,7 +72,7 @@ function Postcode() {
   }, [selected.country]);
 
   const handleChangeQueryPostcode = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -84,9 +84,9 @@ function Postcode() {
     });
   };
   return (
-    <div>
-      <header className="w-full  font-Poppins flex-col gap-10 flex items-center justify-center">
-        <section className="flex gap-5 flex-col items-center justify-center">
+    <div className="mt-20 w-full">
+      <header className="flex  w-full flex-col items-center justify-center gap-10 font-Poppins">
+        <section className="flex flex-col items-center justify-center gap-5">
           <CountryInput
             handleChangeQueryPostcode={handleChangeQueryPostcode}
             setQueryPostcode={setQueryPostcode}
@@ -111,9 +111,9 @@ function Postcode() {
           )}
         </section>
       </header>
-      <main className="flex w-full justify-center mb-5">
+      <main className="mb-5 flex w-full justify-center">
         {postalCodes.isFetching ? (
-          <ul className="w-10/12  grid grid-cols-5 gap-5">
+          <ul className="grid  w-10/12 grid-cols-5 gap-5">
             {loadingNumber.map((list) => {
               return <Skeleton animation="wave" key={list} height={200} />;
             })}
