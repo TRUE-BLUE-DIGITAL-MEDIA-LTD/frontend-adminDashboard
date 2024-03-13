@@ -137,7 +137,7 @@ function Index({ user }: { user: User }) {
       )}
       <div className="w-full">
         <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
-          <h1 className="font-Poppins text-5xl font-semibold">
+          <h1 className="font-Poppins text-4xl font-semibold md:text-5xl">
             <span className="text-icon-color">D</span>
             <span>omains</span>
           </h1>
@@ -171,8 +171,8 @@ function Index({ user }: { user: User }) {
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className="flex flex-col items-center lg:w-11/12 xl:w-11/12 ">
-            <div className="  w-[45rem]  overflow-auto p-5 2xl:w-[60rem] ">
-              <table className="min-w-full max-w-max border-collapse ">
+            <div className="  h-96 w-80 overflow-auto   md:w-[30rem] xl:w-[60rem] ">
+              <table className="w-max min-w-full border-collapse ">
                 <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                   <tr className="sticky top-0 z-40 bg-white ">
                     <td className=" px-5">Domain Name</td>

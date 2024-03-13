@@ -3,7 +3,7 @@ import { ResponseGetPostalCodesByStateService } from "../../services/tools/postc
 
 function Cities({ cities }: { cities: ResponseGetPostalCodesByStateService }) {
   return (
-    <ul className="mt-5  grid w-10/12 grid-cols-3 gap-5 2xl:grid-cols-5">
+    <ul className="mt-5  grid w-10/12 grid-cols-1 gap-5 md:grid-cols-3 2xl:grid-cols-5">
       {Object.values(cities.results)
         .flat()
         .map((city, index) => (

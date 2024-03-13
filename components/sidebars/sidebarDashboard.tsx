@@ -28,7 +28,7 @@ function SidebarDashboard({ user }: { user: User }) {
   }, [lastRoute]);
 
   return (
-    <ul className="sticky left-0 top-0 flex h-screen w-60 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 2xl:w-80 ">
+    <ul className="sticky left-0 top-0 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex ">
       {menusSidebar.map((list, index) => {
         if (user?.role !== "admin" && (index == 3 || index == 4)) {
           return null;

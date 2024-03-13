@@ -61,7 +61,7 @@ function BonusCaluator({
           })}
         </tbody>
       </table>
-      <div className="flex w-full items-center justify-center gap-5">
+      <div className="flex w-full flex-col items-center justify-center gap-5 md:flex-row">
         {partnerPerformanceDayByDay.isLoading ? (
           <div
             className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2

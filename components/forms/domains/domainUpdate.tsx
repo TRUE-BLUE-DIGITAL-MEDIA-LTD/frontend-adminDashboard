@@ -79,8 +79,14 @@ function DomainUpdate({
     }
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
-      <main className="max-h-5/6 flex h-max w-max  max-w-2xl flex-col items-center  justify-start gap-5 rounded-lg bg-white p-10">
+    <div
+      className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen
+     items-center justify-center font-Poppins"
+    >
+      <main
+        className="max-h-5/6 flex h-max w-11/12 flex-col  items-center justify-start 
+       gap-5 rounded-lg bg-white p-10 md:w-96"
+      >
         {domainUpdate.isFetching ? (
           <Skeleton width={400} height={60} />
         ) : (
@@ -110,17 +116,17 @@ function DomainUpdate({
               <h3 className="text-xl font-bold text-main-color">
                 Probability - setting
               </h3>
-              <ul className="flex h-72 flex-col gap-4 overflow-auto p-5 ">
+              <ul className="flex h-60 flex-col gap-4 overflow-auto p-2 ">
                 {domainData?.landingPages?.map((landingPage) => {
                   return (
                     <li
-                      className="flex items-center justify-between gap-5 border-b-2 border-slate-400  px-5 py-3"
+                      className="grid grid-cols-1 items-center justify-between gap-5 border-b-2 border-slate-400 px-5  py-3 md:flex"
                       key={landingPage.id}
                     >
                       <Link
                         target="_blank"
                         href={`/landingpage/${landingPage.id}`}
-                        className="w-96 truncate font-bold text-blue-600 underline"
+                        className="w-80 truncate font-bold text-blue-600 underline md:w-96"
                       >
                         {landingPage.name}
                       </Link>

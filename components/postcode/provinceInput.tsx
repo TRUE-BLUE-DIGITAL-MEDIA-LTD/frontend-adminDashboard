@@ -43,7 +43,7 @@ function ProvinceInput({
           province
             .toLowerCase()
             .replace(/\s+/g, "")
-            .includes(queryPostcode.province.toLowerCase().replace(/\s+/g, ""))
+            .includes(queryPostcode.province.toLowerCase().replace(/\s+/g, "")),
         );
 
   return (
@@ -60,10 +60,10 @@ function ProvinceInput({
     >
       <div className="relative mt-1 ">
         <label>Select A Province Or State</label>
-        <div className="relative cursor-default w-96 text-left shadow-md ">
+        <div className="relative w-80 cursor-default text-left shadow-md ">
           <Combobox.Input
             name="province"
-            className="w-full focus:bg-icon-color bg-white ring-2 ring-black rounded-md appearance-none border-none py-5 pl-3 pr-10 text-sm leading-5 text-black"
+            className="w-full appearance-none rounded-md border-none bg-white py-5 pl-3 pr-10 text-sm leading-5 text-black ring-2 ring-black focus:bg-icon-color"
             displayValue={(province: string) => {
               return province;
             }}
@@ -87,7 +87,7 @@ function ProvinceInput({
             })
           }
         >
-          <Combobox.Options className="absolute mt-1 max-h-60 w-full z-40 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="absolute z-40 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
             {filteredProvince.length === 0 && queryPostcode.province !== "" ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                 Nothing found.

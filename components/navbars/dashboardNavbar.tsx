@@ -7,8 +7,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import { IoMenu } from "react-icons/io5";
+import { IoMdMenu } from "react-icons/io";
 
-function DashboardNavbar({ user }: { user: User }) {
+function DashboardNavbar({
+  user,
+  setTriggerMiniMenu,
+}: {
+  user: User;
+  setTriggerMiniMenu: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [triggerAccountMenu, setTriggerAccountMenu] = useState(false);
@@ -23,12 +30,19 @@ function DashboardNavbar({ user }: { user: User }) {
   };
   return (
     <nav
-      className="bg fixed top-0  z-50 hidden h-max w-full items-center justify-between bg-gray-800
-    font-Poppins drop-shadow-md md:flex "
+      className=" fixed top-0  z-50 flex  h-16 w-full items-center justify-between bg-gray-800
+    pl-5 font-Poppins drop-shadow-md "
     >
+      <div
+        onClick={() => setTriggerMiniMenu((prev) => !prev)}
+        className="flex items-center justify-center text-3xl text-white md:hidden"
+      >
+        <IoMdMenu />
+      </div>
+
       <Link
         href="/"
-        className="relative ml-2 h-10 w-40 overflow-hidden rounded-lg bg-white "
+        className="relative ml-2 hidden h-10 w-20 overflow-hidden rounded-lg bg-white md:block md:w-40 "
       >
         <Image
           src="/faviconFull.png"
@@ -37,7 +51,7 @@ function DashboardNavbar({ user }: { user: User }) {
           alt="favicon"
         />
       </Link>
-      <ul className="relative flex h-14 w-9/12 items-center justify-end text-sm font-semibold lg:gap-5 xl:gap-10">
+      <ul className="relative flex h-14 w-60  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
           onMouseLeave={() => setTriggerAccountMenu(() => false)}

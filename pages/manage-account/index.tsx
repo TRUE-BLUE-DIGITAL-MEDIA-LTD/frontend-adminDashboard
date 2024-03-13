@@ -133,9 +133,11 @@ function Index({ user }: { user: User }) {
         />
       )}
       <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start font-Poppins">
-        <section className="flex h-max w-max flex-col items-center justify-start gap-5 rounded-lg p-7 ring-2 ring-slate-300">
-          <header className="flex w-full items-center justify-between">
-            <h1 className="text-3xl font-bold">Account Management</h1>
+        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
+          <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
+            <h1 className="rext-xl font-bold md:text-3xl">
+              Account Management
+            </h1>
             <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => {
@@ -150,7 +152,7 @@ function Index({ user }: { user: User }) {
               </button>
             </div>
           </header>
-          <div className=" h-96 w-[45rem] justify-center  overflow-auto 2xl:w-[60rem] ">
+          <div className=" h-96 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
             <table className="w-max table-auto border-collapse ">
               <thead className="sticky top-0   z-20 bg-gray-200">
                 <tr className=" h-14  border-slate-400 font-normal  text-slate-600">

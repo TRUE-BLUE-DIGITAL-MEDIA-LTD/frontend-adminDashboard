@@ -58,11 +58,11 @@ function Index({ user }: { user: User }) {
     <DashboardLayout user={user}>
       <div className="w-full">
         <header className="mt-20 flex  h-max w-full flex-col items-start justify-center gap-4 p-10">
-          <h1 className="font-Poppins text-7xl font-semibold">
+          <h1 className="font-Poppins text-5xl font-semibold md:text-7xl">
             <span className="text-icon-color">C</span>
             <span>ategories</span>
           </h1>
-          <section className="flex h-20 w-full items-end justify-start gap-5   border-b-2 pb-5 ">
+          <section className="grid  h-full w-full grid-cols-2 items-end justify-start gap-5 border-b-2   pb-5 md:flex ">
             {categories.isLoading ? (
               <Skeleton width={200} height={60} animation="wave" />
             ) : (
@@ -99,7 +99,7 @@ function Index({ user }: { user: User }) {
             </Link>
           </section>
         </header>
-        <main className="grid grid-cols-2 gap-10 p-10 2xl:grid-cols-3">
+        <main className="grid grid-cols-1 gap-10 p-10 md:grid-cols-2 2xl:grid-cols-3">
           {categories.data?.map((category) => {
             return (
               <Link
