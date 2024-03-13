@@ -86,7 +86,7 @@ export default function Home({ user }: { user: User }) {
   }: handleRemoveDomainNameParams) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "To Delete This Domain Name From This Landing Page",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -140,7 +140,7 @@ export default function Home({ user }: { user: User }) {
     <DashboardLayout user={user}>
       <div className="h-full w-full  bg-gradient-to-b pt-10 font-Poppins">
         <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
-          <h1 className="font-Poppins text-5xl font-semibold">
+          <h1 className="font-Poppins text-4xl font-semibold md:text-7xl">
             <span className="text-icon-color">L</span>
             <span>anding Pages</span>
           </h1>
@@ -151,9 +151,9 @@ export default function Home({ user }: { user: User }) {
             Create
           </Link>
         </header>
-        <main className=" flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className=" w-[45rem] justify-center  overflow-auto p-5 2xl:w-[60rem] ">
-            <table className="min-w-full max-w-max border-collapse ">
+        <main className=" mt-5 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
+            <table className="w-max min-w-full border-collapse ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className="">Name</td>
@@ -204,7 +204,10 @@ export default function Home({ user }: { user: User }) {
                           (language) => language.value === landingPage.language,
                         );
                         return (
-                          <tr className="h-14 " key={index}>
+                          <tr
+                            className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                            key={index}
+                          >
                             <td className="px-2">
                               {landingPages.isFetching ? (
                                 <Skeleton animation="wave" />

@@ -141,8 +141,8 @@ function ParterReport({ user }: { user: User }) {
           {paterPerfomaces.error?.message}
         </h2>
       )}
-      <div className=" h-96 w-[40rem] justify-center  overflow-auto 2xl:w-[60rem] ">
-        <table className="w-max table-auto overflow-scroll">
+      <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
+        <table className="w-max min-w-full border-collapse ">
           <thead className="sticky top-0 z-40 ">
             <tr className=" h-16   bg-white drop-shadow-sm">
               {menuTables

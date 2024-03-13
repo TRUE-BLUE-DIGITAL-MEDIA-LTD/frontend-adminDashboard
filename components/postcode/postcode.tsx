@@ -86,7 +86,7 @@ function Postcode() {
   return (
     <div className="mt-20 w-full">
       <header className="flex  w-full flex-col items-center justify-center gap-10 font-Poppins">
-        <section className="flex flex-col items-center justify-center gap-5">
+        <section className="flex w-80 flex-col items-center justify-center gap-5">
           <CountryInput
             handleChangeQueryPostcode={handleChangeQueryPostcode}
             setQueryPostcode={setQueryPostcode}

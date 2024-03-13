@@ -102,13 +102,13 @@ function SignIn() {
             alt="logo oxyclick.com"
           />
         </div>
-        <h1 className="font-Poppins text-3xl font-semibold">
+        <h1 className="font-Poppins text-xl font-semibold md:text-3xl">
           Welcome to OxyClick
         </h1>
-        <h1 className="font-Poppins text-lg font-medium text-icon-color">
+        <h1 className="font-Poppins text-base font-medium text-icon-color md:text-lg">
           Sign In To Enter Dashboard
         </h1>
-        <form className="flex w-96 flex-col" onSubmit={handleSubmit}>
+        <form className="flex w-80 flex-col" onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             required
