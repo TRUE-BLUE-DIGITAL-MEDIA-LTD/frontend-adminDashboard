@@ -13,8 +13,7 @@ export interface LandingPage {
   json: string;
   viewCount: number | null;
   mainButton: string;
-  backClick: number | null;
-  popUpUnder: string;
+  directLink?: string | null;
   percent: number;
   categoryId: string | null;
   creatorId: string;
