@@ -32,7 +32,7 @@ interface UpdateLandingPageData {
   description: string;
   imageLink: string;
   mainButton: string;
-  popUnder: string;
+  directLink: string;
   domainId: string;
   language: Language;
   categoryId: string;
@@ -81,7 +81,7 @@ function Index({ user }: { user: User }) {
       description: "",
       imageLink: "",
       mainButton: "",
-      popUnder: "",
+      directLink: "",
       domainId: "",
       categoryId: "",
       language: "en",
@@ -98,7 +98,7 @@ function Index({ user }: { user: User }) {
           description: landingPage.data.description,
           imageLink: landingPage.data.backgroundImage,
           mainButton: landingPage.data.mainButton,
-          popUnder: landingPage.data.popUpUnder,
+          directLink: landingPage.data.directLink as string,
           domainId: landingPage?.data?.domain?.id as string,
           language: landingPage?.data?.language,
           categoryId: landingPage.data?.categoryId as string,
@@ -148,7 +148,7 @@ function Index({ user }: { user: User }) {
           landingPageId: router?.query?.landingPageId as string,
           backgroundImage: landingPageData.imageLink,
           mainButton: landingPageData.mainButton,
-          popUpUnder: landingPageData.popUnder,
+          directLink: landingPageData.directLink,
           name: landingPageData.name,
           icon: icon,
           categoryId: landingPageData.categoryId,
@@ -395,11 +395,10 @@ function Index({ user }: { user: User }) {
             />
             <TextField
               onChange={handleChangeLandingPageData}
-              name="popUnder"
-              label="pop under"
+              name="directLink"
+              label="direct Link (Optional)"
               variant="outlined"
-              required
-              value={landingPageData.popUnder}
+              value={landingPageData.directLink}
             />
           </div>
         </div>

@@ -12,8 +12,8 @@ export interface InputCreateLandingPageService {
   language: Language;
   mainButton: string;
   categoryId?: string;
+  directLink?: string;
   name: string;
-  popUpUnder: string;
   icon?: string | null;
   description: string;
   googleAnalyticsId?: string | null;
@@ -25,7 +25,7 @@ export async function CreateLandingPageService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-
+    if (input.directLink === "") delete input.directLink;
     const landingPage = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/create`,
       {
@@ -55,7 +55,7 @@ interface InputUpdateLandingPageService {
   language: Language;
   mainButton: string;
   name: string;
-  popUpUnder: string;
+  directLink?: string;
   categoryId: string;
   icon?: string | null;
   description: string;

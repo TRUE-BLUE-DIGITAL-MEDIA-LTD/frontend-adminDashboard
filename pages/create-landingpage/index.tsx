@@ -30,7 +30,7 @@ interface CreateLandingPageData {
   description: string;
   backgroundImage: string;
   mainButton: string;
-  popUpUnder: string;
+  directLink: string;
   domainId?: string;
   categoryId?: string;
   googleAnalyticsId?: string | null;
@@ -68,7 +68,7 @@ function Index({ user }: { user: User }) {
       description: "",
       backgroundImage: "",
       mainButton: "",
-      popUpUnder: "",
+      directLink: "",
       domainId: "",
       categoryId: "",
       googleAnalyticsId: "",
@@ -112,7 +112,7 @@ function Index({ user }: { user: User }) {
           title: landingPageData.title,
           backgroundImage: landingPageData.backgroundImage,
           mainButton: landingPageData.mainButton,
-          popUpUnder: landingPageData.popUpUnder,
+          directLink: landingPageData.directLink,
           name: landingPageData.name,
           language: landingPageData.language,
           description: landingPageData.description,
@@ -198,7 +198,7 @@ function Index({ user }: { user: User }) {
         </Alert>
       </Snackbar>
       {isLoadingEditor && <FullLoading />}
-      <div>
+      <div className="w-full">
         <div className="mt-5 flex w-full justify-start bg-white">
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             Create Landing Page
@@ -338,11 +338,10 @@ function Index({ user }: { user: User }) {
             />
             <TextField
               onChange={handleChangeLandingPageData}
-              name="popUpUnder"
-              label="pop under"
+              name="directLink"
+              label="direct Link (Optional)"
               variant="outlined"
-              required
-              value={landingPageData.popUpUnder}
+              value={landingPageData.directLink}
             />
           </div>
         </div>
