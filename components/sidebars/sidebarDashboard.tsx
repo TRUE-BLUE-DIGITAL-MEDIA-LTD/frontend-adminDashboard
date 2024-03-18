@@ -58,7 +58,7 @@ function SidebarDashboard({ user }: { user: User }) {
             </Link>
             {list.childs && (
               <ul
-                className={`ml-5 flex flex-col gap-2 transition duration-150 ${list.trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
+                className={`ml-5 flex flex-col gap-2 transition duration-100 ${list.trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
               >
                 {list.childs.map((child, index) => {
                   return (
@@ -72,7 +72,11 @@ function SidebarDashboard({ user }: { user: User }) {
                     >
                       <Link
                         className="flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
-                        href={list.url + `?option=${child.params}`}
+                        href={
+                          child.url
+                            ? child.url
+                            : list.url + `?option=${child.params}`
+                        }
                       >
                         {child.title}
                       </Link>

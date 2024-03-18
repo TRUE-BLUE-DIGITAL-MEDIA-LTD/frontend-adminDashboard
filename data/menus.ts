@@ -23,6 +23,7 @@ export const menusSidebar = [
     childs: [
       { title: "Partners' Perfomance", params: "partners-perfomance" },
       { title: "Postcode", params: "postcode" },
+      { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
     ],
     trigger: false,
   },
