@@ -166,7 +166,7 @@ function Index({ user }: { user: User }) {
             className="relative mt-10 flex w-96 flex-col"
           >
             <Input
-              placeholder="Search Domain Name"
+              placeholder="Search Domain Name Or Note"
               className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
             />
             <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
