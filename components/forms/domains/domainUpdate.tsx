@@ -33,6 +33,7 @@ function DomainUpdate({
       },
     ],
     name: "",
+    note: "",
     domainNameId: "",
     googleAnalyticsId: "",
   });
@@ -51,6 +52,7 @@ function DomainUpdate({
         domainNameId: domainUpdate.data?.domain.id as string,
         googleAnalyticsId: domainUpdate.data?.domain
           .googleAnalyticsId as string,
+        note: domainUpdate.data?.domain.note as string,
         landingPages: domainUpdate.data?.landingPages as {
           name: string;
           id: string;
@@ -66,10 +68,11 @@ function DomainUpdate({
       await UpdateDomainService({
         name: domainData.name,
         domainNameId: domain.id,
+        note: domainData.note,
         landingPages: domainData.landingPages,
         googleAnalyticsId: domainData?.googleAnalyticsId,
       });
-      domainUpdate.refetch();
+      await domainUpdate.refetch();
       Swal.fire("success", "create domain successfully", "success");
       setIsLoading(() => false);
     } catch (err: any) {
@@ -84,13 +87,13 @@ function DomainUpdate({
      items-center justify-center font-Poppins"
     >
       <main
-        className="max-h-5/6 flex h-max w-11/12 flex-col  items-center justify-start 
-       gap-5 rounded-lg bg-white p-10 md:w-96"
+        className="max-h-5/6 md:max-w-8/12 flex h-max w-11/12  flex-col items-center 
+       justify-start gap-5 rounded-lg bg-white p-10 md:w-max"
       >
         {domainUpdate.isFetching ? (
           <Skeleton width={400} height={60} />
         ) : (
-          <section className="grid grid-cols-1 gap-5">
+          <section className="grid grid-cols-2 gap-5">
             <TextField
               onChange={(e) =>
                 setDomainData((prev) => {
@@ -106,6 +109,21 @@ function DomainUpdate({
               label="google analytics id"
               id="fullWidth"
             />
+            <TextField
+              onChange={(e) =>
+                setDomainData((prev) => {
+                  return {
+                    ...prev,
+                    note: e.target.value,
+                  };
+                })
+              }
+              value={domainData?.note || ""}
+              className="w-60"
+              name="note"
+              label="note"
+              id="fullWidth"
+            />
           </section>
         )}
         {domainUpdate.isFetching ? (
@@ -113,20 +131,20 @@ function DomainUpdate({
         ) : (
           domainData?.landingPages?.length > 0 && (
             <section className="flex w-full flex-col gap-5">
-              <h3 className="text-xl font-bold text-main-color">
+              <h3 className="text-xl font-bold text-gray-800">
                 Probability - setting
               </h3>
               <ul className="flex h-60 flex-col gap-4 overflow-auto p-2 ">
                 {domainData?.landingPages?.map((landingPage) => {
                   return (
                     <li
-                      className="grid grid-cols-1 items-center justify-between gap-5 border-b-2 border-slate-400 px-5  py-3 md:flex"
+                      className="grid grid-cols-1 items-center justify-between gap-5 px-5 py-3  hover:bg-gray-100 md:flex"
                       key={landingPage.id}
                     >
                       <Link
                         target="_blank"
                         href={`/landingpage/${landingPage.id}`}
-                        className="w-80 truncate font-bold text-blue-600 underline md:w-96"
+                        className="w-80  truncate font-bold text-blue-600 underline md:w-96"
                       >
                         {landingPage.name}
                       </Link>

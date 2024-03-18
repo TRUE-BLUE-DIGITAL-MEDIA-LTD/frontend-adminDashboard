@@ -28,7 +28,7 @@ interface HandleDeleteDomain {
   name: string;
 }
 function Index({ user }: { user: User }) {
-  const [domainName, setDoaminName] = useState<string>();
+  const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
@@ -39,8 +39,12 @@ function Index({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const domains = useQuery({
-    queryKey: ["domains-byPage", page, domainName],
-    queryFn: () => GetAllDomainsByPage({ page: page, domainName }),
+    queryKey: ["domains-byPage", page, searchField],
+    queryFn: () =>
+      GetAllDomainsByPage({
+        page: page,
+        searchField: searchField,
+      }),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,
@@ -155,9 +159,9 @@ function Index({ user }: { user: User }) {
             </button>
           )}
           <SearchField
-            value={domainName}
+            value={searchField}
             onChange={(e) => {
-              setDoaminName(() => e);
+              setSearchField(() => e);
             }}
             className="relative mt-10 flex w-96 flex-col"
           >

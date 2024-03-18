@@ -40,7 +40,7 @@ export interface ResponseGetAllDomainsByPage {
 }
 interface InputGetAllDomainsByPage {
   page: number;
-  domainName?: string;
+  searchField?: string;
 }
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
@@ -68,13 +68,7 @@ export async function GetAllDomainsByPage(
 }
 
 export interface ResponseGetDomainService {
-  domain: {
-    id: string;
-    createAt: string;
-    updateAt: string;
-    name: string;
-    googleAnalyticsId: string | null;
-  };
+  domain: Domain;
   landingPages: {
     id: string;
     name: string;
@@ -144,17 +138,12 @@ export async function CreateDomainService(
   }
 }
 
-interface ResponseUpdateDomainService {
-  id: string;
-  createAt: string;
-  updateAt: string;
-  name: string;
-  googleAnalyticsId: string | null;
-}
+type ResponseUpdateDomainService = Domain;
 export interface InputUpdateDomainService {
   name: string;
   domainNameId: string;
   googleAnalyticsId?: string | null;
+  note?: string;
   landingPages: {
     name?: string;
     id: string;

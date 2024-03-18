@@ -3,6 +3,7 @@ export interface Domain {
   createAt: Date;
   updateAt: Date;
   name: string;
+  note: string;
   googleAnalyticsId: string;
   netlify_siteId: string;
   netlify_dns_zoneId: string;
