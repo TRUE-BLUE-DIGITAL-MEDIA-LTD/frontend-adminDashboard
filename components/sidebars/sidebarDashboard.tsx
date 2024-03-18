@@ -30,7 +30,7 @@ function SidebarDashboard({ user }: { user: User }) {
   return (
     <ul className="sticky left-0 top-0 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex ">
       {menusSidebar.map((list, index) => {
-        if (user?.role !== "admin" && (index == 3 || index == 4)) {
+        if (user?.role !== "admin" && (index == 2 || index == 3)) {
           return null;
         }
         return (
@@ -45,8 +45,11 @@ function SidebarDashboard({ user }: { user: User }) {
               className="relative z-20 flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
               href={list.childs ? "#" : list.url}
             >
-              <list.icon />
-              {list.title}
+              <span className="flex w-full items-center justify-start gap-2">
+                <list.icon />
+                {list.title}
+              </span>
+
               {list.childs && (
                 <div className="flex w-full justify-end">
                   <IoMdArrowDropdownCircle />

@@ -21,6 +21,7 @@ export default function DashboardLayout({
   const tawkMessengerRef = useRef<TawkInterface>();
   const [currentMenuIndex, setCurrentMenuIndex] = useState<any>();
   const [triggerMiniMenu, setTriggerMiniMenu] = useState(false);
+  const [triggerSidebar, setTriggerSidebar] = useState<boolean>(false);
   const pathname = router.pathname; // e.g. "/classroom/setting"
   const lastRoute = pathname.split("/").pop();
   const onLoad = () => {
@@ -72,6 +73,9 @@ export default function DashboardLayout({
          duration-150 md:hidden ${triggerMiniMenu ? "visible translate-y-0" : "invisible hidden -translate-y-14"}`}
       >
         {menusSidebar.map((list, index) => {
+          if (user?.role !== "admin" && (index == 2 || index == 3)) {
+            return null;
+          }
           return (
             <li
               key={index}
@@ -90,8 +94,10 @@ export default function DashboardLayout({
                 className="relative z-20 flex w-full items-center justify-start gap-2 p-3 text-lg text-white hover:bg-gray-800 md:text-sm xl:text-lg"
                 href={list.childs ? "#" : list.url}
               >
-                <list.icon />
-                {list.title}
+                <span className="flex w-full items-center justify-start gap-2">
+                  <list.icon />
+                  {list.title}
+                </span>
                 {list.childs && (
                   <div className="flex w-full justify-end">
                     <IoMdArrowDropdownCircle />
@@ -128,9 +134,14 @@ export default function DashboardLayout({
           );
         })}
       </ul>
-      <DashboardNavbar user={user} setTriggerMiniMenu={setTriggerMiniMenu} />
+      <DashboardNavbar
+        setTriggerSidebar={setTriggerSidebar}
+        user={user}
+        setTriggerMiniMenu={setTriggerMiniMenu}
+      />
+
       <div className="flex">
-        <SidebarDashboard user={user} />
+        {triggerSidebar && <SidebarDashboard user={user} />}
         {children}
       </div>
     </>
