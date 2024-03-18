@@ -121,7 +121,11 @@ export default function DashboardLayout({
                         <Link
                           onClick={() => setTriggerMiniMenu(() => false)}
                           className="flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
-                          href={list.url + `?option=${child.params}`}
+                          href={
+                            child.url
+                              ? child.url
+                              : list.url + `?option=${child.params}`
+                          }
                         >
                           {child.title}
                         </Link>
