@@ -12,9 +12,11 @@ import { IoMdMenu } from "react-icons/io";
 function DashboardNavbar({
   user,
   setTriggerMiniMenu,
+  setTriggerSidebar,
 }: {
   user: User;
   setTriggerMiniMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setTriggerSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -39,18 +41,26 @@ function DashboardNavbar({
       >
         <IoMdMenu />
       </div>
+      <div className="  flex items-center justify-center gap-2 ">
+        <button
+          onClick={() => setTriggerSidebar((prev) => !prev)}
+          className="hidden items-center justify-center text-4xl text-white md:flex"
+        >
+          <IoMenu />
+        </button>
 
-      <Link
-        href="/"
-        className="relative ml-2 hidden h-10 w-20 overflow-hidden rounded-lg bg-white md:block md:w-40 "
-      >
-        <Image
-          src="/faviconFull.png"
-          fill
-          className="object-contain"
-          alt="favicon"
-        />
-      </Link>
+        <Link
+          href="/"
+          className="relative ml-2 hidden h-10 w-20 overflow-hidden rounded-lg bg-white md:block md:w-40 "
+        >
+          <Image
+            src="/faviconFull.png"
+            fill
+            className="object-contain"
+            alt="favicon"
+          />
+        </Link>
+      </div>
       <ul className="relative flex h-14 w-60  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
@@ -71,7 +81,9 @@ function DashboardNavbar({
                 />
               </div>
               <span className="text-white">{user?.name}</span>
-              <div>{triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}</div>
+              <div className="text-white">
+                {triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}
+              </div>
             </div>
           )}
           {triggerAccountMenu && (

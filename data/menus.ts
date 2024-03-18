@@ -8,17 +8,16 @@ import {
 } from "react-icons/md";
 
 export const menusSidebar = [
-  { title: "Categories", url: "/", icon: BiSolidCategory },
-  { title: "Landing Pages", url: "/landingPages", icon: MdWeb },
-  { title: "Domain", url: "/domain", icon: MdOutlineDomain },
-  { title: "Email", url: "/email", icon: MdEmail },
+  { title: "Landing Pages", url: "/", icon: MdWeb },
+  { title: "Domain Library", url: "/domain", icon: MdOutlineDomain },
+  { title: "Submissions", url: "/email", icon: MdEmail },
   {
-    title: "Account Management",
+    title: "Control Center",
     url: "/manage-account",
     icon: MdAdminPanelSettings,
   },
   {
-    title: "Tools",
+    title: "Oxy Tools",
     url: "/tools",
     icon: BsTools,
     childs: [
