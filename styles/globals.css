@@ -12,8 +12,8 @@
 
 @layer components {
   .buttonSuccess {
-    @apply flex items-center justify-center gap-2 bg-green-400 p-3 rounded-xl hover:bg-green-500 
-    transition duration-100 active:scale-105 active:ring-2 ring-black active:drop-shadow-sm;
+    @apply flex items-center justify-center gap-2 rounded-xl bg-green-400 p-3 ring-black 
+    transition duration-100 hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm;
   }
 }
 
@@ -35,4 +35,8 @@
   animation: gradient 15s ease infinite;
   height: max-content;
   background-clip: text;
+}
+
+.print {
+  page-break-before: always;
 }

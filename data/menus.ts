@@ -24,6 +24,7 @@ export const menusSidebar = [
       { title: "Partners' Perfomance", params: "partners-perfomance" },
       { title: "Postcode", params: "postcode" },
       { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
+      { title: "Payslip Generator",  params: "payslip" },
     ],
     trigger: false,
   },

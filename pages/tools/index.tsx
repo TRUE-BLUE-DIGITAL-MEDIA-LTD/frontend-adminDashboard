@@ -18,6 +18,7 @@ import Cities from "../../components/postcode/cities";
 import Postcode from "../../components/postcode/postcode";
 import ParterReport from "../../components/tables/parterReport";
 import { useRouter } from "next/router";
+import PayslipGenerator from "../../components/payslip/payslipGenerator";
 
 function Index({ user }: { user: User }) {
   const [selectMenu, setSelectMenu] = useState(0);
@@ -29,6 +30,7 @@ function Index({ user }: { user: User }) {
           <ParterReport user={user} />
         )}
         {router.query.option === "postcode" && <Postcode />}
+        {router.query.option === "payslip" && <PayslipGenerator />}
       </div>
     </DashboardLayout>
   );
