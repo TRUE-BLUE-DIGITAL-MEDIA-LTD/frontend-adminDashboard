@@ -21,22 +21,22 @@ function Index({ payslips }: { payslips: Payslip[] }) {
             <h1 className="text-4xl font-bold">Payslip</h1>
           </div>
           <div className="flex w-max flex-col items-start gap-5">
-            <div className="relative h-20  w-20 overflow-hidden">
+            <div className="relative h-24  w-40 overflow-hidden">
               <Image
                 fill
                 alt="logo"
                 className="object-contain"
-                src="https://lirp.cdn-website.com/3e22e7d7/dms3rep/multi/opt/WKR+-LOGO-FINAL-1920w.png"
+                src="https://storage.googleapis.com/storage-oxyclick/public/logoDTST.jpg"
               />
             </div>
             <div>
-              <h1 className="text-sm font-bold">WKR Recruitment Co., Ltd.</h1>
+              <h1 className="text-sm font-bold">บริษัท ดีทีเอสที จำกัด</h1>
               <h1 className="text-sm font-bold">Tax ID: 0445559000236</h1>
               <h1 className="text-sm font-normal">
-                11/2 P23 Building, 10th Floor, Sukhumvit 23
+                139/70 ถนนถีนานนท์ ตำบลตลาด
               </h1>
               <h1 className="text-sm font-normal">
-                Khlong Toei Nuea, Watthana , Bangkok, 10110
+                อำเภอเมือง จังหวัดมหาสารคาม 44000
               </h1>
             </div>
           </div>
