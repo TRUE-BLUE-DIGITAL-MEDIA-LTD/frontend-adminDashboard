@@ -27,9 +27,13 @@ import { FaPrint } from "react-icons/fa6";
 import Link from "next/link";
 
 function PayslipGenerator() {
-  const [recordDate, setRecordDate] = useState<Nullable<Date | null>>(
-    new Date(),
-  );
+  const [recordDate, setRecordDate] = useState<Nullable<Date | null>>(() => {
+    const cuurentDate = new Date();
+    const year = cuurentDate.getFullYear();
+    const month = cuurentDate.getMonth();
+    const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+    return endOfMonth;
+  });
   const [selectPayslip, setSelectPayslip] = useState<Payslip>();
   const payslips = useQuery({
     queryKey: ["payslips", moment(recordDate).format("MM-YYYY")],
@@ -101,7 +105,11 @@ function PayslipGenerator() {
           <Calendar
             value={recordDate}
             onChange={(e) => {
-              setRecordDate(e.value);
+              if (!e.value) return;
+              const year = e.value?.getFullYear();
+              const month = e.value?.getMonth();
+              const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+              setRecordDate(endOfMonth);
             }}
             view="month"
             dateFormat="mm/yy"
