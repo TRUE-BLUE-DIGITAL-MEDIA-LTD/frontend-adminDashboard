@@ -31,8 +31,8 @@ function PayslipGenerator() {
     const cuurentDate = new Date();
     const year = cuurentDate.getFullYear();
     const month = cuurentDate.getMonth();
-    const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    return endOfMonth;
+    const middleOfMonth = new Date(year, month, 15);
+    return middleOfMonth;
   });
   const [selectPayslip, setSelectPayslip] = useState<Payslip>();
   const payslips = useQuery({
@@ -108,8 +108,8 @@ function PayslipGenerator() {
               if (!e.value) return;
               const year = e.value?.getFullYear();
               const month = e.value?.getMonth();
-              const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
-              setRecordDate(endOfMonth);
+              const middleOfMonth = new Date(year, month, 15);
+              setRecordDate(middleOfMonth);
             }}
             view="month"
             dateFormat="mm/yy"
