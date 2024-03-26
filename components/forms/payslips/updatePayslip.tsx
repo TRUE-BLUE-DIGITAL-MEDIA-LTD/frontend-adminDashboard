@@ -358,13 +358,19 @@ function UpdatePayslip({
                     setPayslipData((prev) => ({
                       ...prev,
                       deductions: prev?.deductions?.map((item) => {
-                        if (item.id === deduction.id) {
+                        if (item.id && item.id === deduction.id) {
                           return {
                             ...item,
                             title: e.target.value,
                           };
+                        } else if (item.uuid && item.uuid === deduction.uuid) {
+                          return {
+                            ...item,
+                            title: e.target.value,
+                          };
+                        } else {
+                          return item;
                         }
-                        return item;
                       }),
                     }));
                   }}
@@ -387,15 +393,23 @@ function UpdatePayslip({
                     setPayslipData((prev) => ({
                       ...prev,
                       deductions: prev?.deductions?.map((item) => {
-                        if (item.id === deduction.id) {
+                        if (item.id && item.id === deduction.id) {
                           return {
                             ...item,
                             value: Number(
                               e.target.value.replace(/\D/g, ""),
                             ).toLocaleString(),
                           };
+                        } else if (item.uuid && item.uuid === deduction.uuid) {
+                          return {
+                            ...item,
+                            value: Number(
+                              e.target.value.replace(/\D/g, ""),
+                            ).toLocaleString(),
+                          };
+                        } else {
+                          return item;
                         }
-                        return item;
                       }),
                     }));
                   }}
