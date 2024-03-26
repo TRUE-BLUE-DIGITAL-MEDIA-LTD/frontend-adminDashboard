@@ -9,7 +9,15 @@ export type Payslip = {
   socialSecurity: number;
   bonus: number;
   tax: number;
-  deduction: number;
   note: string;
   userId: string;
+};
+
+export type Deduction = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  title: string;
+  value: number;
+  payslipId: string;
 };

@@ -20,13 +20,14 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import { Toast } from "primereact/toast";
 import CreatePayslip from "../forms/payslips/createPayslip";
-import { MdDelete, MdModeEdit } from "react-icons/md";
-import { Payslip } from "../../models";
+import { MdDelete, MdModeEdit, MdOutlineSummarize } from "react-icons/md";
+import { Deduction, Payslip } from "../../models";
 import UpdatePayslip from "../forms/payslips/updatePayslip";
 import { FaPrint } from "react-icons/fa6";
 import Link from "next/link";
 
 function PayslipGenerator() {
+  const toast = useRef<Toast>(null);
   const [recordDate, setRecordDate] = useState<Nullable<Date | null>>(() => {
     const cuurentDate = new Date();
     const year = cuurentDate.getFullYear();
@@ -34,7 +35,9 @@ function PayslipGenerator() {
     const middleOfMonth = new Date(year, month, 15);
     return middleOfMonth;
   });
-  const [selectPayslip, setSelectPayslip] = useState<Payslip>();
+  const [selectPayslip, setSelectPayslip] = useState<
+    Payslip & { deductions: Deduction[] }
+  >();
   const payslips = useQuery({
     queryKey: ["payslips", moment(recordDate).format("MM-YYYY")],
     queryFn: () =>
@@ -93,6 +96,7 @@ function PayslipGenerator() {
 
   return (
     <div className="flex w-full flex-col items-center ">
+      <Toast ref={toast} />
       <header className="mt-28 flex flex-col items-center justify-center py-5">
         <h1 className="font-Poppins text-4xl font-semibold md:text-7xl">
           <span className="text-icon-color">Pay</span>
@@ -120,11 +124,13 @@ function PayslipGenerator() {
         )}
         {selectPayslip && (
           <UpdatePayslip
+            toast={toast}
             selectPayslip={selectPayslip}
             payslips={payslips}
             setSelectPayslip={setSelectPayslip}
           />
         )}
+
         <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
           <Link
             href={`/payslip/${moment(recordDate).toISOString()}`}
@@ -220,7 +226,14 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                             {payslip.tax.toLocaleString()}
                           </td>
                           <td className="border-2 border-black px-4 py-2">
-                            {payslip.deduction.toLocaleString()}
+                            {payslip.deductions.map((deduction, index) => {
+                              return (
+                                <div key={index}>
+                                  {deduction.title} :{" "}
+                                  {deduction.value.toLocaleString()}
+                                </div>
+                              );
+                            })}
                           </td>
                           <td className="max-w-96 break-words border-2 border-black px-4 py-2">
                             {payslip.note}
@@ -254,6 +267,69 @@ hover:bg-green-600 active:scale-105 active:ring-2"
               </tbody>
             </table>
           </div>
+        </div>
+        <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
+          <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-black">
+            <MdOutlineSummarize />
+            Summary
+          </h2>
+          <ul className="mt-5 grid w-full grid-cols-4 gap-5">
+            <li className="flex flex-col">
+              <span>Total Salary</span>
+              <span className="font-semibold">
+                {payslips.data
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.salary;
+                  }, 0)
+                  .toLocaleString()}
+              </span>
+            </li>
+            <li className="flex flex-col">
+              <span>Total Social Security</span>
+              <span className="font-semibold">
+                {payslips.data
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.socialSecurity;
+                  }, 0)
+                  .toLocaleString()}
+              </span>
+            </li>
+            <li className="flex flex-col">
+              <span>Total Bonus</span>
+              <span className="font-semibold">
+                {payslips.data
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.bonus;
+                  }, 0)
+                  .toLocaleString()}
+              </span>
+            </li>
+            <li className="flex flex-col">
+              <span> Total Tax</span>
+              <span className="font-semibold">
+                {payslips.data
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.tax;
+                  }, 0)
+                  .toLocaleString()}
+              </span>
+            </li>
+            <li className="flex flex-col">
+              <span> Total Deduction</span>
+              <span className="font-semibold">
+                {payslips.data
+                  ?.reduce((acc, payslip) => {
+                    return (
+                      acc +
+                      payslip.deductions.reduce((acc, deduction) => {
+                        return acc + deduction.value;
+                      }, 0)
+                    );
+                  }, 0)
+                  .toLocaleString()}
+              </span>
+            </li>
+          </ul>
         </div>
       </main>
     </div>
