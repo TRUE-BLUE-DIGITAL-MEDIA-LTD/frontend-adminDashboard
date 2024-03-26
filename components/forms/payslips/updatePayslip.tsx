@@ -7,28 +7,45 @@ import {
   Form,
   Input,
   Label,
+  TextArea,
   TextField,
 } from "react-aria-components";
-import { Payslip } from "../../../models";
+import { Deduction, Payslip } from "../../../models";
 import { UseQueryResult } from "@tanstack/react-query";
 import {
+  CreateDeductionService,
+  DeleteDeductionService,
   ResponseGetAllPayslipByMonthsService,
+  UpdateDeductionService,
   UpdatePayslipService,
 } from "../../../services/admin/payslip";
 import Swal from "sweetalert2";
+import { MdDelete } from "react-icons/md";
+import { IoAddCircle } from "react-icons/io5";
+import { v4 as uuidv4 } from "uuid";
 
 type UpdatePayslipProps = {
-  selectPayslip: Payslip;
+  selectPayslip: Payslip & { deductions: Deduction[] | [] };
   payslips: UseQueryResult<ResponseGetAllPayslipByMonthsService, Error>;
-  setSelectPayslip: React.Dispatch<React.SetStateAction<Payslip | undefined>>;
+  setSelectPayslip: React.Dispatch<
+    React.SetStateAction<
+      | (Payslip & {
+          deductions: Deduction[];
+        })
+      | undefined
+    >
+  >;
+  toast: React.RefObject<Toast>;
 };
 function UpdatePayslip({
   selectPayslip,
   payslips,
   setSelectPayslip,
+  toast,
 }: UpdatePayslipProps) {
   const [loading, setLoading] = useState(false);
-  const toast = useRef<Toast>(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const [payslipData, setPayslipData] = useState<{
     name?: string;
     startDate?: string;
@@ -36,7 +53,12 @@ function UpdatePayslip({
     socialSecurity?: string;
     bonus?: string;
     tax?: string;
-    deduction?: string;
+    deductions?: {
+      uuid?: string;
+      id?: string;
+      title: string;
+      value: string;
+    }[];
     note?: string;
   }>({
     name: selectPayslip.name,
@@ -45,7 +67,6 @@ function UpdatePayslip({
     socialSecurity: selectPayslip.socialSecurity.toLocaleString(),
     bonus: selectPayslip.bonus.toLocaleString(),
     tax: selectPayslip.tax.toLocaleString(),
-    deduction: selectPayslip.deduction.toLocaleString(),
     note: selectPayslip.note,
   });
 
@@ -57,8 +78,17 @@ function UpdatePayslip({
       socialSecurity: selectPayslip.socialSecurity.toLocaleString(),
       bonus: selectPayslip.bonus.toLocaleString(),
       tax: selectPayslip.tax.toLocaleString(),
-      deduction: selectPayslip.deduction.toLocaleString(),
       note: selectPayslip.note,
+      deductions:
+        selectPayslip.deductions.length > 0
+          ? selectPayslip.deductions.map((deduction) => {
+              return {
+                id: deduction.id,
+                title: deduction.title,
+                value: deduction.value.toLocaleString(),
+              };
+            })
+          : [{ uuid: uuidv4(), title: "", value: "" }],
     });
   }, [selectPayslip]);
 
@@ -72,13 +102,12 @@ function UpdatePayslip({
         !payslipData.salary ||
         !payslipData.socialSecurity ||
         !payslipData.bonus ||
-        !payslipData.tax ||
-        !payslipData.deduction
+        !payslipData.tax
       ) {
         throw new Error("Please fill all required fields");
       }
 
-      await UpdatePayslipService({
+      const payslip = await UpdatePayslipService({
         query: {
           payslipId: selectPayslip.id,
         },
@@ -92,10 +121,34 @@ function UpdatePayslip({
           ),
           bonus: parseInt(payslipData.bonus.replace(/,/g, ""), 10),
           tax: parseInt(payslipData.tax.replace(/,/g, ""), 10),
-          deduction: parseInt(payslipData.deduction.replace(/,/g, ""), 10),
           note: payslipData?.note,
         },
       });
+      const oldDeductions = payslipData.deductions?.filter(
+        (deduction) => deduction.id,
+      );
+      const newDeductions = payslipData.deductions?.filter(
+        (deduction) => deduction.uuid,
+      );
+
+      await Promise.all([
+        ...(oldDeductions?.map((deduction) => {
+          return UpdateDeductionService({
+            query: { deductionId: deduction.id as string },
+            body: {
+              title: deduction.title,
+              value: parseInt(deduction.value.replace(/,/g, ""), 10),
+            },
+          });
+        }) || []),
+        ...(newDeductions?.map((deduction) => {
+          return CreateDeductionService({
+            title: deduction.title,
+            value: parseInt(deduction.value.replace(/,/g, ""), 10),
+            payslipId: payslip.id,
+          });
+        }) || []),
+      ]);
       await payslips.refetch();
       toast.current?.show({
         severity: "success",
@@ -103,6 +156,7 @@ function UpdatePayslip({
         detail: "Payslip updated successfully",
       });
       setLoading(false);
+      setSelectPayslip(undefined);
     } catch (error: any) {
       setLoading(false);
       console.error(error);
@@ -120,12 +174,64 @@ function UpdatePayslip({
       [name]: Number(value.replace(/\D/g, "")).toLocaleString(),
     }));
   };
+
+  const handleAddMoreDeduction = () => {
+    setPayslipData((prev) => ({
+      ...prev,
+      deductions: [
+        ...(prev?.deductions || [{ uuid: uuidv4(), title: "", value: "" }]),
+        {
+          uuid: uuidv4(),
+          title: "",
+          value: "",
+        },
+      ],
+    }));
+  };
+
+  const handleDeleteDeduction = async ({
+    id,
+    uuid,
+  }: {
+    id?: string;
+    uuid?: string;
+  }) => {
+    if (uuid) {
+      setPayslipData((prev) => ({
+        ...prev,
+        deductions: prev?.deductions?.filter(
+          (deduction) => deduction.uuid !== uuid,
+        ),
+      }));
+    } else if (id) {
+      try {
+        setLoadingDelete(true);
+        await DeleteDeductionService({ deductionId: id });
+        setPayslipData((prev) => ({
+          ...prev,
+          deductions: prev?.deductions?.filter(
+            (deduction) => deduction.id !== id,
+          ),
+        }));
+
+        await payslips.refetch();
+        setLoadingDelete(false);
+      } catch (error: any) {
+        setLoadingDelete(false);
+        console.error(error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+      }
+    }
+  };
   return (
     <Form
       onSubmit={handleUpdatePaySlip}
       className="mt-5 flex  w-full flex-col  items-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-400"
     >
-      <Toast ref={toast} />
       <div className="grid w-max max-w-full grid-cols-1 items-center justify-center gap-2 md:grid-cols-4">
         <TextField
           className="flex flex-col"
@@ -235,37 +341,133 @@ function UpdatePayslip({
           />
           <FieldError className="text-xs text-red-700" />
         </TextField>
-
-        <TextField isRequired className="flex flex-col" aria-label="deduction">
-          <Label>deduction</Label>
-          <Input
-            placeholder="deduction"
-            className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
-            type="text"
-            value={payslipData?.deduction}
-            onChange={handleChangePayslipData}
-            inputMode="numeric"
-            name="deduction"
-          />
-          <FieldError className="text-xs text-red-700" />
-        </TextField>
-        <TextField className="flex flex-col" aria-label="note">
-          <Label>note</Label>
-          <Input
-            value={payslipData?.note}
-            onChange={(e) => {
-              setPayslipData((prev) => ({
-                ...prev,
-                note: e.target.value,
-              }));
-            }}
-            placeholder="note"
-            className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
-            name="note"
-          />
-          <FieldError className="text-xs text-red-700" />
-        </TextField>
       </div>
+      <div className="w-full">
+        <h3>Other Deducations</h3>
+        {payslipData?.deductions?.map((deduction, index) => {
+          return (
+            <div
+              key={index}
+              className="grid w-full grid-cols-3 gap-5 border-b-2  border-gray-200 pb-2"
+            >
+              <TextField isRequired className="flex flex-col" aria-label="tax">
+                <Label>title</Label>
+                <Input
+                  value={deduction.title}
+                  onChange={(e) => {
+                    setPayslipData((prev) => ({
+                      ...prev,
+                      deductions: prev?.deductions?.map((item) => {
+                        if (item.id === deduction.id) {
+                          return {
+                            ...item,
+                            title: e.target.value,
+                          };
+                        }
+                        return item;
+                      }),
+                    }));
+                  }}
+                  placeholder="title"
+                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  type="text"
+                  inputMode="numeric"
+                  name="tax"
+                />
+                <FieldError className="text-xs text-red-700" />
+              </TextField>
+              <TextField isRequired className="flex flex-col" aria-label="tax">
+                <Label>value</Label>
+                <Input
+                  placeholder="value"
+                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  type="text"
+                  value={deduction.value}
+                  onChange={(e) => {
+                    setPayslipData((prev) => ({
+                      ...prev,
+                      deductions: prev?.deductions?.map((item) => {
+                        if (item.id === deduction.id) {
+                          return {
+                            ...item,
+                            value: Number(
+                              e.target.value.replace(/\D/g, ""),
+                            ).toLocaleString(),
+                          };
+                        }
+                        return item;
+                      }),
+                    }));
+                  }}
+                  inputMode="numeric"
+                  name="tax"
+                />
+                <FieldError className="text-xs text-red-700" />
+              </TextField>
+              <div className="flex  items-end justify-start gap-3 ">
+                {payslipData.deductions?.length === index + 1 && (
+                  <button
+                    onClick={handleAddMoreDeduction}
+                    type="button"
+                    className=" flex h-12 w-28 items-center justify-center gap-2
+             rounded-lg bg-green-300 text-xl text-green-600 ring-black transition duration-100
+              hover:bg-green-400 focus:drop-shadow-lg active:scale-105
+         active:ring-2"
+                  >
+                    <IoAddCircle />
+                    Add
+                  </button>
+                )}
+                {loadingDelete ? (
+                  <div
+                    className=" flex h-12 w-28 animate-pulse items-center justify-center
+             gap-2 rounded-lg bg-gray-300 text-xl text-gray-600 ring-black transition duration-100
+              hover:bg-gray-400 focus:drop-shadow-lg active:scale-105
+         active:ring-2"
+                  >
+                    loading
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (deduction.id) {
+                        handleDeleteDeduction({ id: deduction.id });
+                      } else {
+                        handleDeleteDeduction({ uuid: deduction.uuid });
+                      }
+                    }}
+                    type="button"
+                    className=" flex h-12 w-28 items-center justify-center gap-2
+             rounded-lg bg-red-300 text-xl text-red-600 ring-black transition duration-100
+              hover:bg-red-400 focus:drop-shadow-lg active:scale-105
+         active:ring-2"
+                  >
+                    <MdDelete />
+                    Delete
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <TextField className="flex w-full flex-col" aria-label="note">
+        <Label>Note</Label>
+        <TextArea
+          value={payslipData?.note}
+          onChange={(e) => {
+            setPayslipData((prev) => ({
+              ...prev,
+              note: e.target.value,
+            }));
+          }}
+          placeholder="note"
+          className="h-40 w-full resize-none
+           rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+          name="note"
+        />
+        <FieldError className="text-xs text-red-700" />
+      </TextField>
       {loading ? (
         <div
           className="animate-pulse rounded-lg  bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150

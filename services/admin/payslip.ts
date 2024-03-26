@@ -1,8 +1,10 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
-import { Payslip, User } from "../../models";
+import { Deduction, Payslip, User } from "../../models";
 
-export type ResponseGetAllPayslipByMonthsService = Payslip[];
+export type ResponseGetAllPayslipByMonthsService = (Payslip & {
+  deductions: Deduction[];
+})[];
 type InputGetAllPayslipByMonthsService = {
   recordDate: string;
   accessToken?: string;
@@ -48,7 +50,6 @@ type InputCreatePaySlipService = {
   socialSecurity: number;
   bonus: number;
   tax: number;
-  deduction: number;
   note?: string;
 };
 
@@ -144,6 +145,104 @@ export async function DeletePayslipService(
     });
 
     return payslip.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseCreateDeductionService = Deduction;
+type InputCreateDeductionService = {
+  payslipId: string;
+  title: string;
+  value: number;
+};
+
+export async function CreateDeductionService(
+  input: InputCreateDeductionService,
+): Promise<ResponseCreateDeductionService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const deduction = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/payslip/deduction`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return deduction.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseUpdateDeductionService = Deduction;
+type InputUpdateDeductionService = {
+  query: {
+    deductionId: string;
+  };
+  body: {
+    title: string;
+    value: number;
+  };
+};
+
+export async function UpdateDeductionService(
+  input: InputUpdateDeductionService,
+): Promise<ResponseUpdateDeductionService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const deduction = await axios({
+      method: "PATCH",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/payslip/deduction`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return deduction.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseDeleteDeductionService = { message: string };
+type InputDeleteDeductionService = {
+  deductionId: string;
+};
+
+export async function DeleteDeductionService(
+  input: InputDeleteDeductionService,
+): Promise<ResponseDeleteDeductionService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const deduction = await axios({
+      method: "DELETE",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/payslip/deduction`,
+      params: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return deduction.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
