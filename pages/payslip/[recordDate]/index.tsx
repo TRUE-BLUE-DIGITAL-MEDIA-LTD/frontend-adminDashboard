@@ -23,12 +23,12 @@ function Index({
             className={`${index === 0 ? "break-after-avoid" : "print"} flex  flex-col items-center justify-start gap-5 p-5 font-Poppins`}
             key={payslip.id}
           >
-            <div className="flex w-full justify-between">
+            <div className="flex w-11/12 justify-between">
               <div className="flex w-max flex-col items-start justify-center gap-5">
                 <h1 className="text-4xl font-bold">Payslip</h1>
               </div>
-              <div className="flex w-max flex-col items-start gap-5">
-                <div className="relative h-24  w-40 overflow-hidden">
+              <div className="flex w-max flex-col items-end gap-5">
+                <div className="relative h-24 w-72 overflow-hidden">
                   <Image
                     fill
                     alt="logo"
@@ -36,7 +36,7 @@ function Index({
                     src="https://storage.googleapis.com/storage-oxyclick/public/logoDTST.jpg"
                   />
                 </div>
-                <div>
+                <div className="flex w-max flex-col items-end">
                   <h1 className="text-sm font-bold">บริษัท ดีทีเอสที จำกัด</h1>
                   <h1 className="text-sm font-bold">Tax ID: 0445559000236</h1>
                   <h1 className="text-sm font-normal">
@@ -48,22 +48,22 @@ function Index({
                 </div>
               </div>
             </div>
-            <ul className="mt-5 grid w-11/12 grid-cols-3 border-t-2 border-gray-300 py-5">
-              <li>
-                <h2 className="text-sm font-semibold">Company</h2>
-                <h2 className="font-noraml text-sm">
-                  WKR Recruitment Co., Ltd.
-                </h2>
-              </li>
-              <li>
-                <h2 className="text-sm font-semibold">Start Date</h2>
-                <h2 className="font-noraml text-sm">
-                  {moment(payslip.startDate).format("DD/MM/YYYY")}
-                </h2>
-              </li>
+            <ul className="mt-5 grid w-11/12 grid-cols-2 border-t-2 border-gray-300 py-5">
               <li>
                 <h2 className="text-sm font-semibold">Employee name</h2>
                 <h2 className="font-noraml text-sm">{payslip.name}</h2>
+              </li>
+              <li>
+                <h2 className="text-sm font-semibold">Pay Period</h2>
+                <h2 className="font-noraml text-sm">
+                  {moment(payslip.recordDate)
+                    .startOf("month")
+                    .format("DD MMMM YYYY")}{" "}
+                  -{" "}
+                  {moment(payslip.recordDate)
+                    .endOf("month")
+                    .format("DD MMMM YYYY")}
+                </h2>
               </li>
             </ul>
             <table className="w-11/12 table-auto border-collapse  ">
@@ -121,16 +121,18 @@ function Index({
                   </td>
                   <td className="px-4 py-5 text-lg">
                     <h1 className="flex w-full justify-between">
-                      <span className="font-bold">Total Deductions {"  "}</span>
+                      <span className="font-bold">Net Payment {"  "}</span>
                       {(
-                        payslip.deductions.reduce(
+                        payslip.salary +
+                        payslip.bonus -
+                        (payslip.deductions.reduce(
                           (previousValue, currentValue) => {
                             return previousValue + currentValue.value;
                           },
                           0,
                         ) +
-                        payslip.socialSecurity +
-                        payslip.tax
+                          payslip.socialSecurity +
+                          payslip.tax)
                       ).toLocaleString()}{" "}
                       THB
                     </h1>
