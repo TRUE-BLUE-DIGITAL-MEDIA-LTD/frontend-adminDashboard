@@ -22,7 +22,8 @@ import dynamic from "next/dynamic";
 // import EmailEditor from "react-email-editor";
 import { GetAllCategories } from "../../services/admin/categories";
 import { MdDomainVerification } from "react-icons/md";
-const EmailEditor: any = dynamic(() => import("react-email-editor"), {
+import { EditorRef, EmailEditorProps } from "react-email-editor";
+const EmailEditor = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
 
@@ -40,7 +41,7 @@ interface UpdateLandingPageData {
 }
 
 function Index({ user }: { user: User }) {
-  const emailEditorRef = useRef<UnlayerMethods>();
+  const emailEditorRef = useRef<EditorRef | null>(null);
   const router = useRouter();
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
@@ -108,15 +109,16 @@ function Index({ user }: { user: User }) {
       setIcon(() => landingPage?.data?.icon);
       const json = JSON.parse(landingPage?.data?.json);
 
-      emailEditorRef?.current?.loadDesign(json);
+      emailEditorRef?.current?.editor?.loadDesign(json);
     }
   }, [landingPage.isSuccess, isLoadingEditor]);
 
-  const onReady = (unlayer: UnlayerMethods) => {
-    emailEditorRef.current = unlayer;
+  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
+    emailEditorRef.current = { editor: unlayer };
     unlayer.exportHtml((data) => {
       const { design, html } = data;
     });
+    document.body.style.overflow = "auto";
     setIsLoadingEditor(() => false);
     // unlayer.loadDesign(json);
   };
@@ -135,7 +137,7 @@ function Index({ user }: { user: User }) {
 
   const handleCrateLandingPage = async () => {
     setIsLoading(() => true);
-    emailEditorRef.current?.exportHtml(async (data) => {
+    emailEditorRef.current?.editor?.exportHtml(async (data) => {
       try {
         const { design, html } = data;
         const json = JSON.stringify(design);
@@ -248,7 +250,8 @@ function Index({ user }: { user: User }) {
 
           <EmailEditor
             ref={emailEditorRef}
-            onReady={onReady}
+            onReady={handleOnReadyEmailEditor}
+            projectId={222117}
             style={{ height: "40rem", width: "80%" }}
             options={{ displayMode: "web" }}
           />
