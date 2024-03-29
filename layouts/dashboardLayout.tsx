@@ -37,7 +37,6 @@ export default function DashboardLayout({
   const onBeforeLoad = () => {
     setLoadingChat(() => true);
   };
-
   useEffect(() => {
     if (lastRoute === "") {
       setCurrentMenuIndex(() => 0);
@@ -60,13 +59,15 @@ export default function DashboardLayout({
           <SpinLoading />
         </div>
       )}
-      <TawkMessengerReact
-        onBeforeLoad={onBeforeLoad}
-        onLoad={onLoad}
-        ref={tawkMessengerRef}
-        propertyId={process.env.NEXT_PUBLIC_PROPERTY_ID}
-        widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
-      />
+      {user && (
+        <TawkMessengerReact
+          onBeforeLoad={onBeforeLoad}
+          onLoad={onLoad}
+          ref={tawkMessengerRef}
+          propertyId={process.env.NEXT_PUBLIC_PROPERTY_ID}
+          widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
+        />
+      )}
       <ul
         className={` fixed bottom-0 left-0 right-0 top-0 z-40 m-auto flex 
         h-screen w-screen flex-col gap-5 bg-gray-800 p-10 pt-20 transition
