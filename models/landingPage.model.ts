@@ -20,4 +20,22 @@ export interface LandingPage {
   domainId: string | null;
 }
 
-export type Language = "en" | "es" | "fr" | "de";
+export type Language =
+  | "en"
+  | "es"
+  | "fr"
+  | "de"
+  | "it"
+  | "pt"
+  | "hr"
+  | "de-ch"
+  | "fr-ch"
+  | "it-ch"
+  | "nl"
+  | "fi"
+  | "no"
+  | "sv"
+  | "ro"
+  | "hu"
+  | "pl"
+  | "cs";

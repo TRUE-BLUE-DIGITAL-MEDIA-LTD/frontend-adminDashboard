@@ -423,7 +423,7 @@ function Index({ user }: { user: User }) {
                 value={landingPageData.domainId}
                 helperText="Please select your domain name"
               >
-                {domains?.data?.map((domain) => {
+                {domains.data?.map((domain) => {
                   return (
                     <MenuItem
                       onClick={(e) => {
