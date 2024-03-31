@@ -103,7 +103,7 @@ function PayslipGenerator() {
           <span>slip Generator</span>
         </h1>
       </header>
-      <main className="flex w-80 flex-col items-center justify-start gap-5 py-10 lg:w-[45rem] xl:w-[60rem]  ">
+      <main className="flex w-80 flex-col items-center justify-start gap-5 py-10 lg:w-[45rem] xl:w-[60rem] 2xl:w-[75rem]  ">
         <TextField className="flex flex-col items-start justify-center gap-2">
           <Label className="">Pick Record Date</Label>
           <Calendar
