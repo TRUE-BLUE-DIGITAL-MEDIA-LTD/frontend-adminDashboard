@@ -22,7 +22,8 @@
     "**/*.ts",
     "**/*.tsx",
     "data/languages.ts",
-    "data/tools.js"
+    "data/tools.js",
+    "pages/landingpage/test.tjs"
   ],
   "exclude": ["node_modules"]
 }

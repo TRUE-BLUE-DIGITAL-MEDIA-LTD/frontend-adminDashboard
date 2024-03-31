@@ -121,6 +121,25 @@ function Index({
                   </td>
                   <td className="px-4 py-5 text-lg">
                     <h1 className="flex w-full justify-between">
+                      <span className="font-bold">Total Deductions {"  "}</span>
+                      {(
+                        payslip.deductions.reduce(
+                          (previousValue, currentValue) => {
+                            return previousValue + currentValue.value;
+                          },
+                          0,
+                        ) +
+                        payslip.socialSecurity +
+                        payslip.tax
+                      ).toLocaleString()}{" "}
+                      THB
+                    </h1>
+                  </td>
+                </tr>
+                <tr className="border-2 border-gray-200">
+                  <td className="px-4 py-5 text-lg"></td>
+                  <td className="px-4 py-5 text-lg">
+                    <h1 className="flex w-full justify-between">
                       <span className="font-bold">Net Payment {"  "}</span>
                       {(
                         payslip.salary +
@@ -196,7 +215,7 @@ function Index({
             </span>
           </li>
           <li className="flex flex-col">
-            <span> Total Deduction</span>
+            <span>Total Deduction</span>
             <span className="font-semibold">
               {payslips
                 ?.reduce((acc, payslip) => {
