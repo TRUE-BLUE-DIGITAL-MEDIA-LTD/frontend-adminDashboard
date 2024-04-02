@@ -9,12 +9,16 @@ import { MdOutlineSummarize } from "react-icons/md";
 
 function Index({
   payslips,
+  companySocialSecurity,
+  consultingFee,
 }: {
   payslips: (Payslip & { deductions: Deduction[] })[];
+  companySocialSecurity: string;
+  consultingFee: string;
 }) {
-  useEffect(() => {
-    window.print();
-  }, []);
+  // useEffect(() => {
+  //   window.print();
+  // }, []);
   return (
     <>
       {payslips.map((payslip, index) => {
@@ -226,6 +230,54 @@ function Index({
                 </tr>
               );
             })}
+            <tr>
+              <td className="border-2  border-black px-2 text-center font-semibold">
+                สรุป
+              </td>
+              <td className="border-2 border-black px-2"></td>
+              <td className="border-2 border-black px-2"></td>
+              <td className="border-2 border-black px-2 font-bold text-green-600">
+                {payslips
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.salary;
+                  }, 0)
+                  .toLocaleString()}
+              </td>
+              <td className="border-2 border-black px-2">
+                {payslips
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.socialSecurity;
+                  }, 0)
+                  .toLocaleString()}
+              </td>
+              <td className="border-2 border-black px-2">
+                {payslips
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.bonus;
+                  }, 0)
+                  .toLocaleString()}
+              </td>
+              <td className="border-2 border-black px-2">
+                {payslips
+                  ?.reduce((acc, payslip) => {
+                    return acc + payslip.tax;
+                  }, 0)
+                  .toLocaleString()}
+              </td>
+              <td className="border-2 border-black px-2">
+                {payslips
+                  ?.reduce((acc, payslip) => {
+                    return (
+                      acc +
+                      payslip.deductions.reduce((acc, deduction) => {
+                        return acc + deduction.value;
+                      }, 0)
+                    );
+                  }, 0)
+                  .toLocaleString()}
+              </td>
+              <td className="border-2 border-black px-2"></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -234,19 +286,19 @@ function Index({
           Summary <MdOutlineSummarize />{" "}
           {moment(payslips[0].recordDate).format("MMMM YYYY")}
         </h2>
-        <ul className="mt-5 grid w-full grid-cols-4 gap-5">
-          <li className="flex flex-col">
-            <span>Total Salary</span>
+        <ul className="mt-5 grid w-full grid-cols-1 gap-5">
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">รายการ</span>
+            <span className="font-semibold">ยอดเงิน</span>
+          </li>
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">ค่าประกันสังคมจากบริษัท</span>
             <span className="font-semibold">
-              {payslips
-                ?.reduce((acc, payslip) => {
-                  return acc + payslip.salary;
-                }, 0)
-                .toLocaleString()}
+              {Number(companySocialSecurity).toLocaleString()}
             </span>
           </li>
-          <li className="flex flex-col">
-            <span>Total Social Security</span>
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">ประกันสังคมพนักงาน</span>
             <span className="font-semibold">
               {payslips
                 ?.reduce((acc, payslip) => {
@@ -255,18 +307,14 @@ function Index({
                 .toLocaleString()}
             </span>
           </li>
-          <li className="flex flex-col">
-            <span>Total Bonus</span>
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">ค่าปรึกษาบัญชี</span>
             <span className="font-semibold">
-              {payslips
-                ?.reduce((acc, payslip) => {
-                  return acc + payslip.bonus;
-                }, 0)
-                .toLocaleString()}
+              {Number(consultingFee).toLocaleString()}
             </span>
           </li>
-          <li className="flex flex-col">
-            <span> Total Tax</span>
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">Total Tax</span>
             <span className="font-semibold">
               {payslips
                 ?.reduce((acc, payslip) => {
@@ -275,19 +323,21 @@ function Index({
                 .toLocaleString()}
             </span>
           </li>
-          <li className="flex flex-col">
-            <span>Total Deduction</span>
-            <span className="font-semibold">
-              {payslips
-                ?.reduce((acc, payslip) => {
-                  return (
-                    acc +
-                    payslip.deductions.reduce((acc, deduction) => {
-                      return acc + deduction.value;
-                    }, 0)
-                  );
+          <li className="grid w-full grid-cols-2">
+            <span className="text-xl">
+              Total To Transfer - ยอดรวมที่ต้องโอน
+            </span>
+            <span className="text-xl font-semibold">
+              {(
+                Number(companySocialSecurity) +
+                payslips?.reduce((acc, payslip) => {
+                  return acc + payslip.socialSecurity;
+                }, 0) +
+                Number(consultingFee) +
+                payslips?.reduce((acc, payslip) => {
+                  return acc + payslip.tax;
                 }, 0)
-                .toLocaleString()}
+              ).toLocaleString()}
             </span>
           </li>
         </ul>
@@ -304,6 +354,8 @@ export const getServerSideProps: GetServerSideProps = async (
   const cookies = parseCookies(ctx);
   const accessToken = cookies.access_token;
   const recordDate = ctx.query.recordDate;
+  const { companySocialSecurity, consultingFee } = ctx.query;
+
   const payslips = await GetAllPayslipByMonthsService({
     recordDate: recordDate as string,
     accessToken: accessToken,
@@ -311,6 +363,8 @@ export const getServerSideProps: GetServerSideProps = async (
   return {
     props: {
       payslips,
+      companySocialSecurity,
+      consultingFee,
     },
   };
 };
