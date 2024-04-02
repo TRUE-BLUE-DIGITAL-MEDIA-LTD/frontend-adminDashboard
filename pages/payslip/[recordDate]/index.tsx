@@ -168,6 +168,67 @@ function Index({
           </div>
         );
       })}
+
+      <div className="print flex w-full flex-col items-center gap-5 ">
+        <table className="mt-5 w-96 table-auto border-collapse border-black ">
+          <thead>
+            <tr className=" border-2 border-black bg-gray-200 drop-shadow-md">
+              <th className="border-2 border-black px-2">No.</th>
+              <th className="sticky left-0 border-2 border-black bg-gray-200 px-2">
+                Name / Description
+              </th>
+              <th className="border-2 border-black px-2">Start Date</th>
+              <th className="border-2 border-black px-2">Salary (THB)</th>
+              <th className="border-2 border-black px-2">Social Security</th>
+              <th className="border-2 border-black px-2">Bonus /Allowance</th>
+              <th className="border-2 border-black px-2">Tax</th>
+              <th className="border-2 border-black px-2">Deduction</th>
+              <th className="border-2 border-black px-2">Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payslips?.map((payslip, index) => {
+              return (
+                <tr key={index} className="">
+                  <td className="border-2  border-black px-2 text-center font-semibold">
+                    {index + 1}
+                  </td>
+                  <td className="border-2 border-black  px-2 ">
+                    {payslip.name}
+                  </td>
+                  <td className="border-2 border-black px-2">
+                    {moment(payslip.startDate).format("DD/MM/YYYY")}
+                  </td>
+                  <td className="border-2 border-black px-2 font-bold text-green-600">
+                    {payslip.salary.toLocaleString()}
+                  </td>
+                  <td className="border-2 border-black px-2">
+                    {payslip.socialSecurity.toLocaleString()}
+                  </td>
+                  <td className="border-2 border-black px-2">
+                    {payslip.bonus.toLocaleString()}
+                  </td>
+                  <td className="border-2 border-black px-2">
+                    {payslip.tax.toLocaleString()}
+                  </td>
+                  <td className="border-2 border-black px-2">
+                    {payslip.deductions.map((deduction, index) => {
+                      return (
+                        <div key={index}>
+                          {deduction.title} : {deduction.value.toLocaleString()}
+                        </div>
+                      );
+                    })}
+                  </td>
+                  <td className="max-w-96 break-words border-2 border-black px-2">
+                    {payslip.note}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       <div className="print w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
         <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-black">
           Summary <MdOutlineSummarize />{" "}
