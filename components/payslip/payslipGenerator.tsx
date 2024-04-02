@@ -35,6 +35,10 @@ function PayslipGenerator() {
     const middleOfMonth = new Date(year, month, 15);
     return middleOfMonth;
   });
+  const [overallData, setOverallData] = useState<{
+    companySocialSecurity?: string;
+    consultingFee?: string;
+  }>();
   const [selectPayslip, setSelectPayslip] = useState<
     Payslip & { deductions: Deduction[] }
   >();
@@ -45,6 +49,14 @@ function PayslipGenerator() {
         recordDate: moment(recordDate).toISOString() as string,
       }),
   });
+
+  const handleChangePayslipData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { name, value, type } = e.target;
+    setOverallData((prev) => ({
+      ...prev,
+      [name]: Number(value.replace(/\D/g, "")).toLocaleString(),
+    }));
+  };
 
   const handleDeletePayslip = async ({
     payslipId,
@@ -132,14 +144,66 @@ function PayslipGenerator() {
         )}
 
         <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
-          <Link
-            href={`/payslip/${moment(recordDate).toISOString()}`}
-            className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+          <Form>
+            {!overallData?.companySocialSecurity ||
+            !overallData?.consultingFee ? (
+              <Button
+                type="submit"
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
-          >
-            <FaPrint />
-            Generate Payslip
-          </Link>
+              >
+                <FaPrint />
+                Generate Payslip (NOT READY)
+              </Button>
+            ) : (
+              <Link
+                role="button"
+                href={`/payslip/${moment(recordDate).toISOString()}?consultingFee=${overallData?.consultingFee && parseInt(overallData?.consultingFee.replace(/,/g, ""), 10)}&companySocialSecurity=${overallData?.companySocialSecurity && parseInt(overallData?.companySocialSecurity.replace(/,/g, ""), 10)}`}
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+              >
+                <FaPrint />
+                Generate Payslip
+              </Link>
+            )}
+            <div className="flex w-full  gap-5">
+              <TextField
+                isRequired
+                className="flex flex-col"
+                aria-label="consultingFee"
+              >
+                <Label>ค่าปรึกษาบัญชี</Label>
+                <Input
+                  placeholder="consultingFee"
+                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  type="text"
+                  value={overallData?.consultingFee}
+                  onChange={handleChangePayslipData}
+                  inputMode="numeric"
+                  name="consultingFee"
+                />
+                <FieldError className="text-xs text-red-700" />
+              </TextField>
+              <TextField
+                isRequired
+                className="flex flex-col"
+                aria-label="companySocialSecurity"
+              >
+                <Label>ค่าประกันสังคมจากบริษัท</Label>
+                <Input
+                  placeholder="companySocialSecurity"
+                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  type="text"
+                  value={overallData?.companySocialSecurity}
+                  onChange={handleChangePayslipData}
+                  inputMode="numeric"
+                  name="companySocialSecurity"
+                />
+                <FieldError className="text-xs text-red-700" />
+              </TextField>
+            </div>
+          </Form>
+
           <div className="h-96 w-full overflow-auto ">
             <table className="mt-5 w-max table-auto border-collapse border-black ">
               <thead>
