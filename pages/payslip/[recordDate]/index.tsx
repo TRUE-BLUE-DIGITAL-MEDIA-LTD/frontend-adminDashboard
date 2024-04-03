@@ -16,9 +16,9 @@ function Index({
   companySocialSecurity: string;
   consultingFee: string;
 }) {
-  // useEffect(() => {
-  //   window.print();
-  // }, []);
+  useEffect(() => {
+    window.print();
+  }, []);
   return (
     <>
       {payslips.map((payslip, index) => {
