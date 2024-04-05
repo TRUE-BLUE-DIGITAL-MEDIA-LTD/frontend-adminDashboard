@@ -25,9 +25,12 @@ import { Deduction, Payslip } from "../../models";
 import UpdatePayslip from "../forms/payslips/updatePayslip";
 import { FaPrint } from "react-icons/fa6";
 import Link from "next/link";
+import { DownloadExcelPayslipService } from "../../services/excel/payslip";
+import { SiMicrosoftexcel } from "react-icons/si";
 
 function PayslipGenerator() {
   const toast = useRef<Toast>(null);
+  const [loadingExcel, setLoadingExcel] = useState(false);
   const [recordDate, setRecordDate] = useState<Nullable<Date | null>>(() => {
     const cuurentDate = new Date();
     const year = cuurentDate.getFullYear();
@@ -106,6 +109,31 @@ function PayslipGenerator() {
     }
   };
 
+  const handleDownloadExcelPayslip = async () => {
+    try {
+      setLoadingExcel(true);
+      await DownloadExcelPayslipService({
+        recordDate: moment(recordDate).toISOString(),
+        companySocialSecurity: overallData?.companySocialSecurity
+          ? parseInt(overallData?.companySocialSecurity.replace(/,/g, ""), 10)
+          : 0,
+        consultingFee: overallData?.consultingFee
+          ? parseInt(overallData?.consultingFee.replace(/,/g, ""), 10)
+          : 0,
+      });
+      setLoadingExcel(false);
+    } catch (err: any) {
+      setLoadingExcel(false);
+      console.log(err);
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: err.message,
+        life: 3000,
+      });
+    }
+  };
+
   return (
     <div className="flex w-full flex-col items-center ">
       <Toast ref={toast} />
@@ -147,25 +175,57 @@ function PayslipGenerator() {
           <Form>
             {!overallData?.companySocialSecurity ||
             !overallData?.consultingFee ? (
-              <Button
-                type="submit"
-                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+              <div className="flex w-full gap-5">
+                <Button
+                  type="submit"
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
-              >
-                <FaPrint />
-                Generate Payslip (NOT READY)
-              </Button>
+                >
+                  <FaPrint />
+                  Generate Payslip (NOT READY)
+                </Button>
+
+                <Button
+                  type="submit"
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+                >
+                  <SiMicrosoftexcel />
+                  Download Excel (NOT READY)
+                </Button>
+              </div>
             ) : (
-              <Link
-                role="button"
-                href={`/payslip/${moment(recordDate).toISOString()}?consultingFee=${overallData?.consultingFee && parseInt(overallData?.consultingFee.replace(/,/g, ""), 10)}&companySocialSecurity=${overallData?.companySocialSecurity && parseInt(overallData?.companySocialSecurity.replace(/,/g, ""), 10)}`}
-                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+              <div className="flex w-full gap-5">
+                <Link
+                  role="button"
+                  href={`/payslip/${moment(recordDate).toISOString()}?consultingFee=${overallData?.consultingFee && parseInt(overallData?.consultingFee.replace(/,/g, ""), 10)}&companySocialSecurity=${overallData?.companySocialSecurity && parseInt(overallData?.companySocialSecurity.replace(/,/g, ""), 10)}`}
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
-              >
-                <FaPrint />
-                Generate Payslip
-              </Link>
+                >
+                  <FaPrint />
+                  Generate Payslip
+                </Link>
+                {loadingExcel ? (
+                  <div
+                    className="my-5 flex w-max animate-pulse items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+                  >
+                    <SiMicrosoftexcel />
+                    loading
+                  </div>
+                ) : (
+                  <Button
+                    onPress={handleDownloadExcelPayslip}
+                    className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+                  >
+                    <SiMicrosoftexcel />
+                    Download Excel
+                  </Button>
+                )}
+              </div>
             )}
+
             <div className="flex w-full  gap-5">
               <TextField
                 isRequired
