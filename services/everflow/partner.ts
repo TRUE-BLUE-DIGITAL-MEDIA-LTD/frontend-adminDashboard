@@ -18,7 +18,7 @@ export interface TableEntry {
 }
 
 interface Column {
-  column_type: string;
+  column_type: "affiliate" | "offer" | "country" | "sub1";
   id: string;
   label: string;
 }
