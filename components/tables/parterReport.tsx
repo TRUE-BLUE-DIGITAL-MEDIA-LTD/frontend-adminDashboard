@@ -9,17 +9,17 @@ import {
   GetParterPerfomacesByDayByDayService,
   GetSummaryParterReportService,
   TableEntry,
+  column_type,
 } from "../../services/everflow/partner";
-import { FaArrowAltCircleDown } from "react-icons/fa";
 import { LuArrowDownUp } from "react-icons/lu";
 import { User } from "../../models";
 import SummaryReport from "./summaryReport";
 import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
 import BonusCaluator from "./bonusCaluator";
-import { bonusRate } from "../../data/bonusRate";
 import { CalculateBonus } from "../../utils/useCaluateBonus";
-import { a } from "react-spring";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { CiCalendarDate } from "react-icons/ci";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -42,15 +42,34 @@ const menuTables = [
   { title: "Profit", sort: "up" || "down", admin: true },
   { title: "Margin", sort: "up" || "down", admin: true },
 ];
+const columns = [
+  { name: "Partner", code: "affiliate" },
+  { name: "Offer", code: "offer" },
+  { name: "Country", code: "country" },
+  { name: "Sub1", code: "sub1" },
+];
 function ParterReport({ user }: { user: User }) {
-  const [partnerBonus, setPartnerBonus] = useState<
-    {
-      id: string;
-      bonus: 0;
-    }[]
-  >();
   const [activePartnerDropdowns, setActivePartnerDropdowns] =
     useState<{ key: string; active: boolean }[]>();
+  const [selectColumns, setSelectColumns] = useState<{
+    parent: {
+      name: string;
+      code: column_type;
+    };
+    child: {
+      name: string;
+      code: column_type;
+    };
+  }>({
+    parent: {
+      name: "Partner",
+      code: "affiliate",
+    },
+    child: {
+      name: "Offer",
+      code: "offer",
+    },
+  });
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const yesterday = moment().subtract(1, "day").format("YYYY-MM-DD");
@@ -65,11 +84,24 @@ function ParterReport({ user }: { user: User }) {
   });
 
   const paterPerfomaces = useQuery({
-    queryKey: ["partnerPerfomaces", dates],
+    queryKey: [
+      "partnerPerfomaces",
+      {
+        date: dates,
+        columns: {
+          parent: selectColumns.parent?.code,
+          child: selectColumns.child?.code,
+        },
+      },
+    ],
     queryFn: () =>
       GetParterPerfomacesByDate({
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
+        columns: [
+          { column: selectColumns.parent?.code },
+          { column: selectColumns.child?.code },
+        ],
       }).then((data) => {
         const group = data.table.reduce<{
           [key: string]: {
@@ -211,6 +243,7 @@ function ParterReport({ user }: { user: User }) {
       GetParterPerfomacesByDayByDayService({
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
+        columns: [{ column: "affiliate" }],
       }).then((data) => {
         const allBonus = data.map((table) => {
           return table.table.map((item) => {
@@ -248,29 +281,79 @@ function ParterReport({ user }: { user: User }) {
       GetSummaryParterReportService({
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
+        columns: [{ column: "affiliate" }],
       }),
   });
 
-  const handleSort = () => {};
   return (
     <div className="flex w-full flex-col items-center gap-5 py-10 pt-20">
       <BonusCaluator
         summary={summary}
         partnerPerformanceDayByDay={partnerPerformanceDayByDay}
       />
-      <div
-        className="mb-5 flex flex-col items-center  justify-center  gap-4 p-5
-         text-base font-semibold md:flex-row"
-      >
-        <label>Pick Up Date</label>
-        <Calendar
-          className="w-60 xl:w-96"
-          value={dates}
-          onChange={(e) => {
-            setDates(e.value);
-          }}
-          selectionMode="range"
-        />
+      <div className="flex w-10/12  items-end justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100">
+        <div
+          className=" flex flex-col items-start  justify-center  gap-1 
+         text-base font-semibold "
+        >
+          <label className="flex  items-center justify-center gap-1 text-base text-black">
+            Parent
+          </label>
+          <Dropdown
+            value={selectColumns.parent}
+            onChange={(e) =>
+              setSelectColumns((prev) => {
+                return {
+                  ...prev,
+                  parent: e.value,
+                };
+              })
+            }
+            options={columns}
+            optionLabel="name"
+            placeholder="Select a Parent"
+            className="md:w-14rem w-full"
+          />
+        </div>
+        <div
+          className=" flex flex-col items-start  justify-center  gap-1 
+         text-base font-semibold "
+        >
+          <label className="flex  items-center justify-center gap-1 text-base text-black">
+            Child
+          </label>
+          <Dropdown
+            value={selectColumns.child}
+            onChange={(e) =>
+              setSelectColumns((prev) => {
+                return {
+                  ...prev,
+                  child: e.value,
+                };
+              })
+            }
+            options={columns}
+            optionLabel="name"
+            placeholder="Select a Child"
+            className="md:w-14rem w-40"
+          />
+        </div>
+        <div
+          className=" flex flex-col items-start  justify-center  gap-1 
+         text-base font-semibold "
+        >
+          <label className="flex  items-center justify-center gap-1 text-base text-black">
+            Pick Up Date <CiCalendarDate />
+          </label>
+          <Calendar
+            className="w-60 xl:w-96"
+            value={dates}
+            onChange={(e) => {
+              setDates(e.value);
+            }}
+            selectionMode="range"
+          />
+        </div>
       </div>
       {user.role === "admin" && <SummaryReport user={user} summary={summary} />}
       {paterPerfomaces.error && (
@@ -310,7 +393,7 @@ function ParterReport({ user }: { user: User }) {
                         "left-0 bg-white md:sticky "
                       }  ${
                         menu.title === "Affilate Name" &&
-                        "sticky left-0 bg-white md:left-[6.9rem] "
+                        "left-0 bg-white md:sticky md:left-[6.9rem] "
                       }  cursor-pointer p-2 transition
                        duration-100 hover:scale-105 active:scale-110 `}
                       key={index}

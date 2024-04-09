@@ -5,6 +5,9 @@ import { parseCookies } from "nookies";
 type RequestGetParterPerfomacesByDate = {
   startDate: Date;
   endDate: Date;
+  columns: {
+    column: column_type;
+  }[];
 };
 export type ResponseRequestGetParterPerfomacesByDate = {
   table: TableEntry[];
@@ -18,10 +21,12 @@ export interface TableEntry {
 }
 
 interface Column {
-  column_type: "affiliate" | "offer" | "country" | "sub1";
+  column_type: column_type;
   id: string;
   label: string;
 }
+
+export type column_type = "affiliate" | "offer" | "country" | "sub1";
 
 export interface Reporting {
   imp: number;
@@ -71,6 +76,7 @@ export async function GetSummaryParterReportService(
         params: {
           startDate: moment(input.startDate).format("YYYY-MM-DD"),
           endDate: moment(input.endDate).format("YYYY-MM-DD"),
+          columns: input.columns,
         },
         headers: {
           Authorization: "Bearer " + access_token,
@@ -94,18 +100,18 @@ export async function GetParterPerfomacesByDate(
     }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const partner = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/by-date`,
-      {
-        params: {
-          startDate: moment(input.startDate).format("YYYY-MM-DD"),
-          endDate: moment(input.endDate).format("YYYY-MM-DD"),
-        },
-        headers: {
-          Authorization: "Bearer " + access_token,
-        },
+    const partner = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/by-date`,
+      data: {
+        startDate: moment(input.startDate).format("YYYY-MM-DD"),
+        endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        columns: input.columns,
       },
-    );
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
 
     return partner.data;
   } catch (err: any) {
@@ -123,18 +129,18 @@ export async function GetParterPerfomacesByDayByDayService(
     }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const partner = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/day-by-day`,
-      {
-        params: {
-          startDate: moment(input.startDate).format("YYYY-MM-DD"),
-          endDate: moment(input.endDate).format("YYYY-MM-DD"),
-        },
-        headers: {
-          Authorization: "Bearer " + access_token,
-        },
+    const partner = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-all/day-by-day`,
+      data: {
+        startDate: moment(input.startDate).format("YYYY-MM-DD"),
+        endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        columns: input.columns,
       },
-    );
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
 
     return partner.data;
   } catch (err: any) {

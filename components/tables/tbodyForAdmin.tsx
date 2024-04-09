@@ -91,7 +91,7 @@ function TbodyForAdmin({
         )}
       </td>
       <td
-        className={`sticky left-0 z-10   px-2 text-left text-xs md:left-[6.9rem]  ${
+        className={`left-0 z-10 px-2   text-left text-xs md:sticky md:left-[6.9rem]  ${
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
@@ -110,7 +110,7 @@ function TbodyForAdmin({
       <td className="px-2">{item.reporting.total_cv.toLocaleString()}</td>
       <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
 
-      <td className="px-2">{item.reporting.cvr}%</td>
+      <td className="px-2">{item.reporting.cvr.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.cpa.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpc.toLocaleString()}</td>
