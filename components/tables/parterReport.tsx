@@ -1,6 +1,6 @@
 import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
@@ -238,6 +238,16 @@ function ParterReport({ user }: { user: User }) {
         return Object.entries(group);
       }),
   });
+
+  useEffect(() => {
+    if (paterPerfomaces.data) {
+      setActivePartnerDropdowns(() => {
+        return paterPerfomaces?.data?.map((list, key) => {
+          return { key: list[0], active: false };
+        });
+      });
+    }
+  }, [paterPerfomaces.data]);
 
   const partnerPerformanceDayByDay = useQuery({
     queryKey: ["partnerBonuse", dates],
