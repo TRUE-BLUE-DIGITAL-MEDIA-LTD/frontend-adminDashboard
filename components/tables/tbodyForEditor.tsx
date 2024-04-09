@@ -48,7 +48,6 @@ function TbodyForEditor({
   const bonos = partnerPerformanceDayByDay.data?.partner.find(
     (list) => list.id === item.columns[0].id,
   );
-
   return (
     <tr
       className={`h-10 w-full text-sm ${activePartnerDropdowns && "font-bold"}  transition hover:bg-icon-color ${
@@ -91,7 +90,11 @@ function TbodyForEditor({
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
-        {activePartnerDropdowns ? item.columns[0].label : item.columns[1].label}
+        {activePartnerDropdowns?.find(
+          (list) => list.key === item.columns[0].label,
+        )?.active
+          ? item.columns[0].label
+          : item.columns[1].label}
       </td>
 
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
