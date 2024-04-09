@@ -110,8 +110,10 @@ function ParterReport({ user }: { user: User }) {
           };
         }>((acc, item) => {
           // Find the affiliate column in the current item
+          const firstColumn = item.columns[0].column_type;
+
           const affiliateColumn = item.columns.find(
-            (column) => column.column_type === "affiliate",
+            (column) => column.column_type === firstColumn,
           );
 
           // Check if the affiliateColumn exists and if the affiliate label is in the accumulator
@@ -303,6 +305,11 @@ function ParterReport({ user }: { user: User }) {
             value={selectColumns.parent}
             onChange={(e) =>
               setSelectColumns((prev) => {
+                if (prev.child.code === e.value.code) {
+                  return {
+                    ...prev,
+                  };
+                }
                 return {
                   ...prev,
                   parent: e.value,
@@ -326,6 +333,11 @@ function ParterReport({ user }: { user: User }) {
             value={selectColumns.child}
             onChange={(e) =>
               setSelectColumns((prev) => {
+                if (prev.parent.code === e.value.code) {
+                  return {
+                    ...prev,
+                  };
+                }
                 return {
                   ...prev,
                   child: e.value,
