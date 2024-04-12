@@ -303,9 +303,9 @@ function ParterReport({ user }: { user: User }) {
         summary={summary}
         partnerPerformanceDayByDay={partnerPerformanceDayByDay}
       />
-      <div className="flex w-10/12  items-end justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100">
+      <div className="flex w-10/12 flex-col items-end  justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100 md:flex-row">
         <div
-          className=" flex flex-col items-start  justify-center  gap-1 
+          className=" md:w-70 flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
         >
           <label className="flex  items-center justify-center gap-1 text-base text-black">
@@ -329,11 +329,11 @@ function ParterReport({ user }: { user: User }) {
             options={columns}
             optionLabel="name"
             placeholder="Select a Parent"
-            className="md:w-14rem w-full"
+            className="w-full "
           />
         </div>
         <div
-          className=" flex flex-col items-start  justify-center  gap-1 
+          className=" flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
         >
           <label className="flex  items-center justify-center gap-1 text-base text-black">
@@ -357,18 +357,18 @@ function ParterReport({ user }: { user: User }) {
             options={columns}
             optionLabel="name"
             placeholder="Select a Child"
-            className="md:w-14rem w-40"
+            className="w-full"
           />
         </div>
         <div
-          className=" flex flex-col items-start  justify-center  gap-1 
+          className=" flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
         >
           <label className="flex  items-center justify-center gap-1 text-base text-black">
             Pick Up Date <CiCalendarDate />
           </label>
           <Calendar
-            className="w-60 xl:w-96"
+            className="w-full xl:w-96"
             value={dates}
             onChange={(e) => {
               setDates(e.value);
@@ -415,7 +415,7 @@ function ParterReport({ user }: { user: User }) {
                         "left-0 bg-white md:sticky "
                       }  ${
                         menu.title === "Affilate Name" &&
-                        "left-0 bg-white md:sticky md:left-[6.9rem] "
+                        "sticky left-0 bg-white   "
                       }  cursor-pointer p-2 transition
                        duration-100 hover:scale-105 active:scale-110 `}
                       key={index}
