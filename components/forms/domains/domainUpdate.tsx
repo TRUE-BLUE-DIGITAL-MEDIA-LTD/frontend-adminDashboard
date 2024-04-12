@@ -12,6 +12,8 @@ import Swal from "sweetalert2";
 import { Skeleton, TextField } from "@mui/material";
 import Link from "next/link";
 import SpinLoading from "../../loadings/spinLoading";
+import { MdRemoveCircle } from "react-icons/md";
+import { RemoveDomainNameFromLandingPageService } from "../../../services/admin/landingPage";
 
 interface DomainUpdate {
   domain: Domain;
@@ -62,7 +64,7 @@ function DomainUpdate({
     });
   }, [domainUpdate.data]);
 
-  const handleCreateDomain = async () => {
+  const handleUpdateDomain = async () => {
     try {
       setIsLoading(() => true);
       await UpdateDomainService({
@@ -80,6 +82,41 @@ function DomainUpdate({
       console.log(err);
       Swal.fire("error!", err.message?.toString(), "error");
     }
+  };
+
+  //handle remove domain name from landing page
+  const handleRemoveDomainName = ({
+    landingPageId,
+  }: {
+    landingPageId: string;
+  }) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "To Remove This Landing Page From The Domain",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          Swal.isLoading();
+          await RemoveDomainNameFromLandingPageService({
+            landingPageId: landingPageId,
+          });
+          await domainUpdate.refetch();
+          Swal.fire(
+            "Deleted!",
+            "The landing page has been unlinked to this domain",
+            "success",
+          );
+        } catch (err: any) {
+          console.log(err);
+          Swal.fire("error!", err.message?.toString(), "error");
+        }
+      }
+    });
   };
   return (
     <div
@@ -179,6 +216,19 @@ function DomainUpdate({
                         label="Probability"
                         id="fullWidth"
                       />
+                      <button
+                        onClick={() =>
+                          handleRemoveDomainName({
+                            landingPageId: landingPage.id,
+                          })
+                        }
+                        className="flex items-center justify-center 
+                      gap-2 rounded-lg bg-red-300  px-5 py-1 text-sm
+                       text-red-500 drop-shadow-md transition duration-150 hover:bg-red-500 hover:text-white active:scale-105"
+                      >
+                        Remove LandingPage
+                        <MdRemoveCircle />
+                      </button>
                     </li>
                   );
                 })}
@@ -191,7 +241,7 @@ function DomainUpdate({
           <SpinLoading />
         ) : isVaildDomain ? (
           <button
-            onClick={handleCreateDomain}
+            onClick={handleUpdateDomain}
             className="rounded-full bg-blue-500 px-5 py-1 text-lg font-normal text-white transition
      duration-150 hover:bg-blue-700 active:scale-110"
           >
