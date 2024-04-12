@@ -105,12 +105,16 @@ interface InputGetAllLandingPageService {
     categoryId?: string;
     domainId?: string;
     language?: Language | string;
+    searchField?: string;
   };
 }
 export async function GetAllLandingPageService(
   input: InputGetAllLandingPageService,
 ): Promise<ResponseGetAllLandingPageService> {
   try {
+    if (input.query?.searchField === "" || null || undefined) {
+      delete input.query?.searchField;
+    }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const landingPage = await axios.get(

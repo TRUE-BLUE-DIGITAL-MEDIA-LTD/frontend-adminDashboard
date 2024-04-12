@@ -22,6 +22,8 @@ import SpinLoading from "../../components/loadings/spinLoading";
 import { BiCopyAlt, BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { languages } from "../../data/languages";
+import { Input, SearchField } from "react-aria-components";
+import { IoSearchCircleSharp } from "react-icons/io5";
 
 interface handleRemoveDomainNameParams {
   landingPageId: string;
@@ -36,19 +38,20 @@ export default function Home({ user }: { user: User }) {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
+  const [searchField, setSearchField] = useState<string>("");
   const landingPages = useQuery({
-    queryKey: ["landingPages", page],
+    queryKey: [
+      "landingPages",
+      { page: page, query: { ...router.query, searchField: searchField } },
+    ],
     queryFn: () =>
-      GetAllLandingPageService({ page: page, query: router.query }),
+      GetAllLandingPageService({
+        page: page,
+        query: { ...router.query, searchField: searchField },
+      }),
     placeholderData: keepPreviousData,
   });
 
-  useEffect(() => {
-    if (router.isReady) {
-      landingPages.refetch();
-    }
-  }, [router.isReady]);
   // handle delete landingpage
   const handleDeleteLandingPage = async ({
     landingPageId,
@@ -150,6 +153,19 @@ export default function Home({ user }: { user: User }) {
           >
             Create
           </Link>
+          <SearchField
+            value={searchField}
+            onChange={(e) => {
+              setSearchField(() => e);
+            }}
+            className="relative mt-10 flex w-96 flex-col"
+          >
+            <Input
+              placeholder="Search Landing Page Name"
+              className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+            />
+            <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+          </SearchField>
         </header>
         <main className=" mt-5 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
