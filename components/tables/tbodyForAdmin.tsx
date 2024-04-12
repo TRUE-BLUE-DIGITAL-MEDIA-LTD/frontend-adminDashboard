@@ -60,7 +60,7 @@ function TbodyForAdmin({
       }`}
     >
       <td
-        className={`left-0 z-10 px-2 text-end md:sticky  ${
+        className={`left-0 z-10 max-w-60 truncate px-2 text-end md:sticky  ${
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
@@ -91,7 +91,7 @@ function TbodyForAdmin({
         )}
       </td>
       <td
-        className={`left-0 z-10 px-2   text-left text-xs md:sticky md:left-[6.9rem]  ${
+        className={`sticky left-0 z-10 max-w-40 truncate px-2 text-left    text-xs md:w-max md:max-w-max  ${
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
