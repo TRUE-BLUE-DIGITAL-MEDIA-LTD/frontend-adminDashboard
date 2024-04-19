@@ -6,3 +6,4 @@ export * from "./messageStatus.model";
 export * from "./unlayerMethods.model";
 export * from "./category.model";
 export * from "./payslip.model";
+export * from "./partner.model";

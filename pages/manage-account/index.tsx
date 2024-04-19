@@ -153,7 +153,7 @@ function Index({ user }: { user: User }) {
             </div>
           </header>
           <div className=" h-96 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
-            <table className="w-max table-auto border-collapse ">
+            <table className="w-max table-auto ">
               <thead className="sticky top-0   z-20 bg-gray-200">
                 <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
                   <th className="w-20">Photo</th>
@@ -166,90 +166,106 @@ function Index({ user }: { user: User }) {
                 </tr>
               </thead>
               <tbody>
-                {accounts?.data?.accounts?.map((account) => {
-                  const createAt = new Date(account?.createAt);
-                  const formattedDatecreateAt = createAt.toLocaleDateString(
-                    "en-US",
-                    {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    },
-                  );
-                  return (
-                    <tr className="" key={account.id}>
-                      <td className="relative  h-20 w-10 border-4 border-transparent ">
-                        <Image
-                          src={account.image}
-                          fill
-                          alt="user account profile"
-                          className="object-contain"
-                        />
-                      </td>
-                      <td className="  truncate border-4 border-transparent font-semibold text-black">
-                        {account.email}
-                      </td>
-                      <td className=" border-4 border-transparent">
-                        {account.role}
-                      </td>
-                      <td className=" border-4 border-transparent ">
-                        {formattedDatecreateAt}
-                      </td>
-                      <td className=" border-4 border-transparent">
-                        <button
-                          onClick={() =>
-                            handleSignInAsAnotherUser({ email: account.email })
-                          }
-                          className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
+                {accounts.isLoading
+                  ? [...Array(5)].map((_, index) => (
+                      <tr key={index}>
+                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
+                        <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
+                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
+                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-50 "></td>
+                        <td className="h-12 w-96 animate-pulse border-4 border-transparent bg-gray-300 "></td>
+                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
+                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-200 "></td>
+                      </tr>
+                    ))
+                  : accounts?.data?.accounts?.map((account) => {
+                      const createAt = new Date(account?.createAt);
+                      const formattedDatecreateAt = createAt.toLocaleDateString(
+                        "en-US",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        },
+                      );
+                      return (
+                        <tr key={account.id}>
+                          <td className="">
+                            <div className="relative h-10  w-full overflow-hidden border-4 border-transparent ">
+                              <Image
+                                src={account.image}
+                                fill
+                                alt="user account profile"
+                                className="object-contain"
+                              />
+                            </div>
+                          </td>
+                          <td className="  truncate border-4 border-transparent font-semibold text-black">
+                            {account.email}
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            {account.role}
+                          </td>
+                          <td className=" border-4 border-transparent ">
+                            {formattedDatecreateAt}
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            <button
+                              onClick={() =>
+                                handleSignInAsAnotherUser({
+                                  email: account.email,
+                                })
+                              }
+                              className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
                    ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
-                        >
-                          <FaUser />
-                          sign in
-                        </button>
-                      </td>
-                      <td className=" border-4 border-transparent">
-                        <button
-                          onClick={() => {
-                            setSelectAccount(() => account);
-                            setTriggerResetPassword(() => true);
-                            document.body.style.overflow = "hidden";
-                          }}
-                          className=" w-full rounded-xl bg-red-600 p-2 text-white
+                            >
+                              <FaUser />
+                              sign in
+                            </button>
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            <button
+                              onClick={() => {
+                                setSelectAccount(() => account);
+                                setTriggerResetPassword(() => true);
+                                document.body.style.overflow = "hidden";
+                              }}
+                              className=" w-full rounded-xl bg-red-600 p-2 text-white
                    ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-red-700 active:ring-2 active:drop-shadow-sm"
-                        >
-                          RESET
-                        </button>
-                      </td>
-                      <td className="  gap-2 border-4 border-transparent">
-                        <button
-                          onClick={() => {
-                            setSelectAccount(() => account);
-                            setTriggerEditAccount(() => true);
-                            document.body.style.overflow = "hidden";
-                          }}
-                          className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                        >
-                          <BiSolidMessageSquareEdit />
-                        </button>
+                            >
+                              RESET
+                            </button>
+                          </td>
+                          <td className="  gap-2 border-4 border-transparent">
+                            <button
+                              onClick={() => {
+                                setSelectAccount(() => account);
+                                setTriggerEditAccount(() => true);
+                                document.body.style.overflow = "hidden";
+                              }}
+                              className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                            >
+                              <BiSolidMessageSquareEdit />
+                            </button>
 
-                        <button
-                          onClick={() =>
-                            handleDeletAccount({
-                              userId: account.id,
-                              email: account.email,
-                            })
-                          }
-                          className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                        >
-                          <MdDelete />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                            <button
+                              onClick={() =>
+                                handleDeletAccount({
+                                  userId: account.id,
+                                  email: account.email,
+                                })
+                              }
+                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                            >
+                              <MdDelete />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
               </tbody>
             </table>
           </div>
