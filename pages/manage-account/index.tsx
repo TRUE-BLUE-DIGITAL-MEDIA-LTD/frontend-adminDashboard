@@ -13,7 +13,7 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import CreateAccount from "../../components/forms/accounts/createAccount";
 import EditAccount from "../../components/forms/accounts/editAccount";
 import ResetPassword from "../../components/forms/accounts/reset-password";
-import { FaUser, FaUserPlus } from "react-icons/fa6";
+import { FaPeopleGroup, FaUser, FaUserPlus } from "react-icons/fa6";
 import Image from "next/image";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
@@ -162,6 +162,7 @@ function Index({ user }: { user: User }) {
                   <th className="">Created At</th>
                   <th className="">Login As</th>
                   <th className="">Reset Password</th>
+                  <th className="">Partner</th>
                   <th className="">Options</th>
                 </tr>
               </thead>
@@ -239,29 +240,37 @@ function Index({ user }: { user: User }) {
                               RESET
                             </button>
                           </td>
-                          <td className="  gap-2 border-4 border-transparent">
-                            <button
-                              onClick={() => {
-                                setSelectAccount(() => account);
-                                setTriggerEditAccount(() => true);
-                                document.body.style.overflow = "hidden";
-                              }}
-                              className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                            >
-                              <BiSolidMessageSquareEdit />
+                          <td className=" border-4 border-transparent">
+                            <button className=" flex h-full w-full items-center justify-center gap-1 rounded-lg bg-gray-100 p-2  text-gray-700 transition duration-100 hover:scale-105 active:text-gray-900">
+                              <FaPeopleGroup className="text-3xl" />
+                              <span className="text-xs">partner</span>
                             </button>
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            <div className="flex w-full gap-3">
+                              <button
+                                onClick={() => {
+                                  setSelectAccount(() => account);
+                                  setTriggerEditAccount(() => true);
+                                  document.body.style.overflow = "hidden";
+                                }}
+                                className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                              >
+                                <BiSolidMessageSquareEdit />
+                              </button>
 
-                            <button
-                              onClick={() =>
-                                handleDeletAccount({
-                                  userId: account.id,
-                                  email: account.email,
-                                })
-                              }
-                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                            >
-                              <MdDelete />
-                            </button>
+                              <button
+                                onClick={() =>
+                                  handleDeletAccount({
+                                    userId: account.id,
+                                    email: account.email,
+                                  })
+                                }
+                                className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                              >
+                                <MdDelete />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
