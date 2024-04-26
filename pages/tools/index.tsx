@@ -26,7 +26,7 @@ function Index({ user }: { user: User }) {
   return (
     <DashboardLayout user={user}>
       <div className="w-full">
-        {router.query.option === "partners-perfomance" && (
+        {router.query.option === "partners-performance" && (
           <ParterReport user={user} />
         )}
         {router.query.option === "postcode" && <Postcode />}

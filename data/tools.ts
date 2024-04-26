@@ -12,7 +12,7 @@ export const toolsData: ToolsData[] = [
     title: "Partners' Perfomance",
     icon: MdDataExploration,
     description:
-      "Check the perfomance of your partners in a specific date range!",
+      "Check the performance of your partners in a specific date range!",
   },
   {
     title: "Postcode",

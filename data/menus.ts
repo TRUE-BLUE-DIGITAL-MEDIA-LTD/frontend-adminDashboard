@@ -21,10 +21,10 @@ export const menusSidebar = [
     url: "/tools",
     icon: BsTools,
     childs: [
-      { title: "Partners' Perfomance", params: "partners-perfomance" },
+      { title: "Partners Performance", params: "partners-performance" },
       { title: "Postcode", params: "postcode" },
       { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
-      { title: "Payslip Generator",  params: "payslip" },
+      { title: "Payslip Generator", params: "payslip" },
     ],
     trigger: false,
   },
