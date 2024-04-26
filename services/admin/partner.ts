@@ -1,14 +1,23 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
-import { Partner } from "../../models";
+import { Pagination, Partner, User } from "../../models";
 
-type InputGetPartnerByUserIdService = {
-  userId: string;
+type InputGetPartnerByPageService = {
+  limit: number;
+  page: number;
+  searchField?: string;
 };
-export async function GetPartnerByUserIdService(
-  input: InputGetPartnerByUserIdService,
-): Promise<Partner> {
+export async function GetPartnerByPageService(
+  input: InputGetPartnerByPageService,
+): Promise<Pagination<Partner & { user: User }>> {
   try {
+    if (
+      input.searchField === undefined ||
+      input.searchField === "" ||
+      input.searchField === null
+    ) {
+      delete input.searchField;
+    }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const partner = await axios({
@@ -33,6 +42,7 @@ export async function GetPartnerByUserIdService(
 type InputCreatePartnerService = {
   userId: string;
   affiliateId: string;
+  name: string;
 };
 export async function CreatePartnerService(
   input: InputCreatePartnerService,
@@ -43,7 +53,7 @@ export async function CreatePartnerService(
     const partner = await axios({
       method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner`,
-      params: {
+      data: {
         ...input,
       },
       responseType: "json",
@@ -66,6 +76,7 @@ type InputUpdatePartnerService = {
   body: {
     userId?: string;
     affiliateId?: string;
+    name?: string;
   };
 };
 export async function UpdatePartnerService(
@@ -77,7 +88,7 @@ export async function UpdatePartnerService(
     const partner = await axios({
       method: "PATCH",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner`,
-      params: {
+      data: {
         ...input,
       },
       responseType: "json",
