@@ -19,6 +19,7 @@ import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { Pagination } from "@mui/material";
 import { useRouter } from "next/router";
+import PartnerTable from "../../components/tables/partner";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -132,7 +133,7 @@ function Index({ user }: { user: User }) {
           selectAccount={selectAccount as User}
         />
       )}
-      <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start font-Poppins">
+      <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start gap-10 font-Poppins">
         <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
           <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
             <h1 className="rext-xl font-bold md:text-3xl">
@@ -154,7 +155,7 @@ function Index({ user }: { user: User }) {
           </header>
           <div className=" h-96 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
             <table className="w-max table-auto ">
-              <thead className="sticky top-0   z-20 bg-gray-200">
+              <thead className="sticky top-0 z-20 bg-gray-200">
                 <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
                   <th className="w-20">Photo</th>
                   <th className="">Email</th>
@@ -162,7 +163,6 @@ function Index({ user }: { user: User }) {
                   <th className="">Created At</th>
                   <th className="">Login As</th>
                   <th className="">Reset Password</th>
-                  <th className="">Partner</th>
                   <th className="">Options</th>
                 </tr>
               </thead>
@@ -240,12 +240,7 @@ function Index({ user }: { user: User }) {
                               RESET
                             </button>
                           </td>
-                          <td className=" border-4 border-transparent">
-                            <button className=" flex h-full w-full items-center justify-center gap-1 rounded-lg bg-gray-100 p-2  text-gray-700 transition duration-100 hover:scale-105 active:text-gray-900">
-                              <FaPeopleGroup className="text-3xl" />
-                              <span className="text-xs">partner</span>
-                            </button>
-                          </td>
+
                           <td className=" border-4 border-transparent">
                             <div className="flex w-full gap-3">
                               <button
@@ -284,6 +279,7 @@ function Index({ user }: { user: User }) {
             color="primary"
           />
         </section>
+        <PartnerTable accounts={accounts} />
       </main>
     </DashboardLayout>
   );

@@ -4,4 +4,5 @@ export type Partner = {
   updateAt: string;
   affiliateId: string;
   userId: string;
+  name: string;
 };
