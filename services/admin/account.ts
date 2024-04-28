@@ -1,10 +1,10 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 
 export interface ResponseGetAllAccountByPageService {
-  accounts: User[];
+  accounts: (User & { partner: Partner | null })[];
   totalPages: number;
   currentPage: number;
 }

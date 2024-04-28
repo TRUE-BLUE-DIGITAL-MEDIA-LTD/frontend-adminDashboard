@@ -1,10 +1,7 @@
+import { MenuItem } from "@mui/material";
+import { TextField as TextFieldMUI } from "@mui/material";
 import { UseQueryResult } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { ResponseGetAllAccountByPageService } from "../../services/admin/account";
-import { ErrorMessages, Pagination, Partner, User } from "../../models";
-import Swal from "sweetalert2";
-import { TextField as TextFieldMUI } from "@mui/material";
-import { UpdatePartnerService } from "../../services/admin/partner";
 import {
   Button,
   FieldError,
@@ -13,10 +10,14 @@ import {
   Label,
   TextField,
 } from "react-aria-components";
-import { MenuItem } from "@mui/material";
-type UpdatePartnerProps = {
+import { ResponseGetAllAccountByPageService } from "../../../services/admin/account";
+import Swal from "sweetalert2";
+import { ErrorMessages, Pagination, Partner, User } from "../../../models";
+import { CreatePartnerService } from "../../../services/admin/partner";
+
+type CreatePartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
-  setTriggerUpdatePartner: React.Dispatch<React.SetStateAction<boolean>>;
+  setTriggerCreateParter: React.Dispatch<React.SetStateAction<boolean>>;
   partners: UseQueryResult<
     Pagination<
       Partner & {
@@ -25,28 +26,22 @@ type UpdatePartnerProps = {
     >,
     Error
   >;
-  selectPartner: Partner;
 };
-function UpdatePartner({
+function CreatePartner({
   accounts,
-  setTriggerUpdatePartner,
+  setTriggerCreateParter,
   partners,
-  selectPartner,
-}: UpdatePartnerProps) {
-  const [updatePartnerData, setUpdatePartnerData] = useState<{
+}: CreatePartnerProps) {
+  const [createPartnerData, setCreatePartnerData] = useState<{
     partnerId?: string;
     partnerName?: string;
     userId?: string;
-  }>({
-    partnerId: selectPartner.affiliateId,
-    partnerName: selectPartner.name,
-    userId: selectPartner.userId,
-  });
+  }>();
 
-  const handleChangeupdatePartnerData = (
+  const handleChangeCreatePartnerData = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setUpdatePartnerData((prev) => {
+    setCreatePartnerData((prev) => {
       return {
         ...prev,
         [e.target.name]: e.target.value,
@@ -54,7 +49,7 @@ function UpdatePartner({
     });
   };
 
-  const handleSummitUpdatePartner = async (e: React.FormEvent) => {
+  const handleSummitCreatePartner = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
       Swal.fire({
@@ -66,27 +61,22 @@ function UpdatePartner({
         },
       });
       if (
-        !updatePartnerData?.userId ||
-        !updatePartnerData?.partnerId ||
-        !updatePartnerData?.partnerName
+        !createPartnerData?.userId ||
+        !createPartnerData?.partnerId ||
+        !createPartnerData?.partnerName
       ) {
         throw new Error("Please fill all the fields");
       }
-      const update = await UpdatePartnerService({
-        query: {
-          partnerId: selectPartner.id,
-        },
-        body: {
-          userId: updatePartnerData?.userId,
-          affiliateId: updatePartnerData?.partnerId,
-          name: updatePartnerData?.partnerName,
-        },
+      const createPartner = await CreatePartnerService({
+        userId: createPartnerData?.userId,
+        affiliateId: createPartnerData?.partnerId,
+        name: createPartnerData?.partnerName,
       });
       await partners.refetch();
 
       Swal.fire({
         title: "Success",
-        text: "Partner updated successfully",
+        text: "Partner created successfully",
         icon: "success",
       });
     } catch (error) {
@@ -103,18 +93,17 @@ function UpdatePartner({
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen  w-screen items-center justify-center font-Poppins ">
       <Form
-        onSubmit={handleSummitUpdatePartner}
+        onSubmit={handleSummitCreatePartner}
         className="flex h-max w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7"
       >
         <TextField className="flex flex-col gap-1" isRequired>
           <Label>Partner ID</Label>
           <Input
-            value={updatePartnerData?.partnerId ?? ""}
             className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
-        duration-75 hover:border-black focus:drop-shadow-md"
+            duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
             name="partnerId"
-            onChange={handleChangeupdatePartnerData}
+            onChange={handleChangeCreatePartnerData}
             maxLength={255}
           />
           <FieldError className="text-xs text-red-600" />
@@ -123,11 +112,10 @@ function UpdatePartner({
           <Label>Partner Name</Label>
           <Input
             className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
-         duration-75 hover:border-black focus:drop-shadow-md"
+             duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
-            value={updatePartnerData?.partnerName ?? ""}
             name="partnerName"
-            onChange={handleChangeupdatePartnerData}
+            onChange={handleChangeCreatePartnerData}
             maxLength={255}
           />
           <FieldError className="text-xs text-red-600" />
@@ -138,14 +126,14 @@ function UpdatePartner({
             required
             select
             className="h-14 w-80"
-            value={updatePartnerData?.userId ?? ""}
+            value={createPartnerData?.userId ?? ""}
             helperText="Please select your partner manager here"
           >
             {accounts.data?.accounts.map((account) => {
               return (
                 <MenuItem
                   onClick={(e) => {
-                    setUpdatePartnerData((prev) => {
+                    setCreatePartnerData((prev) => {
                       return {
                         ...prev,
                         userId: e.currentTarget.dataset.value as string,
@@ -165,13 +153,13 @@ function UpdatePartner({
         </div>
 
         <Button type="submit" className="buttonSuccess mt-10 w-40 font-bold">
-          Update
+          Create
         </Button>
       </Form>
       <footer
         onClick={() => {
           document.body.style.overflow = "auto";
-          setTriggerUpdatePartner(() => false);
+          setTriggerCreateParter(() => false);
         }}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-black/50 "
       ></footer>
@@ -179,4 +167,4 @@ function UpdatePartner({
   );
 }
 
-export default UpdatePartner;
+export default CreatePartner;
