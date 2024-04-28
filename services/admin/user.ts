@@ -65,3 +65,60 @@ export async function SignInAsAnoterUserService(
     throw err.response.data;
   }
 }
+
+type ResponseAssignPartnerToUserService = User;
+type RequestAssignPartnerToUserService = {
+  partnerId: string;
+  userId: string;
+};
+export async function AssignPartnerToUserService(
+  input: RequestAssignPartnerToUserService,
+): Promise<ResponseAssignPartnerToUserService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "PATCH",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/assign-partner`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+type ResponseUnAssignPartnerToUserService = User;
+type RequestUnAssignPartnerToUserService = {
+  userId: string;
+};
+export async function UnAssignPartnerToUserService(
+  input: RequestUnAssignPartnerToUserService,
+): Promise<ResponseUnAssignPartnerToUserService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "PATCH",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/unassign-partner`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}

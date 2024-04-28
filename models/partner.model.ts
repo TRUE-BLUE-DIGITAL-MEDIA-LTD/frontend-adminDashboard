@@ -6,3 +6,11 @@ export type Partner = {
   userId: string;
   name: string;
 };
+
+export type ResponsibilityOnPartner = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  partnerId: string;
+  domainId: string;
+};

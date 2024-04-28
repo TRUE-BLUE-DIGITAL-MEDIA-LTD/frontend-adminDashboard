@@ -10,9 +10,9 @@ import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
-import CreatePartner from "../forms/createPartner";
+import CreatePartner from "../forms/partners/createPartner";
 import { ResponseGetAllAccountByPageService } from "../../services/admin/account";
-import UpdatePartner from "../forms/updatePartner";
+import UpdatePartner from "../forms/partners/updatePartner";
 import { ErrorMessages, Partner } from "../../models";
 import Swal from "sweetalert2";
 
@@ -107,13 +107,15 @@ function PartnerTable({ accounts }: PartnerProps) {
       )}
 
       <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
-        <h1 className="rext-xl font-bold md:text-3xl">Partner Management</h1>
+        <h1 className="rext-xl text-lg font-bold 2xl:text-3xl">
+          Partner Management
+        </h1>
         <SearchField
           value={searchField}
           onChange={(e) => {
             setSearchField(() => e);
           }}
-          className="relative mt-10 flex w-80 flex-col"
+          className="relative mt-10 flex w-60 flex-col 2xl:w-80"
         >
           <Input
             placeholder="Search Name Or Partner Manager"
@@ -127,11 +129,11 @@ function PartnerTable({ accounts }: PartnerProps) {
               document.body.style.overflow = "hidden";
               setTriggerCreateParter(() => true);
             }}
-            className="flex items-center justify-center gap-2 rounded-xl bg-green-400 p-3 ring-black
+            className="flex items-center justify-center gap-1 rounded-xl bg-green-400 p-3 ring-black
    transition duration-150 ease-in hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm  "
           >
             <FaUserPlus />
-            create partner
+            <span className="text-xs 2xl:text-base">create partner</span>
           </button>
         </div>
       </header>

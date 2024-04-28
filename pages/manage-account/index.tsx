@@ -2,7 +2,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies, setCookie } from "nookies";
 import React, { useState } from "react";
 import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   DeleteAccountService,
@@ -20,6 +20,7 @@ import { MdDelete } from "react-icons/md";
 import { Pagination } from "@mui/material";
 import { useRouter } from "next/router";
 import PartnerTable from "../../components/tables/partner";
+import AssignPartner from "../../components/forms/accounts/assignPartner";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -27,7 +28,12 @@ function Index({ user }: { user: User }) {
   const [triggerCreateAccount, setTriggerCreateAccount] = useState(false);
   const [triggerResetPassword, setTriggerResetPassword] = useState(false);
   const [triggerEditAccount, setTriggerEditAccount] = useState(false);
-  const [selectAccount, setSelectAccount] = useState<User | null>();
+  const [triggerAssignPartner, setTriggerAssignPartner] = useState(false);
+  const [selectAccount, setSelectAccount] = useState<
+    User & {
+      partner: Partner | null;
+    }
+  >();
   const accounts = useQuery({
     queryKey: ["accounts", page],
     queryFn: () => GetAllAccountByPageService({ page: page }),
@@ -133,6 +139,13 @@ function Index({ user }: { user: User }) {
           selectAccount={selectAccount as User}
         />
       )}
+      {triggerAssignPartner && selectAccount && (
+        <AssignPartner
+          accounts={accounts}
+          selectAccount={selectAccount}
+          setTriggerAssignPartner={setTriggerAssignPartner}
+        />
+      )}
       <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start gap-10 font-Poppins">
         <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
           <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
@@ -161,6 +174,7 @@ function Index({ user }: { user: User }) {
                   <th className="">Email</th>
                   <th className="">Role</th>
                   <th className="">Created At</th>
+                  <th className="">Partner</th>
                   <th className="">Login As</th>
                   <th className="">Reset Password</th>
                   <th className="">Options</th>
@@ -212,6 +226,35 @@ function Index({ user }: { user: User }) {
                           </td>
                           <td className=" border-4 border-transparent ">
                             {formattedDatecreateAt}
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            {account.partner ? (
+                              <button
+                                onClick={() => {
+                                  setTriggerAssignPartner(() => true);
+                                  setSelectAccount(() => account);
+                                  document.body.style.overflow = "hidden";
+                                }}
+                                className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
+                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                              >
+                                <FaUser />
+                                {account.partner?.name}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setTriggerAssignPartner(() => true);
+                                  setSelectAccount(() => account);
+                                  document.body.style.overflow = "hidden";
+                                }}
+                                className=" flex w-full items-center justify-center gap-2 rounded-xl bg-gray-600 p-2 text-white
+                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-gray-700 active:ring-2 active:drop-shadow-sm"
+                              >
+                                <FaUser />
+                                No Partner Connected
+                              </button>
+                            )}
                           </td>
                           <td className=" border-4 border-transparent">
                             <button

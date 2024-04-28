@@ -371,7 +371,7 @@ function Index({ user }: { user: User }) {
                     <MenuItem key={domain.id} value={domain.id}>
                       <div className="flex w-full items-center justify-between gap-2">
                         <span>{domain.name}</span>
-                        {domain.landingPages.length > 0 && (
+                        {domain?.landingPages?.length > 0 && (
                           <span className="flex items-center justify-center gap-1 rounded-sm bg-icon-color px-5 text-white">
                             own <MdDomainVerification />
                           </span>
