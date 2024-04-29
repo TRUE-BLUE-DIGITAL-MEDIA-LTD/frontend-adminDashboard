@@ -39,7 +39,10 @@ function AssignDomain({
   const [page, setPage] = useState<number>(1);
 
   const fetch = useQuery({
-    queryKey: ["responsibilityOnPartner", selectPartner.id],
+    queryKey: [
+      "responsibilityOnPartner",
+      { partnerId: selectPartner.id, searchField: searchField, page: page },
+    ],
     queryFn: () =>
       GetResponsibilityOnPartnerService({
         partnerId: selectPartner.id,
@@ -246,10 +249,6 @@ function AssignDomain({
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
                         <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-50 "></td>
-                        <td className="h-12 w-96 animate-pulse border-4 border-transparent bg-gray-300 "></td>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
-                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                       </tr>
                     ))
                   : responsibilityOnPartner?.domains.map((domain) => {
