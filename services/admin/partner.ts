@@ -1,6 +1,7 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
 import {
+  Domain,
   Pagination,
   Partner,
   ResponsibilityOnPartner,
@@ -144,6 +145,40 @@ export async function DeletePartnerService(
   }
 }
 
+type ResponseGetResponsibilityOnPartnerService = {
+  domains: (Domain & { responsibilityPartners: ResponsibilityOnPartner })[];
+  totalPages: number;
+  currentPage: number;
+};
+type RequestGetResponsibilityOnPartnerService = {
+  partnerId: string;
+  page: number;
+  searchField: string;
+};
+export async function GetResponsibilityOnPartnerService(
+  input: RequestGetResponsibilityOnPartnerService,
+): Promise<ResponseGetResponsibilityOnPartnerService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/responsibility-partner`,
+      params: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 type ResponseCreateResponsibilityOnPartnerService = ResponsibilityOnPartner;
 type RequestCreateResponsibilityOnPartnerService = {
   domainId: string;
@@ -186,7 +221,7 @@ export async function DeleteResponsibilityOnPartnerService(
     const user = await axios({
       method: "DELETE",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/responsibility-partner`,
-      data: {
+      params: {
         ...input,
       },
       responseType: "json",
