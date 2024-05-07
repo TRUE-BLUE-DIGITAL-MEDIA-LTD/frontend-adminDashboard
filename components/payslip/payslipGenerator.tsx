@@ -28,10 +28,15 @@ import { FaPrint } from "react-icons/fa6";
 import Link from "next/link";
 import { DownloadExcelPayslipService } from "../../services/excel/payslip";
 import { SiMicrosoftexcel } from "react-icons/si";
+import { IoCreateSharp, IoDuplicateSharp } from "react-icons/io5";
+import DuplicatePayslip from "../forms/payslips/duplicatePayslip";
 
 function PayslipGenerator() {
   const toast = useRef<Toast>(null);
   const [loadingExcel, setLoadingExcel] = useState(false);
+  const [triggerUpdatePayslip, setTriggerUpdatePayslip] = useState(false);
+  const [triggerCreatePayslip, setTriggerCreatePayslip] = useState(false);
+  const [triggerDuplicatePayslip, setTriggerDuplicatePayslip] = useState(false);
   const [recordDate, setRecordDate] = useState<Nullable<Date | null>>(() => {
     const cuurentDate = new Date();
     const year = cuurentDate.getFullYear();
@@ -160,11 +165,16 @@ function PayslipGenerator() {
             dateFormat="mm/yy"
           />
         </TextField>
-        {!selectPayslip && (
-          <CreatePayslip recordDate={recordDate} payslips={payslips} />
+        {triggerCreatePayslip && (
+          <CreatePayslip
+            setTriggerCreatePayslip={setTriggerCreatePayslip}
+            recordDate={recordDate}
+            payslips={payslips}
+          />
         )}
-        {selectPayslip && (
+        {triggerUpdatePayslip && selectPayslip && (
           <UpdatePayslip
+            setTriggerUpdatePayslip={setTriggerUpdatePayslip}
             toast={toast}
             selectPayslip={selectPayslip}
             payslips={payslips}
@@ -172,8 +182,36 @@ function PayslipGenerator() {
           />
         )}
 
+        {triggerDuplicatePayslip && recordDate && (
+          <DuplicatePayslip
+            payslips={payslips}
+            setTriggerDuplicatePayslip={setTriggerDuplicatePayslip}
+            currentRecordDate={recordDate}
+          />
+        )}
+
         <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
           <Form>
+            <div className="flex w-full justify-center gap-5 border-b-2">
+              <Button
+                onPress={() => {
+                  setTriggerDuplicatePayslip(true);
+                }}
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+              >
+                <IoDuplicateSharp />
+                Duplicate Payslip
+              </Button>
+              <Button
+                onPress={() => setTriggerCreatePayslip(true)}
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+hover:bg-green-600 active:scale-105 active:ring-2"
+              >
+                <IoCreateSharp />
+                Create Payslip
+              </Button>
+            </div>
             {!overallData?.companySocialSecurity ||
             !overallData?.consultingFee ? (
               <div className="flex w-full gap-5">
@@ -366,7 +404,10 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                           <td className="border-2 border-black px-4 py-2">
                             <div className="flex w-full items-center justify-center gap-2">
                               <button
-                                onClick={() => setSelectPayslip(payslip)}
+                                onClick={() => {
+                                  setSelectPayslip(payslip);
+                                  setTriggerUpdatePayslip(true);
+                                }}
                                 className="flex items-center justify-center rounded-full bg-green-700 
                               p-2 text-xl text-white transition duration-100 hover:bg-green-800 active:scale-105"
                               >

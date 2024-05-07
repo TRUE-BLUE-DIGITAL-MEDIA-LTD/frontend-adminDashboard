@@ -78,6 +78,37 @@ export async function CreatePaySlipService(
   }
 }
 
+export type ResponseDuplicatePaySlipService = Payslip[];
+type InputDuplicatePaySlipService = {
+  targetRecordDate: string;
+  currentRecordDate: string;
+};
+
+export async function DuplicatePaySlipService(
+  input: InputDuplicatePaySlipService,
+): Promise<ResponseDuplicatePaySlipService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const payslip = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/payslip/duplicate`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return payslip.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseUpdatePayslipService = Payslip;
 type InputUpdatePayslipService = {
   query: {
