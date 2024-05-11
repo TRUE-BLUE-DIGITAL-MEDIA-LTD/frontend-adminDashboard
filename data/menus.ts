@@ -25,6 +25,7 @@ export const menusSidebar = [
       { title: "Postcode", params: "postcode" },
       { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
       { title: "Payslip Generator", params: "payslip" },
+      { title: "SMS Online", params: "sms" },
     ],
     trigger: false,
   },

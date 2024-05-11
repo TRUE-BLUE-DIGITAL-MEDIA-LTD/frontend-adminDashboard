@@ -19,6 +19,7 @@ import Postcode from "../../components/postcode/postcode";
 import ParterReport from "../../components/tables/parterReport";
 import { useRouter } from "next/router";
 import PayslipGenerator from "../../components/payslip/payslipGenerator";
+import SmsReceive from "../../components/sms/sms";
 
 function Index({ user }: { user: User }) {
   const [selectMenu, setSelectMenu] = useState(0);
@@ -31,6 +32,7 @@ function Index({ user }: { user: User }) {
         )}
         {router.query.option === "postcode" && <Postcode />}
         {router.query.option === "payslip" && <PayslipGenerator />}
+        {router.query.option === "sms" && <SmsReceive />}
       </div>
     </DashboardLayout>
   );

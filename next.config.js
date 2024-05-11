@@ -9,6 +9,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "oxyclick.com",
+      },
+      {
+        protocol: "https",
         hostname: "storage.googleapis.com",
       },
       {
@@ -18,6 +22,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "lirp.cdn-website.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
     ],
   },
