@@ -9,3 +9,4 @@ export * from "./payslip.model";
 export * from "./partner.model";
 export * from "./pagination.model";
 export * from "./error.model";
+export * from "./sms.model";
