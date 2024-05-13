@@ -101,20 +101,22 @@ export async function RequestNumberSMSService(
 }
 
 export type ResponseGetActiveNumberSMSService = {
-  country: number;
-  sum: number;
-  service: string;
-  number: string;
-  response: string;
-  tzid: number;
-  time: number;
-  form: string;
-  msg?: {
+  response: "ERROR_NO_OPERATIONS";
+  data: {
+    country: number;
+    sum: number;
     service: string;
-    text: string;
-    code: string;
+    number: string;
+    response: string;
+    tzid: number;
+    time: number;
+    form: string;
+    msg?: {
+      service: string;
+      msg: string;
+    }[];
   }[];
-}[];
+};
 
 export async function GetActiveNumberSMSService(): Promise<ResponseGetActiveNumberSMSService> {
   try {
@@ -123,6 +125,65 @@ export async function GetActiveNumberSMSService(): Promise<ResponseGetActiveNumb
     const provinces = await axios({
       method: "GET",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/active-number`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return provinces.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseCancelNumberSMSService = {
+  response: string;
+  tzid: number;
+};
+
+type InputCancelNumberSMSService = {
+  tzid: number;
+};
+export async function CancelNumberSMSService(
+  input: InputCancelNumberSMSService,
+): Promise<ResponseCancelNumberSMSService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const provinces = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/cancel-number`,
+      params: {
+        ...input,
+      },
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return provinces.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseGetBalacneSMSService = {
+  response: string;
+  balance: string;
+  zbalance: number;
+};
+
+export async function GetBalacneSMSService(): Promise<ResponseGetBalacneSMSService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const provinces = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/balance`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
