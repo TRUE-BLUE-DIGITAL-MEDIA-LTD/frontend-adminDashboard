@@ -68,6 +68,7 @@ function SelectService({
         text: "Please wait.",
         allowEscapeKey: false,
         allowOutsideClick: false,
+        showConfirmButton: false,
         allowEnterKey: false,
         willOpen: () => {
           Swal.showLoading();
@@ -77,6 +78,10 @@ function SelectService({
         country: query.country,
         service: service_slug as string,
       });
+      console.log(number);
+      if (number.response !== 1) {
+        throw new Error(number.response as string);
+      }
       await activeNumber.refetch();
       Swal.fire({
         title: "Success",

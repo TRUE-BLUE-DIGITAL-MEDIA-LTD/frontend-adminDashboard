@@ -44,14 +44,18 @@ function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
           html: "Please wait.",
           allowEscapeKey: false,
           allowOutsideClick: false,
+
           didOpen: () => {
             Swal.showLoading();
           },
         });
 
-        await CancelNumberSMSService({
+        const response = await CancelNumberSMSService({
           tzid: tzid,
         });
+        if (response.response !== 1) {
+          throw new Error(response.response as string);
+        }
         await activeNumber.refetch();
 
         Swal.fire({
