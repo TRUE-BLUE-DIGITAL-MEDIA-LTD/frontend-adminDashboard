@@ -78,10 +78,7 @@ function SelectService({
         country: query.country,
         service: service_slug as string,
       });
-      console.log(number);
-      if (number.response !== 1) {
-        throw new Error(number.response as string);
-      }
+
       await activeNumber.refetch();
       Swal.fire({
         title: "Success",

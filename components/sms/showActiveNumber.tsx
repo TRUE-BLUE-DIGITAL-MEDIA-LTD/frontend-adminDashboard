@@ -53,9 +53,7 @@ function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
         const response = await CancelNumberSMSService({
           tzid: tzid,
         });
-        if (response.response !== 1) {
-          throw new Error(response.response as string);
-        }
+
         await activeNumber.refetch();
 
         Swal.fire({
