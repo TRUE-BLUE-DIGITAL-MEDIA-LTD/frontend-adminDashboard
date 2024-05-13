@@ -1,4 +1,5 @@
 import axios from "axios";
+import Error from "next/error";
 import { parseCookies } from "nookies";
 import { LanguageSMS } from "../../models";
 
@@ -46,9 +47,9 @@ export async function GetTraficSMSService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
+    const provinces = await axios({
       method: "GET",
-      url: `https://onlinesim.io/api/getTariffs.php?apikey=${process.env.NEXT_PUBLIC_ONLINESIM_API_KEY}`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/tariffs`,
       params: {
         ...input,
       },
@@ -58,7 +59,7 @@ export async function GetTraficSMSService(
       responseType: "json",
     });
 
-    return response.data;
+    return provinces.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
@@ -66,7 +67,7 @@ export async function GetTraficSMSService(
 }
 
 export type ResponseRequestNumberSMSService = {
-  response: string | number;
+  response: string;
   tzid: number;
 };
 
@@ -80,14 +81,11 @@ export async function RequestNumberSMSService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
+    const provinces = await axios({
       method: "GET",
-      url: `https://onlinesim.io/api/getNum.php?apikey=${process.env.NEXT_PUBLIC_ONLINESIM_API_KEY}`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/request-number`,
       params: {
         ...input,
-        dev_id: 6091301,
-        number: true,
-        lang: "en",
       },
       headers: {
         Authorization: "Bearer " + access_token,
@@ -95,7 +93,7 @@ export async function RequestNumberSMSService(
       responseType: "json",
     });
 
-    return response.data;
+    return provinces.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
@@ -103,7 +101,7 @@ export async function RequestNumberSMSService(
 }
 
 export type ResponseGetActiveNumberSMSService = {
-  response: "ERROR_NO_OPERATIONS" | string;
+  response: "ERROR_NO_OPERATIONS";
   data: {
     country: number;
     sum: number;
@@ -124,32 +122,16 @@ export async function GetActiveNumberSMSService(): Promise<ResponseGetActiveNumb
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
+    const provinces = await axios({
       method: "GET",
-      url: `https://onlinesim.io/api/getState.php?apikey=${process.env.NEXT_PUBLIC_ONLINESIM_API_KEY}`,
-      params: {
-        message_to_code: 0,
-        orderby: "asc",
-        msg_list: 1,
-        clean: 0,
-        lang: "en",
-      },
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/active-number`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
       responseType: "json",
     });
-    if (response.data instanceof Array) {
-      return {
-        response: "OK",
-        data: response.data,
-      };
-    } else {
-      return {
-        response: response.data.response,
-        data: [],
-      };
-    }
+
+    return provinces.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
@@ -157,7 +139,7 @@ export async function GetActiveNumberSMSService(): Promise<ResponseGetActiveNumb
 }
 
 export type ResponseCancelNumberSMSService = {
-  response: string | number;
+  response: string;
   tzid: number;
 };
 
@@ -170,13 +152,11 @@ export async function CancelNumberSMSService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
+    const provinces = await axios({
       method: "GET",
-      url: `https://onlinesim.io/api/setOperationOk.php?apikey=${process.env.NEXT_PUBLIC_ONLINESIM_API_KEY}`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/cancel-number`,
       params: {
         ...input,
-        ban: 1,
-        lang: "en",
       },
       headers: {
         Authorization: "Bearer " + access_token,
@@ -184,7 +164,7 @@ export async function CancelNumberSMSService(
       responseType: "json",
     });
 
-    return response.data;
+    return provinces.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
@@ -201,20 +181,16 @@ export async function GetBalacneSMSService(): Promise<ResponseGetBalacneSMSServi
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
+    const provinces = await axios({
       method: "GET",
-      url: `https://onlinesim.io/api/getBalance.php?apikey=${process.env.NEXT_PUBLIC_ONLINESIM_API_KEY}`,
-      params: {
-        income: true,
-        lang: "en",
-      },
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms/balance`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
       responseType: "json",
     });
 
-    return response.data;
+    return provinces.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
