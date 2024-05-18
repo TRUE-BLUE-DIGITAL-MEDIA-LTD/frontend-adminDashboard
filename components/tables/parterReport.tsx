@@ -189,8 +189,10 @@ function ParterReport({ user }: { user: User }) {
               item.reporting.total_cv;
             acc[affiliateColumn.label].summary.reporting.event +=
               item.reporting.event;
-            acc[affiliateColumn.label].summary.reporting.cvr +=
-              item.reporting.cvr;
+            acc[affiliateColumn.label].summary.reporting.cvr =
+              (acc[affiliateColumn.label].summary.reporting.cv /
+                acc[affiliateColumn.label].summary.reporting.total_click) *
+              100;
             acc[affiliateColumn.label].summary.reporting.evr +=
               item.reporting.evr;
             acc[affiliateColumn.label].summary.reporting.cpc +=
