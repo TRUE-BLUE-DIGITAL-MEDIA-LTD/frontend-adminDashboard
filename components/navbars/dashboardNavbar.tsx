@@ -32,7 +32,7 @@ function DashboardNavbar({
   };
   return (
     <nav
-      className=" fixed top-0  z-50 flex  h-16 w-full items-center justify-between bg-gray-800
+      className="fixed top-0  z-50 flex  h-16 w-full items-center justify-between bg-gray-800
     pl-5 font-Poppins drop-shadow-md "
     >
       <div

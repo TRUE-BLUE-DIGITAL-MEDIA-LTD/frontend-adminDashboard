@@ -97,9 +97,6 @@ function TbodyForAdmin({
       >
         {partner ? partner?.[0] : item.columns[1].label}
       </td>
-      <td className="px-2">
-        ${item.reporting.media_buying_cost.toLocaleString()}
-      </td>
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.total_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.unique_click.toLocaleString()}</td>

@@ -5,6 +5,7 @@ import { menusSidebar } from "../../data/menus";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
+import { Popover } from "@headlessui/react";
 
 function SidebarDashboard({ user }: { user: User }) {
   const router = useRouter();
@@ -28,7 +29,7 @@ function SidebarDashboard({ user }: { user: User }) {
   }, [lastRoute]);
 
   return (
-    <ul className="sticky left-0 top-0 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex ">
+    <ul className="fixed left-0 top-0 z-40 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex ">
       {menusSidebar.map((list, index) => {
         if (user?.role !== "admin" && (index == 2 || index == 3)) {
           return null;

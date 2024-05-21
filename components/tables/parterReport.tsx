@@ -24,7 +24,6 @@ import { CiCalendarDate } from "react-icons/ci";
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
   { title: "Affilate Name", sort: "up" || "down" },
-  { title: "Media Buying Cost", sort: "up" || "down", admin: true },
   { title: "Gross Clicks", sort: "up" || "down" },
   { title: "Total Clicks", sort: "up" || "down" },
   { title: "Unique Clicks", sort: "up" || "down" },
@@ -301,10 +300,12 @@ function ParterReport({ user }: { user: User }) {
 
   return (
     <div className="flex w-full flex-col items-center gap-5 py-10 pt-20">
-      <BonusCaluator
-        summary={summary}
-        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
-      />
+      {user.role === "editor" && (
+        <BonusCaluator
+          summary={summary}
+          partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+        />
+      )}
       <div className="flex w-10/12 flex-col items-end  justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100 md:flex-row">
         <div
           className=" md:w-70 flex w-full flex-col items-start  justify-center  gap-1 
@@ -385,9 +386,9 @@ function ParterReport({ user }: { user: User }) {
           {paterPerfomaces.error?.message}
         </h2>
       )}
-      <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[75rem] ">
+      <div className=" h-96 w-11/12 justify-center  overflow-auto ">
         <table className="w-max min-w-full border-collapse ">
-          <thead className="sticky top-0 z-40 ">
+          <thead className="sticky top-0 z-30 ">
             <tr className=" h-16   bg-white drop-shadow-sm">
               {menuTables
                 .filter((list) => {

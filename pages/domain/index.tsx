@@ -175,15 +175,16 @@ function Index({ user }: { user: User }) {
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div className="flex flex-col items-center lg:w-11/12 xl:w-11/12 ">
-            <div className="  h-96 w-80 overflow-auto   md:w-[30rem] xl:w-[60rem] ">
+            <div className="  h-96 w-11/12 overflow-auto    ">
               <table className="w-max min-w-full border-collapse ">
                 <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-                  <tr className="sticky top-0 z-40 bg-white ">
+                  <tr className="sticky top-0 z-30 bg-white ">
                     <td className=" px-5">Domain Name</td>
                     <td className="">Updated At</td>
                     <td>Site Status</td>
                     <td>DNS Status</td>
                     <td>Nameserver</td>
+                    <td>Partners</td>
                     <td>Options</td>
                   </tr>
                 </thead>
@@ -218,7 +219,7 @@ function Index({ user }: { user: User }) {
                         <tr className="h-14 hover:bg-blue-50 " key={index}>
                           <td className="px-2">
                             {domains.isFetching ? (
-                              <div className="h-5 w-full animate-pulse bg-gray-400"></div>
+                              <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
                             ) : (
                               list?.name
                             )}
@@ -261,13 +262,38 @@ function Index({ user }: { user: User }) {
                                 })
                               }
                               className=" flex w-max items-center justify-center rounded-lg
-                            bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 drop-shadow-md transition duration-100 
+                            bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 
                               hover:scale-105"
                             >
                               {" "}
                               <MdViewTimeline />
                               View
                             </button>
+                          </td>
+                          <td className="px-2 ">
+                            <div className="flex max-w-40 flex-wrap">
+                              {list.partners.length > 0 ? (
+                                list.partners?.map((partner, index) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
+                                    >
+                                      <span>
+                                        {partner.name} : {partner.affiliateId}
+                                      </span>
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <div
+                                  key={index}
+                                  className="rounded-md bg-red-200 px-2 py-1 text-red-500"
+                                >
+                                  <span>No Partner</span>
+                                </div>
+                              )}
+                            </div>
                           </td>
                           <td className="flex h-14 w-20 gap-2">
                             <button

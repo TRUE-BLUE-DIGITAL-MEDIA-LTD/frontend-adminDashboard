@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import SpinLoading from "../components/loadings/spinLoading";
 import { TawkInterface, User } from "../models";
 import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
@@ -8,6 +8,7 @@ import { menusSidebar } from "../data/menus";
 import { useRouter } from "next/router";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
 import Link from "next/link";
+import { Popover, Transition } from "@headlessui/react";
 
 export default function DashboardLayout({
   children,
@@ -144,11 +145,8 @@ export default function DashboardLayout({
         user={user}
         setTriggerMiniMenu={setTriggerMiniMenu}
       />
-
-      <div className="flex">
-        {triggerSidebar && <SidebarDashboard user={user} />}
-        {children}
-      </div>
+      {triggerSidebar && <SidebarDashboard user={user} />}
+      {children}
     </>
   );
 }

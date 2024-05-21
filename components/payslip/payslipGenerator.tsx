@@ -149,7 +149,7 @@ function PayslipGenerator() {
           <span>slip Generator</span>
         </h1>
       </header>
-      <main className="flex w-80 flex-col items-center justify-start gap-5 py-10 lg:w-[45rem] xl:w-[60rem] 2xl:w-[75rem]  ">
+      <main className="flex w-11/12 flex-col items-center justify-start gap-5 py-10  ">
         <TextField className="flex flex-col items-start justify-center gap-2">
           <Label className="">Pick Record Date</Label>
           <Calendar
@@ -306,7 +306,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
           <div className="h-96 w-full overflow-auto ">
             <table className="mt-5 w-max table-auto border-collapse border-black ">
               <thead>
-                <tr className="sticky top-0 z-40 border-2 border-black bg-gray-200 drop-shadow-md">
+                <tr className="sticky top-0 z-30 border-2 border-black bg-gray-200 drop-shadow-md">
                   <th className="border-2 border-black px-4 py-2">Date</th>
                   <th className="sticky left-0 border-2 border-black bg-gray-200 px-4 py-2">
                     Name / Description
