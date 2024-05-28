@@ -10,3 +10,4 @@ export * from "./partner.model";
 export * from "./pagination.model";
 export * from "./error.model";
 export * from "./sms.model";
+export * from "./simcard.model";

@@ -22,10 +22,11 @@ export const menusSidebar = [
     icon: BsTools,
     childs: [
       { title: "Partners Performance", params: "partners-performance" },
+      { title: "SMS Online", params: "sms" },
+      { title: "SMS ETMS", params: "sms-etms" },
       { title: "Postcode", params: "postcode" },
       { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
       { title: "Payslip Generator", params: "payslip" },
-      { title: "SMS Online", params: "sms" },
     ],
     trigger: false,
   },
