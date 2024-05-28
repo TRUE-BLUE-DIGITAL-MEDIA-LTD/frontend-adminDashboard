@@ -16,12 +16,14 @@ import UpdatePartner from "../forms/partners/updatePartner";
 import { ErrorMessages, Partner } from "../../models";
 import Swal from "sweetalert2";
 import AssignDomain from "../forms/partners/assignDomain";
+import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
 };
 function PartnerTable({ accounts }: PartnerProps) {
   const [triggerCreatePartner, setTriggerCreateParter] = useState(false);
+  const [triggerAssignNumber, setTriggerAssignNumber] = useState(false);
   const [triggerUpdatePartner, setTriggerUpdatePartner] = useState(false);
   const [triggerAssignDomain, setTriggerAssignDomain] = useState(false);
   const [selectPartner, setSelectPartner] = useState<Partner>();
@@ -91,7 +93,7 @@ function PartnerTable({ accounts }: PartnerProps) {
     }
   };
   return (
-    <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
+    <section className="flex h-max w-11/12 flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:p-5">
       {triggerCreatePartner && (
         <CreatePartner
           partners={partners}
@@ -112,6 +114,13 @@ function PartnerTable({ accounts }: PartnerProps) {
         <AssignDomain
           selectPartner={selectPartner}
           setTriggerAssignDomain={setTriggerAssignDomain}
+        />
+      )}
+
+      {triggerAssignNumber && selectPartner && (
+        <AssignPhoneNumber
+          setTriggerAssignNumber={setTriggerAssignNumber}
+          selectPartner={selectPartner}
         />
       )}
 
@@ -146,15 +155,16 @@ function PartnerTable({ accounts }: PartnerProps) {
           </button>
         </div>
       </header>
-      <div className=" h-96 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
+      <div className=" h-96 w-full justify-center overflow-auto   ">
         <table className=" w-full table-auto ">
           <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
             <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-              <th>Affiliate ID</th>
-              <th>Name</th>
-              <th>Partner Manager</th>
-              <th>Assign Domain</th>
-              <th>Options</th>
+              <th className="px-5">Affiliate ID</th>
+              <th className="px-5">Name</th>
+              <th className="px-5">Partner Manager</th>
+              <th className="px-5">Assign Phone Number</th>
+              <th className="px-5">Assign Domain</th>
+              <th className="px-5">Options</th>
             </tr>
           </thead>
           <tbody>
@@ -196,6 +206,21 @@ function PartnerTable({ accounts }: PartnerProps) {
                       </td>
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         {partner.user.email}
+                      </td>
+                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => {
+                              setSelectPartner(partner);
+                              setTriggerAssignNumber(() => true);
+                              document.body.style.overflow = "hidden";
+                            }}
+                            className="rounded-md bg-green-400 px-5 py-1 text-black
+                           transition duration-150 hover:bg-green-500"
+                          >
+                            phone number
+                          </button>
+                        </div>
                       </td>
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         <div className="flex items-center justify-center">

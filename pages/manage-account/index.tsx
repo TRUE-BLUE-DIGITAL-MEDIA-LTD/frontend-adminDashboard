@@ -147,7 +147,7 @@ function Index({ user }: { user: User }) {
         />
       )}
       <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start gap-10 font-Poppins">
-        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
+        <section className="flex h-max w-11/12 flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:p-5">
           <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
             <h1 className="rext-xl font-bold md:text-3xl">
               Account Management
@@ -166,18 +166,18 @@ function Index({ user }: { user: User }) {
               </button>
             </div>
           </header>
-          <div className=" h-96 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
-            <table className="w-max table-auto ">
+          <div className=" h-96  w-full  overflow-auto ">
+            <table className="w-full table-auto ">
               <thead className="sticky top-0 z-20 bg-gray-200">
                 <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
-                  <th className="w-20">Photo</th>
-                  <th className="">Email</th>
-                  <th className="">Role</th>
-                  <th className="">Created At</th>
-                  <th className="">Partner</th>
-                  <th className="">Login As</th>
-                  <th className="">Reset Password</th>
-                  <th className="">Options</th>
+                  <th className="px-5">Photo</th>
+                  <th className="px-5">Email</th>
+                  <th className="px-5">Role</th>
+                  <th className="px-5">Created At</th>
+                  <th className="px-5">Partner</th>
+                  <th className="px-5">Login As</th>
+                  <th className="px-5">Reset Password</th>
+                  <th className="px-5">Options</th>
                 </tr>
               </thead>
               <tbody>

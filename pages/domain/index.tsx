@@ -162,6 +162,7 @@ function Index({ user }: { user: User }) {
             value={searchField}
             onChange={(e) => {
               setSearchField(() => e);
+              setPage(1);
             }}
             className="relative mt-10 flex w-96 flex-col"
           >
