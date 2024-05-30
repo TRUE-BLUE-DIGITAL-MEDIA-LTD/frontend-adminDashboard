@@ -34,7 +34,7 @@ function Index({ user }: { user: User }) {
         {router.query.option === "postcode" && <Postcode />}
         {router.query.option === "payslip" && <PayslipGenerator />}
         {router.query.option === "sms" && <SmsReceive />}
-        {router.query.option === "sms-etms" && <SimCard />}
+        {router.query.option === "sms-etms" && <SimCard user={user} />}
       </div>
     </DashboardLayout>
   );

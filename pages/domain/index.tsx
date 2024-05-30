@@ -273,19 +273,16 @@ function Index({ user }: { user: User }) {
                           </td>
                           <td className="px-2 ">
                             <div className="flex max-w-40 flex-wrap">
-                              {list.partners.length > 0 ? (
-                                list.partners?.map((partner, index) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
-                                    >
-                                      <span>
-                                        {partner.name} : {partner.affiliateId}
-                                      </span>
-                                    </div>
-                                  );
-                                })
+                              {list.partner ? (
+                                <div
+                                  key={index}
+                                  className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
+                                >
+                                  <span>
+                                    {list.partner.name} :{" "}
+                                    {list.partner.affiliateId}
+                                  </span>
+                                </div>
                               ) : (
                                 <div
                                   key={index}

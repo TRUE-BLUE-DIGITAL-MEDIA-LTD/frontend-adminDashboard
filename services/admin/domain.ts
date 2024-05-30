@@ -34,7 +34,7 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
 }
 
 export interface ResponseGetAllDomainsByPage {
-  domains: (Domain & { siteBuild?: SiteBuild | null; partners: Partner[] })[];
+  domains: (Domain & { siteBuild?: SiteBuild | null; partner: Partner | null })[];
   totalPages: number;
   currentPage: number;
 }

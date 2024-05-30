@@ -249,7 +249,6 @@ function AssignPhoneNumber({
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
                   <th>Phone Number</th>
-                  <th>Note</th>
                   <th>Assing Phone number</th>
                 </tr>
               </thead>
@@ -258,7 +257,6 @@ function AssignPhoneNumber({
                   ? [...Array(5)].map((_, index) => (
                       <tr key={index}>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                        <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                       </tr>
                     ))
@@ -285,12 +283,6 @@ function AssignPhoneNumber({
                               /(\d{4})(\d{3})(\d{4})/,
                               "($1) $2-$3",
                             )}
-                          </td>
-                          <td className="truncate border-4 border-transparent font-semibold text-black">
-                            <TextArea
-                              disabled
-                              className="h-14 w-full resize-none"
-                            />
                           </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">

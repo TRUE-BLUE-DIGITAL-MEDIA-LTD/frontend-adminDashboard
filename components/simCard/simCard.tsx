@@ -11,13 +11,13 @@ import { Input, SearchField, TextArea } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { GetSimCardByPageService } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
-import { ErrorMessages, SimCard } from "../../models";
+import { ErrorMessages, SimCard, User } from "../../models";
 import ShowMessage from "./showMessage";
 import moment from "moment";
 import CreateDeviceUser from "../forms/createDeviceUser";
 import Swal from "sweetalert2";
 
-function SimCards() {
+function SimCards({ user }: { user: User }) {
   const deviceUser = useQuery({
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
@@ -127,46 +127,48 @@ function SimCards() {
         <h1 className="flex items-center justify-center gap-1 text-center text-3xl font-bold ">
           SMS-ETMS <SimCardOutlined />
         </h1>
-        <section
-          className="bg-gra w-10/12 rounded-md bg-gradient-to-tr from-neutral-50
+        {user.role === "admin" && (
+          <section
+            className="bg-gra w-10/12 rounded-md bg-gradient-to-tr from-neutral-50
          to-neutral-200 p-5 ring-1 ring-gray-400 drop-shadow-lg"
-        >
-          <section className="flex w-full justify-between gap-5">
-            <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-black pr-5">
-              Device User <FaServer />
-            </h3>
-            <button
-              onClick={() => setTriggerCreateDeviceUser(true)}
-              className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
+          >
+            <section className="flex w-full justify-between gap-5">
+              <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-black pr-5">
+                Device User <FaServer />
+              </h3>
+              <button
+                onClick={() => setTriggerCreateDeviceUser(true)}
+                className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
             transition duration-100 hover:bg-green-400"
-            >
-              Add Device User
-            </button>
-          </section>
+              >
+                Add Device User
+              </button>
+            </section>
 
-          <ul className="mt-10 flex w-full flex-wrap gap-5">
-            {deviceUser.data?.map((device) => {
-              return (
-                <li
-                  key={device.id}
-                  className="ite flex items-center justify-center gap-5  
+            <ul className="mt-10 flex w-full flex-wrap gap-5">
+              {deviceUser.data?.map((device) => {
+                return (
+                  <li
+                    key={device.id}
+                    className="ite flex items-center justify-center gap-5  
                   rounded-sm bg-white p-3 ring-1 ring-gray-700"
-                >
-                  Port Number: {device.portNumber}
-                  <button
-                    onClick={() =>
-                      handleDeleteDeviceUser({ deviceUserId: device.id })
-                    }
-                    className="rounded-md bg-red-300 px-5 py-2 text-sm text-red-600 drop-shadow-lg 
-            transition duration-100 hover:bg-red-400"
                   >
-                    <MdDelete />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
+                    Port Number: {device.portNumber}
+                    <button
+                      onClick={() =>
+                        handleDeleteDeviceUser({ deviceUserId: device.id })
+                      }
+                      className="rounded-md bg-red-300 px-5 py-2 text-sm text-red-600 drop-shadow-lg 
+            transition duration-100 hover:bg-red-400"
+                    >
+                      <MdDelete />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
       </header>
 
       <main className="mt-5 flex w-full flex-col items-center p-5">
