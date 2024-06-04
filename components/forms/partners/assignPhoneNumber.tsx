@@ -226,7 +226,7 @@ function AssignPhoneNumber({
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
       <ul className="flex h-[30rem] w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
         <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          List of {selectPartner.name}'s phone number
+          List of {selectPartner.name}&apos;s phone number
         </label>
         <div className=" flex h-full w-full flex-col justify-center overflow-auto  ">
           {simCardOnPartners.isLoading ? (
