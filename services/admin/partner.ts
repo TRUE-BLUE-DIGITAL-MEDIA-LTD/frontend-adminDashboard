@@ -145,15 +145,12 @@ export async function DeletePartnerService(
   }
 }
 
-type ResponseGetResponsibilityOnPartnerService = {
-  domains: (Domain & { responsibilityPartners: ResponsibilityOnPartner })[];
-  totalPages: number;
-  currentPage: number;
-};
+type ResponseGetResponsibilityOnPartnerService = (ResponsibilityOnPartner & {
+  domain: Domain;
+})[];
+
 type RequestGetResponsibilityOnPartnerService = {
   partnerId: string;
-  page: number;
-  searchField: string;
 };
 export async function GetResponsibilityOnPartnerService(
   input: RequestGetResponsibilityOnPartnerService,

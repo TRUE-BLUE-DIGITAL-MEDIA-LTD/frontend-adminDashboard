@@ -223,19 +223,48 @@ function AssignPhoneNumber({
     }
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen  w-screen items-center justify-center font-Poppins ">
-      <Form className="flex h-max w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
+      <ul className="flex h-[30rem] w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+        <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
+          List of {selectPartner.name}'s phone number
+        </label>
+        <div className=" flex h-full w-full flex-col justify-center overflow-auto  ">
+          {simCardOnPartners.isLoading ? (
+            <div className="h-full w-full animate-pulse bg-gray-200"></div>
+          ) : (
+            simCardOnPartners.data?.map((simCardOnPartner) => {
+              return (
+                <div
+                  key={simCardOnPartner.id}
+                  className="flex h-12 w-full items-center justify-between  py-3 hover:bg-gray-200"
+                >
+                  <div className="h-10 w-full truncate border-4 border-transparent font-semibold text-black">
+                    {simCardOnPartner.simCard.phoneNumber.replace(
+                      /(\d{4})(\d{3})(\d{4})/,
+                      "($1) $2-$3",
+                    )}
+                  </div>
+                  <div className="h-max w-max bg-green-300 px-2 py-1 text-green-700">
+                    OWN
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </ul>
+      <Form className="flex h-[30rem] w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
         <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
-          <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
-            <h1 className="rext-xl font-bold md:text-xl">
-              Assign Phone<div> {selectPartner.name}</div>
+          <header className="flex w-full flex-col items-center justify-center gap-2 ">
+            <h1 className="flex w-full justify-center font-bold md:text-xl">
+              Assign Phone {selectPartner.name}
             </h1>
             <SearchField
               value={searchField}
               onChange={(e) => {
                 setSearchField(() => e);
               }}
-              className="relative mt-10 flex w-80 flex-col"
+              className="relative flex w-80 flex-col"
             >
               <Input
                 placeholder="Search Phone Number Or Note"
@@ -244,7 +273,8 @@ function AssignPhoneNumber({
               <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
             </SearchField>
           </header>
-          <div className=" h-60 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
+
+          <div className=" h-60 w-[30rem] justify-center overflow-auto  ">
             <table className=" w-full table-auto ">
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">

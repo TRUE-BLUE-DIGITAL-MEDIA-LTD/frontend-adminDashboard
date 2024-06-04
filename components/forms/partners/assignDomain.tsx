@@ -29,7 +29,7 @@ function AssignDomain({
   const [searchField, setSearchField] = useState<string>("");
   const [responsibilityOnPartner, setResponsibilityOnPartner] = useState<{
     domains: (Domain & {
-      responsibilityPartners: ResponsibilityOnPartner;
+      responsibilityPartners: ResponsibilityOnPartner | null;
       isLoading: boolean;
       isChecking: boolean;
     })[];
@@ -38,37 +38,46 @@ function AssignDomain({
   }>();
   const [page, setPage] = useState<number>(1);
 
-  const fetch = useQuery({
-    queryKey: [
-      "responsibilityOnPartner",
-      { partnerId: selectPartner.id, searchField: searchField, page: page },
-    ],
+  const partnerOnDomain = useQuery({
+    queryKey: ["partnerOnDomain", { partnerId: selectPartner.id }],
     queryFn: () =>
       GetResponsibilityOnPartnerService({
         partnerId: selectPartner.id,
-        searchField: searchField,
-        page: page,
       }),
   });
 
+  const domains = useQuery({
+    queryKey: ["domains", { page: page, searchField: searchField }],
+    queryFn: () =>
+      GetAllDomainsByPage({
+        page: page,
+        searchField: searchField,
+      }),
+  });
   useEffect(() => {
-    if (fetch.data) {
+    if (domains.data) {
       setResponsibilityOnPartner(() => {
         return {
-          domains: fetch.data?.domains.map((domain) => {
+          domains: domains.data.domains.map((domain) => {
             return {
               ...domain,
-              responsibilityPartners: domain.responsibilityPartners,
+              responsibilityPartners:
+                partnerOnDomain.data?.find(
+                  (partner) => partner.domainId === domain.id,
+                ) ?? null,
               isLoading: false,
-              isChecking: domain.responsibilityPartners ? true : false,
+              isChecking:
+                partnerOnDomain.data?.some(
+                  (partner) => partner.domainId === domain.id,
+                ) ?? false,
             };
           }),
-          totalPages: fetch.data?.totalPages,
-          currentPage: fetch.data?.currentPage,
+          totalPages: domains.data.totalPages,
+          currentPage: domains.data.currentPage,
         };
       });
     }
-  }, [fetch.data]);
+  }, [partnerOnDomain.data, domains.data]);
 
   const handleAssignDomain = async ({
     partnerId,
@@ -97,7 +106,7 @@ function AssignDomain({
         domainId: domainId,
         partnerId: partnerId,
       });
-      await fetch.refetch();
+      await partnerOnDomain.refetch();
 
       setResponsibilityOnPartner((prev) => {
         if (!prev) return prev;
@@ -168,7 +177,7 @@ function AssignDomain({
       await DeleteResponsibilityOnPartnerService({
         responsibilityPartnerId: responsibilityPartnerId,
       });
-      await fetch.refetch();
+      await partnerOnDomain.refetch();
       setResponsibilityOnPartner((prev) => {
         if (!prev) return prev;
         return {
@@ -212,9 +221,38 @@ function AssignDomain({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen  w-screen items-center justify-center font-Poppins ">
-      <Form className="flex h-max w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
-        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
+      <ul className="flex h-[30rem] w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+        <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
+          List of {selectPartner.name}'s domain
+        </label>
+        <div className=" flex max-h-full min-h-min w-full flex-col justify-center overflow-auto  ">
+          {partnerOnDomain.isLoading ? (
+            <div className="h-full w-full animate-pulse bg-gray-200"></div>
+          ) : (
+            partnerOnDomain.data?.map((partner) => {
+              return (
+                <div
+                  key={partner.id}
+                  className="flex h-12 w-full items-center justify-between  py-3 hover:bg-gray-200"
+                >
+                  <div className="h-10 w-full truncate border-4 border-transparent font-semibold text-black">
+                    {partner.domain.name}
+                  </div>
+                  <div className="h-max w-max bg-green-300 px-2 py-1 text-green-700">
+                    OWN
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </ul>
+      <Form className="flex h-[30rem] w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+        <section
+          className="flex h-max w-full flex-col items-center 
+        justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300 "
+        >
           <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
             <h1 className="rext-xl font-bold md:text-xl">
               Assign Domain<div> {selectPartner.name}</div>
@@ -228,12 +266,16 @@ function AssignDomain({
             >
               <Input
                 placeholder="Search Name Or Partner Manager"
-                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10 
+                 outline-0 ring-2 ring-icon-color lg:w-full"
               />
-              <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+              <IoSearchCircleSharp
+                className="text-super-main-color
+               absolute bottom-0 left-2 top-0 m-auto text-3xl"
+              />
             </SearchField>
           </header>
-          <div className=" h-60 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
+          <div className=" h-60 w-full justify-center overflow-auto  ">
             <table className=" w-full table-auto ">
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
@@ -243,7 +285,7 @@ function AssignDomain({
                 </tr>
               </thead>
               <tbody>
-                {fetch.isLoading
+                {domains.isLoading
                   ? [...Array(5)].map((_, index) => (
                       <tr key={index}>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
@@ -291,7 +333,8 @@ function AssignDomain({
                                       handleDeleteResponsibility({
                                         domainId: domain.id,
                                         responsibilityPartnerId:
-                                          domain.responsibilityPartners.id,
+                                          domain.responsibilityPartners?.id ||
+                                          "",
                                       });
                                     }
                                   }}
