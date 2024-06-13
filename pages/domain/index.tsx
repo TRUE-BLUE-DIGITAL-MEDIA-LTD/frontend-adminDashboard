@@ -243,7 +243,11 @@ function Index({ user }: { user: User }) {
                               </div>
                             ) : list.siteBuild?.deploy_state === "enqueued" ? (
                               <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                                enqueued
+                                Enqueued
+                              </div>
+                            ) : list.siteBuild?.deploy_state === "new" ? (
+                              <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+                                In Queue
                               </div>
                             ) : (
                               <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">

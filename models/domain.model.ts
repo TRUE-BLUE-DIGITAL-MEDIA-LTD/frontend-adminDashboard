@@ -18,6 +18,6 @@ export type SiteBuild = {
   done: boolean;
   error: null;
   created_at: string;
-  deploy_state: "enqueued" | "ready" | "building" | "error";
+  deploy_state: "enqueued" | "ready" | "building" | "error" | "new";
   deploy_pending_review_reason: string;
 };
