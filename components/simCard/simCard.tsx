@@ -33,6 +33,8 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["simCards", page, searchField],
     queryFn: () =>
       GetSimCardByPageService({ limit: 20, page: page, searchField }),
+    refetchInterval: 1000 * 5,
+    staleTime: 1000 * 5,
   });
 
   const getRandomSlateShade = (): number => {

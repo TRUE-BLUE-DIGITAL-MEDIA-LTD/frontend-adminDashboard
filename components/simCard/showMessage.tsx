@@ -3,6 +3,7 @@ import { ErrorMessages, SimCard } from "../../models";
 import { useQuery } from "@tanstack/react-query";
 import {
   GetSimCardByIdService,
+  ResponseGetSimCardByIdService,
   UpdateSimCardService,
 } from "../../services/simCard/simCard";
 import { FcSimCard } from "react-icons/fc";
@@ -12,6 +13,8 @@ import { MdDevices, MdOutlineSdCard } from "react-icons/md";
 import { Message, Note, NoteAdd } from "@mui/icons-material";
 import { Editor } from "@tinymce/tinymce-react";
 import Swal from "sweetalert2";
+import Countdown from "react-countdown";
+import { IoIosTimer } from "react-icons/io";
 
 type ShowMessageProps = {
   setTriggerShowMessage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +29,10 @@ function ShowMessage({
   const [firstLoad, setFirstLoad] = useState<boolean>(false);
   const [note, setNote] = useState<string>();
   const focusNote = useRef<HTMLDivElement | null>(null);
-  const simCard = useQuery({
+  const simCard = useQuery<
+    ResponseGetSimCardByIdService,
+    { message: string; simCard: SimCard }
+  >({
     queryKey: ["simCard", { simCardId: selectSimCard.id }],
     queryFn: () =>
       GetSimCardByIdService({ simCardId: selectSimCard.id }).then((res) => {
@@ -105,110 +111,161 @@ function ShowMessage({
             Synced
           </div>
         )}
-        <section className="flex flex-col justify-center gap-5">
-          <h1
-            className="flex items-center justify-center gap-2 border-b
-           border-gray-400 text-xl font-semibold text-main-color"
-          >
-            Sim card Information <FcSimCard />
-          </h1>
-          <div className="flex w-full gap-3 ">
-            {simCard.isLoading ? (
-              <div className="h-8 w-20 animate-pulse rounded-md bg-gray-400"></div>
-            ) : simCard.data?.simCard.status === "active" ? (
-              <div className="w-max rounded-sm bg-green-600 px-2   text-green-100">
-                active
-              </div>
-            ) : (
-              <div className="w-max rounded-sm bg-red-600 px-2   text-red-100">
-                inactive
-              </div>
-            )}
-            {simCard.isLoading ? (
-              <div className="h-8 w-full animate-pulse rounded-md bg-gray-300"></div>
-            ) : (
-              <div className="rounded-sm border border-blue-400 bg-blue-500 px-2  text-white">
-                last update at{" "}
-                {moment(simCard.data?.simCard.updateAt).format(
-                  "DD/MM/YYYY HH:mm:ss",
+        {simCard.error ? (
+          <section className="flex flex-col items-center justify-center gap-5">
+            <span className="text-2xl font-semibold text-red-700">
+              {simCard.error.message}
+            </span>
+            <div>
+              Number:{" "}
+              {simCard.error.simCard.phoneNumber.replace(
+                /(\d{4})(\d{3})(\d{4})/,
+                "($1) $2-$3",
+              )}{" "}
+              is currently using the slot
+            </div>
+            <div className="flex flex-col items-center gap-2 font-semibold text-green-700">
+              Please come back in{" "}
+              <Countdown
+                date={simCard.error.simCard.expireAt ?? new Date()}
+                intervalDelay={0}
+                precision={3}
+                renderer={(props) => (
+                  <div className="w-full text-center">
+                    {props.minutes} : {props.seconds} : {props.milliseconds}
+                  </div>
+                )}
+              />
+            </div>
+          </section>
+        ) : (
+          <section className="flex flex-col justify-center gap-5">
+            <h1
+              className="flex items-center justify-center gap-2 border-b
+         border-gray-400 text-xl font-semibold text-main-color"
+            >
+              Sim card Information <FcSimCard />
+            </h1>
+            <div className="flex w-full gap-3 ">
+              {simCard.isLoading ? (
+                <div className="h-8 w-20 animate-pulse rounded-md bg-gray-400"></div>
+              ) : simCard.data?.simCard.status === "active" ? (
+                <div className="w-max rounded-sm bg-green-600 px-2   text-green-100">
+                  active
+                </div>
+              ) : (
+                <div className="w-max rounded-sm bg-red-600 px-2   text-red-100">
+                  inactive
+                </div>
+              )}
+              {simCard.isLoading ? (
+                <div className="h-8 w-full animate-pulse rounded-md bg-gray-300"></div>
+              ) : (
+                <div className="rounded-sm border border-blue-400 bg-blue-500 px-2  text-white">
+                  last update at{" "}
+                  {moment(simCard.data?.simCard.updateAt).format(
+                    "DD/MM/YYYY HH:mm:ss",
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex w-full flex-col gap-2">
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <FaPhone />
+                  Phone Number:{" "}
+                </span>
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                ) : (
+                  <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    {simCard.data?.simCard.phoneNumber.replace(
+                      /(\d{4})(\d{3})(\d{4})/,
+                      "($1) $2-$3",
+                    )}
+                  </span>
                 )}
               </div>
-            )}
-          </div>
-          <div className="flex w-full flex-col gap-2">
-            <div className="flex items-center justify-start gap-2 text-lg">
-              <span className="flex w-40 items-center justify-start gap-1">
-                <FaPhone />
-                Phone Number:{" "}
-              </span>
-              {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
-              ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.phoneNumber.replace(
-                    /(\d{4})(\d{3})(\d{4})/,
-                    "($1) $2-$3",
-                  )}
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <FaDharmachakra />
+                  Port Number:{" "}
                 </span>
-              )}
-            </div>
-            <div className="flex items-center justify-start gap-2 text-lg">
-              <span className="flex w-40 items-center justify-start gap-1">
-                <FaDharmachakra />
-                Port Number:{" "}
-              </span>
-              {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
-              ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.portNumber}
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                ) : (
+                  <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    {simCard.data?.simCard.portNumber}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <MdOutlineSdCard />
+                  ICCID:{" "}
                 </span>
-              )}
-            </div>
-            <div className="flex items-center justify-start gap-2 text-lg">
-              <span className="flex w-40 items-center justify-start gap-1">
-                <MdOutlineSdCard />
-                ICCID:{" "}
-              </span>
 
-              {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-400"></div>
-              ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.iccid}
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-400"></div>
+                ) : (
+                  <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    {simCard.data?.simCard.iccid}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <FaSimCard />
+                  IMSI:{" "}
                 </span>
-              )}
-            </div>
-            <div className="flex items-center justify-start gap-2 text-lg">
-              <span className="flex w-40 items-center justify-start gap-1">
-                <FaSimCard />
-                IMSI:{" "}
-              </span>
 
-              {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-300"></div>
-              ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.imsi}
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-300"></div>
+                ) : (
+                  <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    {simCard.data?.simCard.imsi}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <MdDevices />
+                  Device User:{" "}
                 </span>
-              )}
-            </div>
-            <div className="flex items-center justify-start gap-2 text-lg">
-              <span className="flex w-40 items-center justify-start gap-1">
-                <MdDevices />
-                Device User:{" "}
-              </span>
 
-              {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
-              ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.deviceUser.portNumber}
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                ) : (
+                  <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    {simCard.data?.simCard.deviceUser.portNumber}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-start gap-2 text-lg">
+                <span className="flex w-60 items-center justify-start gap-1">
+                  <IoIosTimer />
+                  Time Reminding:{" "}
                 </span>
-              )}
+
+                {simCard.isLoading ? (
+                  <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                ) : (
+                  <Countdown
+                    date={simCard.data?.simCard.expireAt}
+                    intervalDelay={0}
+                    precision={3}
+                    renderer={(props) => (
+                      <div className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                        {props.minutes} : {props.seconds} : {props.milliseconds}
+                      </div>
+                    )}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
         <section className="relative flex flex-col gap-2">
           {saving ? (
             <span className="absolute right-2 top-2 m-auto text-xs">
@@ -292,7 +349,7 @@ function ShowMessage({
               />
             </div>
           ) : simCard.isLoading ? (
-            <div className="h-40 w-full animate-pulse rounded-md bg-gray-200"></div>
+            <div className="h-60 w-full animate-pulse rounded-md bg-gray-200"></div>
           ) : (
             <div className="py-2">
               {simCard.data && simCard.data?.messages.length > 0 ? (
@@ -330,6 +387,7 @@ function ShowMessage({
           )}
         </section>
       </main>
+
       <footer
         onClick={() => {
           if (saving === false) {
