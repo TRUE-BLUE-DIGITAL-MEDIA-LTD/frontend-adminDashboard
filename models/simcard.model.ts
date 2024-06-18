@@ -9,6 +9,8 @@ export type SimCard = {
   status: StatusSimCard;
   simCardNote: string;
   deviceUserId: string;
+  isActive: boolean;
+  expireAt: Date;
 };
 
 export type StatusSimCard = "active" | "inactive";
