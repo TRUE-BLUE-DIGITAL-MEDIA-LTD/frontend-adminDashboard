@@ -25,7 +25,9 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
   });
-  const [unavailableSlot, setUnavailableSlot] = useState<string[]>([]);
+  const [unavailableSlot, setUnavailableSlot] = useState<
+    { slot: string; deviceUserId: string }[]
+  >([]);
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
@@ -46,7 +48,12 @@ function SimCards({ user }: { user: User }) {
     queryFn: () =>
       GetSimCardActiveService().then((data) => {
         setUnavailableSlot(() =>
-          data?.map((sim) => sim.portNumber.split(".")[0]),
+          data?.map((sim) => {
+            return {
+              slot: sim.portNumber.split(".")[0],
+              deviceUserId: sim.deviceUserId,
+            };
+          }),
         );
         return data;
       }),
@@ -220,9 +227,14 @@ function SimCards({ user }: { user: User }) {
             : simCards.data?.data?.map((sim) => {
                 const createAt = new Date(sim?.createAt);
                 let slotInUsed = false;
-                if (unavailableSlot.includes(sim.portNumber.split(".")[0])) {
-                  slotInUsed = true;
-                }
+                unavailableSlot.forEach((unavailable) => {
+                  if (
+                    unavailable.slot === sim.portNumber.split(".")[0] &&
+                    unavailable.deviceUserId === sim.deviceUserId
+                  ) {
+                    slotInUsed = true;
+                  }
+                });
 
                 return (
                   <li
