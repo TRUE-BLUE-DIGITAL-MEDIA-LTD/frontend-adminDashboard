@@ -9,7 +9,10 @@ import {
 import { MdDelete } from "react-icons/md";
 import { Input, SearchField, TextArea } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
-import { GetSimCardByPageService } from "../../services/simCard/simCard";
+import {
+  GetSimCardActiveService,
+  GetSimCardByPageService,
+} from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
 import { ErrorMessages, SimCard, User } from "../../models";
 import ShowMessage from "./showMessage";
@@ -22,6 +25,7 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
   });
+  const [unavailableSlot, setUnavailableSlot] = useState<string[]>([]);
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
@@ -33,6 +37,19 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["simCards", page, searchField],
     queryFn: () =>
       GetSimCardByPageService({ limit: 20, page: page, searchField }),
+    refetchInterval: 1000 * 5,
+    staleTime: 1000 * 5,
+  });
+
+  const activeSimcard = useQuery({
+    queryKey: ["activeSimcard"],
+    queryFn: () =>
+      GetSimCardActiveService().then((data) => {
+        setUnavailableSlot(() =>
+          data?.map((sim) => sim.portNumber.split(".")[0]),
+        );
+        return data;
+      }),
     refetchInterval: 1000 * 5,
     staleTime: 1000 * 5,
   });
@@ -202,14 +219,18 @@ function SimCards({ user }: { user: User }) {
               })
             : simCards.data?.data?.map((sim) => {
                 const createAt = new Date(sim?.createAt);
+                let slotInUsed = false;
+                if (unavailableSlot.includes(sim.portNumber.split(".")[0])) {
+                  slotInUsed = true;
+                }
 
                 return (
                   <li
-                    className="flex w-full flex-col gap-2 rounded-md bg-slate-200 p-2 ring-1
+                    className="flex w-full  flex-col gap-2 rounded-md bg-slate-200 p-2 ring-1
                      ring-gray-400 "
                     key={sim.id}
                   >
-                    <div className="flex w-full gap-2  border-b border-gray-400 py-1">
+                    <div className="flex w-full flex-wrap gap-2  border-b border-gray-400 py-1">
                       {sim.status === "active" ? (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
                           active
@@ -220,10 +241,16 @@ function SimCards({ user }: { user: User }) {
                         </div>
                       )}
                       <div className="rounded-sm border border-blue-400 bg-blue-500 px-2 text-xs text-white">
-                        last update at{" "}
+                        last updated{" "}
                         {moment(sim.updateAt).format("DD/MM/YYYY HH:mm:ss")}
                       </div>
+                      {slotInUsed && (
+                        <div className="w-full rounded-sm bg-gray-600 px-2  text-xs text-green-100">
+                          slot in used
+                        </div>
+                      )}
                     </div>
+
                     <div className="grid w-full grid-cols-2 place-items-center">
                       <span
                         className="w-max 

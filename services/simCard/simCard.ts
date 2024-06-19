@@ -87,16 +87,30 @@ export async function GetSimCardByPartnerIdService(): Promise<ResponseGetSimCard
   }
 }
 
+export type ResponseGetSimCardActiveService = SimCard[];
+
+export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiveService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetSimCardByIdService = {
   simCard: SimCard & { deviceUser: DeviceUser };
-  messages: {
-    status: number;
-    port: string;
-    timeStamp: number;
-    sender: string;
-    recipient: string;
-    message: string;
-  }[];
 };
 
 type InputGetSimCardByIdService = {
@@ -111,6 +125,43 @@ export async function GetSimCardByIdService(
     const simcard = await axios({
       method: "GET",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/${input.simCardId}`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseGetSimCardMessageService = {
+  simCard: SimCard & { deviceUser: DeviceUser };
+  messages: {
+    status: number;
+    port: string;
+    timeStamp: number;
+    sender: string;
+    recipient: string;
+    message: string;
+  }[];
+};
+
+type InputGetSimCardMessageService = {
+  simCardId: string;
+};
+export async function GetSimCardMessageService(
+  input: InputGetSimCardMessageService,
+): Promise<ResponseGetSimCardMessageService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/${input.simCardId}/message`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
