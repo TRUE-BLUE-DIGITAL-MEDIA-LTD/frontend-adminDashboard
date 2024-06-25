@@ -14,13 +14,23 @@ import {
   GetSimCardByPageService,
 } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
-import { ErrorMessages, SimCard, User } from "../../models";
+import { ErrorMessages, Partner, SimCard, User } from "../../models";
 import ShowMessage from "./showMessage";
 import moment from "moment";
 import CreateDeviceUser from "../forms/createDeviceUser";
 import Swal from "sweetalert2";
+import { GetPartnerByMangegerService } from "../../services/admin/partner";
+import { IoMdPerson } from "react-icons/io";
+import { Dropdown } from "primereact/dropdown";
 
 function SimCards({ user }: { user: User }) {
+  const [searchField, setSearchField] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
+  const [selectSimCard, setSelectSimCard] = useState<SimCard>();
+  const [triigerCreateDeviceUser, setTriggerCreateDeviceUser] =
+    useState<boolean>(false);
+  const [selectPartner, setSelectPartner] = useState<Partner>();
   const deviceUser = useQuery({
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
@@ -28,19 +38,31 @@ function SimCards({ user }: { user: User }) {
   const [unavailableSlot, setUnavailableSlot] = useState<
     { slot: string; deviceUserId: string }[]
   >([]);
-  const [searchField, setSearchField] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
-  const [selectSimCard, setSelectSimCard] = useState<SimCard>();
-  const [triigerCreateDeviceUser, setTriggerCreateDeviceUser] =
-    useState<boolean>(false);
+  const partners = useQuery({
+    queryKey: ["partners-by-manager"],
+    queryFn: () =>
+      GetPartnerByMangegerService().then((response) => {
+        setSelectPartner(() => response[0]);
+        return response;
+      }),
+  });
 
   const simCards = useQuery({
-    queryKey: ["simCards", page, searchField],
+    queryKey: [
+      "simCards",
+      { page, searchField, selectPartner: selectPartner?.id },
+    ],
     queryFn: () =>
-      GetSimCardByPageService({ limit: 20, page: page, searchField }),
+      GetSimCardByPageService({
+        limit: 20,
+        page: page,
+        searchField,
+        partnerId: selectPartner?.id,
+      }),
     refetchInterval: 1000 * 5,
     staleTime: 1000 * 5,
+    // run when selectPartner is selected
+    enabled: !!selectPartner || user.role === "admin",
   });
 
   const activeSimcard = useQuery({
@@ -176,8 +198,8 @@ function SimCards({ user }: { user: User }) {
                 return (
                   <li
                     key={device.id}
-                    className="ite flex items-center justify-center gap-5  
-                  rounded-sm bg-white p-3 ring-1 ring-gray-700"
+                    className=" flex items-center justify-center gap-5  
+                  rounded-sm bg-white p-3 ring-1  ring-gray-700"
                   >
                     Port Number: {device.portNumber}
                     <button
@@ -197,21 +219,43 @@ function SimCards({ user }: { user: User }) {
         )}
       </header>
 
-      <main className="mt-5 flex w-full flex-col items-center p-5">
-        <SearchField
-          value={searchField}
-          onChange={(e) => {
-            setSearchField(() => e);
-            setPage(1);
-          }}
-          className="relative mt-10 flex w-96 flex-col"
-        >
-          <Input
-            placeholder="Search For Number"
-            className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
-          />
-          <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-        </SearchField>
+      <main className="mt-5 flex w-full  flex-col items-center p-5">
+        <div className="flex w-full items-end justify-center gap-5">
+          <div className="flex flex-col">
+            <label className="text-sm font-normal">Seach</label>
+            <SearchField
+              value={searchField}
+              onChange={(e) => {
+                setSearchField(() => e);
+                setPage(1);
+              }}
+              className="relative  flex w-96 flex-col"
+            >
+              <Input
+                placeholder="Search For Number"
+                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+              />
+              <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+            </SearchField>
+          </div>
+          {user.role === "editor" && (
+            <div className="flex flex-col">
+              <label className="text-sm font-normal">Select Partner</label>
+              <Dropdown
+                value={selectPartner}
+                onChange={(e) => {
+                  setSelectPartner(() => e.value);
+                }}
+                optionLabel="name"
+                loading={partners.isLoading}
+                options={partners.data}
+                placeholder="Select Partner"
+                className="h-10 w-96  rounded-lg outline-0 ring-2 ring-icon-color "
+              />
+            </div>
+          )}
+        </div>
+
         <ul className="mt-10 grid w-full gap-5 md:grid-cols-3 2xl:grid-cols-4">
           {simCards.isLoading
             ? [...Array(10)].map((list, index) => {

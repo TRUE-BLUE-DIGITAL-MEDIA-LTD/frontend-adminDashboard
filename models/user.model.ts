@@ -4,6 +4,7 @@ export interface User {
   updateAt: string;
   email: string;
   name: string;
+  partnerId: string;
   image: string; // Assuming this is a base64-encoded image string
   provider: string;
   role: "admin" | "editor";

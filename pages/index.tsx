@@ -57,7 +57,7 @@ function Index({ user }: { user: User }) {
   return (
     <DashboardLayout user={user}>
       <div className="w-full">
-        <header className="mt-20 flex  h-max w-full flex-col items-start justify-center gap-4 p-10">
+        <header className="mt-20  flex  h-max w-full flex-col items-start justify-center gap-4 p-10">
           <h1 className="font-Poppins text-5xl font-semibold md:text-7xl">
             <span className="text-icon-color">C</span>
             <span>ategories</span>

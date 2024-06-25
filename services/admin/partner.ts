@@ -8,6 +8,28 @@ import {
   User,
 } from "../../models";
 
+export async function GetPartnerByMangegerService(): Promise<Partner[]> {
+  {
+    try {
+      const cookies = parseCookies();
+      const access_token = cookies.access_token;
+      const partner = await axios({
+        method: "GET",
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner/by-manager`,
+        responseType: "json",
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      });
+
+      return partner.data;
+    } catch (err: any) {
+      console.log(err);
+      throw err.response.data;
+    }
+  }
+}
+
 type InputGetPartnerByPageService = {
   limit: number;
   page: number;

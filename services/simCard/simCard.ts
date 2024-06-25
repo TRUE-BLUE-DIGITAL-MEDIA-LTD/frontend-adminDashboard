@@ -38,6 +38,7 @@ type InputGetSimCardByPageService = {
   limit: number;
   page: number;
   searchField: string;
+  partnerId?: string;
 };
 export async function GetSimCardByPageService(
   input: InputGetSimCardByPageService,
