@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { Button, MenuItem, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { accountListsRole } from "../../../data/accoutListsRoles";
+import { Role } from "../../../models";
 interface CreateAccount {
   setTriggerCreateAccount: React.Dispatch<React.SetStateAction<boolean>>;
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
@@ -17,7 +18,7 @@ interface FormDataCreateUser {
   email: string;
   name: string;
   password: string;
-  role: "admin" | "editor";
+  role: Role;
 }
 interface ErrorFormData {
   email?: string;
@@ -30,7 +31,7 @@ function CreateAccount({ setTriggerCreateAccount, accounts }: CreateAccount) {
     email: "",
     name: "",
     password: "",
-    role: "editor",
+    role: "manager",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<ErrorFormData>({});
@@ -82,7 +83,7 @@ function CreateAccount({ setTriggerCreateAccount, accounts }: CreateAccount) {
           email: "",
           name: "",
           password: "",
-          role: "editor",
+          role: "manager",
         });
 
         setErrors({});
