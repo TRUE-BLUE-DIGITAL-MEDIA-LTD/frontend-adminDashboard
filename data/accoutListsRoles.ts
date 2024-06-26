@@ -4,7 +4,11 @@ export const accountListsRole = [
     label: "admin",
   },
   {
-    value: "editor",
-    label: "editor",
+    value: "manager",
+    label: "manager",
+  },
+  {
+    value: "partner",
+    label: "partner",
   },
 ];

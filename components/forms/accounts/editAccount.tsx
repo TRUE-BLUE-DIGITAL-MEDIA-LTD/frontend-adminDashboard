@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User } from "../../../models";
+import { Role, User } from "../../../models";
 import { UseQueryResult } from "@tanstack/react-query";
 import {
   EditAccountService,
@@ -16,7 +16,7 @@ interface EditAccount {
 interface EditFormDataAccount {
   email: string;
   name: string;
-  role: "admin" | "editor";
+  role: Role;
 }
 interface ErrorFormData {
   email?: string;
@@ -65,7 +65,7 @@ function EditAccount({
       setFormData({
         email: "",
         name: "",
-        role: "editor",
+        role: "manager",
       });
 
       setErrors({});

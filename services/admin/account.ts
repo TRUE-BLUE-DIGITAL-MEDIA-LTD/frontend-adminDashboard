@@ -1,7 +1,7 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { Partner, User } from "../../models";
+import { Partner, Role, User } from "../../models";
 
 export interface ResponseGetAllAccountByPageService {
   accounts: (User & { partner: Partner | null })[];
@@ -55,7 +55,7 @@ interface InputCreateAccountService {
   email: string;
   name: string;
   password: string;
-  role: "admin" | "editor";
+  role: Role;
 }
 export async function CreateAccountService(
   input: InputCreateAccountService,
@@ -97,7 +97,7 @@ interface ResponseEditAccountService {
 interface InputEditAccountService {
   email: string;
   name: string;
-  role: "admin" | "editor";
+  role: Role;
   userId: string;
 }
 export async function EditAccountService(
