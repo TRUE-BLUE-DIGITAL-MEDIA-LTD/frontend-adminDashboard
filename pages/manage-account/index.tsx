@@ -13,7 +13,12 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import CreateAccount from "../../components/forms/accounts/createAccount";
 import EditAccount from "../../components/forms/accounts/editAccount";
 import ResetPassword from "../../components/forms/accounts/reset-password";
-import { FaPeopleGroup, FaUser, FaUserPlus } from "react-icons/fa6";
+import {
+  FaMoneyBillTrendUp,
+  FaPeopleGroup,
+  FaUser,
+  FaUserPlus,
+} from "react-icons/fa6";
 import Image from "next/image";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
@@ -21,6 +26,7 @@ import { Pagination } from "@mui/material";
 import { useRouter } from "next/router";
 import PartnerTable from "../../components/tables/partner";
 import AssignPartner from "../../components/forms/accounts/assignPartner";
+import UpdateBonusRate from "../../components/forms/accounts/updateBonusRate";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -34,6 +40,7 @@ function Index({ user }: { user: User }) {
       partner: Partner | null;
     }
   >();
+  const [triggerUpdateBonusRate, setTriggerUpdateBonusRate] = useState(false);
   const accounts = useQuery({
     queryKey: ["accounts", page],
     queryFn: () => GetAllAccountByPageService({ page: page }),
@@ -146,6 +153,14 @@ function Index({ user }: { user: User }) {
           setTriggerAssignPartner={setTriggerAssignPartner}
         />
       )}
+
+      {triggerUpdateBonusRate && selectAccount && (
+        <UpdateBonusRate
+          userId={selectAccount.id}
+          setTrigger={setTriggerUpdateBonusRate}
+        />
+      )}
+
       <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start gap-10 font-Poppins">
         <section className="flex h-max w-11/12 flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:p-5">
           <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
@@ -167,7 +182,7 @@ function Index({ user }: { user: User }) {
             </div>
           </header>
           <div className=" h-96  w-full  overflow-auto ">
-            <table className="w-full table-auto ">
+            <table className="w-max table-auto ">
               <thead className="sticky top-0 z-20 bg-gray-200">
                 <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
                   <th className="px-5">Photo</th>
@@ -175,6 +190,7 @@ function Index({ user }: { user: User }) {
                   <th className="px-5">Role</th>
                   <th className="px-5">Created At</th>
                   <th className="px-5">Partner</th>
+                  <th className="px-5">Bonus Setting</th>
                   <th className="px-5">Login As</th>
                   <th className="px-5">Reset Password</th>
                   <th className="px-5">Options</th>
@@ -255,6 +271,20 @@ function Index({ user }: { user: User }) {
                                 No Partner Connected
                               </button>
                             )}
+                          </td>
+                          <td className=" border-4 border-transparent">
+                            <button
+                              onClick={() => {
+                                setTriggerUpdateBonusRate(() => true);
+                                setSelectAccount(() => account);
+                                document.body.style.overflow = "hidden";
+                              }}
+                              className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
+                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                            >
+                              <FaMoneyBillTrendUp />
+                              Bonus Setting
+                            </button>
                           </td>
                           <td className=" border-4 border-transparent">
                             <button

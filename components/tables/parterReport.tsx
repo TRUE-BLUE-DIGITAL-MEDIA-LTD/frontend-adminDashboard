@@ -20,6 +20,8 @@ import BonusCaluator from "./bonusCaluator";
 import { CalculateBonus } from "../../utils/useCaluateBonus";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { CiCalendarDate } from "react-icons/ci";
+import { GetBonusRateByUserIdService } from "../../services/bonus";
+import { bonusRateDefault } from "../../data/bonusRate";
 
 const menuTables = [
   { title: "Network Affliate ID", sort: "up" || "down" },
@@ -80,6 +82,11 @@ function ParterReport({ user }: { user: User }) {
   }>({
     title: "Network Affliate ID",
     sort: "up",
+  });
+
+  const bonusRate = useQuery({
+    queryKey: ["bonusRate", { userId: user.id }],
+    queryFn: () => GetBonusRateByUserIdService({ userId: user.id }),
   });
 
   const paterPerfomaces = useQuery({
@@ -260,13 +267,18 @@ function ParterReport({ user }: { user: User }) {
       }).then((data) => {
         const allBonus = data.map((table) => {
           return table.table.map((item) => {
-            const bonus = CalculateBonus({ payout: item.reporting.payout });
+            const bonus = CalculateBonus({
+              payout: item.reporting.payout,
+              bonusRate: bonusRate.data ?? bonusRateDefault,
+            });
+
             return {
               id: item.columns[0].id,
               bonus: bonus,
             };
           });
         });
+
         const flatBonus = allBonus.flat();
         const groupBy = flatBonus.reduce(
           (acc, item) => {
@@ -286,6 +298,7 @@ function ParterReport({ user }: { user: User }) {
         const totalBonus = result.reduce((acc, item) => acc + item.bonus, 0);
         return { partner: result, totalBonus: totalBonus };
       }),
+    enabled: bonusRate.isSuccess,
   });
 
   const summary = useQuery({
@@ -300,8 +313,9 @@ function ParterReport({ user }: { user: User }) {
 
   return (
     <div className="flex w-full flex-col items-center gap-5 py-10 pt-20">
-      {user.role === "editor" && (
+      {user.role === "manager" && (
         <BonusCaluator
+          bonusRate={bonusRate.data ?? bonusRateDefault}
           summary={summary}
           partnerPerformanceDayByDay={partnerPerformanceDayByDay}
         />
@@ -371,7 +385,7 @@ function ParterReport({ user }: { user: User }) {
             Pick Up Date <CiCalendarDate />
           </label>
           <Calendar
-            className="w-full xl:w-96"
+            className="h-10 w-full xl:w-96"
             value={dates}
             onChange={(e) => {
               setDates(e.value);
@@ -678,7 +692,7 @@ function ParterReport({ user }: { user: User }) {
                             item={partner[1].summary as TableEntry}
                           />
                         )}
-                        {user.role === "editor" && (
+                        {user.role === "manager" && (
                           <TbodyForEditor
                             activePartnerDropdowns={
                               activePartnerDropdowns ?? []
@@ -701,7 +715,7 @@ function ParterReport({ user }: { user: User }) {
                         )?.active === true &&
                           partner[1].entries.map((item, index) => {
                             const oddChild = index % 2;
-                            if (user.role === "editor") {
+                            if (user.role === "manager") {
                               return (
                                 <TbodyForEditor
                                   partnerPerformanceDayByDay={

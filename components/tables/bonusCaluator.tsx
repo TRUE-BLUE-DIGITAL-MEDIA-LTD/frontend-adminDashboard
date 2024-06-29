@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { bonusRate } from "../../data/bonusRate";
 import { UseQueryResult } from "@tanstack/react-query";
 import { Reporting } from "../../services/everflow/partner";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
@@ -9,7 +8,11 @@ import NumberRunning from "../animations/numberRunning";
 
 type BonusRateProps = {
   summary: UseQueryResult<Reporting, Error>;
-
+  bonusRate: {
+    from: number;
+    to: number;
+    rate: number;
+  }[];
   partnerPerformanceDayByDay: UseQueryResult<
     {
       partner: {
@@ -24,6 +27,7 @@ type BonusRateProps = {
 function BonusCaluator({
   summary,
   partnerPerformanceDayByDay,
+  bonusRate,
 }: BonusRateProps) {
   return (
     <div className="flex h-max w-10/12 min-w-60 flex-col items-center justify-center gap-5 rounded-lg p-5 font-Poppins">

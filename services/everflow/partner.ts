@@ -9,7 +9,7 @@ type RequestGetParterPerfomacesByDate = {
     column: column_type;
   }[];
 };
-export type ResponseRequestGetParterPerfomacesByDate = {
+export type ResponseGetParterPerfomacesByDate = {
   table: TableEntry[];
 };
 
@@ -93,7 +93,7 @@ export async function GetSummaryParterReportService(
 
 export async function GetParterPerfomacesByDate(
   input: RequestGetParterPerfomacesByDate,
-): Promise<ResponseRequestGetParterPerfomacesByDate> {
+): Promise<ResponseGetParterPerfomacesByDate> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
       throw new Error("Invalid date");
@@ -122,7 +122,7 @@ export async function GetParterPerfomacesByDate(
 
 export async function GetParterPerfomacesByDayByDayService(
   input: RequestGetParterPerfomacesByDate,
-): Promise<ResponseRequestGetParterPerfomacesByDate[]> {
+): Promise<ResponseGetParterPerfomacesByDate[]> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
       throw new Error("Invalid date");

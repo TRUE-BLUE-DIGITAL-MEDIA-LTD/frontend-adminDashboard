@@ -1,4 +1,4 @@
-export const bonusRate = [
+export const bonusRateDefault = [
   {
     from: 0,
     to: 14.99,

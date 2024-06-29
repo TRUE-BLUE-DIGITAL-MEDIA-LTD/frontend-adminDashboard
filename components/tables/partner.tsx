@@ -126,7 +126,7 @@ function PartnerTable({ accounts }: PartnerProps) {
 
       <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
         <h1 className="rext-xl text-lg font-bold 2xl:text-3xl">
-          Partner Management
+          Everflow Partner Management
         </h1>
         <SearchField
           value={searchField}

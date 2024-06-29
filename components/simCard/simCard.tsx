@@ -238,7 +238,7 @@ function SimCards({ user }: { user: User }) {
               <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
             </SearchField>
           </div>
-          {user.role === "editor" && (
+          {user.role === "manager" && (
             <div className="flex flex-col">
               <label className="text-sm font-normal">Select Partner</label>
               <Dropdown

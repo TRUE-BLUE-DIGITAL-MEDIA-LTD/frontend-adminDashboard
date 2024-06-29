@@ -1,6 +1,14 @@
-import { bonusRate } from "../data/bonusRate";
-
-export function CalculateBonus({ payout }: { payout: number }): number {
+export function CalculateBonus({
+  payout,
+  bonusRate,
+}: {
+  payout: number;
+  bonusRate: {
+    from: number;
+    to: number;
+    rate: number;
+  }[];
+}): number {
   let bonus = 0;
 
   for (let i = 0; i < bonusRate.length; i++) {
