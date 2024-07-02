@@ -14,5 +14,5 @@ export interface User {
   IsResetPassword: boolean;
 }
 
-export type Role = "partner" | "manager" | "admin";
+export type Role = "partner" | "manager" | "admin" | "user";
 export type Provider = "email";

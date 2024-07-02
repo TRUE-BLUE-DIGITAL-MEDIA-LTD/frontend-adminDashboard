@@ -75,7 +75,7 @@ export default function DashboardLayout({
          duration-150 md:hidden ${triggerMiniMenu ? "visible translate-y-0" : "invisible hidden -translate-y-14"}`}
       >
         {menusSidebar.map((list, index) => {
-          if (user?.role !== "admin" && (index == 2 || index == 3)) {
+          if (user?.role === "partner" && (index == 2 || index == 3)) {
             return null;
           }
           return (

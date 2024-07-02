@@ -13,15 +13,16 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import CreatePartner from "../forms/partners/createPartner";
 import { ResponseGetAllAccountByPageService } from "../../services/admin/account";
 import UpdatePartner from "../forms/partners/updatePartner";
-import { ErrorMessages, Partner } from "../../models";
+import { ErrorMessages, Partner, User } from "../../models";
 import Swal from "sweetalert2";
 import AssignDomain from "../forms/partners/assignDomain";
 import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
+  user: User;
 };
-function PartnerTable({ accounts }: PartnerProps) {
+function PartnerTable({ accounts, user }: PartnerProps) {
   const [triggerCreatePartner, setTriggerCreateParter] = useState(false);
   const [triggerAssignNumber, setTriggerAssignNumber] = useState(false);
   const [triggerUpdatePartner, setTriggerUpdatePartner] = useState(false);
@@ -117,7 +118,7 @@ function PartnerTable({ accounts }: PartnerProps) {
         />
       )}
 
-      {triggerAssignNumber && selectPartner && (
+      {triggerAssignNumber && selectPartner && user.role === "admin" && (
         <AssignPhoneNumber
           setTriggerAssignNumber={setTriggerAssignNumber}
           selectPartner={selectPartner}
@@ -141,19 +142,21 @@ function PartnerTable({ accounts }: PartnerProps) {
           />
           <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
         </SearchField>
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => {
-              document.body.style.overflow = "hidden";
-              setTriggerCreateParter(() => true);
-            }}
-            className="flex items-center justify-center gap-1 rounded-xl bg-green-400 p-3 ring-black
+        {user.role === "admin" && (
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => {
+                document.body.style.overflow = "hidden";
+                setTriggerCreateParter(() => true);
+              }}
+              className="flex items-center justify-center gap-1 rounded-xl bg-green-400 p-3 ring-black
    transition duration-150 ease-in hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm  "
-          >
-            <FaUserPlus />
-            <span className="text-xs 2xl:text-base">create partner</span>
-          </button>
-        </div>
+            >
+              <FaUserPlus />
+              <span className="text-xs 2xl:text-base">create partner</span>
+            </button>
+          </div>
+        )}
       </header>
       <div className=" h-96 w-full justify-center overflow-auto   ">
         <table className=" w-full table-auto ">
@@ -162,9 +165,11 @@ function PartnerTable({ accounts }: PartnerProps) {
               <th className="px-5">Affiliate ID</th>
               <th className="px-5">Name</th>
               <th className="px-5">Partner Manager</th>
-              <th className="px-5">Assign Phone Number</th>
+              {user.role === "admin" && (
+                <th className="px-5">Assign Phone Number</th>
+              )}
               <th className="px-5">Assign Domain</th>
-              <th className="px-5">Options</th>
+              {user.role === "admin" && <th className="px-5">Options</th>}
             </tr>
           </thead>
           <tbody>
@@ -207,21 +212,23 @@ function PartnerTable({ accounts }: PartnerProps) {
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         {partner.user.email}
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
-                        <div className="flex items-center justify-center">
-                          <button
-                            onClick={() => {
-                              setSelectPartner(partner);
-                              setTriggerAssignNumber(() => true);
-                              document.body.style.overflow = "hidden";
-                            }}
-                            className="rounded-md bg-green-400 px-5 py-1 text-black
+                      {user.role === "admin" && (
+                        <td className="truncate border-4 border-transparent font-semibold text-black">
+                          <div className="flex items-center justify-center">
+                            <button
+                              onClick={() => {
+                                setSelectPartner(partner);
+                                setTriggerAssignNumber(() => true);
+                                document.body.style.overflow = "hidden";
+                              }}
+                              className="rounded-md bg-green-400 px-5 py-1 text-black
                            transition duration-150 hover:bg-green-500"
-                          >
-                            phone number
-                          </button>
-                        </div>
-                      </td>
+                            >
+                              phone number
+                            </button>
+                          </div>
+                        </td>
+                      )}
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         <div className="flex items-center justify-center">
                           <button
@@ -237,32 +244,34 @@ function PartnerTable({ accounts }: PartnerProps) {
                           </button>
                         </div>
                       </td>
-                      <td className=" border-4 border-transparent">
-                        <div className="flex w-full gap-3">
-                          <button
-                            onClick={() => {
-                              setSelectPartner(partner);
-                              document.body.style.overflow = "hidden";
-                              setTriggerUpdatePartner(() => true);
-                            }}
-                            className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                          >
-                            <BiSolidMessageSquareEdit />
-                          </button>
+                      {user.role === "admin" && (
+                        <td className=" border-4 border-transparent">
+                          <div className="flex w-full gap-3">
+                            <button
+                              onClick={() => {
+                                setSelectPartner(partner);
+                                document.body.style.overflow = "hidden";
+                                setTriggerUpdatePartner(() => true);
+                              }}
+                              className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                            >
+                              <BiSolidMessageSquareEdit />
+                            </button>
 
-                          <button
-                            onClick={() =>
-                              handleDeletePartner({
-                                partnerId: partner.id,
-                                name: partner.name,
-                              })
-                            }
-                            className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                          >
-                            <MdDelete />
-                          </button>
-                        </div>
-                      </td>
+                            <button
+                              onClick={() =>
+                                handleDeletePartner({
+                                  partnerId: partner.id,
+                                  name: partner.name,
+                                })
+                              }
+                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                            >
+                              <MdDelete />
+                            </button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   );
                 })}

@@ -31,9 +31,12 @@ function SidebarDashboard({ user }: { user: User }) {
   return (
     <ul className="fixed left-0 top-0 z-40 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex ">
       {menusSidebar.map((list, index) => {
-        if (user?.role !== "admin" && (index == 2 || index == 3)) {
+        if (user?.role === "partner" && (index == 2 || index == 3)) {
+          return null;
+        } else if (user?.role === "manager" && index == 2) {
           return null;
         }
+
         return (
           <li
             key={index}
