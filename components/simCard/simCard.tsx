@@ -14,7 +14,14 @@ import {
   GetSimCardByPageService,
 } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
-import { ErrorMessages, Partner, SimCard, User } from "../../models";
+import {
+  ErrorMessages,
+  Partner,
+  ResponsibilityOnPartner,
+  SimCard,
+  SimCardOnPartner,
+  User,
+} from "../../models";
 import ShowMessage from "./showMessage";
 import moment from "moment";
 import CreateDeviceUser from "../forms/createDeviceUser";
@@ -245,6 +252,22 @@ function SimCards({ user }: { user: User }) {
                 value={selectPartner}
                 onChange={(e) => {
                   setSelectPartner(() => e.value);
+                }}
+                itemTemplate={(
+                  partner: Partner & {
+                    responsibilityOnPartner: ResponsibilityOnPartner[];
+                    simCardOnPartner: SimCardOnPartner[];
+                  },
+                ) => {
+                  return (
+                    <div className="n flex w-full items-center gap-2">
+                      <IoMdPerson />
+                      <span>{partner.name}</span>
+                      <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
+                        Total {partner.simCardOnPartner.length}
+                      </span>
+                    </div>
+                  );
                 }}
                 optionLabel="name"
                 loading={partners.isLoading}

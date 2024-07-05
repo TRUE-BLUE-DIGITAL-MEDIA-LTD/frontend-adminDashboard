@@ -32,6 +32,7 @@ function AssignDomain({
       responsibilityPartners: ResponsibilityOnPartner | null;
       isLoading: boolean;
       isChecking: boolean;
+      partner: Partner | null;
     })[];
     totalPages: number;
     currentPage: number;
@@ -54,6 +55,11 @@ function AssignDomain({
         searchField: searchField,
       }),
   });
+
+  useEffect(() => {
+    domains.refetch();
+  }, []);
+
   useEffect(() => {
     if (domains.data) {
       setResponsibilityOnPartner(() => {
@@ -222,11 +228,11 @@ function AssignDomain({
 
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
-      <ul className="flex h-[30rem] w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+      <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
         <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
           List of {selectPartner.name}&apos;s domain
         </label>
-        <div className=" flex max-h-full min-h-min w-full flex-col justify-center overflow-auto  ">
+        <div className=" flex max-h-full min-h-72 w-full flex-col justify-start overflow-auto   ">
           {partnerOnDomain.isLoading ? (
             <div className="h-full w-full animate-pulse bg-gray-200"></div>
           ) : (
@@ -247,6 +253,9 @@ function AssignDomain({
             })
           )}
         </div>
+        <footer className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
+          Total Phone Number : {partnerOnDomain.data?.length}
+        </footer>
       </ul>
       <Form className="flex h-[30rem] w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
         <section
@@ -321,6 +330,11 @@ function AssignDomain({
                             <div className="flex items-center justify-center">
                               {domain.isLoading ? (
                                 <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
+                              ) : domain.partner &&
+                                domain.partner.id !== selectPartner.id ? (
+                                <div className="h-max w-max bg-red-300 px-2 py-1 text-xs text-red-700">
+                                  already assigned
+                                </div>
                               ) : (
                                 <input
                                   onChange={(e) => {

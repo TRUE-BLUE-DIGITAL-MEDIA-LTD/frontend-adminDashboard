@@ -5,10 +5,16 @@ import {
   Pagination,
   Partner,
   ResponsibilityOnPartner,
+  SimCardOnPartner,
   User,
 } from "../../models";
 
-export async function GetPartnerByMangegerService(): Promise<Partner[]> {
+export async function GetPartnerByMangegerService(): Promise<
+  (Partner & {
+    responsibilityOnPartner: ResponsibilityOnPartner[];
+    simCardOnPartner: SimCardOnPartner[];
+  })[]
+> {
   {
     try {
       const cookies = parseCookies();
@@ -161,6 +167,32 @@ export async function DeletePartnerService(
     });
 
     return partner.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+type ResponseGetTotalResponsibilityOnPartnerService = number;
+
+type RequestGetTotalResponsibilityOnPartnerService = {
+  partnerId: string;
+};
+export async function GetTotalResponsibilityOnPartnerService(
+  input: RequestGetTotalResponsibilityOnPartnerService,
+): Promise<ResponseGetTotalResponsibilityOnPartnerService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const partnerOnDomain = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/responsibility-partner/${input.partnerId}/total`,
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return partnerOnDomain.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;

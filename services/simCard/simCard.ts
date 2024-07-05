@@ -1,6 +1,11 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
-import { DeviceUser, Pagination, SimCard } from "../../models";
+import {
+  DeviceUser,
+  Pagination,
+  SimCard,
+  SimCardOnPartner,
+} from "../../models";
 
 export type ResponseGetSimCardByDeviceUserIdService = SimCard[];
 
@@ -32,7 +37,9 @@ export async function GetSimCardByDeviceUserIdService(
   }
 }
 
-export type ResponseGetSimCardByPageService = Pagination<SimCard>;
+export type ResponseGetSimCardByPageService = Pagination<
+  SimCard & { partner: SimCardOnPartner }
+>;
 
 type InputGetSimCardByPageService = {
   limit: number;
