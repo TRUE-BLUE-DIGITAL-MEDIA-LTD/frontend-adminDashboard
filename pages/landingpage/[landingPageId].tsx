@@ -4,14 +4,24 @@ import React, { useEffect, useRef, useState } from "react";
 import { GetUser } from "../../services/admin/user";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllDomains } from "../../services/admin/domain";
+import {
+  DomainWithLandingPage,
+  GetAllDomains,
+} from "../../services/admin/domain";
 import {
   GetLandingPageService,
   UpdateLandingPageService,
   UploadURLSingtureFavorIconService,
 } from "../../services/admin/landingPage";
 import Swal from "sweetalert2";
-import { Language, Message, UnlayerMethods, User } from "../../models";
+import {
+  Category,
+  Domain,
+  Language,
+  Message,
+  UnlayerMethods,
+  User,
+} from "../../models";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Alert, MenuItem, Skeleton, Snackbar, TextField } from "@mui/material";
 import FullLoading from "../../components/loadings/fullLoading";
@@ -23,6 +33,7 @@ import dynamic from "next/dynamic";
 import { GetAllCategories } from "../../services/admin/categories";
 import { MdDomainVerification } from "react-icons/md";
 import { EditorRef, EmailEditorProps } from "react-email-editor";
+import { Dropdown } from "primereact/dropdown";
 const EmailEditor = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -47,12 +58,12 @@ function Index({ user }: { user: User }) {
   const [icon, setIcon] = useState<string | null>();
 
   const domains = useQuery({
-    queryKey: ["domains"],
+    queryKey: ["domains-list"],
     queryFn: () => GetAllDomains(),
   });
 
   const categories = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories-list"],
     queryFn: () => GetAllCategories(),
   });
 
@@ -412,83 +423,70 @@ function Index({ user }: { user: User }) {
         </div>
         <div className="flex w-full flex-col items-center justify-center gap-5 py-5">
           <div className="grid w-10/12 grid-cols-2 gap-5 2xl:grid-cols-3">
-            {domains.isLoading ? (
-              <div>
-                <Skeleton height={70} />
-                <span className="animate-pulse">Domain Is Loading</span>
-              </div>
-            ) : (
-              <TextField
-                required
-                select
-                name="domainId"
-                label="Select"
-                value={landingPageData.domainId}
-                helperText="Please select your domain name"
-              >
-                {domains.data?.map((domain) => {
+            <div className="flex w-full flex-col ">
+              <label>Select domain</label>
+              <Dropdown
+                placeholder="Select Domain"
+                value={domains.data?.find(
+                  (d) => d.id === landingPageData.domainId,
+                )}
+                options={domains.data}
+                onChange={(e) => {
+                  const value: DomainWithLandingPage = e.value;
+                  setLandingPageData((prev) => {
+                    return {
+                      ...prev,
+                      domainId: value.id,
+                    };
+                  });
+                }}
+                itemTemplate={(domain: DomainWithLandingPage) => {
                   return (
-                    <MenuItem
-                      onClick={(e) => {
-                        setLandingPageData((prev) => {
-                          return {
-                            ...prev,
-                            domainId: e.currentTarget.dataset.value as string,
-                          };
-                        });
-                      }}
-                      key={domain.id}
-                      value={domain.id}
-                    >
-                      <div className="flex w-full items-center justify-between gap-2">
-                        <span>{domain.name}</span>
-                        {domain?.landingPages?.length > 0 && (
-                          <span className="flex items-center justify-center gap-1 rounded-sm bg-icon-color px-5 text-white">
-                            own <MdDomainVerification />
-                          </span>
-                        )}
-                      </div>
-                    </MenuItem>
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span>{domain.name}</span>
+                      {domain?.landingPages?.length > 0 && (
+                        <span className="flex items-center justify-center gap-1 rounded-sm bg-icon-color px-5 text-white">
+                          own <MdDomainVerification />
+                        </span>
+                      )}
+                    </div>
                   );
-                })}
-              </TextField>
-            )}
-            {domains.isLoading ? (
-              <div>
-                <Skeleton height={70} />
-                <span className="animate-pulse">Domain Is Loading</span>
-              </div>
-            ) : (
-              <TextField
-                required
-                select
-                name="categoryId"
-                label="Select"
-                value={landingPageData.categoryId}
-                helperText="Please select your category here"
-              >
-                {categories?.data?.map((category) => {
+                }}
+                optionLabel="name"
+                loading={domains.isLoading}
+                className="h-14 w-full text-left text-3xl ring-1 ring-gray-400"
+              />
+            </div>
+
+            <div className="flex w-full flex-col ">
+              <label>Select category</label>
+              <Dropdown
+                placeholder="Select category"
+                value={categories.data?.find(
+                  (d) => d.id === landingPageData.categoryId,
+                )}
+                options={categories.data}
+                onChange={(e) => {
+                  const value: Category = e.value;
+                  setLandingPageData((prev) => {
+                    return {
+                      ...prev,
+                      categoryId: value.id,
+                    };
+                  });
+                }}
+                itemTemplate={(category: Category) => {
                   return (
-                    <MenuItem
-                      onClick={(e) => {
-                        setLandingPageData((prev) => {
-                          return {
-                            ...prev,
-                            categoryId: e.currentTarget.dataset.value as string,
-                          };
-                        });
-                      }}
-                      key={category.id}
-                      value={category.id}
-                    >
-                      <div className="flex  items-center justify-start gap-2">
-                        <span>{category.title}</span>
-                      </div>
-                    </MenuItem>
+                    <div className="flex  items-center justify-start gap-2">
+                      <span>{category.title}</span>
+                    </div>
                   );
-                })}
-              </TextField>
-            )}
+                }}
+                optionLabel="title"
+                loading={categories.isLoading}
+                className="h-14 w-full text-left text-3xl ring-1 ring-gray-400"
+              />
+            </div>
           </div>
         </div>
         <div className="flex w-full justify-center pb-10">

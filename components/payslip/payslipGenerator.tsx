@@ -153,6 +153,7 @@ function PayslipGenerator() {
         <TextField className="flex flex-col items-start justify-center gap-2">
           <Label className="">Pick Record Date</Label>
           <Calendar
+            className="rounded-md border ring-1"
             value={recordDate}
             onChange={(e) => {
               if (!e.value) return;

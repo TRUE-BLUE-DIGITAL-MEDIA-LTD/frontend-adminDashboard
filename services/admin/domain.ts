@@ -3,17 +3,13 @@ import Error from "next/error";
 import { parseCookies } from "nookies";
 import { Domain, Partner, SiteBuild } from "../../models";
 
-interface ResponseGetAllDomains {
-  id: string;
-  createAt: string;
-  updateAt: string;
-  name: string;
-  googleAnalyticsId: string | null;
+export type DomainWithLandingPage = Domain & {
   landingPages: {
     id: string;
   }[];
-}
-export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
+};
+export type ResponseGetAllDomains = DomainWithLandingPage[];
+export async function GetAllDomains(): Promise<ResponseGetAllDomains> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
@@ -34,7 +30,10 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains[]> {
 }
 
 export interface ResponseGetAllDomainsByPage {
-  domains: (Domain & { siteBuild?: SiteBuild | null; partner: Partner | null })[];
+  domains: (Domain & {
+    siteBuild?: SiteBuild | null;
+    partner: Partner | null;
+  })[];
   totalPages: number;
   currentPage: number;
 }

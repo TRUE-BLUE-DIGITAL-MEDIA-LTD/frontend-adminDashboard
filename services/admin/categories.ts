@@ -1,17 +1,10 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
+import { Category } from "../../models";
 
-export interface ResponseGetAllCategories {
-  id: string;
-  createAt: Date;
-  updateAt: Date;
-  title: string;
-  description: string;
-  background: string;
-  isDeleted: boolean;
-}
-export async function GetAllCategories(): Promise<ResponseGetAllCategories[]> {
+export type ResponseGetAllCategories = Category[];
+export async function GetAllCategories(): Promise<ResponseGetAllCategories> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;

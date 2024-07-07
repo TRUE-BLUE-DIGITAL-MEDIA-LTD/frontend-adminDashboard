@@ -56,3 +56,11 @@ input[type="number"] {
 .p-inputnumber-input {
   width: 100%;
 }
+
+.p-inputtext {
+  font-family: "Anuphan", sans-serif;
+  padding: 0.5rem;
+}
+.p-calendar-w-btn {
+  outline: none;
+}

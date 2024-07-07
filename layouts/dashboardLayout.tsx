@@ -111,6 +111,12 @@ export default function DashboardLayout({
                   className={`ml-5 flex flex-col gap-2 transition duration-150 ${list.trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
                 >
                   {list.childs.map((child, index) => {
+                    if (
+                      user.role === "partner" &&
+                      (index === 4 || index === 5)
+                    ) {
+                      return null;
+                    }
                     return (
                       <li
                         key={index}

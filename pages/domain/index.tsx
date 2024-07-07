@@ -175,164 +175,172 @@ function Index({ user }: { user: User }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className="flex flex-col items-center lg:w-11/12 xl:w-11/12 ">
-            <div className="  h-96 w-11/12 overflow-auto    ">
-              <table className="w-max min-w-full border-collapse ">
-                <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-                  <tr className="sticky top-0 z-30 bg-white ">
-                    <td className=" px-5">Domain Name</td>
-                    <td className="">Updated At</td>
-                    <td>Site Status</td>
-                    <td>DNS Status</td>
-                    <td>Nameserver</td>
-                    <td>Partners</td>
-                    <td>Options</td>
-                  </tr>
-                </thead>
-                <tbody className="">
-                  {domains.isLoading ? (
-                    loadingNumber.map((list, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton />
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : domains.isError ? (
-                    <tr>NO domain Found</tr>
-                  ) : (
-                    domains.data?.domains.map((list, index) => {
-                      return (
-                        <tr className="h-14 hover:bg-blue-50 " key={index}>
-                          <td className="px-2">
-                            {domains.isFetching ? (
-                              <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
-                            ) : (
-                              list?.name
-                            )}
-                          </td>
-                          <td className=" px-2">
-                            {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
-                          </td>
-                          <td className="px-2">
-                            {list.siteBuild?.deploy_state === "ready" ? (
-                              <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
-                                READY
-                              </div>
-                            ) : list.siteBuild?.deploy_state === "building" ? (
-                              <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
-                                Building
-                              </div>
-                            ) : list.siteBuild?.deploy_state === "error" ? (
-                              <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
-                                Error
-                              </div>
-                            ) : list.siteBuild?.deploy_state === "enqueued" ? (
-                              <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                                Enqueued
-                              </div>
-                            ) : list.siteBuild?.deploy_state === "new" ? (
-                              <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                                In Queue
-                              </div>
-                            ) : (
-                              <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
-                                Unknow Status
-                              </div>
-                            )}
-                          </td>
-                          <td className="px-2">
-                            <VerifyDomain domainName={list.name} />
-                          </td>
-                          <td className="px-2">
-                            <button
-                              onClick={() =>
-                                handleViewNameServer({
-                                  nameServer: list.dns_servers,
-                                  domain: list.name,
-                                })
-                              }
-                              className=" flex w-max items-center justify-center rounded-lg
+          <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
+            <table className="w-max min-w-full border-collapse ">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
+                <tr className="sticky top-0 z-40 bg-white ">
+                  <td className=" px-5">Domain Name</td>
+                  <td className="">Updated At</td>
+                  <td>Site Status</td>
+                  <td>DNS Status</td>
+                  <td>Nameserver</td>
+                  <td>Partners</td>
+                  <td>Options</td>
+                </tr>
+              </thead>
+              <tbody className="">
+                {domains.isLoading ? (
+                  loadingNumber.map((list, index) => {
+                    return (
+                      <tr
+                        className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                        key={index}
+                      >
+                        <td>
+                          <Skeleton />
+                        </td>
+                        <td>
+                          <Skeleton animation="wave" />
+                        </td>
+                        <td>
+                          <Skeleton />
+                        </td>
+                        <td>
+                          <Skeleton animation="wave" />
+                        </td>
+                        <td>
+                          <Skeleton />
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : domains.isError ? (
+                  <tr>NO domain Found</tr>
+                ) : (
+                  domains.data?.domains.map((list, index) => {
+                    return (
+                      <tr
+                        className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                        key={index}
+                      >
+                        <td className="px-2">
+                          {domains.isFetching ? (
+                            <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
+                          ) : (
+                            list?.name
+                          )}
+                        </td>
+                        <td className=" px-2">
+                          {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
+                        </td>
+                        <td className="px-2">
+                          {list.siteBuild?.deploy_state === "ready" ? (
+                            <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+                              READY
+                            </div>
+                          ) : list.siteBuild?.deploy_state === "building" ? (
+                            <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
+                              Building
+                            </div>
+                          ) : list.siteBuild?.deploy_state === "error" ? (
+                            <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
+                              Error
+                            </div>
+                          ) : list.siteBuild?.deploy_state === "enqueued" ? (
+                            <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+                              Enqueued
+                            </div>
+                          ) : list.siteBuild?.deploy_state === "new" ? (
+                            <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+                              In Queue
+                            </div>
+                          ) : (
+                            <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
+                              Unknow Status
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-2">
+                          <VerifyDomain domainName={list.name} />
+                        </td>
+                        <td className="px-2">
+                          <button
+                            onClick={() =>
+                              handleViewNameServer({
+                                nameServer: list.dns_servers,
+                                domain: list.name,
+                              })
+                            }
+                            className=" flex w-max items-center justify-center rounded-lg
                             bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 
                               hover:scale-105"
-                            >
-                              {" "}
-                              <MdViewTimeline />
-                              View
-                            </button>
-                          </td>
-                          <td className="px-2 ">
-                            <div className="flex max-w-40 flex-wrap">
-                              {list.partner ? (
-                                <div
-                                  key={index}
-                                  className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
-                                >
-                                  <span>
-                                    {list.partner.name} :{" "}
-                                    {list.partner.affiliateId}
-                                  </span>
+                          >
+                            {" "}
+                            <MdViewTimeline />
+                            View
+                          </button>
+                        </td>
+                        <td className="px-2 ">
+                          <div className="flex max-w-40 flex-wrap">
+                            {list.partner ? (
+                              <div
+                                key={index}
+                                className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
+                              >
+                                <div className="w-40 truncate">
+                                  NAME: {list.partner.name}
                                 </div>
-                              ) : (
-                                <div
-                                  key={index}
-                                  className="rounded-md bg-red-200 px-2 py-1 text-red-500"
-                                >
-                                  <span>No Partner</span>
+                                <div className="w-40 truncate">
+                                  PARTNER ID: {list.partner.affiliateId}
                                 </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="flex h-14 w-20 gap-2">
-                            <button
-                              onClick={() => {
-                                setTriggerUpdateDomain(() => true);
-                                setCurrentUpdateDomain(() => list as Domain);
-                                document.body.style.overflow = "hidden";
-                              }}
-                              className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                            >
-                              <BiSolidMessageSquareEdit />
-                            </button>
-                            {isLoading ? (
-                              <SpinLoading />
+                              </div>
                             ) : (
-                              user.role === "admin" && (
-                                <button
-                                  onClick={() =>
-                                    handleDeleteDomain({
-                                      domainNameId: list.id,
-                                      name: list.name,
-                                    })
-                                  }
-                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                                >
-                                  <MdDelete />
-                                </button>
-                              )
+                              <div
+                                key={index}
+                                className="rounded-md bg-red-200 px-2 py-1 text-red-500"
+                              >
+                                <span>No Partner</span>
+                              </div>
                             )}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                          </div>
+                        </td>
+                        <td className="flex h-14 w-20 gap-2">
+                          <button
+                            onClick={() => {
+                              setTriggerUpdateDomain(() => true);
+                              setCurrentUpdateDomain(() => list as Domain);
+                              document.body.style.overflow = "hidden";
+                            }}
+                            className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                          >
+                            <BiSolidMessageSquareEdit />
+                          </button>
+                          {isLoading ? (
+                            <SpinLoading />
+                          ) : (
+                            user.role === "admin" && (
+                              <button
+                                onClick={() =>
+                                  handleDeleteDomain({
+                                    domainNameId: list.id,
+                                    name: list.name,
+                                  })
+                                }
+                                className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                              >
+                                <MdDelete />
+                              </button>
+                            )
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex w-full justify-center">
             <Pagination
               onChange={(e, page) => setPage(page)}
               count={domains?.data?.totalPages}

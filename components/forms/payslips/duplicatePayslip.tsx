@@ -77,8 +77,8 @@ function DuplicatePayslip({
               const middleOfMonth = new Date(year, month, 15);
               setTargetRecord(middleOfMonth);
             }}
+            className="w-full rounded-md border ring-1"
             view="month"
-            className="w-full"
             dateFormat="mm/yy"
           />
         </TextField>
