@@ -245,39 +245,38 @@ function SimCards({ user }: { user: User }) {
               <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
             </SearchField>
           </div>
-          {user.role === "manager" ||
-            (user.role === "partner" && (
-              <div className="flex flex-col">
-                <label className="text-sm font-normal">Select Partner</label>
-                <Dropdown
-                  value={selectPartner}
-                  onChange={(e) => {
-                    setSelectPartner(() => e.value);
-                  }}
-                  itemTemplate={(
-                    partner: Partner & {
-                      responsibilityOnPartner: ResponsibilityOnPartner[];
-                      simCardOnPartner: SimCardOnPartner[];
-                    },
-                  ) => {
-                    return (
-                      <div className="n flex w-full items-center gap-2">
-                        <IoMdPerson />
-                        <span>{partner.name}</span>
-                        <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
-                          Total {partner.simCardOnPartner.length}
-                        </span>
-                      </div>
-                    );
-                  }}
-                  optionLabel="name"
-                  loading={partners.isLoading}
-                  options={partners.data}
-                  placeholder="Select Partner"
-                  className="h-10 w-96  rounded-lg outline-0 ring-2 ring-icon-color "
-                />
-              </div>
-            ))}
+          {(user.role === "manager" || user.role === "partner") && (
+            <div className="flex flex-col">
+              <label className="text-sm font-normal">Select Partner</label>
+              <Dropdown
+                value={selectPartner}
+                onChange={(e) => {
+                  setSelectPartner(() => e.value);
+                }}
+                itemTemplate={(
+                  partner: Partner & {
+                    responsibilityOnPartner: ResponsibilityOnPartner[];
+                    simCardOnPartner: SimCardOnPartner[];
+                  },
+                ) => {
+                  return (
+                    <div className="n flex w-full items-center gap-2">
+                      <IoMdPerson />
+                      <span>{partner.name}</span>
+                      <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
+                        Total {partner.simCardOnPartner.length}
+                      </span>
+                    </div>
+                  );
+                }}
+                optionLabel="name"
+                loading={partners.isLoading}
+                options={partners.data}
+                placeholder="Select Partner"
+                className="h-10 w-96  rounded-lg outline-0 ring-2 ring-icon-color "
+              />
+            </div>
+          )}
         </div>
 
         <ul className="mt-10 grid w-full gap-5 md:grid-cols-3 2xl:grid-cols-4">

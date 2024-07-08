@@ -72,7 +72,7 @@ export default function Home({ user }: { user: User }) {
             landingPageId: landingPageId,
           });
           Swal.fire("Deleted!", deleteLandingPage.message, "success");
-          landingPages.refetch();
+          await landingPages.refetch();
           setIsLoading(() => false);
         } catch (err: any) {
           setIsLoading(() => false);
