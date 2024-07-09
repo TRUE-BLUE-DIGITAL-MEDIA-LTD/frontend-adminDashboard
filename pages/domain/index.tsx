@@ -10,7 +10,14 @@ import {
 } from "../../services/admin/domain";
 import Swal from "sweetalert2";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Domain, SiteBuild, User } from "../../models";
+import {
+  Domain,
+  Partner,
+  ResponsibilityOnPartner,
+  SimCardOnPartner,
+  SiteBuild,
+  User,
+} from "../../models";
 import { loadingNumber } from "../../data/loadingNumber";
 import { Pagination, Skeleton } from "@mui/material";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
@@ -22,6 +29,9 @@ import VerifyDomain from "../../components/domain/verifyDomain";
 import moment from "moment";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
+import { GetPartnerByMangegerService } from "../../services/admin/partner";
+import { Dropdown } from "primereact/dropdown";
+import { IoMdPerson } from "react-icons/io";
 
 interface HandleDeleteDomain {
   domainNameId: string;
@@ -30,6 +40,8 @@ interface HandleDeleteDomain {
 function Index({ user }: { user: User }) {
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [selectPartner, setSelectPartner] = useState<Partner>();
+
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
   const [triggerUpdateDomain, setTriggerUpdateDomain] =
@@ -39,15 +51,44 @@ function Index({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const domains = useQuery({
-    queryKey: ["domains-byPage", page, searchField],
+    queryKey: [
+      "domains-byPage",
+      { page, searchField, partnerId: selectPartner?.id },
+    ],
     queryFn: () =>
       GetAllDomainsByPage({
         page: page,
         searchField: searchField,
+        partnerId: selectPartner?.id,
       }),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,
+  });
+
+  const partners = useQuery({
+    queryKey: ["partners-by-manager"],
+    queryFn: () =>
+      GetPartnerByMangegerService().then((response) => {
+        let addSeeAll = [...response];
+        if (user.role === "partner") {
+          setSelectPartner(() => response[0]);
+          return response;
+        }
+        addSeeAll.unshift({
+          createAt: new Date(),
+          updateAt: new Date(),
+          affiliateId: "all",
+          userId: "all",
+          name: "See All",
+          id: "all",
+          responsibilityOnPartner: new Array(domains.data?.totalDomain),
+          simCardOnPartner: [],
+        });
+        setSelectPartner(() => addSeeAll[0] as Partner);
+        return addSeeAll;
+      }),
+    enabled: domains.isSuccess,
   });
 
   // handle delete domain
@@ -158,20 +199,53 @@ function Index({ user }: { user: User }) {
               Create
             </button>
           )}
-          <SearchField
-            value={searchField}
-            onChange={(e) => {
-              setSearchField(() => e);
-              setPage(1);
-            }}
-            className="relative mt-10 flex w-96 flex-col"
-          >
-            <Input
-              placeholder="Search Domain Name Or Note"
-              className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
-            />
-            <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-          </SearchField>
+          <div className="flex w-full flex-wrap justify-center gap-5">
+            <div className="flex flex-col items-start gap-1">
+              <label className="text-sm font-normal">Search Domain</label>
+              <SearchField
+                value={searchField}
+                onChange={(e) => {
+                  setSearchField(() => e);
+                  setPage(1);
+                }}
+                className="relative  flex w-96 flex-col"
+              >
+                <Input
+                  placeholder="Search Domain Name Or Note"
+                  className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+                />
+                <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+              </SearchField>
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <label className="text-sm font-normal">Select Partner</label>
+              <Dropdown
+                value={selectPartner}
+                onChange={(e) => {
+                  setSelectPartner(() => e.value);
+                }}
+                itemTemplate={(
+                  partner: Partner & {
+                    responsibilityOnPartner: ResponsibilityOnPartner[];
+                    simCardOnPartner: SimCardOnPartner[];
+                  },
+                ) => (
+                  <div className="n flex w-full items-center gap-2">
+                    <IoMdPerson />
+                    <span>{partner.name}</span>
+                    <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
+                      Total {partner.responsibilityOnPartner.length}
+                    </span>
+                  </div>
+                )}
+                optionLabel="name"
+                loading={partners.isLoading}
+                options={partners.data}
+                placeholder="Select Partner"
+                className="h-10 w-96  rounded-lg text-left outline-0 ring-2 ring-icon-color "
+              />
+            </div>
+          </div>
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
@@ -285,7 +359,7 @@ function Index({ user }: { user: User }) {
                             {list.partner ? (
                               <div
                                 key={index}
-                                className="rounded-md bg-gray-200 px-2 py-1 text-gray-500"
+                                className="rounded-md  px-2 py-1 text-xs text-gray-500"
                               >
                                 <div className="w-40 truncate">
                                   NAME: {list.partner.name}

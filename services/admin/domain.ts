@@ -36,15 +36,18 @@ export interface ResponseGetAllDomainsByPage {
   })[];
   totalPages: number;
   currentPage: number;
+  totalDomain: number;
 }
 interface InputGetAllDomainsByPage {
   page: number;
   searchField?: string;
+  partnerId?: string;
 }
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
 ): Promise<ResponseGetAllDomainsByPage> {
   try {
+    if (input.partnerId === "all") delete input.partnerId;
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.get(

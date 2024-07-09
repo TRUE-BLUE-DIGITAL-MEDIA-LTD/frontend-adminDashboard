@@ -1,7 +1,7 @@
 export type Partner = {
   id: string;
-  createAt: string;
-  updateAt: string;
+  createAt: Date;
+  updateAt: Date;
   affiliateId: string;
   userId: string;
   name: string;
