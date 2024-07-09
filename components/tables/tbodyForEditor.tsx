@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { TableEntry } from "../../services/everflow/partner";
 import { UseQueryResult } from "@tanstack/react-query";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { User } from "../../models";
 
 type TbodyForEditorProps = {
+  user: User;
   odd: number;
   item: TableEntry;
   partnerPerformanceDayByDay: UseQueryResult<
@@ -39,6 +41,7 @@ type TbodyForEditorProps = {
 };
 function TbodyForEditor({
   odd,
+  user,
   item,
   partner,
   activePartnerDropdowns,
@@ -112,9 +115,11 @@ function TbodyForEditor({
           loading..
         </td>
       ) : (
-        <td className="px-2 font-bold text-yellow-600 ">
-          ${bonos?.bonus.toLocaleString()}
-        </td>
+        user.role === "manager" && (
+          <td className="px-2 font-bold text-yellow-600 ">
+            ${bonos?.bonus.toLocaleString()}
+          </td>
+        )
       )}
     </tr>
   );

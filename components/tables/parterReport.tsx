@@ -87,6 +87,7 @@ function ParterReport({ user }: { user: User }) {
   const bonusRate = useQuery({
     queryKey: ["bonusRate", { userId: user.id }],
     queryFn: () => GetBonusRateByUserIdService({ userId: user.id }),
+    enabled: user.role === "manager" || user.role === "admin",
   });
 
   const paterPerfomaces = useQuery({
@@ -443,16 +444,18 @@ function ParterReport({ user }: { user: User }) {
                     </th>
                   );
                 })}
-              <th
-                className={`left-0 
+              {user.role === "manager" && (
+                <th
+                  className={`left-0 
                 cursor-pointer bg-white p-2  
                 text-xs transition duration-100
                   hover:scale-105 active:scale-110 md:sticky `}
-              >
-                <button className="flex  items-center  justify-center gap-1">
-                  bonus
-                </button>
-              </th>
+                >
+                  <button className="flex  items-center  justify-center gap-1">
+                    bonus
+                  </button>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -692,8 +695,10 @@ function ParterReport({ user }: { user: User }) {
                             item={partner[1].summary as TableEntry}
                           />
                         )}
-                        {user.role === "manager" && (
+                        {(user.role === "manager" ||
+                          user.role === "partner") && (
                           <TbodyForEditor
+                            user={user}
                             activePartnerDropdowns={
                               activePartnerDropdowns ?? []
                             }
@@ -715,9 +720,13 @@ function ParterReport({ user }: { user: User }) {
                         )?.active === true &&
                           partner[1].entries.map((item, index) => {
                             const oddChild = index % 2;
-                            if (user.role === "manager") {
+                            if (
+                              user.role === "manager" ||
+                              user.role === "partner"
+                            ) {
                               return (
                                 <TbodyForEditor
+                                  user={user}
                                   partnerPerformanceDayByDay={
                                     partnerPerformanceDayByDay
                                   }

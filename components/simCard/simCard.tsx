@@ -180,7 +180,7 @@ function SimCards({ user }: { user: User }) {
 
       <header className="mt-20 flex w-full flex-col items-center justify-center gap-5">
         <h1 className="flex items-center justify-center gap-1 text-center text-3xl font-bold ">
-          SMS-ETMS <SimCardOutlined />
+          Oxy-ETMS <SimCardOutlined />
         </h1>
         {user.role === "admin" && (
           <section
@@ -291,7 +291,7 @@ function SimCards({ user }: { user: User }) {
                   ></li>
                 );
               })
-            : simCards.data?.data?.map((sim) => {
+            : simCards.data?.data?.map((sim, index) => {
                 const createAt = new Date(sim?.createAt);
                 let slotInUsed = false;
                 unavailableSlot.forEach((unavailable) => {
@@ -305,11 +305,15 @@ function SimCards({ user }: { user: User }) {
 
                 return (
                   <li
-                    className="flex w-full  flex-col gap-2 rounded-md bg-slate-200 p-2 ring-1
+                    className="relative flex w-full  flex-col gap-2 rounded-md bg-slate-200 p-2 ring-1
                      ring-gray-400 "
                     key={sim.id}
                   >
-                    <div className="flex w-full flex-wrap gap-2  border-b border-gray-400 py-1">
+                    <div className="absolute left-0 top-0 rounded-md bg-white px-3">
+                      Number{" "}
+                      {page === 1 ? index + 1 : index + 1 + 20 * (page - 1)}
+                    </div>
+                    <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 pt-7">
                       {sim.status === "active" ? (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
                           active
@@ -360,7 +364,7 @@ function SimCards({ user }: { user: User }) {
         <Pagination
           className="mt-5"
           onChange={(e, page) => setPage(page)}
-          count={simCards.data?.meta.total || 1}
+          count={simCards.data?.meta.total}
           color="primary"
         />
       </main>
