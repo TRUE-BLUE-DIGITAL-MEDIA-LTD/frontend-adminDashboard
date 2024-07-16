@@ -59,6 +59,7 @@ function AssignPhoneNumber({
   useEffect(() => {
     phoneNumber.refetch();
   }, []);
+
   useEffect(() => {
     if (phoneNumber.data) {
       setSimCardOmPartnerData(() => {

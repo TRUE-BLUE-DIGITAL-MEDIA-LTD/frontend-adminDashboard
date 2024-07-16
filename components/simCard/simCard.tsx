@@ -305,15 +305,16 @@ function SimCards({ user }: { user: User }) {
 
                 return (
                   <li
-                    className="relative flex w-full  flex-col gap-2 rounded-md bg-slate-200 p-2 ring-1
-                     ring-gray-400 "
+                    className={`relative flex h-32 w-full
+                        flex-col gap-2 rounded-md ${slotInUsed ? "bg-slate-400" : "bg-slate-200"}  p-2 ring-1
+                     ring-gray-400  `}
                     key={sim.id}
                   >
-                    <div className="absolute left-0 top-0 rounded-md bg-white px-3">
-                      Number{" "}
-                      {page === 1 ? index + 1 : index + 1 + 20 * (page - 1)}
-                    </div>
-                    <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 pt-7">
+                    <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 ">
+                      <div className="w-max rounded-sm px-2 text-xs text-black  ring-1 ring-black">
+                        Number{" "}
+                        {page === 1 ? index + 1 : index + 1 + 20 * (page - 1)}
+                      </div>
                       {sim.status === "active" ? (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
                           active
@@ -323,21 +324,27 @@ function SimCards({ user }: { user: User }) {
                           inactive
                         </div>
                       )}
-                      <div className="rounded-sm border border-blue-400 bg-blue-500 px-2 text-xs text-white">
-                        last updated{" "}
-                        {moment(sim.updateAt).format("DD/MM/YYYY HH:mm:ss")}
-                      </div>
+
                       {slotInUsed && (
-                        <div className="w-full rounded-sm bg-gray-600 px-2  text-xs text-green-100">
+                        <div className="w-max rounded-sm bg-gray-600 px-2  text-xs text-green-100">
                           slot in used
                         </div>
                       )}
                     </div>
+                    {sim.lastUsedAt ? (
+                      <div className="w-max rounded-sm bg-blue-600 px-2  text-xs text-green-100">
+                        Last Used {moment(sim.lastUsedAt).format("DD/MM/YYYY")}
+                      </div>
+                    ) : (
+                      <div className="w-max rounded-sm bg-blue-600 px-2  text-xs text-green-100">
+                        Last Used: NONE
+                      </div>
+                    )}
 
-                    <div className="grid w-full grid-cols-2 place-items-center">
+                    <div className="grid h-full w-full grid-cols-2 place-items-center">
                       <span
-                        className="w-max 
-                 font-semibold text-black"
+                        className="w-full 
+                  text-center font-semibold text-black"
                       >
                         {sim.phoneNumber.replace(
                           /(\d{4})(\d{3})(\d{4})/,

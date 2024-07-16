@@ -9,6 +9,7 @@ export type SimCard = {
   status: StatusSimCard;
   simCardNote: string;
   deviceUserId: string;
+  lastUsedAt: string;
   isActive: boolean;
   expireAt: Date;
 };

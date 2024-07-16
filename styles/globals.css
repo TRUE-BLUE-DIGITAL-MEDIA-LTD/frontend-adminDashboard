@@ -64,3 +64,8 @@ input[type="number"] {
 .p-calendar-w-btn {
   outline: none;
 }
+.p-datepicker {
+  padding: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}

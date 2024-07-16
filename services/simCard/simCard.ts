@@ -187,7 +187,8 @@ export type ResponseUpdateSimCardService = SimCard;
 
 type InputUpdateSimCardService = {
   simCardId: string;
-  simCardNote: string;
+  simCardNote?: string | null;
+  lastUsedAt?: string | null;
 };
 export async function UpdateSimCardService(
   input: InputUpdateSimCardService,

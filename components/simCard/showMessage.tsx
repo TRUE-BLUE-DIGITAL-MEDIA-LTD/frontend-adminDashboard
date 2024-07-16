@@ -10,13 +10,20 @@ import {
 } from "../../services/simCard/simCard";
 import { FcSimCard } from "react-icons/fc";
 import moment from "moment";
-import { FaDharmachakra, FaPhone, FaSimCard } from "react-icons/fa6";
+import {
+  FaCalendarCheck,
+  FaDharmachakra,
+  FaPhone,
+  FaSimCard,
+} from "react-icons/fa6";
 import { MdDevices, MdOutlineSdCard } from "react-icons/md";
 import { Message, Note, NoteAdd } from "@mui/icons-material";
 import { Editor } from "@tinymce/tinymce-react";
 import Swal from "sweetalert2";
 import Countdown from "react-countdown";
 import { IoIosTimer } from "react-icons/io";
+import { Calendar } from "primereact/calendar";
+import { Nullable } from "primereact/ts-helpers";
 
 type ShowMessageProps = {
   setTriggerShowMessage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +38,7 @@ function ShowMessage({
   const [firstLoad, setFirstLoad] = useState<boolean>(false);
   const [note, setNote] = useState<string>();
   const focusNote = useRef<HTMLDivElement | null>(null);
-
+  const [lastUsed, setLastUsed] = useState<string | null>();
   const simCard = useQuery<
     ResponseGetSimCardByIdService,
     { message: string; simCard: SimCard }
@@ -39,6 +46,8 @@ function ShowMessage({
     queryKey: ["simCard", { simCardId: selectSimCard.id }],
     queryFn: () =>
       GetSimCardByIdService({ simCardId: selectSimCard.id }).then((res) => {
+        console.log(res);
+        setLastUsed(res.simCard.lastUsedAt);
         if (firstLoad === false) {
           setNote(res.simCard.simCardNote);
           setFirstLoad(true);
@@ -52,14 +61,7 @@ function ShowMessage({
     { message: string; simCard: SimCard }
   >({
     queryKey: ["simCard-message", { simCardId: selectSimCard.id }],
-    queryFn: () =>
-      GetSimCardMessageService({ simCardId: selectSimCard.id }).then((res) => {
-        if (firstLoad === false) {
-          setNote(res.simCard.simCardNote);
-          setFirstLoad(true);
-        }
-        return res;
-      }),
+    queryFn: () => GetSimCardMessageService({ simCardId: selectSimCard.id }),
     refetchInterval: 1000 * 10,
     staleTime: 1000 * 10,
   });
@@ -73,7 +75,7 @@ function ShowMessage({
         clearTimeout(debounceTimeoutRef.current);
       }
       debounceTimeoutRef.current = setTimeout(() => {
-        handleUpdateNote(debouncedNoteRef.current!);
+        handleUpdateNoted(debouncedNoteRef.current!);
         debounceTimeoutRef.current = null;
       }, 2000);
     }
@@ -84,11 +86,33 @@ function ShowMessage({
     message.refetch();
   }, []);
 
-  const handleUpdateNote = async (content: string) => {
+  const handleUpdateNoted = async (content: string) => {
     try {
       await UpdateSimCardService({
         simCardId: selectSimCard.id,
         simCardNote: content,
+      });
+      setSaving(false);
+    } catch (error) {
+      setSaving(false);
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
+  const handleUpdateLastUsed = async (date: string | null) => {
+    try {
+      setSaving(true);
+      console.log(date);
+      await UpdateSimCardService({
+        simCardId: selectSimCard.id,
+        lastUsedAt: date,
       });
       setSaving(false);
     } catch (error) {
@@ -176,6 +200,27 @@ function ShowMessage({
                     "($1) $2-$3",
                   )}
                 </span>
+              )}
+            </div>
+            <div className="flex items-center justify-start gap-2 text-lg">
+              <span className="flex w-60 items-center justify-start gap-1">
+                <FaCalendarCheck />
+                Last Used:{" "}
+              </span>
+              {simCard.isLoading ? (
+                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+              ) : (
+                <Calendar
+                  value={lastUsed ? new Date(lastUsed) : null}
+                  onChange={async (e) => {
+                    setLastUsed(e.value ? e.value?.toISOString() : null);
+                    await handleUpdateLastUsed(
+                      e.value ? e.value?.toISOString() : null,
+                    );
+                  }}
+                  className="h-10"
+                  showButtonBar
+                />
               )}
             </div>
             <div className="flex items-center justify-start gap-2 text-lg">
