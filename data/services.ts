@@ -1,4 +1,5 @@
-export const services = [
+export type Service = { title: string; slug: string; icon: string };
+export const services: Service[] = [
   {
     title: "VKontakte",
     slug: "vkcom",
@@ -58,5 +59,75 @@ export const services = [
     title: "LINE",
     slug: "linemessenger",
     icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/1200px-LINE_logo.svg.png",
+  },
+  {
+    title: "Twitter",
+    slug: "twitter",
+    icon: "https://img.icons8.com/?size=100&id=13963&format=png&color=000000",
+  },
+  {
+    title: "LinkedIn",
+    slug: "linkedin",
+    icon: "https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000",
+  },
+  {
+    title: "Pinterest",
+    slug: "pinterest",
+    icon: "https://img.icons8.com/?size=100&id=63676&format=png&color=000000",
+  },
+  {
+    title: "Snapchat",
+    slug: "snapchat",
+    icon: "https://img.icons8.com/?size=100&id=67599&format=png&color=000000",
+  },
+  {
+    title: "Reddit",
+    slug: "reddit",
+    icon: "https://img.icons8.com/?size=100&id=kshUdu5u4FCX&format=png&color=000000",
+  },
+  {
+    title: "Tumblr",
+    slug: "tumblr",
+    icon: "https://img.icons8.com/?size=100&id=8829&format=png&color=000000",
+  },
+  {
+    title: "TikTok",
+    slug: "tiktok",
+    icon: "https://img.icons8.com/?size=100&id=118638&format=png&color=000000",
+  },
+  {
+    title: "WeChat",
+    slug: "wechat",
+    icon: "https://img.icons8.com/?size=100&id=38288&format=png&color=000000",
+  },
+  {
+    title: "Discord",
+    slug: "discord",
+    icon: "https://img.icons8.com/?size=100&id=30998&format=png&color=000000",
+  },
+  {
+    title: "Skype",
+    slug: "skype",
+    icon: "https://img.icons8.com/?size=100&id=117566&format=png&color=000000",
+  },
+  {
+    title: "Zoom",
+    slug: "zoom",
+    icon: "https://img.icons8.com/?size=100&id=7csVZvHoQrLW&format=png&color=000000",
+  },
+  {
+    title: "Viber",
+    slug: "viber",
+    icon: "https://img.icons8.com/?size=100&id=108842&format=png&color=000000",
+  },
+  {
+    title: "Flickr",
+    slug: "flickr",
+    icon: "https://img.icons8.com/?size=100&id=108842&format=png&color=000000",
+  },
+  {
+    title: "Quora",
+    slug: "quora",
+    icon: "https://img.icons8.com/?size=100&id=wPcChHypTdti&format=png&color=000000",
   },
 ];

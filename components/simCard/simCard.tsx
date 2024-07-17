@@ -1,4 +1,9 @@
-import { SimCardAlert, SimCardOutlined, Sms } from "@mui/icons-material";
+import {
+  Facebook,
+  SimCardAlert,
+  SimCardOutlined,
+  Sms,
+} from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { FaServer } from "react-icons/fa6";
@@ -27,14 +32,19 @@ import moment from "moment";
 import CreateDeviceUser from "../forms/createDeviceUser";
 import Swal from "sweetalert2";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
-import { IoMdPerson } from "react-icons/io";
+import { IoIosPricetags, IoIosRemoveCircle, IoMdPerson } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
+import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
+import Image from "next/image";
+import { blurDataURL } from "../../data/blurDataURL";
+import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
 
 function SimCards({ user }: { user: User }) {
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
+  const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
   const [triigerCreateDeviceUser, setTriggerCreateDeviceUser] =
     useState<boolean>(false);
   const [selectPartner, setSelectPartner] = useState<Partner>();
@@ -161,6 +171,39 @@ function SimCards({ user }: { user: User }) {
       }
     }
   };
+
+  const handleDeleteTag = async ({
+    tagOnSimCardId,
+  }: {
+    tagOnSimCardId: string;
+  }) => {
+    try {
+      Swal.fire({
+        title: "Deleting Tag",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await DeleteTagOnSimcardService({
+        tagOnSimCardId,
+      });
+      await simCards.refetch();
+      Swal.fire("Deleted!", "Your tag has been deleted.", "success");
+    } catch (error) {
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
       {triggerShowMessage && selectSimCard && (
@@ -175,6 +218,14 @@ function SimCards({ user }: { user: User }) {
           simCards={simCards}
           deviceUser={deviceUser}
           setTrigger={setTriggerCreateDeviceUser}
+        />
+      )}
+
+      {triggerCreateTag && selectSimCard && (
+        <CreateTagsOnSimcard
+          simCards={simCards}
+          simcard={selectSimCard}
+          setTrigger={setTriggerCreateTag}
         />
       )}
 
@@ -305,7 +356,7 @@ function SimCards({ user }: { user: User }) {
 
                 return (
                   <li
-                    className={`relative flex h-32 w-full
+                    className={`relative flex h-44 w-full
                         flex-col gap-2 rounded-md ${slotInUsed ? "bg-slate-400" : "bg-slate-200"}  p-2 ring-1
                      ring-gray-400  `}
                     key={sim.id}
@@ -317,11 +368,11 @@ function SimCards({ user }: { user: User }) {
                       </div>
                       {sim.status === "active" ? (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
-                          active
+                          available
                         </div>
                       ) : (
                         <div className="w-max rounded-sm bg-red-600 px-2  text-xs text-red-100">
-                          inactive
+                          unavailable
                         </div>
                       )}
 
@@ -364,6 +415,50 @@ function SimCards({ user }: { user: User }) {
                         View Message <Sms />
                       </button>
                     </div>
+                    <div className="grid w-full grid-cols-5 gap-2 border-t border-gray-400 py-2">
+                      <button
+                        onClick={() => {
+                          setSelectSimCard(sim);
+                          setTriggerCreateTag(true);
+                        }}
+                        className="transition-width group col-span-1 flex w-10 items-center justify-center 
+                     gap-1 rounded-md bg-green-200 px-3 text-green-600 hover:w-32 hover:drop-shadow-md  active:scale-105"
+                      >
+                        <IoIosPricetags className="h-10" />
+                        <span className="hidden text-xs group-hover:block">
+                          add tag
+                        </span>
+                      </button>
+                      <div className="col-span-4 flex h-10 flex-wrap   gap-3 overflow-auto p-1">
+                        {sim.tag.map((tag) => {
+                          return (
+                            <div
+                              key={tag.id}
+                              className="transition-width group flex  items-center    justify-between gap-1 
+                        rounded-sm bg-white p-1 text-xs"
+                            >
+                              <div className="relative h-5 w-5 overflow-hidden rounded-md">
+                                <Image
+                                  fill
+                                  src={tag.icon}
+                                  alt={tag.tag}
+                                  placeholder="blur"
+                                  blurDataURL={blurDataURL}
+                                />
+                              </div>
+                              {tag.tag}
+                              <IoIosRemoveCircle
+                                onClick={() =>
+                                  handleDeleteTag({ tagOnSimCardId: tag.id })
+                                }
+                                className="ml-3 mr-1 text-red-600 transition hover:text-red-700 "
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div></div>
                   </li>
                 );
               })}

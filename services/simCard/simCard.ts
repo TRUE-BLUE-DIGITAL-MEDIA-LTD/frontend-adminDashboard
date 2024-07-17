@@ -5,6 +5,7 @@ import {
   Pagination,
   SimCard,
   SimCardOnPartner,
+  TagOnSimcard,
 } from "../../models";
 
 export type ResponseGetSimCardByDeviceUserIdService = SimCard[];
@@ -38,7 +39,7 @@ export async function GetSimCardByDeviceUserIdService(
 }
 
 export type ResponseGetSimCardByPageService = Pagination<
-  SimCard & { partner: SimCardOnPartner }
+  SimCard & { partner: SimCardOnPartner; tag: TagOnSimcard[] }
 >;
 
 type InputGetSimCardByPageService = {

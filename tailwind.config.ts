@@ -12,6 +12,9 @@ const config: Config = {
       fontFamily: {
         Poppins: ["Poppins", "sans-serif"],
       },
+      transitionProperty: {
+        width: "width",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

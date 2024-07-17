@@ -30,3 +30,12 @@ export type SimCardOnPartner = {
   partnerId: string;
   simCardId: string;
 };
+
+export type TagOnSimcard = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  tag: string;
+  icon: string;
+  simCardId: string;
+};
