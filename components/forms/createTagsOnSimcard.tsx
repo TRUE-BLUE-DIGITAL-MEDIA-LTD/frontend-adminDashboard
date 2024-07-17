@@ -38,7 +38,7 @@ function CreateTagsOnSimcard({
 
       await CreateTagOnSimcardService({
         simCardId: simcard.id,
-        tag: tag.slug,
+        tag: tag.title,
         icon: tag.icon,
       });
 
