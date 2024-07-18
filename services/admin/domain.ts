@@ -1,7 +1,12 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { Domain, Partner, SiteBuild } from "../../models";
+import {
+  Domain,
+  Partner,
+  ResponsibilityOnPartner,
+  SiteBuild,
+} from "../../models";
 
 export type DomainWithLandingPage = Domain & {
   landingPages: {
@@ -33,6 +38,7 @@ export interface ResponseGetAllDomainsByPage {
   domains: (Domain & {
     siteBuild?: SiteBuild | null;
     partner: Partner | null;
+    partnerOnDomain: ResponsibilityOnPartner | null;
   })[];
   totalPages: number;
   currentPage: number;

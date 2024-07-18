@@ -58,6 +58,7 @@ function AssignDomain({
 
   useEffect(() => {
     domains.refetch();
+    partnerOnDomain.refetch();
   }, []);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ function AssignDomain({
               responsibilityPartners:
                 partnerOnDomain.data?.find(
                   (partner) => partner.domainId === domain.id,
-                ) ?? null,
+                ) ?? domain.partnerOnDomain,
               isLoading: false,
               isChecking:
                 partnerOnDomain.data?.some(
@@ -113,6 +114,7 @@ function AssignDomain({
         partnerId: partnerId,
       });
       await partnerOnDomain.refetch();
+      await domains.refetch();
 
       setResponsibilityOnPartner((prev) => {
         if (!prev) return prev;
@@ -155,12 +157,13 @@ function AssignDomain({
       });
     }
   };
-
   const handleDeleteResponsibility = async ({
     domainId,
     responsibilityPartnerId,
+    partner: Partner,
   }: {
     domainId: string;
+    partner: Partner;
     responsibilityPartnerId: string;
   }) => {
     try {
@@ -184,6 +187,7 @@ function AssignDomain({
         responsibilityPartnerId: responsibilityPartnerId,
       });
       await partnerOnDomain.refetch();
+      await domains.refetch();
       setResponsibilityOnPartner((prev) => {
         if (!prev) return prev;
         return {
@@ -230,7 +234,7 @@ function AssignDomain({
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
       <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
         <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          List of {selectPartner.name}&apos;s domain
+          List of {selectPartner.name}&apos;s domains
         </label>
         <div className=" flex max-h-full min-h-72 w-full flex-col justify-start overflow-auto   ">
           {partnerOnDomain.isLoading ? (
@@ -254,7 +258,7 @@ function AssignDomain({
           )}
         </div>
         <footer className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          Total Phone Number : {partnerOnDomain.data?.length}
+          Total Domain : {partnerOnDomain.data?.length}
         </footer>
       </ul>
       <Form className="flex h-[30rem] w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
@@ -290,7 +294,8 @@ function AssignDomain({
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
                   <th>Domain Name</th>
                   <th>Create At</th>
-                  <th>Assing Domain</th>
+                  <th>Own By</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -310,9 +315,6 @@ function AssignDomain({
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
                         },
                       );
                       return (
@@ -326,15 +328,35 @@ function AssignDomain({
                           <td className="truncate border-4 border-transparent font-semibold text-black">
                             {formattedDatecreateAt}
                           </td>
+                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                            {domain.partner?.name ?? "No Partner"}
+                          </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">
                               {domain.isLoading ? (
                                 <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
                               ) : domain.partner &&
                                 domain.partner.id !== selectPartner.id ? (
-                                <div className="h-max w-max bg-red-300 px-2 py-1 text-xs text-red-700">
-                                  already assigned
-                                </div>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteResponsibility({
+                                      domainId: domain.id,
+                                      partner: domain.partner ?? selectPartner,
+                                      responsibilityPartnerId:
+                                        domain.responsibilityPartners?.id || "",
+                                    })
+                                  }
+                                  type="button"
+                                  className="group  h-10 w-full bg-red-300 px-2 py-1
+                                 text-xs text-red-700 transition hover:bg-red-400"
+                                >
+                                  <span className="block group-hover:hidden">
+                                    already assigned
+                                  </span>
+                                  <span className="hidden group-hover:block">
+                                    unassign
+                                  </span>
+                                </button>
                               ) : (
                                 <input
                                   onChange={(e) => {
@@ -346,6 +368,8 @@ function AssignDomain({
                                     } else if (e.target.checked === false) {
                                       handleDeleteResponsibility({
                                         domainId: domain.id,
+                                        partner:
+                                          domain.partner ?? selectPartner,
                                         responsibilityPartnerId:
                                           domain.responsibilityPartners?.id ||
                                           "",
