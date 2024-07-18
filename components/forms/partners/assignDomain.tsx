@@ -274,6 +274,7 @@ function AssignDomain({
               value={searchField}
               onChange={(e) => {
                 setSearchField(() => e);
+                setPage(1);
               }}
               className="relative mt-10 flex w-80 flex-col"
             >
@@ -390,6 +391,7 @@ function AssignDomain({
             </table>
           </div>
           <Pagination
+            page={page}
             onChange={(e, page) => setPage(page)}
             count={responsibilityOnPartner?.totalPages || 1}
             color="primary"

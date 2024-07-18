@@ -222,6 +222,7 @@ function Index({ user }: { user: User }) {
               <Dropdown
                 value={selectPartner}
                 onChange={(e) => {
+                  setPage(1);
                   setSelectPartner(() => e.value);
                 }}
                 itemTemplate={(
@@ -417,6 +418,7 @@ function Index({ user }: { user: User }) {
           <div className="flex w-full justify-center">
             <Pagination
               onChange={(e, page) => setPage(page)}
+              page={page}
               count={domains?.data?.totalPages}
               color="primary"
             />
