@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { InputSignInService, signInService } from "../../services/auth/sign-in";
-import { setCookie } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import { Alert, Snackbar, TextField } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { Message } from "../../models";
 import { useQuery } from "@tanstack/react-query";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { GetUser } from "../../services/admin/user";
 
 function SignIn() {
   const router = useRouter();
@@ -180,3 +182,23 @@ function SignIn() {
 }
 
 export default SignIn;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  try {
+    const cookies = parseCookies(context);
+    const accessToken = cookies.access_token;
+    const user = await GetUser({ access_token: accessToken });
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+    };
+  } catch (err) {
+    return {
+      props: {},
+    };
+  }
+};
