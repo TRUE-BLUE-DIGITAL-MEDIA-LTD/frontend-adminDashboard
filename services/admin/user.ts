@@ -50,7 +50,7 @@ export async function SignInAsAnoterUserService(
     const access_token = cookies.access_token;
     const user = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/sign-in-as-another-user`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}https://home.oxyclick.com-as-another-user`,
       params: {
         ...input,
       },
