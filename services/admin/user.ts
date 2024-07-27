@@ -40,6 +40,30 @@ export async function GetUser(input: InputGetUser): Promise<ResponseGetUser> {
   }
 }
 
+type ResponseGetImpersonateUser = User;
+interface InputGetImpersonateUser {
+  impersonate_access_token: string;
+}
+export async function GetImpersonateUser(
+  input: InputGetImpersonateUser,
+): Promise<ResponseGetImpersonateUser> {
+  try {
+    const user = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/get-me`,
+      {
+        headers: {
+          Authorization: "Bearer " + input.impersonate_access_token,
+        },
+      },
+    );
+
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 type ResponseSignInAsAnoterUserService = { access_token: string; user: User };
 type RequestSignInAsAnoterUserService = { email: string };
 export async function SignInAsAnoterUserService(
@@ -50,7 +74,7 @@ export async function SignInAsAnoterUserService(
     const access_token = cookies.access_token;
     const user = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}https://home.oxyclick.com-as-another-user`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/sign-in-as-another-user`,
       params: {
         ...input,
       },

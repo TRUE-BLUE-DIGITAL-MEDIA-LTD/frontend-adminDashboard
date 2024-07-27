@@ -41,8 +41,8 @@ function SignIn() {
       setIsLoading(() => false);
       setOpen(() => true);
       setCookie(null, "access_token", res.access_token, {
-        maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
         path: "/", // Cookie path (can be adjusted based on your needs)
+        maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
       });
       setTriggerRedirect(() => true);
       if (res.user.IsResetPassword === false) {

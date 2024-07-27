@@ -109,6 +109,12 @@ function Index({ user }: { user: User }) {
           Swal.showLoading();
         },
       });
+      const cookies = parseCookies();
+      const currentAccessToken = cookies.access_token;
+      setCookie(null, "impersonate_access_token", currentAccessToken, {
+        maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
+        path: "/", // Cookie path (can be adjusted based on your needs)
+      });
       const user = await SignInAsAnoterUserService({ email });
       setCookie(null, "access_token", user.access_token, {
         maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
