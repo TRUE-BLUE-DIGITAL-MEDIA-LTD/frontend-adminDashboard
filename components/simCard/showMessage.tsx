@@ -46,7 +46,6 @@ function ShowMessage({
     queryKey: ["simCard", { simCardId: selectSimCard.id }],
     queryFn: () =>
       GetSimCardByIdService({ simCardId: selectSimCard.id }).then((res) => {
-        console.log(res);
         setLastUsed(res.simCard.lastUsedAt);
         if (firstLoad === false) {
           setNote(res.simCard.simCardNote);

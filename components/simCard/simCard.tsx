@@ -1,19 +1,22 @@
 import {
   Facebook,
+  PhoneAndroid,
   SimCardAlert,
   SimCardOutlined,
   Sms,
 } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { FaServer } from "react-icons/fa6";
+import { FaDharmachakra, FaServer } from "react-icons/fa6";
 import {
   DeleteDeviceUserService,
   GetDeviceUsersService,
 } from "../../services/simCard/deviceUser";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdDevices } from "react-icons/md";
 import { Input, SearchField, TextArea } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
+import parse from "html-react-parser";
+
 import {
   GetSimCardActiveService,
   GetSimCardByPageService,
@@ -32,12 +35,18 @@ import moment from "moment";
 import CreateDeviceUser from "../forms/createDeviceUser";
 import Swal from "sweetalert2";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
-import { IoIosPricetags, IoIosRemoveCircle, IoMdPerson } from "react-icons/io";
+import {
+  IoIosPricetags,
+  IoIosRemoveCircle,
+  IoIosTimer,
+  IoMdPerson,
+} from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
 import Image from "next/image";
 import { blurDataURL } from "../../data/blurDataURL";
 import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
+import Countdown from "react-countdown";
 
 function SimCards({ user }: { user: User }) {
   const [searchField, setSearchField] = useState<string>("");
@@ -343,7 +352,6 @@ function SimCards({ user }: { user: User }) {
                 );
               })
             : simCards.data?.data?.map((sim, index) => {
-                const createAt = new Date(sim?.createAt);
                 let slotInUsed = false;
                 unavailableSlot.forEach((unavailable) => {
                   if (
@@ -356,8 +364,16 @@ function SimCards({ user }: { user: User }) {
 
                 return (
                   <li
-                    className={`relative flex h-44 w-full
-                        flex-col gap-2 rounded-md ${slotInUsed ? "bg-slate-400" : "bg-slate-200"}  p-2 ring-1
+                    className={`relative flex h-max w-full
+                        flex-col gap-2 rounded-md ${
+                          slotInUsed
+                            ? activeSimcard.data?.find(
+                                (active) => active.id === sim.id,
+                              )
+                              ? "bg-green-200"
+                              : "bg-slate-400"
+                            : "bg-slate-200"
+                        }  p-2 ring-1
                      ring-gray-400  `}
                     key={sim.id}
                   >
@@ -381,6 +397,13 @@ function SimCards({ user }: { user: User }) {
                           slot in used
                         </div>
                       )}
+                      {activeSimcard.data?.find(
+                        (active) => active.id === sim.id,
+                      ) && (
+                        <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
+                          active
+                        </div>
+                      )}
                     </div>
                     {sim.lastUsedAt ? (
                       <div className="w-max rounded-sm bg-blue-600 px-2  text-xs text-green-100">
@@ -392,10 +415,26 @@ function SimCards({ user }: { user: User }) {
                       </div>
                     )}
 
-                    <div className="grid h-full w-full grid-cols-2 place-items-center">
+                    <div className="grid h-full w-full grid-cols-2 place-content-start place-items-center gap-y-2">
+                      <button
+                        onClick={() => {
+                          setSelectSimCard(sim);
+                          setTriggerShowMessage(true);
+                        }}
+                        className="col-span-2 flex w-full items-center justify-center gap-1 rounded-md
+                   bg-green-300 px-5 py-2 text-sm text-green-600 
+                        transition duration-100 hover:bg-green-400"
+                      >
+                        View Message <Sms />
+                      </button>
+
+                      <span className="flex w-full items-center justify-start gap-1">
+                        <PhoneAndroid />
+                        Phone Number:{" "}
+                      </span>
                       <span
-                        className="w-full 
-                  text-center font-semibold text-black"
+                        className="w-full bg-slate-200 
+                  text-start font-semibold text-black"
                       >
                         {sim.phoneNumber.replace(
                           /(\d{4})(\d{3})(\d{4})/,
@@ -403,17 +442,55 @@ function SimCards({ user }: { user: User }) {
                         )}
                       </span>
 
-                      <button
-                        onClick={() => {
-                          setSelectSimCard(sim);
-                          setTriggerShowMessage(true);
-                        }}
-                        className="flex items-center justify-center gap-1 rounded-md
-                   bg-green-300 px-5 py-2 text-sm text-green-600 
-                        transition duration-100 hover:bg-green-400"
+                      <span className="flex  w-full items-center justify-start gap-1">
+                        <MdDevices />
+                        Device User:{" "}
+                      </span>
+                      <span
+                        className="w-full bg-slate-200 
+                  text-start font-semibold text-black"
                       >
-                        View Message <Sms />
-                      </button>
+                        {
+                          deviceUser.data?.find(
+                            (d) => d.id === sim.deviceUserId,
+                          )?.portNumber
+                        }
+                      </span>
+
+                      <span className="flex  w-full items-center justify-start gap-1">
+                        <FaDharmachakra />
+                        Port Number:{" "}
+                      </span>
+                      <span
+                        className="w-full bg-slate-200 
+                  text-start font-semibold text-black"
+                      >
+                        {sim.portNumber}
+                      </span>
+
+                      <div className="col-span-2 max-h-14 w-full overflow-auto border-l-4 border-yellow-500 bg-yellow-100 p-4 ">
+                        {sim.simCardNote && parse(sim.simCardNote)}
+                      </div>
+
+                      {sim.expireAt && (
+                        <span className="flex  items-center justify-start gap-1">
+                          <IoIosTimer />
+                          Time Reminding:{" "}
+                        </span>
+                      )}
+                      {sim.expireAt && (
+                        <Countdown
+                          date={sim.expireAt}
+                          intervalDelay={0}
+                          precision={3}
+                          renderer={(props) => (
+                            <div className="w-full rounded-sm bg-slate-200 px-5 font-bold text-black">
+                              {props.minutes} : {props.seconds} :{" "}
+                              {props.milliseconds}
+                            </div>
+                          )}
+                        />
+                      )}
                     </div>
                     <div className="grid w-full grid-cols-5 gap-2 border-t border-gray-400 py-2">
                       <button
@@ -421,8 +498,8 @@ function SimCards({ user }: { user: User }) {
                           setSelectSimCard(sim);
                           setTriggerCreateTag(true);
                         }}
-                        className="transition-width group col-span-1 flex w-10 items-center justify-center 
-                     gap-1 rounded-md bg-green-200 px-3 text-green-600 hover:w-32 hover:drop-shadow-md  active:scale-105"
+                        className="group col-span-1 flex w-10 items-center justify-center gap-1 
+                     rounded-md bg-green-200 px-3 text-green-600 transition-width hover:w-32 hover:drop-shadow-md  active:scale-105"
                       >
                         <IoIosPricetags className="h-10" />
                         <span className="hidden text-xs group-hover:block">
@@ -434,8 +511,8 @@ function SimCards({ user }: { user: User }) {
                           return (
                             <div
                               key={tag.id}
-                              className="transition-width group flex  items-center    justify-between gap-1 
-                        rounded-sm bg-white p-1 text-xs"
+                              className="group flex items-center  justify-between    gap-1 rounded-sm 
+                        bg-white p-1 text-xs transition-width"
                             >
                               <div className="relative h-5 w-5 overflow-hidden rounded-md">
                                 <Image

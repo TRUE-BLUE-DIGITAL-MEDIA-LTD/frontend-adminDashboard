@@ -148,10 +148,14 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   } catch (err) {
+    const node = process.env.NODE_ENV;
     return {
       redirect: {
         permanent: false,
-        destination: "https://home.oxyclick.com",
+        destination:
+          node === "development"
+            ? "/auth/sign-in"
+            : "https://home.oxyclick.com",
       },
     };
   }
