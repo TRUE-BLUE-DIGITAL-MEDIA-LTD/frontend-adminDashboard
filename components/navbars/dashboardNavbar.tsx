@@ -88,6 +88,12 @@ function DashboardNavbar({
           )}
           {triggerAccountMenu && (
             <ul className="   flex w-40 flex-col items-start justify-center gap-2 text-white ">
+              <Link
+                href={"/account-setting"}
+                className="w-full hover:font-bold"
+              >
+                account settings
+              </Link>
               <li onClick={signOut} className="w-full hover:font-bold">
                 Sign Out
               </li>

@@ -146,3 +146,34 @@ export async function UnAssignPartnerToUserService(
     throw err.response.data;
   }
 }
+
+type ResponseUpdateUserService = User;
+type RequestUpdateUserService = {
+  email?: string;
+  name?: string;
+  oldPassword?: string;
+  newPassword?: string;
+};
+export async function UpdateUserService(
+  input: RequestUpdateUserService,
+): Promise<ResponseUpdateUserService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "PATCH",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/user`,
+      data: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
