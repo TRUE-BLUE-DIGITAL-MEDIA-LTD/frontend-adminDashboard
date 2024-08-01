@@ -245,11 +245,11 @@ function CreatePayslip({
           <TextField
             isRequired
             className="flex flex-col"
-            aria-label="Bonus /Allowance"
+            aria-label="Commission /Allowance"
           >
-            <Label>Bonus /Allowance</Label>
+            <Label>Commission /Allowance</Label>
             <Input
-              placeholder="Bonus /Allowance"
+              placeholder="Commission /Allowance"
               className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
               type="text"
               value={payslipData?.bonus}

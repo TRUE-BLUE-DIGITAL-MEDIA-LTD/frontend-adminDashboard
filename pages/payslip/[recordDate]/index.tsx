@@ -85,7 +85,9 @@ function Index({
                       {payslip.salary.toLocaleString()} THB
                     </h1>
                     <h1 className="flex w-full justify-between">
-                      <span className="font-bold">Bonus /Allowance {"  "}</span>
+                      <span className="font-bold">
+                        Commission /Allowance {"  "}
+                      </span>
                       {payslip.bonus.toLocaleString()} THB
                     </h1>
                   </td>
@@ -184,7 +186,9 @@ function Index({
               <th className="border-2 border-black px-2">Start Date</th>
               <th className="border-2 border-black px-2">Salary (THB)</th>
               <th className="border-2 border-black px-2">Social Security</th>
-              <th className="border-2 border-black px-2">Bonus /Allowance</th>
+              <th className="border-2 border-black px-2">
+                Commission /Allowance
+              </th>
               <th className="border-2 border-black px-2">Tax</th>
               <th className="border-2 border-black px-2">Deduction</th>
               <th className="border-2 border-black px-2">Note</th>

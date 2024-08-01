@@ -102,7 +102,7 @@ function BonusCaluator({
             />
             $
             <span className="text-sm font-normal text-green-300">
-              Total Bonus
+              Total Commission
             </span>
           </div>
         )}

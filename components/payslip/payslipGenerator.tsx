@@ -322,7 +322,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                     Social Security
                   </th>
                   <th className="border-2 border-black px-4 py-2">
-                    Bonus /Allowance
+                    Commission /Allowance
                   </th>
                   <th className="border-2 border-black px-4 py-2">Tax</th>
                   <th className="border-2 border-black px-4 py-2">Deduction</th>
@@ -462,7 +462,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
               </span>
             </li>
             <li className="flex flex-col">
-              <span>Total Bonus</span>
+              <span>Total Commission</span>
               <span className="font-semibold">
                 {payslips.data
                   ?.reduce((acc, payslip) => {
