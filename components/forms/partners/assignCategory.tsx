@@ -63,7 +63,6 @@ function AssignCategory({
       });
     }
   }, [categoryOnPartners.data, categorys.data]);
-  console.log(categoryOnPartnerData);
   const handleAssignCategory = async ({
     partnerId,
     categoryId,
@@ -86,6 +85,7 @@ function AssignCategory({
           }),
         ];
       });
+
       await CreateCategoryOnPartnerService({
         categoryId: categoryId,
         partnerId: partnerId,
@@ -260,29 +260,33 @@ function AssignCategory({
                           </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">
-                              <input
-                                onChange={(e) => {
-                                  if (e.target.checked === true) {
-                                    handleAssignCategory({
-                                      partnerId: selectPartner.id,
-                                      categoryId: category.id,
-                                    });
-                                  } else if (e.target.checked === false) {
-                                    handleDeleteCategoryOnPartner({
-                                      categoryId: category.id,
-                                      categoryOnPartnerId:
-                                        categoryOnPartners.data?.find(
-                                          (categoryOnPartner) =>
-                                            categoryOnPartner.categoryId ===
-                                            category.id,
-                                        )?.id || "",
-                                    });
-                                  }
-                                }}
-                                checked={category.isChecking}
-                                type="checkbox"
-                                className="h-5 w-5"
-                              />
+                              {category.isLoading ? (
+                                <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
+                              ) : (
+                                <input
+                                  onChange={(e) => {
+                                    if (e.target.checked === true) {
+                                      handleAssignCategory({
+                                        partnerId: selectPartner.id,
+                                        categoryId: category.id,
+                                      });
+                                    } else if (e.target.checked === false) {
+                                      handleDeleteCategoryOnPartner({
+                                        categoryId: category.id,
+                                        categoryOnPartnerId:
+                                          categoryOnPartners.data?.find(
+                                            (categoryOnPartner) =>
+                                              categoryOnPartner.categoryId ===
+                                              category.id,
+                                          )?.id || "",
+                                      });
+                                    }
+                                  }}
+                                  checked={category.isChecking}
+                                  type="checkbox"
+                                  className="h-5 w-5"
+                                />
+                              )}
                             </div>
                           </td>
                         </tr>
