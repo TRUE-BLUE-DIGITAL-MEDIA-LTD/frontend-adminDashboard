@@ -9,7 +9,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { GetAllDomains } from "../services/admin/domain";
 import { Skeleton } from "@mui/material";
 import { languages } from "../data/languages";
-import { GetAllCategories } from "../services/admin/categories";
+import { GetAllCategoriesByPartnerService } from "../services/admin/categories";
 import Image from "next/image";
 import Link from "next/link";
 import { GetAllLandingPageService } from "../services/admin/landingPage";
@@ -38,7 +38,7 @@ function Index({ user }: { user: User }) {
   const categories = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
-      GetAllCategories().then((res) => {
+      GetAllCategoriesByPartnerService().then((res) => {
         const newFormat = res.map((category) => {
           return {
             option: category.title,

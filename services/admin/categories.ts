@@ -23,3 +23,24 @@ export async function GetAllCategories(): Promise<ResponseGetAllCategories> {
     throw err.response.data;
   }
 }
+
+export type ResponseGetAllCategoriesByPartnerService = Category[];
+export async function GetAllCategoriesByPartnerService(): Promise<ResponseGetAllCategories> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const categories = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/category`,
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+
+    return categories.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}

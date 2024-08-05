@@ -29,15 +29,7 @@ export default function DashboardLayout({
   const [triggerSidebar, setTriggerSidebar] = useState<boolean>(false);
   const pathname = router.pathname; // e.g. "/classroom/setting"
   const lastRoute = pathname.split("/").pop();
-  const impersonateUser = useQuery({
-    queryKey: ["user-impersonate"],
-    queryFn: () => {
-      const cookies = parseCookies();
-      const impersonate_access_token = cookies.impersonate_access_token;
-      if (!impersonate_access_token) return;
-      return GetImpersonateUser({ impersonate_access_token });
-    },
-  });
+
   const onLoad = () => {
     setLoadingChat(() => false);
     if (JSON.stringify(tawkMessengerRef.current) === "{}") return;
@@ -159,9 +151,7 @@ export default function DashboardLayout({
           );
         })}
       </ul>
-      {impersonateUser.data && (
-        <ImpersonateNavBar impersonateUser={impersonateUser} />
-      )}
+
       <DashboardNavbar
         setTriggerSidebar={setTriggerSidebar}
         user={user}

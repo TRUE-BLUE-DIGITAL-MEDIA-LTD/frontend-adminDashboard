@@ -7,3 +7,11 @@ export type Category = {
   background: string;
   isDeleted: boolean;
 };
+
+export type CategoryOnPartner = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  categoryId: string;
+  partnerId: string;
+};

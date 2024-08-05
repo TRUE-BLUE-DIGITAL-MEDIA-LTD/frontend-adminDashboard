@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { User } from "../../models";
 import { useRouter } from "next/router";
-import { useQueryClient } from "@tanstack/react-query";
-import { destroyCookie } from "nookies";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { destroyCookie, parseCookies } from "nookies";
 import Link from "next/link";
 import Image from "next/image";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import { IoMenu } from "react-icons/io5";
 import { IoMdMenu } from "react-icons/io";
+import ImpersonateNavBar from "./impersonateNavBar";
+import { GetImpersonateUser } from "../../services/admin/user";
 
 function DashboardNavbar({
   user,
@@ -21,7 +23,15 @@ function DashboardNavbar({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [triggerAccountMenu, setTriggerAccountMenu] = useState(false);
-
+  const impersonateUser = useQuery({
+    queryKey: ["user-impersonate"],
+    queryFn: () => {
+      const cookies = parseCookies();
+      const impersonate_access_token = cookies.impersonate_access_token;
+      if (!impersonate_access_token) return;
+      return GetImpersonateUser({ impersonate_access_token });
+    },
+  });
   const signOut = () => {
     destroyCookie(null, "access_token", { path: "/" });
     queryClient.removeQueries();
@@ -61,7 +71,10 @@ function DashboardNavbar({
           />
         </Link>
       </div>
-      <ul className="relative flex h-14 w-60  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
+      {impersonateUser.data && (
+        <ImpersonateNavBar impersonateUser={impersonateUser} />
+      )}
+      <ul className="relative flex h-14  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
           onMouseLeave={() => setTriggerAccountMenu(() => false)}
@@ -86,6 +99,7 @@ function DashboardNavbar({
               </div>
             </div>
           )}
+
           {triggerAccountMenu && (
             <ul className="   flex w-40 flex-col items-start justify-center gap-2 text-white ">
               <Link

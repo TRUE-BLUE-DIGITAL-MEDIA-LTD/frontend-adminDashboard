@@ -17,6 +17,7 @@ import { ErrorMessages, Partner, User } from "../../models";
 import Swal from "sweetalert2";
 import AssignDomain from "../forms/partners/assignDomain";
 import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
+import AssignCategory from "../forms/partners/assignCategory";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
@@ -27,6 +28,8 @@ function PartnerTable({ accounts, user }: PartnerProps) {
   const [triggerAssignNumber, setTriggerAssignNumber] = useState(false);
   const [triggerUpdatePartner, setTriggerUpdatePartner] = useState(false);
   const [triggerAssignDomain, setTriggerAssignDomain] = useState(false);
+  const [triggerAssignCategory, setTriggerAssignCategory] = useState(false);
+
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [searchField, setSearchField] = useState("");
   const [page, setPage] = useState(1);
@@ -118,6 +121,13 @@ function PartnerTable({ accounts, user }: PartnerProps) {
         />
       )}
 
+      {triggerAssignCategory && selectPartner && (
+        <AssignCategory
+          selectPartner={selectPartner}
+          setTriggerAssignCategory={setTriggerAssignCategory}
+        />
+      )}
+
       {triggerAssignNumber && selectPartner && user.role === "admin" && (
         <AssignPhoneNumber
           setTriggerAssignNumber={setTriggerAssignNumber}
@@ -169,6 +179,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                 <th className="px-5">Assign Phone Number</th>
               )}
               <th className="px-5">Assign Domain</th>
+              <th className="px-5">Assign Category</th>
               {user.role === "admin" && <th className="px-5">Options</th>}
             </tr>
           </thead>
@@ -241,6 +252,21 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                            transition duration-150 hover:bg-green-500"
                           >
                             domain
+                          </button>
+                        </div>
+                      </td>
+                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => {
+                              setSelectPartner(partner);
+                              setTriggerAssignCategory(() => true);
+                              document.body.style.overflow = "hidden";
+                            }}
+                            className="rounded-md bg-green-400 px-5 py-1 text-black
+                           transition duration-150 hover:bg-green-500"
+                          >
+                            category
                           </button>
                         </div>
                       </td>

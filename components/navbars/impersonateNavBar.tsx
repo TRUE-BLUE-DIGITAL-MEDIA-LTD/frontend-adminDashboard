@@ -40,24 +40,22 @@ function ImpersonateNavBar({ impersonateUser }: ImpresonateNavBarProps) {
     }
   };
   return (
-    <nav className="sticky top-0 flex h-14 w-full justify-end bg-white p-3 font-Poppins">
-      <div className="flex items-center justify-center gap-2">
-        <p className="text-lg font-normal">{impersonateUser.data?.email}</p>
-        {impersonateUser.data && (
-          <button
-            onClick={() =>
-              handleStopImpersonate({
-                email: impersonateUser.data?.email as string,
-              })
-            }
-            className=" rounded-md bg-gray-800 px-3 py-1 font-semibold  
+    <div className="flex items-center justify-center gap-2 text-white">
+      <p className="text-lg font-normal">{impersonateUser.data?.email}</p>
+      {impersonateUser.data && (
+        <button
+          onClick={() =>
+            handleStopImpersonate({
+              email: impersonateUser.data?.email as string,
+            })
+          }
+          className=" rounded-md bg-gray-400 px-3 py-1 font-semibold  
          text-white transition hover:bg-gray-900 active:scale-105"
-          >
-            Stop Impersonate
-          </button>
-        )}
-      </div>
-    </nav>
+        >
+          Stop Impersonate
+        </button>
+      )}
+    </div>
   );
 }
 
