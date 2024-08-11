@@ -2,6 +2,7 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 import {
   DeviceUser,
+  MessageOnSimcard,
   Pagination,
   SimCard,
   SimCardOnPartner,
@@ -96,7 +97,9 @@ export async function GetSimCardByPartnerIdService(): Promise<ResponseGetSimCard
   }
 }
 
-export type ResponseGetSimCardActiveService = SimCard[];
+export type ResponseGetSimCardActiveService = (SimCard & {
+  messages: MessageOnSimcard[];
+})[];
 
 export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiveService> {
   try {
@@ -104,7 +107,7 @@ export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiv
     const access_token = cookies.access_token;
     const simcard = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/option/active`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
@@ -149,14 +152,7 @@ export async function GetSimCardByIdService(
 
 export type ResponseGetSimCardMessageService = {
   simCard: SimCard & { deviceUser: DeviceUser };
-  messages: {
-    status: number;
-    port: string;
-    timeStamp: number;
-    sender: string;
-    recipient: string;
-    message: string;
-  }[];
+  messages: MessageOnSimcard[];
 };
 
 type InputGetSimCardMessageService = {

@@ -23,7 +23,8 @@ import Swal from "sweetalert2";
 import Countdown from "react-countdown";
 import { IoIosTimer } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
+import { InView, useInView } from "react-intersection-observer";
+import { UpdateMessageOnSimcardService } from "../../services/simCard/message";
 
 type ShowMessageProps = {
   setTriggerShowMessage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,6 +39,7 @@ function ShowMessage({
   const [firstLoad, setFirstLoad] = useState<boolean>(false);
   const [note, setNote] = useState<string>();
   const focusNote = useRef<HTMLDivElement | null>(null);
+  const [messageTracking, setMessageTracking] = useState<{ id: string }[]>([]);
   const [lastUsed, setLastUsed] = useState<string | null>();
   const simCard = useQuery<
     ResponseGetSimCardByIdService,
@@ -132,10 +134,12 @@ function ShowMessage({
     setNote(content);
     debouncedNoteRef.current = content;
   };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
       <main
-        className="relative grid h-96 grid-cols-2 gap-5 rounded-lg border border-gray-100  bg-gradient-to-r from-gray-50 to-gray-200  p-5 
+        className="relative grid h-96 grid-cols-2 gap-5 overflow-y-auto rounded-lg border
+         border-gray-100  bg-gradient-to-r from-gray-50 to-gray-200  p-5 
         drop-shadow-xl lg:w-11/12 xl:w-10/12  2xl:w-9/12"
       >
         {message.isFetching ? (
@@ -419,12 +423,23 @@ function ShowMessage({
           ) : (
             <div className="py-2">
               {message.data && message.data?.messages?.length > 0 ? (
-                <ul className="flex max-h-60 flex-col gap-3 overflow-auto p-3">
+                <div className="flex max-h-60 flex-col gap-3 overflow-auto p-3">
                   {message.data?.messages
-                    .sort((a, b) => b.timeStamp - a.timeStamp)
+                    .sort((a, b) => b.timestamp - a.timestamp)
                     .map((msg, index) => {
                       return (
-                        <li
+                        <InView
+                          as="div"
+                          onChange={(inView, entry) => {
+                            if (inView && msg.isRead === false) {
+                              setMessageTracking((prev) => {
+                                if (!prev) return [];
+                                if (prev.find((item) => item.id === msg.id))
+                                  return prev;
+                                return [...prev, { id: msg.id }];
+                              });
+                            }
+                          }}
                           className="flex w-full flex-col gap-1 rounded-md
                          border border-gray-500 bg-white p-2
                          py-2  "
@@ -434,15 +449,22 @@ function ShowMessage({
                             <span className="font-semibold">Message: </span>
                             {msg.message}
                           </span>
-                          <span className="w-max rounded-sm bg-gray-600 px-2 text-xs text-white">
-                            {moment(
-                              new Date(msg.timeStamp * 1000).toISOString(),
-                            ).format("DD MMMM YYYY HH:mm:ss")}{" "}
-                          </span>
-                        </li>
+                          <div className="flex w-full items-center gap-3">
+                            <span className="w-max rounded-sm bg-gray-600 px-2 text-xs text-white">
+                              {moment(
+                                new Date(msg.timestamp * 1000).toISOString(),
+                              ).format("DD MMMM YYYY HH:mm:ss")}{" "}
+                            </span>
+                            <span
+                              className={`w-max rounded-sm ${msg.isRead ? "bg-green-600" : "bg-gray-600"}  px-2 text-xs text-white`}
+                            >
+                              {msg.isRead ? "Read" : "Unread"}
+                            </span>
+                          </div>
+                        </InView>
                       );
                     })}
-                </ul>
+                </div>
               ) : (
                 <p>
                   An SMS with a code will appear here after you use the number
@@ -458,9 +480,23 @@ function ShowMessage({
         onClick={() => {
           if (saving === false) {
             setTriggerShowMessage(false);
+            if (messageTracking?.length > 0) {
+              Promise.allSettled(
+                messageTracking.map((msg) =>
+                  UpdateMessageOnSimcardService({
+                    query: {
+                      messageOnSimcardId: msg.id,
+                    },
+                    body: { isRead: true },
+                  }),
+                ),
+              );
+              message.refetch();
+            }
             if (focusNote.current) {
               focusNote.current.classList.remove("ring-2");
             }
+            document.body.style.overflow = "auto";
           } else {
             if (focusNote.current) {
               focusNote.current.classList.add("ring-2");
@@ -468,7 +504,7 @@ function ShowMessage({
           }
         }}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen
-        bg-white/30 backdrop-blur-md "
+        bg-black/30  "
       ></footer>
     </div>
   );

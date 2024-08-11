@@ -39,3 +39,16 @@ export type TagOnSimcard = {
   icon: string;
   simCardId: string;
 };
+
+export type MessageOnSimcard = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  message: string;
+  isRead: boolean;
+  sender: string;
+  recipient: string;
+  status: number;
+  timestamp: number;
+  simCardId: string;
+};

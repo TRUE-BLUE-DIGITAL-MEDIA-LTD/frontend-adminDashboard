@@ -206,19 +206,6 @@ function AssignCategory({
             <h1 className="flex w-full justify-center font-bold md:text-xl">
               Assign Category {selectPartner.name}
             </h1>
-            {/* <SearchField
-              value={searchField}
-              onChange={(e) => {
-                setSearchField(() => e);
-              }}
-              className="relative flex w-80 flex-col"
-            >
-              <Input
-                placeholder="Search Phone Number Or Note"
-                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
-              />
-              <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-            </SearchField> */}
           </header>
 
           <div className=" h-60 w-[30rem] justify-center overflow-auto  ">

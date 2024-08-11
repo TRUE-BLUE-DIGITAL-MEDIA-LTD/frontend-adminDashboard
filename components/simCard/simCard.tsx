@@ -6,7 +6,7 @@ import {
   Sms,
 } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { FaDharmachakra, FaServer } from "react-icons/fa6";
 import {
   DeleteDeviceUserService,
@@ -24,6 +24,7 @@ import {
 import { Pagination } from "@mui/material";
 import {
   ErrorMessages,
+  MessageOnSimcard,
   Partner,
   ResponsibilityOnPartner,
   SimCard,
@@ -47,8 +48,12 @@ import Image from "next/image";
 import { blurDataURL } from "../../data/blurDataURL";
 import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
 import Countdown from "react-countdown";
+import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
 
 function SimCards({ user }: { user: User }) {
+  const toast = useRef<Toast>(null);
+
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
@@ -61,6 +66,9 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
   });
+  const [trackingUnreadMessage, setTrackingUnreadMessage] = useState<
+    { id: string }[]
+  >([]);
   const [unavailableSlot, setUnavailableSlot] = useState<
     { slot: string; deviceUserId: string }[]
   >([]);
@@ -103,10 +111,21 @@ function SimCards({ user }: { user: User }) {
             };
           }),
         );
+        data.forEach((sim) => {
+          sim.messages.forEach((message) => {
+            if (!message.isRead) {
+              setTrackingUnreadMessage((prev) => {
+                if (prev.find((track) => track.id === message.id)) return prev;
+                showInfo({ message: message, sim: sim });
+                return [...prev, { id: message.id }];
+              });
+            }
+          });
+        });
         return data;
       }),
-    refetchInterval: 1000 * 5,
-    staleTime: 1000 * 5,
+    refetchInterval: 1000 * 3,
+    staleTime: 1000 * 3,
   });
 
   const getRandomSlateShade = (): number => {
@@ -114,6 +133,20 @@ function SimCards({ user }: { user: User }) {
     const randomIndex = Math.floor(Math.random() * shades.length);
     return shades[randomIndex];
   };
+
+  useEffect(() => {
+    if (trackingUnreadMessage.length > 0) {
+      document.title = `There are ${trackingUnreadMessage.length} unread message`;
+
+      // Reset title after some time (optional)
+      const resetTitle = setTimeout(() => {
+        document.title = "Oxy Sms"; // Replace with your original title
+      }, 5000); // Adjust timing as needed
+
+      // Cleanup the timeout to prevent memory leaks
+      return () => clearTimeout(resetTitle);
+    }
+  }, [trackingUnreadMessage]);
 
   const getSlateColorStyle = (shade: number): React.CSSProperties => {
     const slateColors: { [key: number]: string } = {
@@ -213,8 +246,57 @@ function SimCards({ user }: { user: User }) {
     }
   };
 
+  const showInfo = ({
+    message,
+    sim,
+  }: {
+    message: MessageOnSimcard;
+    sim: SimCard;
+  }) => {
+    toast.current?.show({
+      id: message.id,
+      severity: "info",
+      life: 50000,
+      content: (props: any) =>
+        (
+          <div className="w-80">
+            <h1 className="text-start text-lg font-bold">New Message</h1>
+            <div className="flex w-full items-center justify-start gap-2">
+              <span className="">Sender</span>
+              <span className="text-start text-sm font-semibold">
+                {message.sender}
+              </span>
+              <span className="">Phone</span>
+              <span className="text-start text-sm font-semibold">
+                {sim.phoneNumber}
+              </span>
+            </div>
+            <div className="flex w-full items-center justify-start gap-2 border-t border-gray-300 py-3">
+              <span className="text-start text-sm font-semibold">
+                {message.message}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                setSelectSimCard(sim);
+                setTriggerShowMessage(true);
+                toast.current?.remove(props);
+                document.body.style.overflow = "hidden";
+              }}
+              className="flex w-full items-center justify-center gap-1 rounded-md
+                   bg-green-300 px-5 py-2 text-sm text-green-600 
+                    transition duration-100 hover:bg-green-400"
+            >
+              View Message
+            </button>
+          </div>
+        ) as ReactNode,
+    });
+  };
+
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
+      <Toast ref={toast} />
       {triggerShowMessage && selectSimCard && (
         <ShowMessage
           setTriggerShowMessage={setTriggerShowMessage}
@@ -420,6 +502,7 @@ function SimCards({ user }: { user: User }) {
                         onClick={() => {
                           setSelectSimCard(sim);
                           setTriggerShowMessage(true);
+                          document.body.style.overflow = "hidden";
                         }}
                         className="col-span-2 flex w-full items-center justify-center gap-1 rounded-md
                    bg-green-300 px-5 py-2 text-sm text-green-600 

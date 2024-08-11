@@ -83,7 +83,7 @@ function DashboardNavbar({
       items-center justify-center gap-2 rounded-lg bg-gray-800 p-2 transition duration-100 `}
         >
           {user && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex w-max items-center justify-center gap-2">
               <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-300">
                 <Image
                   src={user.image}
