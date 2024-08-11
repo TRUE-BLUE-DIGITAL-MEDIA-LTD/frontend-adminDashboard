@@ -52,7 +52,7 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 
 function SimCards({ user }: { user: User }) {
-  const toast = useRef<Toast>(null);
+  const toast = useRef<any>(null);
 
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
