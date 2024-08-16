@@ -211,3 +211,57 @@ export async function UpdateSimCardService(
     throw err.response.data;
   }
 }
+
+export type ResponseActiveSimCardService = SimCard;
+
+type InputActiveSimCardService = {
+  simCardId: string;
+};
+export async function ActiveSimCardService(
+  input: InputActiveSimCardService,
+): Promise<ResponseActiveSimCardService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/${input.simCardId}/active`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseDeactiveSimCardService = SimCard;
+
+type InputDeactiveSimCardService = {
+  simCardId: string;
+};
+export async function DeactiveSimCardService(
+  input: InputDeactiveSimCardService,
+): Promise<ResponseDeactiveSimCardService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/${input.simCardId}/deactive`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
