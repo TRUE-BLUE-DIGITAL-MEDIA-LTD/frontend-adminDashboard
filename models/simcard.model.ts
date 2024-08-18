@@ -52,3 +52,18 @@ export type MessageOnSimcard = {
   timestamp: number;
   simCardId: string;
 };
+
+export type StatusPort =
+  | "no card"
+  | "free card"
+  | "SIM card in registration"
+  | "SIM card register successful"
+  | "Talking"
+  | "no balance or alarm"
+  | "SIM card register fail"
+  | "SIM card is locked (program behavior)"
+  | "SIM card is locked (operator behavior)"
+  | "SIM card read error"
+  | "SIM card inserted"
+  | "user lock"
+  | "port not match";

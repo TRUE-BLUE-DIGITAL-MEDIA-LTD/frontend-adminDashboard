@@ -18,6 +18,8 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import parse from "html-react-parser";
 
 import {
+  ActiveSimCardService,
+  DeactiveSimCardService,
   GetSimCardActiveService,
   GetSimCardByPageService,
 } from "../../services/simCard/simCard";
@@ -50,6 +52,8 @@ import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
 import Countdown from "react-countdown";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
+import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
+import { BiCheckCircle } from "react-icons/bi";
 
 function SimCards({ user }: { user: User }) {
   const toast = useRef<any>(null);
@@ -235,6 +239,76 @@ function SimCards({ user }: { user: User }) {
       });
       await simCards.refetch();
       Swal.fire("Deleted!", "Your tag has been deleted.", "success");
+    } catch (error) {
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
+  const handleActiveSimcard = async ({ simCardId }: { simCardId: string }) => {
+    try {
+      Swal.fire({
+        title: "Activating Simcard",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await ActiveSimCardService({
+        simCardId,
+      });
+      await activeSimcard.refetch();
+      await simCards.refetch();
+      Swal.fire({
+        title: "Activated!",
+        text: "Your simcard has been activated.",
+        icon: "success",
+      });
+    } catch (error) {
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
+  const handleDeactiveSimcard = async ({
+    simCardId,
+  }: {
+    simCardId: string;
+  }) => {
+    try {
+      Swal.fire({
+        title: "Deactivating Simcard",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await DeactiveSimCardService({
+        simCardId,
+      });
+      await activeSimcard.refetch();
+      await simCards.refetch();
+      Swal.fire({
+        title: "Deactivated!",
+        text: "Your simcard has been deactivated.",
+        icon: "success",
+      });
     } catch (error) {
       let result = error as ErrorMessages;
       Swal.fire({
@@ -444,6 +518,10 @@ function SimCards({ user }: { user: User }) {
                   }
                 });
 
+                const portStatus =
+                  activeSimcard.data?.find((active) => active.id === sim.id)
+                    ?.statusPort ?? "-";
+
                 return (
                   <li
                     className={`relative flex h-max w-full
@@ -497,7 +575,7 @@ function SimCards({ user }: { user: User }) {
                       </div>
                     )}
 
-                    <div className="grid h-full w-full grid-cols-2 place-content-start place-items-center gap-y-2">
+                    <div className="grid h-full w-full grid-cols-2 place-content-start place-items-center gap-3 gap-y-2">
                       <button
                         onClick={() => {
                           setSelectSimCard(sim);
@@ -505,10 +583,30 @@ function SimCards({ user }: { user: User }) {
                           document.body.style.overflow = "hidden";
                         }}
                         className="col-span-2 flex w-full items-center justify-center gap-1 rounded-md
+                   bg-blue-300 px-5 py-2 text-sm text-blue-600 
+                        transition duration-100 hover:bg-blue-400"
+                      >
+                        View Message <Sms />
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleActiveSimcard({ simCardId: sim.id });
+                        }}
+                        className="col-span-1 flex w-full items-center justify-center gap-1 rounded-md
                    bg-green-300 px-5 py-2 text-sm text-green-600 
                         transition duration-100 hover:bg-green-400"
                       >
-                        View Message <Sms />
+                        Active
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleDeactiveSimcard({ simCardId: sim.id });
+                        }}
+                        className="col-span-1 flex w-full items-center justify-center gap-1 rounded-md
+                   bg-red-300 px-5 py-2 text-sm text-red-600 
+                        transition duration-100 hover:bg-red-400"
+                      >
+                        Deactive
                       </button>
 
                       <span className="flex w-full items-center justify-start gap-1">
@@ -550,6 +648,43 @@ function SimCards({ user }: { user: User }) {
                       >
                         {sim.portNumber}
                       </span>
+
+                      <span className="col-span-2 flex w-full  items-center justify-center gap-1">
+                        <GrStatusInfo />
+                        Port Status
+                      </span>
+                      {portStatus === "SIM card inserted" ? (
+                        <span
+                          className="col-span-2 flex w-full
+                  animate-pulse items-center justify-center gap-1
+                   bg-slate-200 text-start font-semibold text-slate-800"
+                        >
+                          {portStatus}
+                        </span>
+                      ) : portStatus === "SIM card in registration" ? (
+                        <span
+                          className="col-span-2 
+              flex w-full animate-pulse items-center justify-center gap-1
+              bg-yellow-200 text-start font-semibold text-yellow-800"
+                        >
+                          {portStatus}
+                        </span>
+                      ) : portStatus === "SIM card register successful" ? (
+                        <span
+                          className="col-span-2 flex
+              w-full  items-center justify-center gap-1
+              bg-green-200 text-start font-semibold text-green-800"
+                        >
+                          {portStatus} <BiCheckCircle />
+                        </span>
+                      ) : (
+                        <span
+                          className="col-span-2 w-full bg-slate-200  text-center
+                   font-semibold text-black"
+                        >
+                          {portStatus}
+                        </span>
+                      )}
 
                       <div className="col-span-2 max-h-14 w-full overflow-auto border-l-4 border-yellow-500 bg-yellow-100 p-4 ">
                         {sim.simCardNote && parse(sim.simCardNote)}

@@ -6,6 +6,7 @@ import {
   Pagination,
   SimCard,
   SimCardOnPartner,
+  StatusPort,
   TagOnSimcard,
 } from "../../models";
 
@@ -98,7 +99,9 @@ export async function GetSimCardByPartnerIdService(): Promise<ResponseGetSimCard
 }
 
 export type ResponseGetSimCardActiveService = (SimCard & {
+  deviceUser: DeviceUser | null;
   messages: MessageOnSimcard[];
+  statusPort: StatusPort;
 })[];
 
 export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiveService> {
@@ -122,7 +125,11 @@ export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiv
 }
 
 export type ResponseGetSimCardByIdService = {
-  simCard: SimCard & { deviceUser: DeviceUser };
+  simCard: SimCard & {
+    deviceUser: DeviceUser;
+    tags: TagOnSimcard[];
+    partner: SimCardOnPartner;
+  };
 };
 
 type InputGetSimCardByIdService = {
@@ -153,6 +160,7 @@ export async function GetSimCardByIdService(
 export type ResponseGetSimCardMessageService = {
   simCard: SimCard & { deviceUser: DeviceUser };
   messages: MessageOnSimcard[];
+  status: StatusPort;
 };
 
 type InputGetSimCardMessageService = {
