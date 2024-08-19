@@ -54,6 +54,7 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
 import { BiCheckCircle } from "react-icons/bi";
+import SpinLoading from "../loadings/spinLoading";
 
 function SimCards({ user }: { user: User }) {
   const toast = useRef<any>(null);
@@ -512,7 +513,8 @@ function SimCards({ user }: { user: User }) {
                 unavailableSlot.forEach((unavailable) => {
                   if (
                     unavailable.slot === sim.portNumber.split(".")[0] &&
-                    unavailable.deviceUserId === sim.deviceUserId
+                    unavailable.deviceUserId === sim.deviceUserId &&
+                    activeSimcard.data?.find((active) => active.id !== sim.id)
                   ) {
                     slotInUsed = true;
                   }
@@ -606,7 +608,7 @@ function SimCards({ user }: { user: User }) {
                    bg-red-300 px-5 py-2 text-sm text-red-600 
                         transition duration-100 hover:bg-red-400"
                       >
-                        Deactive
+                        Release
                       </button>
 
                       <span className="flex w-full items-center justify-start gap-1">
@@ -659,7 +661,7 @@ function SimCards({ user }: { user: User }) {
                   animate-pulse items-center justify-center gap-1
                    bg-slate-200 text-start font-semibold text-slate-800"
                         >
-                          {portStatus}
+                          {portStatus} <SpinLoading />
                         </span>
                       ) : portStatus === "SIM card in registration" ? (
                         <span
@@ -668,6 +670,7 @@ function SimCards({ user }: { user: User }) {
               bg-yellow-200 text-start font-semibold text-yellow-800"
                         >
                           {portStatus}
+                          <SpinLoading />
                         </span>
                       ) : portStatus === "SIM card register successful" ? (
                         <span
@@ -675,7 +678,7 @@ function SimCards({ user }: { user: User }) {
               w-full  items-center justify-center gap-1
               bg-green-200 text-start font-semibold text-green-800"
                         >
-                          {portStatus} <BiCheckCircle />
+                          Ready To Recieve A Message <BiCheckCircle />
                         </span>
                       ) : (
                         <span
