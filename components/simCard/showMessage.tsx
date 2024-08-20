@@ -277,14 +277,14 @@ function ShowMessage({
                 <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
               ) : (
                 <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
-                  {simCard.data?.simCard.deviceUser.portNumber}
+                  {simCard.data?.simCard?.deviceUser?.portNumber ?? "N/A"}
                 </span>
               )}
             </div>
             <div className="flex items-center justify-start gap-2 text-lg">
               <span className="flex w-60 items-center justify-start gap-1">
                 <IoIosTimer />
-                Time Reminding:{" "}
+                Time Remaining:{" "}
               </span>
 
               {message.isLoading ? (
@@ -398,27 +398,31 @@ function ShowMessage({
               <span className="text-2xl font-semibold text-red-700">
                 {message.error.message}
               </span>
-              <div>
-                Number:{" "}
-                {message.error.simCard.phoneNumber.replace(
-                  /(\d{4})(\d{3})(\d{4})/,
-                  "($1) $2-$3",
-                )}{" "}
-                is currently using the slot
-              </div>
-              <div className="flex flex-col items-center gap-2 font-semibold text-green-700">
-                Please come back in{" "}
-                <Countdown
-                  date={message.error.simCard.expireAt ?? new Date()}
-                  intervalDelay={0}
-                  precision={3}
-                  renderer={(props) => (
-                    <div className="w-full text-center">
-                      {props.minutes} : {props.seconds} : {props.milliseconds}
-                    </div>
-                  )}
-                />
-              </div>
+              {message.error.simCard && (
+                <div>
+                  Number:{" "}
+                  {message.error.simCard.phoneNumber.replace(
+                    /(\d{4})(\d{3})(\d{4})/,
+                    "($1) $2-$3",
+                  )}{" "}
+                  is currently using the slot
+                </div>
+              )}
+              {message.error.simCard && (
+                <div className="flex flex-col items-center gap-2 font-semibold text-green-700">
+                  Please come back in{" "}
+                  <Countdown
+                    date={message.error.simCard.expireAt ?? new Date()}
+                    intervalDelay={0}
+                    precision={3}
+                    renderer={(props) => (
+                      <div className="w-full text-center">
+                        {props.minutes} : {props.seconds} : {props.milliseconds}
+                      </div>
+                    )}
+                  />
+                </div>
+              )}
             </section>
           ) : (
             <div className="py-2">

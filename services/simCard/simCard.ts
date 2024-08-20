@@ -49,6 +49,8 @@ type InputGetSimCardByPageService = {
   page: number;
   searchField: string;
   partnerId?: string;
+  availability: "available" | "unavailable";
+  deviceId?: string;
 };
 export async function GetSimCardByPageService(
   input: InputGetSimCardByPageService,

@@ -25,6 +25,7 @@ import {
 } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
 import {
+  DeviceUser,
   ErrorMessages,
   MessageOnSimcard,
   Partner,
@@ -56,14 +57,20 @@ import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
 import { BiCheckCircle } from "react-icons/bi";
 import SpinLoading from "../loadings/spinLoading";
 
+const availableSlot = ["available", "unavailable"];
+
 function SimCards({ user }: { user: User }) {
   const toast = useRef<any>(null);
-
+  const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
   const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
+  const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
+  const [selectAvailableSlot, setSelectAvailableSlot] = useState<
+    "available" | "unavailable"
+  >("available");
   const [triigerCreateDeviceUser, setTriggerCreateDeviceUser] =
     useState<boolean>(false);
   const [selectPartner, setSelectPartner] = useState<Partner>();
@@ -89,14 +96,25 @@ function SimCards({ user }: { user: User }) {
   const simCards = useQuery({
     queryKey: [
       "simCards",
-      { page, searchField, selectPartner: selectPartner?.id },
+      {
+        page,
+        searchField,
+        selectPartner: selectPartner?.id,
+        availability: selectAvailableSlot,
+        deviceId: selectDeviceUser?.id,
+      },
     ],
     queryFn: () =>
       GetSimCardByPageService({
         limit: 20,
         page: page,
         searchField,
+        availability: selectAvailableSlot,
+        deviceId: selectDeviceUser?.id,
         partnerId: selectPartner?.id,
+      }).then((data) => {
+        setTotalPage(() => data.meta.total);
+        return data;
       }),
     refetchInterval: 1000 * 5,
     staleTime: 1000 * 5,
@@ -132,6 +150,12 @@ function SimCards({ user }: { user: User }) {
     refetchInterval: 1000 * 3,
     staleTime: 1000 * 3,
   });
+
+  useEffect(() => {
+    if (simCards.data) {
+      setTotalPage(() => simCards.data?.meta.total);
+    }
+  }, [simCards.data]);
 
   const getRandomSlateShade = (): number => {
     const shades = [50, 100, 200, 300, 400, 500, 600];
@@ -444,7 +468,7 @@ function SimCards({ user }: { user: User }) {
       </header>
 
       <main className="mt-5 flex w-full  flex-col items-center p-5">
-        <div className="flex w-full items-end justify-center gap-5">
+        <div className="flex w-full flex-wrap items-end justify-center gap-5">
           <div className="flex flex-col">
             <label className="text-sm font-normal">Seach</label>
             <SearchField
@@ -462,6 +486,35 @@ function SimCards({ user }: { user: User }) {
               <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
             </SearchField>
           </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-normal">Select Availability</label>
+            <Dropdown
+              value={selectAvailableSlot}
+              onChange={(e) => {
+                setSelectAvailableSlot(() => e.value);
+              }}
+              options={availableSlot}
+              placeholder="Select Available Slot"
+              className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+            />
+          </div>
+          {user.role === "admin" && (
+            <div className="flex flex-col">
+              <label className="text-sm font-normal">Select Device User</label>
+              <Dropdown
+                value={selectDeviceUser}
+                onChange={(e) => {
+                  setSelectDeviceUser(() => e.value);
+                }}
+                showClear
+                options={deviceUser.data}
+                loading={deviceUser.isLoading}
+                optionLabel="portNumber"
+                placeholder="Select Available Slot"
+                className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+              />
+            </div>
+          )}
           {(user.role === "manager" || user.role === "partner") && (
             <div className="flex flex-col">
               <label className="text-sm font-normal">Select Partner</label>
@@ -513,12 +566,17 @@ function SimCards({ user }: { user: User }) {
                 unavailableSlot.forEach((unavailable) => {
                   if (
                     unavailable.slot === sim.portNumber.split(".")[0] &&
-                    unavailable.deviceUserId === sim.deviceUserId &&
-                    activeSimcard.data?.find((active) => active.id !== sim.id)
+                    unavailable.deviceUserId === sim.deviceUserId
                   ) {
                     slotInUsed = true;
                   }
                 });
+
+                if (
+                  activeSimcard.data?.find((active) => active.id === sim.id)
+                ) {
+                  slotInUsed = false;
+                }
 
                 const portStatus =
                   activeSimcard.data?.find((active) => active.id === sim.id)
@@ -598,7 +656,7 @@ function SimCards({ user }: { user: User }) {
                    bg-green-300 px-5 py-2 text-sm text-green-600 
                         transition duration-100 hover:bg-green-400"
                       >
-                        Active
+                        Activate
                       </button>
                       <button
                         onClick={() => {
@@ -696,7 +754,7 @@ function SimCards({ user }: { user: User }) {
                       {sim.expireAt && (
                         <span className="flex  items-center justify-start gap-1">
                           <IoIosTimer />
-                          Time Reminding:{" "}
+                          Time Remaining:{" "}
                         </span>
                       )}
                       {sim.expireAt && (
@@ -763,8 +821,9 @@ function SimCards({ user }: { user: User }) {
         </ul>
         <Pagination
           className="mt-5"
+          page={page}
           onChange={(e, page) => setPage(page)}
-          count={simCards.data?.meta.total}
+          count={totalPage}
           color="primary"
         />
       </main>
