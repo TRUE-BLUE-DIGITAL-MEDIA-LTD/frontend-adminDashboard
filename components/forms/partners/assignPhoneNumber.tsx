@@ -53,6 +53,7 @@ function AssignPhoneNumber({
         limit: 20,
         page: page,
         searchField: searchField,
+        availability: "available",
       }),
   });
 
