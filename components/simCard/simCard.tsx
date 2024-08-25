@@ -14,7 +14,7 @@ import {
 } from "../../services/simCard/deviceUser";
 import { MdDelete, MdDevices } from "react-icons/md";
 import { Input, SearchField, TextArea } from "react-aria-components";
-import { IoSearchCircleSharp } from "react-icons/io5";
+import { IoSave, IoSearchCircleSharp } from "react-icons/io5";
 import parse from "html-react-parser";
 
 import {
@@ -22,6 +22,7 @@ import {
   DeactiveSimCardService,
   GetSimCardActiveService,
   GetSimCardByPageService,
+  UpdateSimCardService,
 } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
 import {
@@ -32,6 +33,7 @@ import {
   ResponsibilityOnPartner,
   SimCard,
   SimCardOnPartner,
+  TagOnSimcard,
   User,
 } from "../../models";
 import ShowMessage from "./showMessage";
@@ -56,6 +58,8 @@ import { Button } from "primereact/button";
 import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
 import { BiCheckCircle } from "react-icons/bi";
 import SpinLoading from "../loadings/spinLoading";
+import { Editor } from "@tinymce/tinymce-react";
+import { GiSave } from "react-icons/gi";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -64,10 +68,19 @@ function SimCards({ user }: { user: User }) {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [noteLoading, setNoteLoading] = useState<boolean>(true);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
+  const [simcardData, setSimcardData] = useState<
+    (SimCard & {
+      partner: SimCardOnPartner;
+      tag: TagOnSimcard[];
+      isLoading: boolean;
+    })[]
+  >([]);
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
   const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
+
   const [selectAvailableSlot, setSelectAvailableSlot] = useState<
     "available" | "unavailable"
   >("available");
@@ -154,11 +167,17 @@ function SimCards({ user }: { user: User }) {
   useEffect(() => {
     if (simCards.data) {
       setTotalPage(() => simCards.data?.meta.total);
+      setSimcardData(() =>
+        simCards.data.data.map((sim) => ({
+          ...sim,
+          isLoading: false,
+        })),
+      );
     }
   }, [simCards.data]);
 
   const getRandomSlateShade = (): number => {
-    const shades = [50, 100, 200, 300, 400, 500, 600];
+    const shades = [200, 300, 400, 500, 600];
     const randomIndex = Math.floor(Math.random() * shades.length);
     return shades[randomIndex];
   };
@@ -298,6 +317,55 @@ function SimCards({ user }: { user: User }) {
         icon: "success",
       });
     } catch (error) {
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
+  const handleUpdateNoted = async ({
+    content,
+    simcardId,
+  }: {
+    content: string;
+    simcardId: string;
+  }) => {
+    try {
+      setSimcardData((prev) =>
+        prev.map((simcard) => {
+          if (simcard.id === simcardId) {
+            return { ...simcard, simCardNote: content, isLoading: true };
+          }
+          return simcard;
+        }),
+      );
+      await UpdateSimCardService({
+        simCardId: simcardId,
+        simCardNote: content,
+      });
+      setSimcardData((prev) =>
+        prev.map((simcard) => {
+          if (simcard.id === simcardId) {
+            return { ...simcard, isLoading: false };
+          }
+          return simcard;
+        }),
+      );
+    } catch (error) {
+      setSimcardData((prev) =>
+        prev.map((simcard) => {
+          if (simcard.id === simcardId) {
+            return { ...simcard, isLoading: false };
+          }
+          return simcard;
+        }),
+      );
+
+      console.log(error);
       let result = error as ErrorMessages;
       Swal.fire({
         title: result.error,
@@ -549,7 +617,7 @@ function SimCards({ user }: { user: User }) {
           )}
         </div>
 
-        <ul className="mt-10 grid w-full gap-5 md:grid-cols-3 2xl:grid-cols-4">
+        <ul className="mt-10 grid w-full gap-5 md:grid-cols-3 2xl:grid-cols-3">
           {simCards.isLoading
             ? [...Array(10)].map((list, index) => {
                 const randomShade = getRandomSlateShade();
@@ -561,7 +629,8 @@ function SimCards({ user }: { user: User }) {
                   ></li>
                 );
               })
-            : simCards.data?.data?.map((sim, index) => {
+            : simcardData.map((sim, index) => {
+                const randomShade = getRandomSlateShade();
                 let slotInUsed = false;
                 unavailableSlot.forEach((unavailable) => {
                   if (
@@ -747,10 +816,101 @@ function SimCards({ user }: { user: User }) {
                         </span>
                       )}
 
-                      <div className="col-span-2 max-h-14 w-full overflow-auto border-l-4 border-yellow-500 bg-yellow-100 p-4 ">
-                        {sim.simCardNote && parse(sim.simCardNote)}
+                      <div className="col-span-2 h-40 w-full">
+                        {noteLoading && (
+                          <div
+                            style={getSlateColorStyle(randomShade)}
+                            className="h-full w-full animate-pulse rounded-md "
+                          ></div>
+                        )}
+                        <div
+                          className={`${noteLoading ? "h-0" : "h-40"} w-full`}
+                        >
+                          <Editor
+                            onInit={() => {
+                              setNoteLoading(false);
+                            }}
+                            value={sim.simCardNote}
+                            onEditorChange={(note) => {
+                              setSimcardData((prev) =>
+                                prev.map((simcard) => {
+                                  if (simcard.id === sim.id) {
+                                    return {
+                                      ...simcard,
+                                      simCardNote: note,
+                                    };
+                                  }
+                                  return simcard;
+                                }),
+                              );
+                            }}
+                            tinymceScriptSrc={
+                              "/assets/libs/tinymce/tinymce.min.js"
+                            }
+                            textareaName="description"
+                            init={{
+                              paste_block_drop: true,
+                              link_context_toolbar: true,
+                              height: "100%",
+                              width: "100%",
+                              menubar: false,
+                              image_title: true,
+                              automatic_uploads: true,
+                              file_picker_types: "image",
+                              plugins: [
+                                "contextmenu",
+                                "advlist",
+                                "autolink",
+                                "lists",
+                                "link",
+                                "charmap",
+                                "preview",
+                                "anchor",
+                                "searchreplace",
+                                "visualblocks",
+                                "code",
+                                "fullscreen",
+                                "insertdatetime",
+                                "media",
+                                "table",
+                                "help",
+                                "wordcount",
+                              ],
+                              contextmenu:
+                                "paste | link  inserttable | cell row column deletetable",
+                              toolbar:
+                                "undo redo | formatselect | blocks | " +
+                                "bold italic backcolor | alignleft aligncenter " +
+                                "alignright alignjustify | bullist numlist outdent indent | " +
+                                "removeformat | help | link | ",
+                              content_style:
+                                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                            }}
+                          />
+                        </div>
                       </div>
 
+                      {sim.isLoading ? (
+                        <div
+                          className="col-span-2 mt-2 w-full animate-pulse rounded-md px-5 py-2 text-center
+                       text-gray-600"
+                        >
+                          Saving Note...
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            handleUpdateNoted({
+                              content: sim.simCardNote,
+                              simcardId: sim.id,
+                            });
+                          }}
+                          className={`col-span-2 mt-2  flex w-full items-center justify-center gap-1
+                     rounded-md bg-blue-300 px-5 py-2 text-blue-600 transition duration-150 hover:bg-blue-400`}
+                        >
+                          Save Note <IoSave />
+                        </button>
+                      )}
                       {sim.expireAt && (
                         <span className="flex  items-center justify-start gap-1">
                           <IoIosTimer />
