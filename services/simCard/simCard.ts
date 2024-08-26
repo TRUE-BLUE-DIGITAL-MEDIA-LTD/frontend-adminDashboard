@@ -51,6 +51,7 @@ type InputGetSimCardByPageService = {
   partnerId?: string;
   availability: "available" | "unavailable";
   deviceId?: string;
+  isActive?: boolean;
 };
 export async function GetSimCardByPageService(
   input: InputGetSimCardByPageService,
@@ -101,9 +102,7 @@ export async function GetSimCardByPartnerIdService(): Promise<ResponseGetSimCard
 }
 
 export type ResponseGetSimCardActiveService = (SimCard & {
-  deviceUser: DeviceUser | null;
-  messages: MessageOnSimcard[];
-  statusPort: StatusPort;
+  messages?: MessageOnSimcard[];
 })[];
 
 export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiveService> {

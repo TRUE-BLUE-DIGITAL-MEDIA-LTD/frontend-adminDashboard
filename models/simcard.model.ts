@@ -10,6 +10,7 @@ export type SimCard = {
   simCardNote: string;
   deviceUserId: string;
   lastUsedAt: string;
+  portStatus: StatusPort;
   isActive: boolean;
   expireAt: Date;
 };
@@ -66,4 +67,5 @@ export type StatusPort =
   | "SIM card read error"
   | "SIM card inserted"
   | "user lock"
-  | "port not match";
+  | "port not match"
+  | "preparing";

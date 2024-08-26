@@ -72,11 +72,14 @@ function SimCards({ user }: { user: User }) {
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
   const [simcardData, setSimcardData] = useState<
     (SimCard & {
-      partner: SimCardOnPartner;
-      tag: TagOnSimcard[];
-      isLoading: boolean;
+      partner?: SimCardOnPartner;
+      tag?: TagOnSimcard[];
+      isLoading?: boolean;
     })[]
   >([]);
+  const [selectActiveSimcard, setSelectActiveSimcard] = useState<
+    "active" | "default"
+  >("default");
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
   const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
@@ -125,9 +128,6 @@ function SimCards({ user }: { user: User }) {
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
         partnerId: selectPartner?.id,
-      }).then((data) => {
-        setTotalPage(() => data.meta.total);
-        return data;
       }),
     refetchInterval: 1000 * 5,
     staleTime: 1000 * 5,
@@ -148,7 +148,7 @@ function SimCards({ user }: { user: User }) {
           }),
         );
         data.forEach((sim) => {
-          sim.messages.forEach((message) => {
+          sim.messages?.forEach((message) => {
             if (!message.isRead) {
               setTrackingUnreadMessage((prev) => {
                 if (prev.find((track) => track.id === message.id)) return prev;
@@ -165,7 +165,7 @@ function SimCards({ user }: { user: User }) {
   });
 
   useEffect(() => {
-    if (simCards.data) {
+    if (simCards.data && selectActiveSimcard === "default") {
       setTotalPage(() => simCards.data?.meta.total);
       setSimcardData(() =>
         simCards.data.data.map((sim) => ({
@@ -175,6 +175,23 @@ function SimCards({ user }: { user: User }) {
       );
     }
   }, [simCards.data]);
+
+  useEffect(() => {
+    if (selectActiveSimcard === "active") {
+      setSimcardData(
+        () => activeSimcard.data?.filter((sim) => sim.messages) ?? [],
+      );
+      setPage(1);
+      setTotalPage(1);
+    } else if (selectActiveSimcard === "default") {
+      setSimcardData(
+        () =>
+          simCards.data?.data.map((sim) => ({
+            ...sim,
+          })) ?? [],
+      );
+    }
+  }, [selectActiveSimcard]);
 
   const getRandomSlateShade = (): number => {
     const shades = [200, 300, 400, 500, 600];
@@ -566,6 +583,20 @@ function SimCards({ user }: { user: User }) {
               className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
             />
           </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-normal">
+              Select Active Sim Card
+            </label>
+            <Dropdown
+              value={selectActiveSimcard}
+              onChange={(e) => {
+                setSelectActiveSimcard(() => e.value);
+              }}
+              options={["active", "default"]}
+              placeholder="Select Available Slot"
+              className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+            />
+          </div>
           {user.role === "admin" && (
             <div className="flex flex-col">
               <label className="text-sm font-normal">Select Device User</label>
@@ -649,7 +680,7 @@ function SimCards({ user }: { user: User }) {
 
                 const portStatus =
                   activeSimcard.data?.find((active) => active.id === sim.id)
-                    ?.statusPort ?? "-";
+                    ?.portStatus ?? "-";
 
                 return (
                   <li
@@ -795,6 +826,15 @@ function SimCards({ user }: { user: User }) {
                           className="col-span-2 
               flex w-full animate-pulse items-center justify-center gap-1
               bg-yellow-200 text-start font-semibold text-yellow-800"
+                        >
+                          {portStatus}
+                          <SpinLoading />
+                        </span>
+                      ) : portStatus === "preparing" ? (
+                        <span
+                          className="col-span-2 
+              flex w-full animate-pulse items-center justify-center gap-1
+              bg-gray-200 text-start font-semibold text-gray-800"
                         >
                           {portStatus}
                           <SpinLoading />
@@ -946,7 +986,7 @@ function SimCards({ user }: { user: User }) {
                         </span>
                       </button>
                       <div className="col-span-4 flex h-10 flex-wrap   gap-3 overflow-auto p-1">
-                        {sim.tag.map((tag) => {
+                        {sim.tag?.map((tag) => {
                           return (
                             <div
                               key={tag.id}
