@@ -977,7 +977,7 @@ function SimCards({ user }: { user: User }) {
                           setSelectSimCard(sim);
                           setTriggerCreateTag(true);
                         }}
-                        className="group col-span-1 flex w-10 items-center justify-center gap-1 
+                        className="group z-20 col-span-1 flex w-10 items-center justify-center gap-1 
                      rounded-md bg-green-200 px-3 text-green-600 transition-width hover:w-32 hover:drop-shadow-md  active:scale-105"
                       >
                         <IoIosPricetags className="h-10" />
@@ -997,7 +997,9 @@ function SimCards({ user }: { user: User }) {
                                 <Image
                                   fill
                                   src={tag.icon}
+                                  className="object-contain"
                                   alt={tag.tag}
+                                  sizes="(max-width: 768px) 100vw, 33vw"
                                   placeholder="blur"
                                   blurDataURL={blurDataURL}
                                 />
