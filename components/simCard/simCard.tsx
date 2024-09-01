@@ -177,13 +177,17 @@ function SimCards({ user }: { user: User }) {
   }, [simCards.data]);
 
   useEffect(() => {
-    if (selectActiveSimcard === "active") {
+    if (simCards.data && selectActiveSimcard === "active") {
+      setTotalPage(() => simCards.data?.meta.total);
+
       setSimcardData(
         () => activeSimcard.data?.filter((sim) => sim.messages) ?? [],
       );
       setPage(1);
       setTotalPage(1);
-    } else if (selectActiveSimcard === "default") {
+    } else if (simCards.data && selectActiveSimcard === "default") {
+      setTotalPage(() => simCards.data?.meta.total);
+
       setSimcardData(
         () =>
           simCards.data?.data.map((sim) => ({
