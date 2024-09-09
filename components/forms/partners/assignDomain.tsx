@@ -53,6 +53,7 @@ function AssignDomain({
       GetAllDomainsByPage({
         page: page,
         searchField: searchField,
+        filter: "all",
       }),
   });
 

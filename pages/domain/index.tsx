@@ -53,13 +53,29 @@ function Index({ user }: { user: User }) {
   const domains = useQuery({
     queryKey: [
       "domains-byPage",
-      { page, searchField, partnerId: selectPartner?.id },
+      {
+        page,
+        searchField,
+        partnerId: selectPartner?.id,
+        filter:
+          selectPartner?.id === "no-partner"
+            ? "no-partner"
+            : selectPartner?.id === "all"
+              ? "all"
+              : undefined,
+      },
     ],
     queryFn: () =>
       GetAllDomainsByPage({
         page: page,
         searchField: searchField,
         partnerId: selectPartner?.id,
+        filter:
+          selectPartner?.id === "no-partner"
+            ? "no-partner"
+            : selectPartner?.id === "all"
+              ? "all"
+              : undefined,
       }),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
@@ -85,6 +101,19 @@ function Index({ user }: { user: User }) {
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
         });
+        addSeeAll.push({
+          createAt: new Date(),
+          updateAt: new Date(),
+          affiliateId: "none",
+          userId: "none",
+          name: "No Partner",
+          id: "no-partner",
+          responsibilityOnPartner: new Array(
+            domains.data?.totalNoPartnerDomain,
+          ),
+          simCardOnPartner: [],
+        });
+
         setSelectPartner(() => addSeeAll[0] as Partner);
         return addSeeAll;
       }),

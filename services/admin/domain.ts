@@ -41,6 +41,7 @@ export interface ResponseGetAllDomainsByPage {
     partnerOnDomain: ResponsibilityOnPartner | null;
   })[];
   totalPages: number;
+  totalNoPartnerDomain: number;
   currentPage: number;
   totalDomain: number;
 }
@@ -48,12 +49,14 @@ interface InputGetAllDomainsByPage {
   page: number;
   searchField?: string;
   partnerId?: string;
+  filter?: "all" | "no-partner";
 }
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
 ): Promise<ResponseGetAllDomainsByPage> {
   try {
-    if (input.partnerId === "all") delete input.partnerId;
+    if (input.partnerId === "all" || input.partnerId === "no-partner")
+      delete input.partnerId;
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const domain = await axios.get(
