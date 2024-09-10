@@ -17,6 +17,7 @@ import {
   GetResponsibilityOnPartnerService,
 } from "../../../services/admin/partner";
 import Swal from "sweetalert2";
+import { Dropdown } from "primereact/dropdown";
 
 type AssignDomainProps = {
   setTriggerAssignDomain: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +28,7 @@ function AssignDomain({
   selectPartner,
 }: AssignDomainProps) {
   const [searchField, setSearchField] = useState<string>("");
+  const [filterDomain, setFilterDomain] = useState<"all" | "no-partner">("all");
   const [responsibilityOnPartner, setResponsibilityOnPartner] = useState<{
     domains: (Domain & {
       responsibilityPartners: ResponsibilityOnPartner | null;
@@ -48,12 +50,15 @@ function AssignDomain({
   });
 
   const domains = useQuery({
-    queryKey: ["domains", { page: page, searchField: searchField }],
+    queryKey: [
+      "domains",
+      { page: page, searchField: searchField, filter: filterDomain },
+    ],
     queryFn: () =>
       GetAllDomainsByPage({
         page: page,
         searchField: searchField,
-        filter: "all",
+        filter: filterDomain,
       }),
   });
 
@@ -262,33 +267,55 @@ function AssignDomain({
           Total Domain : {partnerOnDomain.data?.length}
         </footer>
       </ul>
-      <Form className="flex h-[30rem] w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+      <Form className="flex h-max w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
         <section
           className="flex h-max w-full flex-col items-center 
         justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300 "
         >
-          <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
-            <h1 className="rext-xl font-bold md:text-xl">
-              Assign Domain<div> {selectPartner.name}</div>
+          <header className="flex w-full flex-col items-center justify-center gap-2">
+            <h1 className="rext-xl flex w-full flex-col items-center justify-center font-bold md:text-xl">
+              Assign Domain
+              <div className="text-base font-medium text-gray-600">
+                {" "}
+                {selectPartner.name}
+              </div>
             </h1>
-            <SearchField
-              value={searchField}
-              onChange={(e) => {
-                setSearchField(() => e);
-                setPage(1);
-              }}
-              className="relative mt-10 flex w-80 flex-col"
-            >
-              <Input
-                placeholder="Search Name Or Partner Manager"
-                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10 
+            <div className="flex w-full items-end justify-center gap-2">
+              <div className="flex flex-col items-start gap-1">
+                <label className="text-sm font-normal">Filter Partner</label>
+                <Dropdown
+                  value={filterDomain}
+                  onChange={(e) => {
+                    setPage(1);
+                    setFilterDomain(() => e.value);
+                  }}
+                  options={["all", "no-partner"]}
+                  placeholder="Filter Partner"
+                  className="h-10 w-40  rounded-lg text-left outline-0 ring-2 ring-icon-color "
+                />
+              </div>
+              <div className="flex flex-col items-start gap-1">
+                <label className="text-sm font-normal">Search</label>
+                <SearchField
+                  value={searchField}
+                  onChange={(e) => {
+                    setSearchField(() => e);
+                    setPage(1);
+                  }}
+                  className="relative flex w-full flex-col"
+                >
+                  <Input
+                    placeholder="Search Name Or Partner Manager"
+                    className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10 
                  outline-0 ring-2 ring-icon-color lg:w-full"
-              />
-              <IoSearchCircleSharp
-                className="text-super-main-color
+                  />
+                  <IoSearchCircleSharp
+                    className="text-super-main-color
                absolute bottom-0 left-2 top-0 m-auto text-3xl"
-              />
-            </SearchField>
+                  />
+                </SearchField>
+              </div>
+            </div>
           </header>
           <div className=" h-60 w-full justify-center overflow-auto  ">
             <table className=" w-full table-auto ">
