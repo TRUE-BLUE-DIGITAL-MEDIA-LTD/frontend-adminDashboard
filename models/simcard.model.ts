@@ -6,6 +6,7 @@ export type SimCard = {
   portNumber: string;
   imsi: string;
   iccid: string;
+  number: number;
   status: StatusSimCard;
   simCardNote: string;
   deviceUserId: string;
