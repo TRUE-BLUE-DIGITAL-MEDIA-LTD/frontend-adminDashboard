@@ -580,6 +580,7 @@ function SimCards({ user }: { user: User }) {
             <Dropdown
               value={selectAvailableSlot}
               onChange={(e) => {
+                setPage(1);
                 setSelectAvailableSlot(() => e.value);
               }}
               options={availableSlot}
@@ -594,6 +595,7 @@ function SimCards({ user }: { user: User }) {
             <Dropdown
               value={selectActiveSimcard}
               onChange={(e) => {
+                setPage(1);
                 setSelectActiveSimcard(() => e.value);
               }}
               options={["active", "default"]}
@@ -607,6 +609,7 @@ function SimCards({ user }: { user: User }) {
               <Dropdown
                 value={selectDeviceUser}
                 onChange={(e) => {
+                  setPage(1);
                   setSelectDeviceUser(() => e.value);
                 }}
                 showClear
@@ -624,6 +627,7 @@ function SimCards({ user }: { user: User }) {
               <Dropdown
                 value={selectPartner}
                 onChange={(e) => {
+                  setPage(1);
                   setSelectPartner(() => e.value);
                 }}
                 itemTemplate={(
