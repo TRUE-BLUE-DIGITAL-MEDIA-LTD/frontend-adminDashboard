@@ -707,7 +707,11 @@ function SimCards({ user }: { user: User }) {
                   >
                     <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 ">
                       <div className="w-max rounded-sm px-2 text-xs text-black  ring-1 ring-black">
-                        Number {sim.number.toLocaleString()}
+                        <span className="font-bold">
+                          Number{" "}
+                          {page === 1 ? index + 1 : index + 1 + 20 * (page - 1)}{" "}
+                        </span>{" "}
+                        / Serial number: {sim.number}
                       </div>
                       {sim.status === "active" ? (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
