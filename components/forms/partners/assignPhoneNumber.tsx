@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
+  DeviceUser,
   ErrorMessages,
   Partner,
   SimCard,
   SimCardOnPartner,
+  User,
 } from "../../../models";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -16,16 +18,29 @@ import { GetSimCardByPageService } from "../../../services/simCard/simCard";
 import { Form, Input, SearchField, TextArea } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { Pagination } from "@mui/material";
+import { Dropdown } from "primereact/dropdown";
+import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
+const availableSlot = ["available", "unavailable"];
 
 type AssignPhoneNumberProps = {
   selectPartner: Partner;
   setTriggerAssignNumber: (value: React.SetStateAction<boolean>) => void;
+  user: User;
 };
 function AssignPhoneNumber({
+  user,
   selectPartner,
   setTriggerAssignNumber,
 }: AssignPhoneNumberProps) {
   const [searchField, setSearchField] = useState<string>("");
+  const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
+  const deviceUser = useQuery({
+    queryKey: ["deviceUser"],
+    queryFn: () => GetDeviceUsersService(),
+  });
+  const [selectAvailableSlot, setSelectAvailableSlot] = useState<
+    "available" | "unavailable"
+  >("available");
   const [simCardOnPartnerData, setSimCardOmPartnerData] = useState<{
     simCards: (SimCard & {
       simCardOnPartner: SimCardOnPartner | null;
@@ -47,13 +62,22 @@ function AssignPhoneNumber({
   });
 
   const phoneNumber = useQuery({
-    queryKey: ["phoneNumber", { page, searchField }],
+    queryKey: [
+      "simCards",
+      {
+        page,
+        searchField,
+        availability: selectAvailableSlot,
+        deviceId: selectDeviceUser?.id,
+      },
+    ],
     queryFn: () =>
       GetSimCardByPageService({
         limit: 20,
         page: page,
         searchField: searchField,
-        availability: "available",
+        availability: selectAvailableSlot,
+        deviceId: selectDeviceUser?.id,
       }),
   });
 
@@ -262,7 +286,7 @@ function AssignPhoneNumber({
           Total Phone Number : {simCardOnPartners.data?.length}
         </footer>
       </ul>
-      <Form className="flex h-[30rem] w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
+      <Form className="flex h-max w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
         <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
           <header className="flex w-full flex-col items-center justify-center gap-2 ">
             <h1 className="flex w-full justify-center font-bold md:text-xl">
@@ -281,6 +305,43 @@ function AssignPhoneNumber({
               />
               <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
             </SearchField>
+            <section className="flex w-full justify-center gap-2">
+              <div className="flex flex-col">
+                <label className="text-sm font-normal">
+                  Select Availability
+                </label>
+                <Dropdown
+                  value={selectAvailableSlot}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSelectAvailableSlot(() => e.value);
+                  }}
+                  options={availableSlot}
+                  placeholder="Select Available Slot"
+                  className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                />
+              </div>
+              {user.role === "admin" && (
+                <div className="flex flex-col">
+                  <label className="text-sm font-normal">
+                    Select Device User
+                  </label>
+                  <Dropdown
+                    value={selectDeviceUser}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSelectDeviceUser(() => e.value);
+                    }}
+                    showClear
+                    options={deviceUser.data}
+                    loading={deviceUser.isLoading}
+                    optionLabel="portNumber"
+                    placeholder="Select Available Slot"
+                    className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                  />
+                </div>
+              )}
+            </section>
           </header>
 
           <div className=" h-60 w-[30rem] justify-center overflow-auto  ">
@@ -288,6 +349,7 @@ function AssignPhoneNumber({
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
                   <th>Phone Number</th>
+                  <th>Device User</th>
                   <th>Assing Phone number</th>
                 </tr>
               </thead>
@@ -296,6 +358,7 @@ function AssignPhoneNumber({
                   ? [...Array(5)].map((_, index) => (
                       <tr key={index}>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
+                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                       </tr>
                     ))
@@ -322,6 +385,11 @@ function AssignPhoneNumber({
                               /(\d{4})(\d{3})(\d{4})/,
                               "($1) $2-$3",
                             )}
+                          </td>
+                          <td className="h-10 truncate border-4 border-transparent text-center font-semibold text-black">
+                            {deviceUser.data?.find(
+                              (d) => d.id === sim.deviceUserId,
+                            )?.portNumber ?? "No Device User"}
                           </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">
@@ -362,6 +430,7 @@ function AssignPhoneNumber({
             </table>
           </div>
           <Pagination
+            page={page}
             onChange={(e, page) => setPage(page)}
             count={phoneNumber.data?.meta.total || 1}
             color="primary"

@@ -130,6 +130,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
 
       {triggerAssignNumber && selectPartner && user.role === "admin" && (
         <AssignPhoneNumber
+          user={user}
           setTriggerAssignNumber={setTriggerAssignNumber}
           selectPartner={selectPartner}
         />
