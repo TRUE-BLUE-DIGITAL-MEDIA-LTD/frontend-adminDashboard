@@ -1,4 +1,5 @@
 export const languages = [
+  { value: "th", name: "Thai" },
   { value: "en", name: "English" },
   { value: "es", name: "Spanish" },
   { value: "fr", name: "French" },
