@@ -83,6 +83,7 @@ function ImageLibrary() {
       const signURL = await GetSignURLService({
         fileName: image?.file.name,
         fileType: image?.file.type,
+        category: "image-library",
       });
 
       const upload = await UploadSignURLService({

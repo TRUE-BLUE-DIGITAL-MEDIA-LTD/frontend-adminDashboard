@@ -1,9 +1,17 @@
 import { parseCookies } from "nookies";
 import axios from "axios";
+export type CategoryFile =
+  | "image-library"
+  | "favicon-library"
+  | "video-library"
+  | "document-library"
+  | "audio-library"
+  | "other-library";
 
 type RequestGetSignURLService = {
   fileName: string;
   fileType: string;
+  category: CategoryFile;
 };
 export async function GetSignURLService(
   input: RequestGetSignURLService,
