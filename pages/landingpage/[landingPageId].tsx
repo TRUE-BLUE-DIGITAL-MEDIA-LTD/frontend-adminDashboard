@@ -34,6 +34,7 @@ import { GetAllCategories } from "../../services/admin/categories";
 import { MdDomainVerification } from "react-icons/md";
 import { EditorRef, EmailEditorProps } from "react-email-editor";
 import { Dropdown } from "primereact/dropdown";
+import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 const EmailEditor = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -266,7 +267,11 @@ function Index({ user }: { user: User }) {
             style={{ height: "40rem", width: "80%" }}
             options={{ displayMode: "web" }}
           />
+          <div className="mt-5 flex w-11/12 justify-end">
+            <ImageLibaray />
+          </div>
         </main>
+
         <div className="flex w-full justify-start">
           <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
             General Information

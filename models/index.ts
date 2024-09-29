@@ -12,3 +12,4 @@ export * from "./error.model";
 export * from "./sms.model";
 export * from "./simcard.model";
 export * from "./bonus.model";
+export * from "./image-library.model";
