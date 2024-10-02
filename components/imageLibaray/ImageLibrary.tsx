@@ -380,7 +380,11 @@ function ImageLibrary() {
                 })}
               </div>
               <footer className="mt-2 flex w-full justify-center">
-                <Pagination page={page} count={images.data?.meta.total} />
+                <Pagination
+                  onChange={(e, page) => setPage(page)}
+                  page={page}
+                  count={images.data?.meta.total}
+                />
               </footer>
             </main>
           )}
