@@ -19,6 +19,7 @@ import parse from "html-react-parser";
 
 import {
   ActiveSimCardService,
+  AutoPopulateNumberService,
   DeactiveSimCardService,
   GetSimCardActiveService,
   GetSimCardByPageService,
@@ -482,6 +483,37 @@ function SimCards({ user }: { user: User }) {
     });
   };
 
+  const handleAutoPopulateNumber = async (portServer: string) => {
+    try {
+      Swal.fire({
+        title: "Auto Populate Number",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      await AutoPopulateNumberService({ portServer });
+      Swal.fire({
+        title: "Success",
+        text: "Auto Populate Number has been done.",
+        footer: "Please wait for 2 - 5 minutes to see the result",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
       <Toast ref={toast} />
@@ -539,6 +571,15 @@ function SimCards({ user }: { user: User }) {
                   rounded-sm bg-white p-3 ring-1  ring-gray-700"
                   >
                     Port Number: {device.portNumber}
+                    <button
+                      onClick={() =>
+                        handleAutoPopulateNumber(device.portNumber)
+                      }
+                      className="rounded-md bg-blue-300 px-5 py-2 text-sm text-blue-600 drop-shadow-lg 
+            transition duration-100 hover:bg-blue-400"
+                    >
+                      Auto Populate
+                    </button>
                     <button
                       onClick={() =>
                         handleDeleteDeviceUser({ deviceUserId: device.id })
