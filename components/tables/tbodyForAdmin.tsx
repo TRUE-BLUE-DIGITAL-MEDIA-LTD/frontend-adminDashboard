@@ -87,7 +87,7 @@ function TbodyForAdmin({
             {item.columns[0].id}
           </div>
         ) : (
-          <div>{item.columns[0].id}</div>
+          <div>{item.columns[1].id}</div>
         )}
       </td>
       <td

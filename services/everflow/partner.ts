@@ -93,7 +93,12 @@ export async function GetSummaryParterReportService(
 
 export async function GetParterPerfomacesByDate(
   input: RequestGetParterPerfomacesByDate,
-): Promise<ResponseGetParterPerfomacesByDate> {
+): Promise<{
+  [key: string]: {
+    summary: TableEntry;
+    entries: TableEntry[];
+  };
+}> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
       throw new Error("Invalid date");

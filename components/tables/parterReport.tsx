@@ -23,25 +23,25 @@ import { CiCalendarDate } from "react-icons/ci";
 import { GetBonusRateByUserIdService } from "../../services/bonus";
 import { bonusRateDefault } from "../../data/bonusRate";
 
-const menuTables = [
-  { title: "Network Affliate ID", sort: "up" || "down" },
-  { title: "Affilate Name", sort: "up" || "down" },
-  { title: "Gross Clicks", sort: "up" || "down" },
-  { title: "Total Clicks", sort: "up" || "down" },
-  { title: "Unique Clicks", sort: "up" || "down" },
-  { title: "Duplicate Clicks", sort: "up" || "down" },
-  { title: "Invalid Clicks", sort: "up" || "down" },
-  { title: "Total CV", sort: "up" || "down", admin: true },
-  { title: "CV", sort: "up" || "down" },
-  { title: "CVR", sort: "up" || "down" },
-  { title: "CPC", sort: "up" || "down" },
-  { title: "CPA", sort: "up" || "down" },
-  { title: "RPC", sort: "up" || "down", admin: true },
-  { title: "RPA", sort: "up" || "down", admin: true },
-  { title: "Revenue", sort: "up" || "down", admin: true },
-  { title: "Payout", sort: "up" || "down" },
-  { title: "Profit", sort: "up" || "down", admin: true },
-  { title: "Margin", sort: "up" || "down", admin: true },
+const menuTables: { title: string; sort: "up" | "down"; admin?: boolean }[] = [
+  { title: "Network Affliate ID", sort: "up" },
+  { title: "Affilate Name", sort: "up" },
+  { title: "Gross Clicks", sort: "up" },
+  { title: "Total Clicks", sort: "up" },
+  { title: "Unique Clicks", sort: "up" },
+  { title: "Duplicate Clicks", sort: "up" },
+  { title: "Invalid Clicks", sort: "up" },
+  { title: "Total CV", sort: "up", admin: true },
+  { title: "CV", sort: "up" },
+  { title: "CVR", sort: "up" },
+  { title: "CPC", sort: "up" },
+  { title: "CPA", sort: "up" },
+  { title: "RPC", sort: "up", admin: true },
+  { title: "RPA", sort: "up", admin: true },
+  { title: "Revenue", sort: "up", admin: true },
+  { title: "Payout", sort: "up" },
+  { title: "Profit", sort: "up", admin: true },
+  { title: "Margin", sort: "up", admin: true },
 ];
 const columns = [
   { name: "Partner", code: "affiliate" },
@@ -49,6 +49,7 @@ const columns = [
   { name: "Country", code: "country" },
   { name: "Sub1", code: "sub1" },
 ];
+
 function ParterReport({ user }: { user: User }) {
   const [activePartnerDropdowns, setActivePartnerDropdowns] =
     useState<{ key: string; active: boolean }[]>();
@@ -110,134 +111,7 @@ function ParterReport({ user }: { user: User }) {
           { column: selectColumns.child?.code },
         ],
       }).then((data) => {
-        const group = data.table.reduce<{
-          [key: string]: {
-            summary: TableEntry;
-            entries: TableEntry[];
-          };
-        }>((acc, item) => {
-          // Find the affiliate column in the current item
-          const firstColumn = item.columns[0].column_type;
-
-          const affiliateColumn = item.columns.find(
-            (column) => column.column_type === firstColumn,
-          );
-
-          // Check if the affiliateColumn exists and if the affiliate label is in the accumulator
-          if (affiliateColumn && !acc[affiliateColumn.label]) {
-            acc[affiliateColumn.label] = {
-              summary: {
-                columns: [],
-                reporting: {
-                  imp: 0,
-                  total_click: 0,
-                  unique_click: 0,
-                  invalid_click: 0,
-                  duplicate_click: 0,
-                  gross_click: 0,
-                  ctr: 0,
-                  cv: 0,
-                  invalid_cv_scrub: 0,
-                  view_through_cv: 0,
-                  total_cv: 0,
-                  event: 0,
-                  cvr: 0,
-                  evr: 0,
-                  cpc: 0,
-                  cpm: 0,
-                  cpa: 0,
-                  epc: 0,
-                  rpc: 0,
-                  rpa: 0,
-                  rpm: 0,
-                  payout: 0,
-                  revenue: 0,
-                  event_revenue: 0,
-                  gross_sales: 0,
-                  profit: 0,
-                  margin: 0,
-                  roas: 0,
-                  avg_sale_value: 0,
-                  media_buying_cost: 0,
-                },
-
-                usm_columns: [],
-                custom_metric_columns: [],
-              },
-              entries: [],
-            };
-          }
-
-          // Add the current item to the appropriate affiliate label group
-          if (affiliateColumn) {
-            acc[affiliateColumn.label].entries.push(item);
-            acc[affiliateColumn.label].summary.columns = item.columns;
-            acc[affiliateColumn.label].summary.reporting.imp +=
-              item.reporting.imp;
-            acc[affiliateColumn.label].summary.reporting.total_click +=
-              item.reporting.total_click;
-            acc[affiliateColumn.label].summary.reporting.unique_click +=
-              item.reporting.unique_click;
-            acc[affiliateColumn.label].summary.reporting.invalid_click +=
-              item.reporting.invalid_click;
-            acc[affiliateColumn.label].summary.reporting.duplicate_click +=
-              item.reporting.duplicate_click;
-            acc[affiliateColumn.label].summary.reporting.gross_click +=
-              item.reporting.gross_click;
-            acc[affiliateColumn.label].summary.reporting.ctr +=
-              item.reporting.ctr;
-            acc[affiliateColumn.label].summary.reporting.cv +=
-              item.reporting.cv;
-            acc[affiliateColumn.label].summary.reporting.invalid_cv_scrub +=
-              item.reporting.invalid_cv_scrub;
-            acc[affiliateColumn.label].summary.reporting.view_through_cv +=
-              item.reporting.view_through_cv;
-            acc[affiliateColumn.label].summary.reporting.total_cv +=
-              item.reporting.total_cv;
-            acc[affiliateColumn.label].summary.reporting.event +=
-              item.reporting.event;
-            acc[affiliateColumn.label].summary.reporting.cvr =
-              (acc[affiliateColumn.label].summary.reporting.cv /
-                acc[affiliateColumn.label].summary.reporting.total_click) *
-              100;
-            acc[affiliateColumn.label].summary.reporting.evr +=
-              item.reporting.evr;
-            acc[affiliateColumn.label].summary.reporting.cpc +=
-              item.reporting.cpc;
-            acc[affiliateColumn.label].summary.reporting.cpm +=
-              item.reporting.cpm;
-            acc[affiliateColumn.label].summary.reporting.cpa +=
-              item.reporting.cpa;
-            acc[affiliateColumn.label].summary.reporting.epc +=
-              item.reporting.epc;
-            acc[affiliateColumn.label].summary.reporting.rpc +=
-              item.reporting.rpc;
-            acc[affiliateColumn.label].summary.reporting.rpa +=
-              item.reporting.rpa;
-            acc[affiliateColumn.label].summary.reporting.rpm +=
-              item.reporting.rpm;
-            acc[affiliateColumn.label].summary.reporting.payout +=
-              item.reporting.payout;
-            acc[affiliateColumn.label].summary.reporting.revenue +=
-              item.reporting.revenue;
-            acc[affiliateColumn.label].summary.reporting.event_revenue +=
-              item.reporting.event_revenue;
-            acc[affiliateColumn.label].summary.reporting.gross_sales +=
-              item.reporting.gross_sales;
-            acc[affiliateColumn.label].summary.reporting.profit +=
-              item.reporting.profit;
-            acc[affiliateColumn.label].summary.reporting.margin +=
-              item.reporting.margin;
-            acc[affiliateColumn.label].summary.reporting.roas +=
-              item.reporting.roas;
-            acc[affiliateColumn.label].summary.reporting.avg_sale_value +=
-              item.reporting.avg_sale_value;
-            acc[affiliateColumn.label].summary.reporting.media_buying_cost +=
-              item.reporting.media_buying_cost;
-          }
-
-          return acc;
-        }, {});
+        const group = data;
         setActivePartnerDropdowns(() => {
           return Object.keys(group).map((key) => {
             return { key: key, active: false };
