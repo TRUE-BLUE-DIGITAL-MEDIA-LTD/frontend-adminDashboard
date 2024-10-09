@@ -1,18 +1,20 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputSignInService, signInService } from "../../services/auth/sign-in";
 import { parseCookies, setCookie } from "nookies";
 import { Alert, Snackbar, TextField } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { Message } from "../../models";
-import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { GetUser } from "../../services/admin/user";
+import TotpRequire from "../../components/auth/totp-require";
 
 function SignIn() {
   const router = useRouter();
   const [triggerRedirect, setTriggerRedirect] = useState(false);
+  const [triggerSetupTotp, setTriggerSetupTotp] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement>();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<Message>({
     status: "success",
@@ -23,6 +25,10 @@ function SignIn() {
     password: "",
   });
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setAudio(() => new Audio("/sounds/notification.mp3"));
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     try {
@@ -45,7 +51,9 @@ function SignIn() {
         maxAge: 30 * 24 * 60 * 60, // Cookie expiration time in seconds (e.g., 30 days)
       });
       setTriggerRedirect(() => true);
-      if (res.user.IsResetPassword === false) {
+      if (!res.user.TOTPsecret || !res.user.TOTPenable) {
+        router.push("/auth/setup-totp");
+      } else if (res.user.IsResetPassword === false) {
         router.push("/");
       } else if (res.user.IsResetPassword === true) {
         console.log(res.user.IsResetPassword);
@@ -53,6 +61,10 @@ function SignIn() {
       }
     } catch (err: any) {
       console.log(err);
+      if (err.message === "MULTI-FACTOR AUTHENTICATION REQUIRED") {
+        audio?.play();
+        setTriggerSetupTotp(() => true);
+      }
       setOpen(() => true);
       setIsLoading(() => false);
       setMessage(() => {
@@ -94,6 +106,12 @@ function SignIn() {
           {message?.message}
         </Alert>
       </Snackbar>
+      {triggerSetupTotp && signInData.email && (
+        <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center">
+          <TotpRequire email={signInData.email} />
+          <footer className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-white/30 backdrop-blur-md "></footer>
+        </div>
+      )}
 
       <div className="mt-32 flex w-8/12 flex-col items-center justify-center gap-2">
         <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
@@ -107,60 +125,63 @@ function SignIn() {
         <h1 className="font-Poppins text-xl font-semibold md:text-3xl">
           Welcome to OxyClick
         </h1>
-        <h1 className="font-Poppins text-base font-medium text-icon-color md:text-lg">
-          Sign In To Enter Dashboard
-        </h1>
-        <form className="flex w-80 flex-col" onSubmit={handleSubmit}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            type="email"
-            id="email"
-            label="Email Address"
-            name="email"
-            onChange={handleChangeInputLogin}
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            onChange={handleChangeInputLogin}
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          {isLoading ? (
-            <div
-              className="animate-pulse rounded-lg bg-blue-500 px-20 py-2 text-center
+
+        <div className="flex flex-col items-center justify-center gap-1 ">
+          <h1 className="font-Poppins text-base font-medium text-icon-color md:text-lg">
+            Sign In To Enter Dashboard
+          </h1>
+          <form className="flex w-80 flex-col" onSubmit={handleSubmit}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              type="email"
+              id="email"
+              label="Email Address"
+              name="email"
+              onChange={handleChangeInputLogin}
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              onChange={handleChangeInputLogin}
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            {isLoading ? (
+              <div
+                className="animate-pulse rounded-lg bg-blue-500 px-20 py-2 text-center
          font-Poppins text-lg font-semibold text-white
       ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
-            >
-              loading...
-            </div>
-          ) : (
-            <button
-              className="rounded-lg bg-blue-500 px-20 py-2
+              >
+                loading...
+              </div>
+            ) : (
+              <button
+                className="rounded-lg bg-blue-500 px-20 py-2
            font-Poppins text-lg font-semibold text-white
         ring-blue-200 transition duration-150 hover:bg-blue-600 hover:ring-2 active:scale-110"
-            >
-              sign in
-            </button>
-          )}
-          <section className="mt-2 flex justify-center gap-2 font-medium">
-            <span>Don&apos;t have an account?</span>
-            <Link
-              href="/auth/sign-up"
-              className="cursor-pointer text-blue-600 underline"
-            >
-              Sign Up
-            </Link>
-          </section>
-        </form>
+              >
+                sign in
+              </button>
+            )}
+            <section className="mt-2 flex justify-center gap-2 font-medium">
+              <span>Don&apos;t have an account?</span>
+              <Link
+                href="/auth/sign-up"
+                className="cursor-pointer text-blue-600 underline"
+              >
+                Sign Up
+              </Link>
+            </section>
+          </form>
+        </div>
       </div>
       <footer className="mb-4 font-Poppins text-xs text-icon-color">
         <section className="flex h-5 items-center  justify-center gap-1">

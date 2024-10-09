@@ -12,6 +12,11 @@ export interface User {
   resetToken: string | null;
   resetTokenExpiresAt: string | null;
   IsResetPassword: boolean;
+  TOTPsecret: string | null;
+  TOTPenable: boolean;
+  TOTPhashRecovery: string | null;
+  TOTPexpireAt: string | null;
+  TOTPurl?: string | null;
 }
 
 export type Role = "partner" | "manager" | "admin" | "user";
