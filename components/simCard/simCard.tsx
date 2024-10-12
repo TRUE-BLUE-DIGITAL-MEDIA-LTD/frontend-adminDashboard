@@ -23,6 +23,7 @@ import {
   DeactiveSimCardService,
   GetSimCardActiveService,
   GetSimCardByPageService,
+  SyncSimCardService,
   UpdateSimCardService,
 } from "../../services/simCard/simCard";
 import { Pagination } from "@mui/material";
@@ -514,6 +515,36 @@ function SimCards({ user }: { user: User }) {
     }
   };
 
+  const handleSycnSimcard = async () => {
+    try {
+      Swal.fire({
+        title: "Syncing Simcard",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      await SyncSimCardService();
+      Swal.fire({
+        title: "Success",
+        text: "Syncing Simcard has been done.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
       <Toast ref={toast} />
@@ -553,13 +584,22 @@ function SimCards({ user }: { user: User }) {
               <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-black pr-5">
                 Device User <FaServer />
               </h3>
-              <button
-                onClick={() => setTriggerCreateDeviceUser(true)}
-                className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
+              <div className="flex w-max gap-2">
+                <button
+                  onClick={handleSycnSimcard}
+                  className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
             transition duration-100 hover:bg-green-400"
-              >
-                Add Device User
-              </button>
+                >
+                  Sync Simcard
+                </button>
+                <button
+                  onClick={() => setTriggerCreateDeviceUser(true)}
+                  className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
+            transition duration-100 hover:bg-green-400"
+                >
+                  Add Device User
+                </button>
+              </div>
             </section>
 
             <ul className="mt-10 flex w-full flex-wrap gap-5">
