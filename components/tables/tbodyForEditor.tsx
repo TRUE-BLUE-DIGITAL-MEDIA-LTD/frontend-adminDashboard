@@ -105,7 +105,7 @@ function TbodyForEditor({
       <td className="px-2">{item.reporting.invalid_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
 
-      <td className="px-2">{item.reporting.cvr.toFixed(2)}%</td>
+      <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.cpa.toLocaleString()}</td>
 

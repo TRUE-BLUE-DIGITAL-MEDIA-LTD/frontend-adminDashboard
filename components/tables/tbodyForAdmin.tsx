@@ -107,7 +107,7 @@ function TbodyForAdmin({
       <td className="px-2">{item.reporting.total_cv.toLocaleString()}</td>
       <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
 
-      <td className="px-2">{item.reporting.cvr.toFixed(2)}%</td>
+      <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.cpa.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpc.toLocaleString()}</td>
