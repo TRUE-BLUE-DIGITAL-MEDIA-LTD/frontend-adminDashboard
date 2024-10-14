@@ -373,6 +373,14 @@ export const getServerSideProps: GetServerSideProps = async (
     const cookies = parseCookies(context);
     const accessToken = cookies.access_token;
     const user = await GetUser({ access_token: accessToken });
+    if (user.TOTPenable === false) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/auth/setup-totp",
+        },
+      };
+    }
     if (user.role === "partner" || user.role === "user") {
       return {
         redirect: {
