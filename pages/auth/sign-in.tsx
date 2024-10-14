@@ -9,6 +9,7 @@ import { Message } from "../../models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { GetUser } from "../../services/admin/user";
 import TotpRequire from "../../components/auth/totp-require";
+import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
 
 function SignIn() {
   const router = useRouter();
@@ -106,6 +107,10 @@ function SignIn() {
           {message?.message}
         </Alert>
       </Snackbar>
+      <TawkMessengerReact
+        propertyId={process.env.NEXT_PUBLIC_PROPERTY_ID}
+        widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
+      />
       {triggerSetupTotp && signInData.email && (
         <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center">
           <TotpRequire email={signInData.email} />

@@ -8,11 +8,6 @@ import { menusSidebar } from "../data/menus";
 import { useRouter } from "next/router";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
 import Link from "next/link";
-import { Popover, Transition } from "@headlessui/react";
-import ImpersonateNavBar from "../components/navbars/impersonateNavBar";
-import { useQuery } from "@tanstack/react-query";
-import { parseCookies } from "nookies";
-import { GetImpersonateUser } from "../services/admin/user";
 
 export default function DashboardLayout({
   children,
