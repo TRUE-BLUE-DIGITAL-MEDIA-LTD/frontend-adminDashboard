@@ -1,5 +1,5 @@
 import "../styles/globals.css";
-import "primereact/resources/themes/bootstrap4-light-purple/theme.css";
+import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import type { AppProps } from "next/app";
 import { PagesProgressBar as ProgressBar } from "next-nprogress-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

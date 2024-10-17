@@ -13,3 +13,5 @@ export * from "./sms.model";
 export * from "./simcard.model";
 export * from "./bonus.model";
 export * from "./image-library.model";
+export * from "./history-record.model";
+export * from "./actions.model";
