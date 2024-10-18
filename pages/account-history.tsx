@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import DashboardLayout from "../layouts/dashboardLayout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
@@ -81,6 +81,7 @@ function Index({ user }: { user: User }) {
   const [page, setPage] = useState<number>(1);
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const [selectUser, setSelectUser] = useState<User>();
+  const [totalPage, setTotalPage] = useState<number>(1);
   const [filter, setFilter] = useState<{
     action?: { title: ActionListKey; icon: IconType };
     data?: string;
@@ -91,8 +92,8 @@ function Index({ user }: { user: User }) {
     data: "",
   });
   const account = useQuery({
-    queryKey: ["account", { page, limit: 100 }],
-    queryFn: () => GetAllAccountByPageService({ page, limit: 100 }),
+    queryKey: ["account", { page: 1, limit: 100 }],
+    queryFn: () => GetAllAccountByPageService({ page: 1, limit: 100 }),
     enabled: user.role === "admin" || user.role === "manager",
   });
 
@@ -124,6 +125,11 @@ function Index({ user }: { user: User }) {
         },
       }),
   });
+  useEffect(() => {
+    if (history.data) {
+      setTotalPage(history.data.meta.lastPage);
+    }
+  }, [history.data]);
   return (
     <>
       <Head>
@@ -393,7 +399,7 @@ function Index({ user }: { user: User }) {
           <Pagination
             onChange={(e, page) => setPage(page)}
             page={page}
-            count={history?.data?.meta.lastPage}
+            count={totalPage}
             color="primary"
           />
         </main>
