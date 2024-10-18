@@ -11,6 +11,7 @@ type InputGetHistoryRecordService = {
   filter: {
     action?: string;
     data?: string;
+    userId?: string;
     startDate?: string;
     endDate?: string;
   };

@@ -10,6 +10,7 @@ export interface ResponseGetAllAccountByPageService {
 }
 interface InputGetAllAccountByPageService {
   page: number;
+  limit: number;
 }
 
 export async function GetAllAccountByPageService(

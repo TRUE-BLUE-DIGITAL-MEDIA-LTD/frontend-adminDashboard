@@ -43,7 +43,7 @@ function Index({ user }: { user: User }) {
   const [triggerUpdateBonusRate, setTriggerUpdateBonusRate] = useState(false);
   const accounts = useQuery({
     queryKey: ["accounts", page],
-    queryFn: () => GetAllAccountByPageService({ page: page }),
+    queryFn: () => GetAllAccountByPageService({ page: page, limit: 30 }),
     placeholderData: keepPreviousData,
   });
 

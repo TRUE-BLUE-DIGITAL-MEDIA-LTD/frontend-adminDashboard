@@ -4,7 +4,7 @@ import DashboardLayout from "../layouts/dashboardLayout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { GetUser } from "../services/admin/user";
-import { User } from "../models";
+import { Partner, User } from "../models";
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "@mui/material";
 import { GetHistoryRecordService } from "../services/history-record";
@@ -36,6 +36,7 @@ import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { Dropdown } from "primereact/dropdown";
+import { GetAllAccountByPageService } from "../services/admin/account";
 
 type ActionListKey =
   | "user"
@@ -79,6 +80,7 @@ type ActionMethodKey = "create" | "update" | "delete" | "get";
 function Index({ user }: { user: User }) {
   const [page, setPage] = useState<number>(1);
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
+  const [selectUser, setSelectUser] = useState<User>();
   const [filter, setFilter] = useState<{
     action?: { title: ActionListKey; icon: IconType };
     data?: string;
@@ -88,6 +90,12 @@ function Index({ user }: { user: User }) {
     action: undefined,
     data: "",
   });
+  const account = useQuery({
+    queryKey: ["account", { page, limit: 100 }],
+    queryFn: () => GetAllAccountByPageService({ page, limit: 100 }),
+    enabled: user.role === "admin",
+  });
+
   const history = useQuery({
     queryKey: [
       "history",
@@ -99,6 +107,7 @@ function Index({ user }: { user: User }) {
           data: filter.data,
           startDate: dates?.[0],
           endDate: dates?.[1],
+          userId: selectUser?.id,
         },
       },
     ],
@@ -109,6 +118,7 @@ function Index({ user }: { user: User }) {
         filter: {
           action: filter.action?.title,
           data: filter.data,
+          userId: selectUser?.id,
           startDate: dates?.[0]?.toISOString(),
           endDate: dates?.[1]?.toISOString(),
         },
@@ -126,10 +136,63 @@ function Index({ user }: { user: User }) {
             <h1 className="text-2xl font-semibold">Account History</h1>
           </div>
           <section className="py flex w-full flex-wrap justify-end gap-3 border-t border-gray-200 p-2">
+            <div
+              className={`${user.role !== "admin" && "hidden"}  flex flex-col`}
+            >
+              <label className="text-xs ">Select User</label>
+              <Dropdown
+                value={selectUser}
+                onChange={(e) => {
+                  setPage(1);
+                  setSelectUser(() => e.value);
+                }}
+                options={account?.data?.accounts}
+                placeholder="Select User"
+                valueTemplate={(
+                  option: User & {
+                    partner: Partner | null;
+                  },
+                ) => {
+                  if (!option) return <>No user select</>;
+                  return (
+                    <span className="font-semibold leading-none">
+                      {option.name}
+                    </span>
+                  );
+                }}
+                showClear
+                loading={account.isLoading}
+                itemTemplate={(
+                  option: User & {
+                    partner: Partner | null;
+                  },
+                ) => (
+                  <section className="flex items-center gap-2">
+                    <div className="relative h-10 w-10 rounded-lg ">
+                      <Image
+                        src={option.image}
+                        layout="fill"
+                        alt="user image"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-semibold leading-none">
+                        {option.name}
+                      </span>
+                      <span className="text-xs">{option.email}</span>
+                    </div>
+                  </section>
+                )}
+                className={`h-10 w-72 rounded  border border-gray-400 text-gray-800 `}
+              />
+            </div>
+
             <div className="flex flex-col">
               <label className="text-xs ">Select Action</label>
               <Dropdown
-                value={filter.action ?? null}
+                value={filter.action}
                 onChange={(e) => {
                   setPage(1);
                   setFilter((prev) => {
@@ -198,7 +261,6 @@ function Index({ user }: { user: User }) {
                   <td>Create At</td>
                   <td>Action</td>
                   <td>Description</td>
-                  <td>Detail</td>
                 </tr>
               </thead>
               <tbody>
@@ -210,10 +272,6 @@ function Index({ user }: { user: User }) {
                           key={index}
                           className="h-14 border-b border-gray-200 hover:bg-gray-100"
                         >
-                          <td
-                            className="animate-pulse"
-                            style={getSlateColorStyle(randomShade)}
-                          ></td>
                           <td
                             className="animate-pulse"
                             style={getSlateColorStyle(randomShade)}
@@ -325,11 +383,6 @@ function Index({ user }: { user: User }) {
                           </td>
                           <td className="max-w-40 text-wrap break-words p-2 text-sm">
                             {record.data}
-                          </td>
-                          <td>
-                            <button className="rounded-lg bg-gray-800 px-3 py-1 text-white">
-                              view detail
-                            </button>
                           </td>
                         </tr>
                       );
