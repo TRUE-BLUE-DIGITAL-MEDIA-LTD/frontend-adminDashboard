@@ -93,7 +93,7 @@ function Index({ user }: { user: User }) {
   const account = useQuery({
     queryKey: ["account", { page, limit: 100 }],
     queryFn: () => GetAllAccountByPageService({ page, limit: 100 }),
-    enabled: user.role === "admin",
+    enabled: user.role === "admin" || user.role === "manager",
   });
 
   const history = useQuery({
@@ -137,7 +137,7 @@ function Index({ user }: { user: User }) {
           </div>
           <section className="py flex w-full flex-wrap justify-end gap-3 border-t border-gray-200 p-2">
             <div
-              className={`${user.role !== "admin" && "hidden"}  flex flex-col`}
+              className={`${user.role === "admin" || user.role === "manager" ? "flex" : "hidden"} flex-col`}
             >
               <label className="text-xs ">Select User</label>
               <Dropdown
