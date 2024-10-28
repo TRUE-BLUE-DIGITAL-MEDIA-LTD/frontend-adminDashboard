@@ -14,6 +14,8 @@ export interface LandingPage {
   viewCount: number | null;
   mainButton: string;
   directLink?: string | null;
+  secondOffer?: string | null;
+  backOffer?: string | null;
   percent: number;
   categoryId: string | null;
   creatorId: string;

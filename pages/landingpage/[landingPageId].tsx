@@ -49,6 +49,8 @@ interface UpdateLandingPageData {
   domainId: string;
   language: Language;
   categoryId: string;
+  secondOffer: string;
+  backOffer: string;
   googleAnalyticsId: string | null;
 }
 
@@ -99,6 +101,8 @@ function Index({ user }: { user: User }) {
       categoryId: "",
       language: "en",
       googleAnalyticsId: "",
+      secondOffer: "",
+      backOffer: "",
     },
   );
 
@@ -116,6 +120,8 @@ function Index({ user }: { user: User }) {
           language: landingPage?.data?.language,
           categoryId: landingPage.data?.categoryId as string,
           googleAnalyticsId: landingPage?.data?.googleAnalyticsId as string,
+          secondOffer: landingPage?.data?.secondOffer as string,
+          backOffer: landingPage?.data?.backOffer as string,
         };
       });
       setIcon(() => landingPage?.data?.icon);
@@ -155,20 +161,35 @@ function Index({ user }: { user: User }) {
         const json = JSON.stringify(design);
 
         await UpdateLandingPageService({
-          title: landingPageData.title,
-          domainId: landingPageData?.domainId,
-          html: html,
-          json: json,
-          landingPageId: router?.query?.landingPageId as string,
-          backgroundImage: landingPageData.imageLink,
-          mainButton: landingPageData.mainButton,
-          directLink: landingPageData.directLink,
-          name: landingPageData.name,
-          icon: icon,
-          categoryId: landingPageData.categoryId,
-          language: landingPageData.language,
-          description: landingPageData.description,
-          googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
+          query: {
+            id: router?.query?.landingPageId as string,
+          },
+          body: {
+            title: landingPageData.title,
+            domainId: landingPageData?.domainId,
+            html: html,
+            json: json,
+            backgroundImage: landingPageData.imageLink,
+            mainButton: landingPageData.mainButton,
+            directLink:
+              landingPageData.directLink === ""
+                ? null
+                : landingPageData.directLink,
+            name: landingPageData.name,
+            icon: icon,
+            categoryId: landingPageData.categoryId,
+            language: landingPageData.language,
+            description: landingPageData.description,
+            googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
+            secondOffer:
+              landingPageData.secondOffer === ""
+                ? null
+                : landingPageData.secondOffer,
+            backOffer:
+              landingPageData.backOffer === ""
+                ? null
+                : landingPageData.backOffer,
+          },
         });
         setMessage(() => {
           return {
@@ -418,6 +439,20 @@ function Index({ user }: { user: User }) {
               label="direct Link (Optional)"
               variant="outlined"
               value={landingPageData.directLink}
+            />
+            <TextField
+              onChange={handleChangeLandingPageData}
+              name="secondOffer"
+              label="Second Offer (Optional)"
+              variant="outlined"
+              value={landingPageData.secondOffer}
+            />
+            <TextField
+              onChange={handleChangeLandingPageData}
+              name="backOffer"
+              label="Back Offer (Optional)"
+              variant="outlined"
+              value={landingPageData.backOffer}
             />
           </div>
         </div>

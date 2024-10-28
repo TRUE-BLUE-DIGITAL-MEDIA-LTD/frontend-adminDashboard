@@ -46,20 +46,26 @@ export async function CreateLandingPageService(
 }
 
 interface InputUpdateLandingPageService {
-  landingPageId: string;
-  title: string;
-  domainId?: string | null;
-  html: string;
-  json: string;
-  backgroundImage: string;
-  language: Language;
-  mainButton: string;
-  name: string;
-  directLink?: string;
-  categoryId: string;
-  icon?: string | null;
-  description: string;
-  googleAnalyticsId: string;
+  query: {
+    id: string;
+  };
+  body: {
+    title?: string;
+    domainId?: string | null;
+    html?: string;
+    json?: string;
+    backgroundImage?: string;
+    language?: Language;
+    mainButton?: string;
+    name?: string;
+    directLink?: string | null;
+    categoryId?: string;
+    icon?: string | null;
+    description?: string;
+    googleAnalyticsId?: string;
+    secondOffer?: string | null;
+    backOffer?: string | null;
+  };
 }
 export async function UpdateLandingPageService(
   input: InputUpdateLandingPageService,
