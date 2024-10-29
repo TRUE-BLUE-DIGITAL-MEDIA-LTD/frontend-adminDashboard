@@ -3,6 +3,7 @@ import Error from "next/error";
 import { parseCookies } from "nookies";
 import {
   Domain,
+  LandingPage,
   Partner,
   ResponsibilityOnPartner,
   SiteBuild,
@@ -39,6 +40,7 @@ export interface ResponseGetAllDomainsByPage {
     siteBuild?: SiteBuild | null;
     partner: Partner | null;
     partnerOnDomain: ResponsibilityOnPartner | null;
+    landingPages: LandingPage[];
   })[];
   totalPages: number;
   totalNoPartnerDomain: number;

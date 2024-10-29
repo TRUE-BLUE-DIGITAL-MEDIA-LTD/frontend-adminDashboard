@@ -32,6 +32,7 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { Dropdown } from "primereact/dropdown";
 import { IoMdPerson } from "react-icons/io";
+import Link from "next/link";
 
 interface HandleDeleteDomain {
   domainNameId: string;
@@ -279,7 +280,10 @@ function Index({ user }: { user: User }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
+          <div
+            className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] 
+          lg:w-[45rem] xl:w-[60rem] 2xl:w-[70rem] "
+          >
             <table className="w-max min-w-full border-collapse ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
@@ -289,6 +293,7 @@ function Index({ user }: { user: User }) {
                   <td>DNS Status</td>
                   <td>Nameserver</td>
                   <td>Partners</td>
+                  <td>Landing Pages</td>
                   <td>Options</td>
                 </tr>
               </thead>
@@ -404,6 +409,34 @@ function Index({ user }: { user: User }) {
                                 className="rounded-md bg-red-200 px-2 py-1 text-red-500"
                               >
                                 <span>No Partner</span>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-2 ">
+                          <div className="flex flex-col gap-2">
+                            {list.landingPages.length > 0 ? (
+                              list.landingPages.map((landingPage, index) => {
+                                return (
+                                  <Link
+                                    target="_blank"
+                                    href={`/landingpage/${landingPage.id}`}
+                                    key={landingPage.id}
+                                    className="flex max-w-36 items-start  truncate rounded-md
+                                     px-2 py-1 text-start text-xs text-gray-500 underline"
+                                  >
+                                    <div className="w-40 truncate">
+                                      Title: {landingPage.title}
+                                    </div>
+                                  </Link>
+                                );
+                              })
+                            ) : (
+                              <div
+                                key={index}
+                                className="rounded-md bg-red-200 px-2 py-1 text-red-500"
+                              >
+                                <span>No Landing Page</span>
                               </div>
                             )}
                           </div>
