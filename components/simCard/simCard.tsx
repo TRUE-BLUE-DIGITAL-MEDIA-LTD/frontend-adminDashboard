@@ -64,6 +64,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { GiSave } from "react-icons/gi";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import { countries } from "../../data/country";
+import { BsFlag } from "react-icons/bs";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -778,7 +779,12 @@ function SimCards({ user }: { user: User }) {
                     slotInUsed = true;
                   }
                 });
-
+                const country = countries.find(
+                  (country) =>
+                    country.country ===
+                    deviceUser.data?.find((d) => d.id === sim.deviceUserId)
+                      ?.country,
+                );
                 if (
                   activeSimcard.data?.find((active) => active.id === sim.id)
                 ) {
@@ -887,12 +893,22 @@ function SimCards({ user }: { user: User }) {
                         className="w-full bg-slate-200 
                   text-start font-semibold text-black"
                       >
+                        {country?.countryCode}{" "}
                         {sim.phoneNumber.replace(
                           /(\d{4})(\d{3})(\d{4})/,
                           "($1) $2-$3",
                         )}
                       </span>
-
+                      <span className="flex  w-full items-center justify-start gap-1">
+                        <BsFlag />
+                        Sim Country:{" "}
+                      </span>
+                      <span
+                        className="w-full bg-slate-200 
+                  text-start font-semibold text-black"
+                      >
+                        {country?.country}
+                      </span>
                       <span className="flex  w-full items-center justify-start gap-1">
                         <MdDevices />
                         Device User:{" "}
