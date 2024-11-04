@@ -26,6 +26,10 @@ export type ResponseCreateDeviceUserService = DeviceUser;
 
 type InputCreateDeviceUserService = {
   portNumber: string;
+  url: string;
+  country: string;
+  username: string;
+  password: string;
 };
 export async function CreateDeviceUserService(
   input: InputCreateDeviceUserService,

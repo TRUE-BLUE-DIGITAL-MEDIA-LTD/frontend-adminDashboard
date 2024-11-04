@@ -23,6 +23,10 @@ export type DeviceUser = {
   createAt: string;
   updateAt: string;
   portNumber: string;
+  url: string;
+  country: string;
+  username: string;
+  password: string;
 };
 
 export type SimCardOnPartner = {

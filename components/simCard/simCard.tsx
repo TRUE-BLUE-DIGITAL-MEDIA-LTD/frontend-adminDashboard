@@ -63,6 +63,7 @@ import SpinLoading from "../loadings/spinLoading";
 import { Editor } from "@tinymce/tinymce-react";
 import { GiSave } from "react-icons/gi";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
+import { countries } from "../../data/country";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -589,28 +590,63 @@ function SimCards({ user }: { user: User }) {
                 return (
                   <li
                     key={device.id}
-                    className=" flex items-center justify-center gap-5  
-                  rounded-sm bg-white p-3 ring-1  ring-gray-700"
+                    className=" relative flex w-96 flex-col items-center  justify-center gap-1  
+                  rounded-sm bg-white p-2 ring-1  ring-gray-700"
                   >
-                    Port Number: {device.portNumber}
-                    <button
-                      onClick={() =>
-                        handleAutoPopulateNumber(device.portNumber)
-                      }
-                      className="rounded-md bg-blue-300 px-5 py-2 text-sm text-blue-600 drop-shadow-lg 
+                    <div
+                      className="absolute right-1 top-1 m-auto h-7 w-10
+                      overflow-hidden rounded-md "
+                    >
+                      <Image
+                        fill
+                        src={
+                          countries.find(
+                            (country) => country.country === device.country,
+                          )?.flag ?? "/favicon.ico"
+                        }
+                        alt="flag"
+                        className="object-contain"
+                      />
+                    </div>
+                    <span className="grid w-full grid-cols-2">
+                      <span>Port Number: </span>
+                      <span className="font-semibold">{device.portNumber}</span>
+                    </span>
+                    <span className="grid w-full grid-cols-2">
+                      <span>Port URL: </span>
+                      <span className="break-words font-semibold">
+                        {device.url}
+                      </span>
+                    </span>
+                    <span className="grid w-full grid-cols-2">
+                      <span>Port Username: </span>
+                      <span className="font-semibold">{device.username}</span>
+                    </span>
+                    <span className="grid w-full grid-cols-2">
+                      <span>Port Password: </span>
+                      <span className="font-semibold">{device.password}</span>
+                    </span>
+
+                    <div className="flex w-full items-center justify-start gap-1">
+                      <button
+                        onClick={() =>
+                          handleAutoPopulateNumber(device.portNumber)
+                        }
+                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
-                    >
-                      Auto Populate
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleDeleteDeviceUser({ deviceUserId: device.id })
-                      }
-                      className="rounded-md bg-red-300 px-5 py-2 text-sm text-red-600 drop-shadow-lg 
+                      >
+                        Auto Populate
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDeleteDeviceUser({ deviceUserId: device.id })
+                        }
+                        className="flex h-8 w-10 items-center justify-center rounded-md bg-red-300 text-sm text-red-600 drop-shadow-lg 
             transition duration-100 hover:bg-red-400"
-                    >
-                      <MdDelete />
-                    </button>
+                      >
+                        <MdDelete />
+                      </button>
+                    </div>
                   </li>
                 );
               })}

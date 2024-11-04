@@ -1458,7 +1458,7 @@ export const countries = [
     countryCode: "+1",
   },
   {
-    flag: "https://twemoji.maxcdn.com/2/svg/1f1fa-1f1f8.svg",
+    flag: "https://flagicons.lipis.dev/flags/4x3/um.svg",
     country: "USA",
     code: "us",
     countryCode: "+1",
@@ -1566,7 +1566,7 @@ export const countries = [
     countryCode: "+263",
   },
   {
-    flag: "https://twemoji.maxcdn.com/2/svg/1f3f4-e0067-e0062-e0065-e006e-e0067-e007f.svg",
+    flag: "https://flagicons.lipis.dev/flags/4x3/gb.svg",
     country: "England",
     code: "uk",
     countryCode: "+44",
@@ -1583,4 +1583,4 @@ export const countries = [
     code: "uk",
     countryCode: "+44",
   },
-] as const;
+];

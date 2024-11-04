@@ -15,6 +15,8 @@ import {
 } from "../../services/simCard/deviceUser";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ResponseGetSimCardByPageService } from "../../services/simCard/simCard";
+import { Dropdown } from "primereact/dropdown";
+import { countries } from "../../data/country";
 
 type CreateDeviceUserProps = {
   setTrigger: (value: boolean) => void;
@@ -26,14 +28,33 @@ function CreateDeviceUser({
   simCards,
   deviceUser,
 }: CreateDeviceUserProps) {
-  const [portNumber, setPortNumber] = useState<string>();
+  const [createData, setCreateData] = useState<{
+    portNumber?: string;
+    url?: string;
+    country?: {
+      code: string;
+      country: string;
+      countryCode: string;
+      flag: string;
+    };
+    username?: string;
+    password?: string;
+  }>();
 
   const handleCreateDeviceUser = async (
     e: React.FormEvent<HTMLFormElement>,
   ) => {
     try {
       e.preventDefault();
-      if (!portNumber) throw new Error("Port Number is required");
+      if (
+        !createData?.portNumber ||
+        !createData?.url ||
+        !createData?.country ||
+        !createData?.username ||
+        !createData?.password
+      ) {
+        throw new Error("All fields are required");
+      }
       Swal.fire({
         title: "Creating Device User",
         text: "Please wait...",
@@ -43,9 +64,17 @@ function CreateDeviceUser({
           Swal.showLoading();
         },
       });
-      await CreateDeviceUserService({ portNumber: portNumber });
+      await CreateDeviceUserService({
+        portNumber: createData?.portNumber,
+        url: createData?.url,
+        country: createData?.country.country,
+        username: createData?.username,
+        password: createData?.password,
+      });
       await deviceUser.refetch();
       await simCards.refetch();
+      setTrigger(false);
+
       Swal.fire({
         title: "Device User Created",
         text: "Device User has been created successfully",
@@ -81,13 +110,94 @@ function CreateDeviceUser({
             onWheelCapture={(e) => {
               e.currentTarget.blur();
             }}
-            value={portNumber}
-            onChange={(e) => setPortNumber(e.target.value)}
+            value={createData?.portNumber}
+            onChange={(e) => {
+              setCreateData({
+                ...createData,
+                portNumber: e.target.value,
+              });
+            }}
             required
             type="number"
             placeholder="Port Number"
             inputMode="numeric"
             className="h-10 w-full rounded-md border border-gray-300 p-5"
+          />
+          <FieldError className="text-xs text-red-700" />
+        </TextField>
+        <TextField>
+          <Label>Port URL</Label>
+          <Input
+            onWheelCapture={(e) => {
+              e.currentTarget.blur();
+            }}
+            value={createData?.url}
+            onChange={(e) => {
+              setCreateData({
+                ...createData,
+                url: e.target.value,
+              });
+            }}
+            required
+            type="url"
+            placeholder="Port Url"
+            className="h-10 w-full rounded-md border border-gray-300 p-5"
+          />
+          <FieldError className="text-xs text-red-700" />
+        </TextField>
+        <TextField>
+          <Label>Port Username</Label>
+          <Input
+            onWheelCapture={(e) => {
+              e.currentTarget.blur();
+            }}
+            value={createData?.username}
+            onChange={(e) => {
+              setCreateData({
+                ...createData,
+                username: e.target.value,
+              });
+            }}
+            required
+            type="text"
+            placeholder="Port Username"
+            className="h-10 w-full rounded-md border border-gray-300 p-5"
+          />
+          <FieldError className="text-xs text-red-700" />
+        </TextField>
+        <TextField>
+          <Label>Port Password</Label>
+          <Input
+            onWheelCapture={(e) => {
+              e.currentTarget.blur();
+            }}
+            value={createData?.password}
+            onChange={(e) => {
+              setCreateData({
+                ...createData,
+                password: e.target.value,
+              });
+            }}
+            required
+            type="text"
+            placeholder="Port Password"
+            className="h-10 w-full rounded-md border border-gray-300 p-5"
+          />
+          <FieldError className="text-xs text-red-700" />
+        </TextField>
+        <TextField>
+          <Label>Select Country</Label>
+          <Dropdown
+            value={createData?.country}
+            onChange={(e) => {
+              setCreateData((prev) => {
+                return { ...prev, country: e.value };
+              });
+            }}
+            options={countries}
+            optionLabel="country"
+            placeholder="Select a Country"
+            className="md:w-14rem w-full"
           />
           <FieldError className="text-xs text-red-700" />
         </TextField>
