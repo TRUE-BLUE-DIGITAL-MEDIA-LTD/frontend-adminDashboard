@@ -20,6 +20,7 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import { Pagination } from "@mui/material";
 import { Dropdown } from "primereact/dropdown";
 import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
+import { countries } from "../../../data/country";
 const availableSlot = ["available", "unavailable"];
 
 type AssignPhoneNumberProps = {
@@ -34,6 +35,7 @@ function AssignPhoneNumber({
 }: AssignPhoneNumberProps) {
   const [searchField, setSearchField] = useState<string>("");
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
+  const [totalPages, setTotalPages] = useState<number>(0);
   const deviceUser = useQuery({
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
@@ -43,10 +45,9 @@ function AssignPhoneNumber({
   >("available");
   const [simCardOnPartnerData, setSimCardOmPartnerData] = useState<{
     simCards: (SimCard & {
-      simCardOnPartner: SimCardOnPartner | null;
       isLoading: boolean;
       isChecking: boolean;
-      partner: SimCardOnPartner | null;
+      simcardOnPartner: SimCardOnPartner & { partner: Partner };
     })[];
     totalPages: number;
     currentPage: number;
@@ -87,22 +88,14 @@ function AssignPhoneNumber({
 
   useEffect(() => {
     if (phoneNumber.data) {
+      setTotalPages(() => phoneNumber.data.meta.total);
       setSimCardOmPartnerData(() => {
         return {
           simCards: phoneNumber.data.data.map((simCard) => {
             return {
               ...simCard,
-              simCardOnPartner:
-                simCardOnPartners.data?.find(
-                  (simCardOnPartner) =>
-                    simCardOnPartner.simCard.id === simCard.id,
-                ) ?? null,
               isLoading: false,
-              isChecking:
-                simCardOnPartners.data?.some(
-                  (simCardOnPartner) =>
-                    simCardOnPartner.simCardId === simCard.id,
-                ) ?? false,
+              isChecking: !!simCard.simcardOnPartner,
             };
           }),
           totalPages: phoneNumber.data.meta.total,
@@ -139,6 +132,7 @@ function AssignPhoneNumber({
         simId: simCardId,
         partnerId: partnerId,
       });
+      await phoneNumber.refetch();
       await simCardOnPartners.refetch();
 
       setSimCardOmPartnerData((prev) => {
@@ -210,6 +204,7 @@ function AssignPhoneNumber({
       await DeleteSimOnPartnerService({
         simOnPartnerId: simCardOnPartnerId,
       });
+      await phoneNumber.refetch();
       await simCardOnPartners.refetch();
       setSimCardOmPartnerData((prev) => {
         if (!prev) return prev;
@@ -252,6 +247,7 @@ function AssignPhoneNumber({
       });
     }
   };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
       <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
@@ -344,12 +340,14 @@ function AssignPhoneNumber({
             </section>
           </header>
 
-          <div className=" h-60 w-[30rem] justify-center overflow-auto  ">
+          <div className=" h-60 w-max min-w-[30rem] max-w-3xl justify-center overflow-auto  ">
             <table className=" w-full table-auto ">
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
                   <th>Phone Number</th>
+                  <th>Country</th>
                   <th>Device User</th>
+                  <th>Own By</th>
                   <th>Assing Phone number</th>
                 </tr>
               </thead>
@@ -359,10 +357,17 @@ function AssignPhoneNumber({
                       <tr key={index}>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
+                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
                         <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
                       </tr>
                     ))
                   : simCardOnPartnerData?.simCards?.map((sim) => {
+                      const device = deviceUser.data?.find(
+                        (d) => d.id === sim.deviceUserId,
+                      );
+                      const country = countries.find(
+                        (c) => c.country === device?.country,
+                      );
                       const createAt = new Date(sim?.createAt);
                       const formattedDatecreateAt = createAt.toLocaleDateString(
                         "en-US",
@@ -381,25 +386,47 @@ function AssignPhoneNumber({
                           key={sim.id}
                         >
                           <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                            {country?.countryCode}{" "}
                             {sim.phoneNumber.replace(
                               /(\d{4})(\d{3})(\d{4})/,
                               "($1) $2-$3",
                             )}
                           </td>
+                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                            {country?.country}
+                          </td>
                           <td className="h-10 truncate border-4 border-transparent text-center font-semibold text-black">
-                            {deviceUser.data?.find(
-                              (d) => d.id === sim.deviceUserId,
-                            )?.portNumber ?? "No Device User"}
+                            {device?.portNumber ?? "No Device User"}
+                          </td>
+                          <td className="h-10 truncate border-4 border-transparent text-center font-semibold text-black">
+                            {sim.simcardOnPartner?.partner.name || "No Partner"}
                           </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">
                               {sim.isLoading ? (
                                 <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
-                              ) : sim.partner &&
-                                sim.partner.partnerId !== selectPartner.id ? (
-                                <div className="h-max w-max bg-red-300 px-2 py-1 text-xs text-red-700">
-                                  already assigned
-                                </div>
+                              ) : sim.simcardOnPartner &&
+                                sim.simcardOnPartner.partnerId !==
+                                  selectPartner.id ? (
+                                <button
+                                  onClick={() =>
+                                    handleDeleteSimCardOnPartner({
+                                      simCardId: sim.id,
+                                      simCardOnPartnerId:
+                                        sim.simcardOnPartner?.id || "",
+                                    })
+                                  }
+                                  type="button"
+                                  className="group  h-10 w-full bg-red-300 px-2 py-1
+                                   text-xs text-red-700 transition hover:bg-red-400"
+                                >
+                                  <span className="block group-hover:hidden">
+                                    already assigned
+                                  </span>
+                                  <span className="hidden group-hover:block">
+                                    unassign
+                                  </span>
+                                </button>
                               ) : (
                                 <input
                                   onChange={(e) => {
@@ -412,7 +439,7 @@ function AssignPhoneNumber({
                                       handleDeleteSimCardOnPartner({
                                         simCardId: sim.id,
                                         simCardOnPartnerId:
-                                          sim.simCardOnPartner?.id || "",
+                                          sim.simcardOnPartner?.id || "",
                                       });
                                     }
                                   }}
@@ -432,7 +459,7 @@ function AssignPhoneNumber({
           <Pagination
             page={page}
             onChange={(e, page) => setPage(page)}
-            count={phoneNumber.data?.meta.total || 1}
+            count={totalPages}
             color="primary"
           />
         </section>

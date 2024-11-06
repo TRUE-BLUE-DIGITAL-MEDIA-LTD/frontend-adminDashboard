@@ -4,6 +4,7 @@ import {
   DeviceUser,
   MessageOnSimcard,
   Pagination,
+  Partner,
   SimCard,
   SimCardOnPartner,
   StatusPort,
@@ -41,7 +42,10 @@ export async function GetSimCardByDeviceUserIdService(
 }
 
 export type ResponseGetSimCardByPageService = Pagination<
-  SimCard & { partner: SimCardOnPartner; tag: TagOnSimcard[] }
+  SimCard & {
+    simcardOnPartner: SimCardOnPartner & { partner: Partner };
+    tag: TagOnSimcard[];
+  }
 >;
 
 type InputGetSimCardByPageService = {

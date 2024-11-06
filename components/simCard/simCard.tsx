@@ -782,7 +782,7 @@ function SimCards({ user }: { user: User }) {
                 const country = countries.find(
                   (country) =>
                     country?.country ===
-                    deviceUser.data?.find((d) => d.id === sim?.deviceUserId)
+                    deviceUser.data?.find((d) => d?.id === sim?.deviceUserId)
                       ?.country,
                 );
                 if (
