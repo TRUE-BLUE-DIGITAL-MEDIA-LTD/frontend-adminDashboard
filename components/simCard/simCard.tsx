@@ -424,9 +424,10 @@ function SimCards({ user }: { user: User }) {
     message,
     sim,
   }: {
-    message: MessageOnSimcard;
+    message: MessageOnSimcard | undefined;
     sim: SimCard;
   }) => {
+    if (!message) return;
     toast.current?.show({
       id: message.id,
       severity: "info",
