@@ -1,5 +1,6 @@
 import { BiSolidCategory } from "react-icons/bi";
 import { BsTools } from "react-icons/bs";
+import { FcCustomerSupport } from "react-icons/fc";
 import {
   MdAdminPanelSettings,
   MdEmail,
@@ -10,7 +11,7 @@ import {
 export const menusSidebar = [
   { title: "Landing Pages", url: "/", icon: MdWeb },
   { title: "Domain Library", url: "/domain", icon: MdOutlineDomain },
-  { title: "Submissions", url: "/email", icon: MdEmail },
+  { title: "Submissions", url: "/customer", icon: FcCustomerSupport },
   {
     title: "Control Center",
     url: "/manage-account",

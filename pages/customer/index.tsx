@@ -5,16 +5,17 @@ import { parseCookies } from "nookies";
 import { GetUser } from "../../services/admin/user";
 import { useRouter } from "next/router";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  DeleteCustomerEmailService,
-  GetEmailsByPageService,
-} from "../../services/admin/email";
 import Swal from "sweetalert2";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Pagination, Skeleton } from "@mui/material";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import { loadingNumber } from "../../data/loadingNumber";
 import { MdDelete } from "react-icons/md";
+import {
+  DeleteCustomerService,
+  GetCustomerByPageService,
+} from "../../services/customer";
+import Link from "next/link";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -22,19 +23,19 @@ function Index({ user }: { user: User }) {
   const [orderBy, setOrderBy] = useState<"createAt" | "email">("createAt");
   const [isAsc, setIsAsc] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const emails = useQuery({
-    queryKey: ["emails", page],
-    queryFn: () => GetEmailsByPageService({ page: page, orderBy, isAsc }),
+  const customers = useQuery({
+    queryKey: ["customer", page],
+    queryFn: () => GetCustomerByPageService({ page: page, limit: 20 }),
     placeholderData: keepPreviousData,
   });
 
   useEffect(() => {
-    emails.refetch();
+    customers.refetch();
   }, [orderBy, isAsc]);
   const handleDeleteCustomerEmail = async ({
-    emailId,
+    customerId,
   }: {
-    emailId: string;
+    customerId: string;
   }) => {
     Swal.fire({
       title: "Are you sure?",
@@ -57,11 +58,11 @@ function Index({ user }: { user: User }) {
             },
           });
           setIsLoading(() => true);
-          await DeleteCustomerEmailService({
-            emailId,
+          await DeleteCustomerService({
+            customerId: customerId,
           });
           Swal.fire("Deleted!", "Email Has Been Deleted", "success");
-          await emails.refetch();
+          await customers.refetch();
           setIsLoading(() => false);
         } catch (err: any) {
           setIsLoading(() => false);
@@ -76,16 +77,19 @@ function Index({ user }: { user: User }) {
       <div className="w-full">
         <header className="mt-28 flex flex-col items-center justify-center">
           <h1 className="font-Poppins text-4xl font-semibold md:text-7xl">
-            <span className="text-icon-color">E</span>
-            <span>mail</span>
+            <span className="text-icon-color">C</span>
+            <span>ustomer</span>
           </h1>
         </header>
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] ">
-            <table className="w-max min-w-full border-collapse ">
+          <div
+            className=" h-96 w-80 justify-center overflow-auto  
+           md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] "
+          >
+            <table className="w-max min-w-full table-auto  ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white  ">
-                  <td className="group flex h-14 items-center  gap-2">
+                  <th className="group flex h-14 items-center  gap-2">
                     <span>Email</span>
                     <div
                       className={`flex items-center ${
@@ -118,10 +122,15 @@ function Index({ user }: { user: User }) {
                         )
                       )}
                     </div>
-                  </td>
-                  <td>Name</td>
-                  <td>Landing Page</td>
-                  <td className="group flex gap-2">
+                  </th>
+                  <th>Name</th>
+                  <th>Phone Number</th>
+                  <th>Birthday</th>
+                  <th>Company</th>
+                  <th>Website</th>
+                  <th>Zip Code</th>
+                  <th>Landing Page</th>
+                  <th className="group flex gap-2">
                     <span>Create At</span>
                     <div
                       className={`flex items-center ${
@@ -154,12 +163,12 @@ function Index({ user }: { user: User }) {
                         )
                       )}
                     </div>
-                  </td>
-                  <td>Options</td>
+                  </th>
+                  <th>Options</th>
                 </tr>
               </thead>
               <tbody className="">
-                {emails.isLoading
+                {customers.isLoading
                   ? loadingNumber.map((list, index) => {
                       return (
                         <tr key={index}>
@@ -170,6 +179,18 @@ function Index({ user }: { user: User }) {
                             <Skeleton animation="wave" />
                           </td>
                           <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
                             <Skeleton />
                           </td>
                           <td>
@@ -178,10 +199,13 @@ function Index({ user }: { user: User }) {
                           <td>
                             <Skeleton />
                           </td>
+                          <td>
+                            <Skeleton />
+                          </td>
                         </tr>
                       );
                     })
-                  : emails?.data?.emails?.map((list, index) => {
+                  : customers?.data?.data?.map((list, index) => {
                       const createAt = new Date(list?.createAt);
                       const formattedDatecreateAt = createAt.toLocaleDateString(
                         "en-US",
@@ -195,36 +219,82 @@ function Index({ user }: { user: User }) {
                         },
                       );
                       return (
-                        <tr className="h-14 hover:bg-blue-50 " key={index}>
-                          {emails.isFetching ? (
+                        <tr
+                          className="h-14 border-4 border-transparent hover:bg-blue-50 "
+                          key={index}
+                        >
+                          {customers.isFetching ? (
                             <td>
                               <Skeleton animation="wave" />
                             </td>
                           ) : (
                             <td>{list?.email}</td>
                           )}
-                          {emails.isFetching ? (
+                          {customers.isFetching ? (
                             <td>
                               <Skeleton />
                             </td>
                           ) : (
-                            <td>{list?.name}</td>
-                          )}
-                          {emails.isFetching ? (
                             <td>
-                              <Skeleton />
+                              <div className="min-w-28 text-center">
+                                {list?.name}
+                              </div>
                             </td>
-                          ) : (
-                            <td>{list?.landingPages.name}</td>
                           )}
 
-                          <td>{formattedDatecreateAt}</td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.phone_number ? list?.phone_number : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.birthday ? list?.birthday : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.company ? list?.company : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.website ? list?.website : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.zip_code ? list?.zip_code : "-"}
+                            </div>
+                          </td>
+
+                          {customers.isFetching ? (
+                            <td>
+                              <Skeleton />
+                            </td>
+                          ) : (
+                            <td>
+                              <Link
+                                href={`/landingpage/${list?.landingPageId}`}
+                              >
+                                <span className="text-blue-700 underline">
+                                  {list?.landingPage?.name}
+                                </span>
+                              </Link>
+                            </td>
+                          )}
+
+                          <td>
+                            <div className="min-w-28 px-2 text-center">
+                              {formattedDatecreateAt}
+                            </div>
+                          </td>
 
                           <td className="flex h-14 w-20 items-center justify-center gap-2">
                             <button
                               onClick={() =>
                                 handleDeleteCustomerEmail({
-                                  emailId: list.id,
+                                  customerId: list.id,
                                 })
                               }
                               className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
@@ -240,7 +310,7 @@ function Index({ user }: { user: User }) {
           </div>
           <Pagination
             onChange={(e, page) => setPage(page)}
-            count={emails?.data?.totalPages}
+            count={customers?.data?.meta?.total}
             color="primary"
           />
         </main>
