@@ -23,8 +23,7 @@
     "**/*.tsx",
     "data/languages.ts",
     "data/tools.js",
-    "pages/landingpage/test.tjs",
     "tailwind.config.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "../../servers/**/*"]
 }
