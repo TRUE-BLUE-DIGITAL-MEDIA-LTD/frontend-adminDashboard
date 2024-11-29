@@ -10,6 +10,7 @@ import {
   StatusPort,
   TagOnSimcard,
 } from "../../models";
+import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
 
 export type ResponseGetSimCardByDeviceUserIdService = SimCard[];
 
@@ -127,6 +128,20 @@ export async function GetSimCardActiveService(): Promise<ResponseGetSimCardActiv
     console.log(err);
     throw err.response.data;
   }
+}
+
+export function SSEGetSimCardActiveService(): EventSource {
+  const cookies = parseCookies();
+  const access_token = cookies.access_token;
+  const eventSource = new EventSourcePolyfill(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/stream/active-sim-cards`,
+    {
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    },
+  );
+  return eventSource;
 }
 
 export type ResponseGetSimCardByIdService = {
