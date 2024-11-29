@@ -64,6 +64,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import { countries } from "../../data/country";
 import { BsFlag } from "react-icons/bs";
+import useSSEWithRetry from "../../utils/sse";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -139,54 +140,6 @@ function SimCards({ user }: { user: User }) {
     // run when selectPartner is selected
     enabled: !!selectPartner || user.role === "admin",
   });
-
-  useEffect(() => {
-    // Create an EventSource instance
-    const eventSource = SSEGetSimCardActiveService();
-    // Generic message handler
-
-    // Specific event handler
-    eventSource.addEventListener("active-sim-cards", (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data) as ResponseGetSimCardActiveService;
-        setActiveSimcard(() => data);
-
-        setUnavailableSlot(() =>
-          data?.map((sim) => {
-            return {
-              slot: sim.portNumber.split(".")[0],
-              deviceUserId: sim.deviceUserId,
-            };
-          }),
-        );
-        data.forEach((sim) => {
-          sim.messages?.forEach((message) => {
-            if (!message.isRead) {
-              setTrackingUnreadMessage((prev) => {
-                if (prev.find((track) => track.id === message.id)) return prev;
-                showInfo({ message: message, sim: sim });
-                return [...prev, { id: message.id }];
-              });
-            }
-          });
-        });
-      } catch (err) {
-        console.error("Error parsing active-sim-cards event data:", err);
-      }
-    });
-
-    // Error handling
-    eventSource.onerror = (err) => {
-      console.error("SSE Error:", err);
-      eventSource.close(); // Close connection on error
-    };
-
-    // Cleanup on component unmount
-    return () => {
-      eventSource.close();
-      console.log("EventSource closed.");
-    };
-  }, []); // Empty dependency array ensures this runs once on mount
 
   useEffect(() => {
     if (simCards.data && selectActiveSimcard === "default") {
@@ -546,6 +499,13 @@ function SimCards({ user }: { user: User }) {
       });
     }
   };
+
+  useSSEWithRetry({
+    setUnavailableSlot,
+    setActiveSimcard,
+    setTrackingUnreadMessage,
+    showInfo,
+  });
 
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
