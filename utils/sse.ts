@@ -87,6 +87,7 @@ const useSSEWithRetry = ({
     // Retry logic
     if (retryInterval !== null) {
       const retryTimeout = setTimeout(() => {
+        eventSource?.close(); // Close the current connection
         setRetryInterval(null); // Reset the retry interval
         connectToSSE(); // Attempt to reconnect
       }, retryInterval);
