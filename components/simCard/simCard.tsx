@@ -15,14 +15,14 @@ import {
 import { MdDelete, MdDevices } from "react-icons/md";
 import { Input, SearchField, TextArea } from "react-aria-components";
 import { IoSave, IoSearchCircleSharp } from "react-icons/io5";
+import parse from "html-react-parser";
+
 import {
   ActiveSimCardService,
   AutoPopulateNumberService,
   DeactiveSimCardService,
   GetSimCardActiveService,
   GetSimCardByPageService,
-  ResponseGetSimCardActiveService,
-  SSEGetSimCardActiveService,
   SyncSimCardService,
   UpdateSimCardService,
 } from "../../services/simCard/simCard";
@@ -61,10 +61,10 @@ import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
 import { BiCheckCircle } from "react-icons/bi";
 import SpinLoading from "../loadings/spinLoading";
 import { Editor } from "@tinymce/tinymce-react";
+import { GiSave } from "react-icons/gi";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import { countries } from "../../data/country";
 import { BsFlag } from "react-icons/bs";
-import useSSEWithRetry from "../../utils/sse";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -88,8 +88,7 @@ function SimCards({ user }: { user: User }) {
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
   const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
-  const [activeSimcard, setActiveSimcard] =
-    useState<ResponseGetSimCardActiveService>([]);
+
   const [selectAvailableSlot, setSelectAvailableSlot] = useState<
     "available" | "unavailable"
   >("available");
@@ -141,6 +140,35 @@ function SimCards({ user }: { user: User }) {
     enabled: !!selectPartner || user.role === "admin",
   });
 
+  const activeSimcard = useQuery({
+    queryKey: ["activeSimcard"],
+    queryFn: () =>
+      GetSimCardActiveService().then((data) => {
+        setUnavailableSlot(() =>
+          data?.map((sim) => {
+            return {
+              slot: sim.portNumber.split(".")[0],
+              deviceUserId: sim.deviceUserId,
+            };
+          }),
+        );
+        data.forEach((sim) => {
+          sim.messages?.forEach((message) => {
+            if (!message.isRead) {
+              setTrackingUnreadMessage((prev) => {
+                if (prev.find((track) => track.id === message.id)) return prev;
+                showInfo({ message: message, sim: sim });
+                return [...prev, { id: message.id }];
+              });
+            }
+          });
+        });
+        return data;
+      }),
+    refetchInterval: 1000 * 3,
+    staleTime: 1000 * 3,
+  });
+
   useEffect(() => {
     if (simCards.data && selectActiveSimcard === "default") {
       setTotalPage(() => simCards.data?.meta.total);
@@ -157,7 +185,9 @@ function SimCards({ user }: { user: User }) {
     if (simCards.data && selectActiveSimcard === "active") {
       setTotalPage(() => simCards.data?.meta.total);
 
-      setSimcardData(() => activeSimcard.filter((sim) => sim.messages) ?? []);
+      setSimcardData(
+        () => activeSimcard.data?.filter((sim) => sim.messages) ?? [],
+      );
       setPage(1);
       setTotalPage(1);
     } else if (simCards.data && selectActiveSimcard === "default") {
@@ -286,7 +316,7 @@ function SimCards({ user }: { user: User }) {
       await ActiveSimCardService({
         simCardId,
       });
-
+      await activeSimcard.refetch();
       await simCards.refetch();
       Swal.fire({
         title: "Activated!",
@@ -372,7 +402,7 @@ function SimCards({ user }: { user: User }) {
       await DeactiveSimCardService({
         simCardId,
       });
-
+      await activeSimcard.refetch();
       await simCards.refetch();
       Swal.fire({
         title: "Deactivated!",
@@ -499,13 +529,6 @@ function SimCards({ user }: { user: User }) {
       });
     }
   };
-
-  useSSEWithRetry({
-    setUnavailableSlot,
-    setActiveSimcard,
-    setTrackingUnreadMessage,
-    showInfo,
-  });
 
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
@@ -763,12 +786,14 @@ function SimCards({ user }: { user: User }) {
                     deviceUser.data?.find((d) => d?.id === sim?.deviceUserId)
                       ?.country,
                 );
-                if (activeSimcard.find((active) => active.id === sim.id)) {
+                if (
+                  activeSimcard.data?.find((active) => active.id === sim.id)
+                ) {
                   slotInUsed = false;
                 }
 
                 const portStatus =
-                  activeSimcard.find((active) => active.id === sim.id)
+                  activeSimcard.data?.find((active) => active.id === sim.id)
                     ?.portStatus ?? "-";
 
                 return (
@@ -776,7 +801,7 @@ function SimCards({ user }: { user: User }) {
                     className={`relative flex h-max w-full
                         flex-col gap-2 rounded-md ${
                           slotInUsed
-                            ? activeSimcard.find(
+                            ? activeSimcard.data?.find(
                                 (active) => active.id === sim.id,
                               )
                               ? "bg-green-200"
@@ -809,7 +834,9 @@ function SimCards({ user }: { user: User }) {
                           slot in used
                         </div>
                       )}
-                      {activeSimcard.find((active) => active.id === sim.id) && (
+                      {activeSimcard.data?.find(
+                        (active) => active.id === sim.id,
+                      ) && (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
                           active
                         </div>
