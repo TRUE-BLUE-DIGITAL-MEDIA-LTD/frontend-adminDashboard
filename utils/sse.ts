@@ -29,9 +29,6 @@ const useSSEWithRetry = ({
   setTrackingUnreadMessage,
   showInfo,
 }: Props) => {
-  const [retryInterval, setRetryInterval] = useState<number | null>(null); // Dynamic retry interval
-  const retryDelay = 5000; // Retry delay in milliseconds
-
   useEffect(() => {
     let eventSource: EventSource | null = null;
 
@@ -80,30 +77,15 @@ const useSSEWithRetry = ({
       eventSource.onerror = (err) => {
         console.error("SSE Error:", err);
         eventSource?.close(); // Close the current connection
-        setRetryInterval(retryDelay); // Trigger a retry
       };
     };
-
-    // Retry logic
-    if (retryInterval !== null) {
-      const retryTimeout = setTimeout(() => {
-        eventSource?.close(); // Close the current connection
-        setRetryInterval(null); // Reset the retry interval
-        connectToSSE(); // Attempt to reconnect
-      }, retryInterval);
-
-      return () => clearTimeout(retryTimeout); // Cleanup timeout
-    }
-
-    // Initial SSE connection
-    connectToSSE();
 
     // Cleanup on component unmount
     return () => {
       eventSource?.close();
       console.log("EventSource closed.");
     };
-  }, [retryInterval]);
+  }, []);
 
   return null; // Hook doesn't return anything; side effect only
 };
