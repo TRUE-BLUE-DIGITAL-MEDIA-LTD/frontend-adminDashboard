@@ -77,6 +77,7 @@ const useSSEWithRetry = ({
       eventSource.onerror = (err) => {
         console.error("SSE Error:", err);
         eventSource?.close(); // Close the current connection
+        window.location.reload(); // Reload the page
       };
     };
 
