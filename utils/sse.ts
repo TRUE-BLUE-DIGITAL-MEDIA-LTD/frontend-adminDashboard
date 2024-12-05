@@ -31,7 +31,6 @@ const useSSEWithRetry = ({
 }: Props) => {
   useEffect(() => {
     let eventSource: EventSource | null = null;
-
     const connectToSSE = () => {
       console.log("Attempting to connect to SSE...");
       eventSource = SSEGetSimCardActiveService();
@@ -80,7 +79,7 @@ const useSSEWithRetry = ({
         window.location.reload(); // Reload the page
       };
     };
-
+    connectToSSE();
     // Cleanup on component unmount
     return () => {
       eventSource?.close();
