@@ -81,7 +81,7 @@ function SimCards({ user }: { user: User }) {
   });
   useEffect(() => {
     webSocket.current = new WebSocket(
-      `ws://localhost:3001/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
+      `ws://${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
     );
     if (!connectedWs && simcardOnPartner.data) {
       Swal.fire({
