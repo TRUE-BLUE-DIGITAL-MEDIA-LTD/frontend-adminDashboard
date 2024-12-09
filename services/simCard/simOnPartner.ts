@@ -59,6 +59,28 @@ export async function GetSimOnPartnersByPartnerIdService(
   }
 }
 
+export type ResponseGetSimOnPartnerUserService = SimCardOnPartner[];
+
+export async function GetSimOnPartnerUserService(): Promise<ResponseGetSimOnPartnerUserService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-partner/options/get-by-user`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseCreateSimOnPartnerService = SimCardOnPartner;
 type InputCreateSimOnPartnerService = {
   partnerId: string;

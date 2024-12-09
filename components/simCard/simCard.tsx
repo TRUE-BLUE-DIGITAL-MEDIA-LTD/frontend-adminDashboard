@@ -65,10 +65,127 @@ import { GiSave } from "react-icons/gi";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import { countries } from "../../data/country";
 import { BsFlag } from "react-icons/bs";
+import { parseCookies } from "nookies";
+import { GetSimOnPartnerUserService } from "../../services/simCard/simOnPartner";
 
 const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
+  const cookies = parseCookies();
+  const [connectedWs, setConnectedWs] = useState<boolean>(false);
+  const webSocket = useRef<WebSocket | null>(null);
+  const access_token = cookies.access_token;
+  const simcardOnPartner = useQuery({
+    queryKey: ["simcardOnPartners"],
+    queryFn: () => GetSimOnPartnerUserService(),
+  });
+  useEffect(() => {
+    webSocket.current = new WebSocket(
+      `ws://localhost:3001/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
+    );
+    if (!connectedWs && simcardOnPartner.data) {
+      Swal.fire({
+        title: "Connecting to WebSocket",
+        text: "Please wait... ",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      webSocket.current.onopen = function (event) {
+        console.log("Connected");
+        Swal.fire({
+          title: "Connected",
+          text: "WebSocket Connected",
+          icon: "success",
+        });
+      };
+      setConnectedWs(true);
+    }
+    webSocket.current.onmessage = (event: any) => {
+      if (event.data) {
+        const dataFromServer = JSON.parse(event.data);
+        let response: (SimCard & {
+          messages?: MessageOnSimcard[] | undefined;
+        })[] = dataFromServer;
+
+        const partnerOnSimcards = simcardOnPartner.data;
+        if (!partnerOnSimcards) return [];
+        if (user.role === "manager") {
+          const simcards = response
+            .filter(
+              (sim) =>
+                !partnerOnSimcards.some(
+                  (simOnPartner) => simOnPartner.simCardId === sim.id,
+                ),
+            )
+            .map(({ messages, ...sim }) => {
+              return {
+                ...sim,
+              };
+            });
+          response = [
+            ...simcards,
+            ...response.filter((sim) =>
+              partnerOnSimcards.some(
+                (simOnPartner) => simOnPartner.simCardId === sim.id,
+              ),
+            ),
+          ];
+        } else if (user.role === "partner") {
+          const simcards = response
+            .filter(
+              (sim) =>
+                !partnerOnSimcards.some(
+                  (simOnPartner) => simOnPartner.simCardId === sim.id,
+                ),
+            )
+            .map(({ messages, ...sim }) => {
+              return {
+                ...sim,
+              };
+            });
+
+          response = [
+            ...simcards,
+            ...response.filter((sim) =>
+              partnerOnSimcards.some(
+                (simOnPartner) => simOnPartner.simCardId === sim.id,
+              ),
+            ),
+          ];
+        }
+        console.log(response);
+
+        setActiveSimcards(response);
+        setUnavailableSlot(() =>
+          response?.map((sim) => {
+            return {
+              slot: sim.portNumber.split(".")[0],
+              deviceUserId: sim.deviceUserId,
+            };
+          }),
+        );
+        response.forEach((sim) => {
+          sim.messages?.forEach((message) => {
+            if (!message.isRead) {
+              setTrackingUnreadMessage((prev) => {
+                if (prev.find((track) => track.id === message.id)) return prev;
+                showInfo({ message: message, sim: sim });
+                return [...prev, { id: message.id }];
+              });
+            }
+          });
+        });
+      }
+    };
+
+    return () => {
+      webSocket.current?.close();
+    };
+  }, [simcardOnPartner.data]);
+
   const toast = useRef<any>(null);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
@@ -105,6 +222,12 @@ function SimCards({ user }: { user: User }) {
   const [unavailableSlot, setUnavailableSlot] = useState<
     { slot: string; deviceUserId: string }[]
   >([]);
+  const [activeSimcards, setActiveSimcards] = useState<
+    (SimCard & {
+      messages?: MessageOnSimcard[];
+    })[]
+  >();
+
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
     queryFn: () =>
@@ -140,35 +263,6 @@ function SimCards({ user }: { user: User }) {
     enabled: !!selectPartner || user.role === "admin",
   });
 
-  const activeSimcard = useQuery({
-    queryKey: ["activeSimcard"],
-    queryFn: () =>
-      GetSimCardActiveService().then((data) => {
-        setUnavailableSlot(() =>
-          data?.map((sim) => {
-            return {
-              slot: sim.portNumber.split(".")[0],
-              deviceUserId: sim.deviceUserId,
-            };
-          }),
-        );
-        data.forEach((sim) => {
-          sim.messages?.forEach((message) => {
-            if (!message.isRead) {
-              setTrackingUnreadMessage((prev) => {
-                if (prev.find((track) => track.id === message.id)) return prev;
-                showInfo({ message: message, sim: sim });
-                return [...prev, { id: message.id }];
-              });
-            }
-          });
-        });
-        return data;
-      }),
-    refetchInterval: 1000 * 3,
-    staleTime: 1000 * 3,
-  });
-
   useEffect(() => {
     if (simCards.data && selectActiveSimcard === "default") {
       setTotalPage(() => simCards.data?.meta.total);
@@ -185,9 +279,7 @@ function SimCards({ user }: { user: User }) {
     if (simCards.data && selectActiveSimcard === "active") {
       setTotalPage(() => simCards.data?.meta.total);
 
-      setSimcardData(
-        () => activeSimcard.data?.filter((sim) => sim.messages) ?? [],
-      );
+      setSimcardData(() => activeSimcards?.filter((sim) => sim.messages) ?? []);
       setPage(1);
       setTotalPage(1);
     } else if (simCards.data && selectActiveSimcard === "default") {
@@ -316,7 +408,6 @@ function SimCards({ user }: { user: User }) {
       await ActiveSimCardService({
         simCardId,
       });
-      await activeSimcard.refetch();
       await simCards.refetch();
       Swal.fire({
         title: "Activated!",
@@ -402,7 +493,6 @@ function SimCards({ user }: { user: User }) {
       await DeactiveSimCardService({
         simCardId,
       });
-      await activeSimcard.refetch();
       await simCards.refetch();
       Swal.fire({
         title: "Deactivated!",
@@ -786,14 +876,12 @@ function SimCards({ user }: { user: User }) {
                     deviceUser.data?.find((d) => d?.id === sim?.deviceUserId)
                       ?.country,
                 );
-                if (
-                  activeSimcard.data?.find((active) => active.id === sim.id)
-                ) {
+                if (activeSimcards?.find((active) => active.id === sim.id)) {
                   slotInUsed = false;
                 }
 
                 const portStatus =
-                  activeSimcard.data?.find((active) => active.id === sim.id)
+                  activeSimcards?.find((active) => active.id === sim.id)
                     ?.portStatus ?? "-";
 
                 return (
@@ -801,7 +889,7 @@ function SimCards({ user }: { user: User }) {
                     className={`relative flex h-max w-full
                         flex-col gap-2 rounded-md ${
                           slotInUsed
-                            ? activeSimcard.data?.find(
+                            ? activeSimcards?.find(
                                 (active) => active.id === sim.id,
                               )
                               ? "bg-green-200"
@@ -834,7 +922,7 @@ function SimCards({ user }: { user: User }) {
                           slot in used
                         </div>
                       )}
-                      {activeSimcard.data?.find(
+                      {activeSimcards?.find(
                         (active) => active.id === sim.id,
                       ) && (
                         <div className="w-max rounded-sm bg-green-600 px-2  text-xs text-green-100">
