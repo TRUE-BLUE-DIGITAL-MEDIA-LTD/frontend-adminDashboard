@@ -408,7 +408,7 @@ function SimCards({ user }: { user: User }) {
       await ActiveSimCardService({
         simCardId,
       });
-      await simCards.refetch();
+
       Swal.fire({
         title: "Activated!",
         text: "Your simcard has been activated.",
@@ -493,7 +493,7 @@ function SimCards({ user }: { user: User }) {
       await DeactiveSimCardService({
         simCardId,
       });
-      await simCards.refetch();
+
       Swal.fire({
         title: "Deactivated!",
         text: "Your simcard has been deactivated.",
