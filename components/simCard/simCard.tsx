@@ -66,7 +66,10 @@ import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import { countries } from "../../data/country";
 import { BsFlag } from "react-icons/bs";
 import { parseCookies } from "nookies";
-import { GetSimOnPartnerUserService } from "../../services/simCard/simOnPartner";
+import {
+  GetSimOnPartnersByPartnerIdService,
+  GetSimOnPartnerUserService,
+} from "../../services/simCard/simOnPartner";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -75,116 +78,6 @@ function SimCards({ user }: { user: User }) {
   const [connectedWs, setConnectedWs] = useState<boolean>(false);
   const webSocket = useRef<WebSocket | null>(null);
   const access_token = cookies.access_token;
-  const simcardOnPartner = useQuery({
-    queryKey: ["simcardOnPartners"],
-    queryFn: () => GetSimOnPartnerUserService(),
-  });
-  useEffect(() => {
-    webSocket.current = new WebSocket(
-      `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
-    );
-    if (!connectedWs && simcardOnPartner.data) {
-      Swal.fire({
-        title: "Connecting to WebSocket",
-        text: "Please wait... ",
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      webSocket.current.onopen = function (event) {
-        console.log("Connected");
-        Swal.fire({
-          title: "Connected",
-          text: "WebSocket Connected",
-          icon: "success",
-        });
-      };
-      setConnectedWs(true);
-    }
-    webSocket.current.onmessage = (event: any) => {
-      if (event.data) {
-        const dataFromServer = JSON.parse(event.data);
-        let response: (SimCard & {
-          messages?: MessageOnSimcard[] | undefined;
-        })[] = dataFromServer;
-
-        const partnerOnSimcards = simcardOnPartner.data;
-        if (!partnerOnSimcards) return [];
-        if (user.role === "manager") {
-          const simcards = response
-            .filter(
-              (sim) =>
-                !partnerOnSimcards.some(
-                  (simOnPartner) => simOnPartner.simCardId === sim.id,
-                ),
-            )
-            .map(({ messages, ...sim }) => {
-              return {
-                ...sim,
-              };
-            });
-          response = [
-            ...simcards,
-            ...response.filter((sim) =>
-              partnerOnSimcards.some(
-                (simOnPartner) => simOnPartner.simCardId === sim.id,
-              ),
-            ),
-          ];
-        } else if (user.role === "partner") {
-          const simcards = response
-            .filter(
-              (sim) =>
-                !partnerOnSimcards.some(
-                  (simOnPartner) => simOnPartner.simCardId === sim.id,
-                ),
-            )
-            .map(({ messages, ...sim }) => {
-              return {
-                ...sim,
-              };
-            });
-
-          response = [
-            ...simcards,
-            ...response.filter((sim) =>
-              partnerOnSimcards.some(
-                (simOnPartner) => simOnPartner.simCardId === sim.id,
-              ),
-            ),
-          ];
-        }
-        console.log(response);
-
-        setActiveSimcards(response);
-        setUnavailableSlot(() =>
-          response?.map((sim) => {
-            return {
-              slot: sim.portNumber.split(".")[0],
-              deviceUserId: sim.deviceUserId,
-            };
-          }),
-        );
-        response.forEach((sim) => {
-          sim.messages?.forEach((message) => {
-            if (!message.isRead) {
-              setTrackingUnreadMessage((prev) => {
-                if (prev.find((track) => track.id === message.id)) return prev;
-                showInfo({ message: message, sim: sim });
-                return [...prev, { id: message.id }];
-              });
-            }
-          });
-        });
-      }
-    };
-
-    return () => {
-      webSocket.current?.close();
-    };
-  }, [simcardOnPartner.data]);
 
   const toast = useRef<any>(null);
   const [totalPage, setTotalPage] = useState<number>(0);
@@ -262,6 +155,102 @@ function SimCards({ user }: { user: User }) {
     // run when selectPartner is selected
     enabled: !!selectPartner || user.role === "admin",
   });
+
+  const simcardOnPartner = useQuery({
+    queryKey: ["simCardOnPartners", { partnerId: selectPartner?.id }],
+    queryFn: () =>
+      GetSimOnPartnersByPartnerIdService({
+        partnerId: selectPartner?.id as string,
+      }),
+    enabled: !!selectPartner,
+  });
+
+  useEffect(() => {
+    webSocket.current = new WebSocket(
+      `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
+    );
+    if (!connectedWs && simcardOnPartner.data) {
+      Swal.fire({
+        title: "Connecting to WebSocket",
+        text: "Please wait... ",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      webSocket.current.onopen = function (event) {
+        console.log("Connected");
+        Swal.fire({
+          title: "Connected",
+          text: "WebSocket Connected",
+          icon: "success",
+        });
+      };
+      setConnectedWs(true);
+    }
+    webSocket.current.onmessage = (event: any) => {
+      if (event.data) {
+        const dataFromServer = JSON.parse(event.data);
+        let response: (SimCard & {
+          messages?: MessageOnSimcard[] | undefined;
+        })[] = dataFromServer;
+
+        const partnerOnSimcards = simcardOnPartner.data;
+        if (!partnerOnSimcards) return [];
+
+        if (user.role === "partner" || user.role === "manager") {
+          const simcards = response
+            .filter(
+              (sim) =>
+                !partnerOnSimcards.some(
+                  (simOnPartner) => simOnPartner.simCardId === sim.id,
+                ),
+            )
+            .map(({ messages, ...sim }) => {
+              return {
+                ...sim,
+              };
+            });
+
+          response = [
+            ...simcards,
+            ...response.filter((sim) =>
+              partnerOnSimcards.some(
+                (simOnPartner) => simOnPartner.simCardId === sim.id,
+              ),
+            ),
+          ];
+        }
+        console.log(response);
+
+        setActiveSimcards(response);
+        setUnavailableSlot(() =>
+          response?.map((sim) => {
+            return {
+              slot: sim.portNumber.split(".")[0],
+              deviceUserId: sim.deviceUserId,
+            };
+          }),
+        );
+        response.forEach((sim) => {
+          sim.messages?.forEach((message) => {
+            if (!message.isRead) {
+              setTrackingUnreadMessage((prev) => {
+                if (prev.find((track) => track.id === message.id)) return prev;
+                showInfo({ message: message, sim: sim });
+                return [...prev, { id: message.id }];
+              });
+            }
+          });
+        });
+      }
+    };
+
+    return () => {
+      webSocket.current?.close();
+    };
+  }, [simcardOnPartner.data, selectPartner]);
 
   useEffect(() => {
     if (simCards.data && selectActiveSimcard === "default") {
