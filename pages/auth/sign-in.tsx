@@ -57,7 +57,6 @@ function SignIn() {
       } else if (res.user.IsResetPassword === false) {
         router.push("/");
       } else if (res.user.IsResetPassword === true) {
-        console.log(res.user.IsResetPassword);
         router.push("/auth/new-password");
       }
     } catch (err: any) {

@@ -22,6 +22,7 @@ import { Dropdown } from "primereact/dropdown";
 import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
 import { countries } from "../../../data/country";
 const availableSlot = ["available", "unavailable"];
+import { InputSwitch } from "primereact/inputswitch";
 
 type AssignPhoneNumberProps = {
   selectPartner: Partner;
@@ -36,6 +37,9 @@ function AssignPhoneNumber({
   const [searchField, setSearchField] = useState<string>("");
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [getNoPartner, setGetNoPartner] = useState<
+    "default" | "no-partner" | "partner"
+  >("default");
   const deviceUser = useQuery({
     queryKey: ["deviceUser"],
     queryFn: () => GetDeviceUsersService(),
@@ -70,6 +74,7 @@ function AssignPhoneNumber({
         searchField,
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
+        getNoPartner,
       },
     ],
     queryFn: () =>
@@ -79,6 +84,7 @@ function AssignPhoneNumber({
         searchField: searchField,
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
+        partner: getNoPartner,
       }),
   });
 
@@ -337,6 +343,20 @@ function AssignPhoneNumber({
                   />
                 </div>
               )}
+              <div className="flex flex-col">
+                <label className="text-sm font-normal">Select No Partner</label>
+                <Dropdown
+                  value={getNoPartner}
+                  onChange={(e) => {
+                    setPage(1);
+                    setGetNoPartner(() => e.value);
+                  }}
+                  showClear
+                  options={["no-partner", "partner", "default"]}
+                  placeholder="Filter Partner"
+                  className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                />
+              </div>
             </section>
           </header>
 

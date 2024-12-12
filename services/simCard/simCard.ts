@@ -55,6 +55,7 @@ type InputGetSimCardByPageService = {
   searchField: string;
   partnerId?: string;
   availability: "available" | "unavailable";
+  partner?: "no-partner" | "partner" | "default";
   deviceId?: string;
   isActive?: boolean;
 };
