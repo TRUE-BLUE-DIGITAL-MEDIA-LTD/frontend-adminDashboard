@@ -79,10 +79,10 @@ function SelectCountry({ tariffs, query, setQuery }: SelectCountryProps) {
             >
               <div className="relative h-10 w-10 overflow-hidden">
                 <Image
-                  src={
+                  src={`/image/flags/1x1/${
                     countries.find((list) => list.country === value.name)
-                      ?.flag as string
-                  }
+                      ?.code as string
+                  }.svg`}
                   fill
                   alt="flag"
                   className="object-contain"

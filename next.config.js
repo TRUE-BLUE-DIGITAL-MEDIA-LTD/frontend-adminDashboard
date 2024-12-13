@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const { hostname } = require("os");
 
 const nextConfig = {
   webpack(config, options) {
@@ -51,6 +52,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "randomwordgenerator.com",
+      },
+      {
+        protocol: "https",
+        hostname: "tinder.com",
       },
     ],
   },

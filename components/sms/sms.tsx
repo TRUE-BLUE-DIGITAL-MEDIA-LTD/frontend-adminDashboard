@@ -25,21 +25,16 @@ function SmsReceive() {
   }>({
     country: 66,
   });
+
   const activeNumber = useQuery({
     queryKey: ["active-number"],
     queryFn: () => GetActiveNumberSMSService(),
-    refetchInterval: 1000 * 10,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
+
   const balance = useQuery({
     queryKey: ["balance"],
     queryFn: () => GetBalacneSMSService(),
     refetchInterval: 1000 * 5,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
   });
   const tariffs = useInfiniteQuery({
     queryKey: [
@@ -92,7 +87,7 @@ function SmsReceive() {
             <span>Frozen balance: {balance.data?.zbalance}</span>
           )}
         </h3>
-        <ShowActiveNumber activeNumber={activeNumber} />
+        <ShowActiveNumber />
       </header>
 
       <main className="flex items-start justify-center gap-2 p-5 ">

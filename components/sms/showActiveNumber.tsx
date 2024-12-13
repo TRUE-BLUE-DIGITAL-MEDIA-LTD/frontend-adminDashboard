@@ -1,5 +1,5 @@
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { memo } from "react";
 import {
   CancelNumberSMSService,
   GetActiveNumberSMSService,
@@ -14,10 +14,12 @@ import { services } from "../../data/services";
 import { ErrorMessages } from "../../models";
 import Swal from "sweetalert2";
 
-type ShowActiveNumberProps = {
-  activeNumber: UseQueryResult<ResponseGetActiveNumberSMSService, Error>;
-};
-function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
+function ShowActiveNumber() {
+  const activeNumber = useQuery({
+    queryKey: ["active-number"],
+    queryFn: () => GetActiveNumberSMSService(),
+  });
+  console.log("Rendered");
   const handleDeleteNumber = async (tzid: number) => {
     const replacedText = "delete";
     let content = document.createElement("div");
@@ -88,22 +90,24 @@ function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
         </div>
       )}
       <ul className=" grid w-full grid-cols-3 gap-5">
-        {activeNumber.data?.data.map((number) => {
+        {activeNumber.data?.data.map((number, index) => {
+          const currentTime = Date.now() + number.time * 1000;
+
           return (
             <div
               className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl"
-              key={number.tzid}
+              key={index}
             >
               <div className="flex justify-between border-b border-gray-400 pb-2">
                 <div className="flex items-center justify-start gap-2">
                   <div className="relative h-5 w-7 overflow-hidden ">
                     <Image
-                      src={
+                      src={`/image/flags/1x1/${
                         countries.find(
                           (country) =>
                             country.countryCode === `+${number.country}`,
-                        )?.flag as string
-                      }
+                        )?.code as string
+                      }.svg`}
                       alt="country flag"
                       fill
                       className="object-contain"
@@ -114,7 +118,9 @@ function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
                 <div className="flex items-center justify-start gap-2">
                   <h3 className="rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
                     <Countdown
-                      date={Date.now() + number.time * 1000}
+                      date={currentTime}
+                      intervalDelay={0}
+                      precision={3}
                       onComplete={() => {
                         activeNumber.refetch();
                       }}
@@ -184,4 +190,4 @@ function ShowActiveNumber({ activeNumber }: ShowActiveNumberProps) {
   );
 }
 
-export default ShowActiveNumber;
+export default memo(ShowActiveNumber);

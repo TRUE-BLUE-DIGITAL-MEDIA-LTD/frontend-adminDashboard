@@ -121,6 +121,11 @@ export const services: Service[] = [
     icon: "https://img.icons8.com/?size=100&id=108842&format=png&color=000000",
   },
   {
+    title: "Tinder",
+    slug: "tinder",
+    icon: "https://tinder.com/static/android-chrome-192x192.png",
+  },
+  {
     title: "Flickr",
     slug: "flickr",
     icon: "https://img.icons8.com/?size=100&id=108842&format=png&color=000000",

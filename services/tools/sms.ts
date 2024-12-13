@@ -49,7 +49,7 @@ export async function GetTraficSMSService(
     const access_token = cookies.access_token;
     const provinces = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_SMS}/v1/sms/tariffs`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/onlinesim/tariffs`,
       params: {
         ...input,
       },
@@ -83,7 +83,7 @@ export async function RequestNumberSMSService(
     const access_token = cookies.access_token;
     const provinces = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_SMS}/v1/sms/request-number`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/onlinesim/request-number`,
       params: {
         ...input,
       },
@@ -124,7 +124,7 @@ export async function GetActiveNumberSMSService(): Promise<ResponseGetActiveNumb
     const access_token = cookies.access_token;
     const provinces = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_SMS}/v1/sms/active-number`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/onlinesim/active-number`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
@@ -154,7 +154,7 @@ export async function CancelNumberSMSService(
     const access_token = cookies.access_token;
     const provinces = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_SMS}/v1/sms/cancel-number`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/onlinesim/cancel-number`,
       params: {
         ...input,
       },
@@ -183,7 +183,7 @@ export async function GetBalacneSMSService(): Promise<ResponseGetBalacneSMSServi
     const access_token = cookies.access_token;
     const provinces = await axios({
       method: "GET",
-      url: `${process.env.NEXT_PUBLIC_SERVER_SMS}/v1/sms/balance`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/onlinesim/balance`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
