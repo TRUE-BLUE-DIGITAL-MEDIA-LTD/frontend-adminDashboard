@@ -5,14 +5,19 @@ import {
   SimCardOutlined,
   Sms,
 } from "@mui/icons-material";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { FaDharmachakra, FaServer } from "react-icons/fa6";
 import {
   DeleteDeviceUserService,
   GetDeviceUsersService,
 } from "../../services/simCard/deviceUser";
-import { MdDelete, MdDevices } from "react-icons/md";
+import {
+  MdDelete,
+  MdDevices,
+  MdFavorite,
+  MdFavoriteBorder,
+} from "react-icons/md";
 import { Input, SearchField, TextArea } from "react-aria-components";
 import { IoSave, IoSearchCircleSharp } from "react-icons/io5";
 import parse from "html-react-parser";
@@ -70,10 +75,19 @@ import {
   GetSimOnPartnersByPartnerIdService,
   GetSimOnPartnerUserService,
 } from "../../services/simCard/simOnPartner";
+import {
+  CreateFavoriteOnSimcardService,
+  DeleteFavoriteOnSimcardService,
+  GetFavoriteOnSimcardService,
+  InputCreateFavoriteOnSimcardService,
+  InputDeleteFavoriteOnSimcardService,
+  ResponseGetFavoriteOnSimcardService,
+} from "../../services/simCard/favorite";
 
 const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
+  const queryClient = useQueryClient();
   const cookies = parseCookies();
   const [connectedWs, setConnectedWs] = useState<boolean>(false);
   const webSocket = useRef<WebSocket | null>(null);
@@ -121,6 +135,41 @@ function SimCards({ user }: { user: User }) {
     })[]
   >();
 
+  const favorites = useQuery({
+    queryKey: ["favorites"],
+    queryFn: () => GetFavoriteOnSimcardService(),
+  });
+
+  const createFavorite = useMutation({
+    mutationKey: ["create-favorite"],
+    mutationFn: (input: InputCreateFavoriteOnSimcardService) => {
+      return CreateFavoriteOnSimcardService(input);
+    },
+    onSuccess(data, variables, context) {
+      queryClient.setQueryData(
+        ["favorites"],
+        (prev: ResponseGetFavoriteOnSimcardService) => {
+          return [...prev, data];
+        },
+      );
+    },
+  });
+
+  const deleteFavorite = useMutation({
+    mutationKey: ["delete-favorite"],
+    mutationFn: (input: InputDeleteFavoriteOnSimcardService) => {
+      return DeleteFavoriteOnSimcardService(input);
+    },
+    onSuccess(data, variables, context) {
+      queryClient.setQueryData(
+        ["favorites"],
+        (prev: ResponseGetFavoriteOnSimcardService) => {
+          return prev.filter((fav) => fav.id !== data.id);
+        },
+      );
+    },
+  });
+
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
     queryFn: () =>
@@ -165,6 +214,7 @@ function SimCards({ user }: { user: User }) {
     enabled: !!selectPartner,
   });
 
+  // call websocket for active simcard
   useEffect(() => {
     webSocket.current = new WebSocket(
       `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
@@ -842,7 +892,8 @@ function SimCards({ user }: { user: User }) {
                 const randomShade = getRandomSlateShade();
                 return (
                   <li
-                    className={`grid h-12 w-full animate-pulse grid-cols-2  place-items-center rounded-md  p-2  drop-shadow-lg`}
+                    className={`grid h-[43rem]
+                       w-full animate-pulse grid-cols-2  place-items-center rounded-md  p-2  drop-shadow-lg`}
                     key={index}
                     style={getSlateColorStyle(randomShade)}
                   ></li>
@@ -873,9 +924,11 @@ function SimCards({ user }: { user: User }) {
                   activeSimcards?.find((active) => active.id === sim.id)
                     ?.portStatus ?? "-";
 
+                const favorite = favorites.data?.find((f) => f.simCardId === sim.id)
+
                 return (
                   <li
-                    className={`relative flex h-max w-full
+                    className={`relative flex h-[43rem] w-full
                         flex-col gap-2 rounded-md ${
                           slotInUsed
                             ? activeSimcards?.find(
@@ -888,6 +941,32 @@ function SimCards({ user }: { user: User }) {
                      ring-gray-400  `}
                     key={sim.id}
                   >
+                    <button
+                      disabled={
+                        createFavorite.isPending || deleteFavorite.isPending
+                      }
+                      onClick={() => {
+                        if (favorite
+                        ) {
+                          deleteFavorite.mutate({
+                            favoriteId:favorite.id
+                          });
+                        } else {
+                          createFavorite.mutate({
+                            simcardId: sim.id,
+                            userId: user.id,
+                          });
+                        }
+                      }}
+                      className={`absolute right-1 top-1 m-auto flex h-5 w-5 items-center justify-center 
+                    text-xl text-red-700 transition hover:scale-105 active:scale-110`}
+                    >
+                      {favorite ? (
+                        <MdFavorite />
+                      ) : (
+                        <MdFavoriteBorder />
+                      )}
+                    </button>
                     <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 ">
                       <div className="w-max rounded-sm px-2 text-xs text-black  ring-1 ring-black">
                         <span className="font-bold">
