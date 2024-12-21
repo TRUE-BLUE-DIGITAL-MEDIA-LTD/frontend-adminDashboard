@@ -2,6 +2,7 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 import {
   DeviceUser,
+  FavoriteOnSimCard,
   MessageOnSimcard,
   Pagination,
   Partner,
@@ -46,6 +47,7 @@ export type ResponseGetSimCardByPageService = Pagination<
   SimCard & {
     simcardOnPartner: SimCardOnPartner & { partner: Partner };
     tag: TagOnSimcard[];
+    favorite: FavoriteOnSimCard | null;
   }
 >;
 

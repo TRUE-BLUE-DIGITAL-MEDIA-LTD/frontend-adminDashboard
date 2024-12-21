@@ -74,3 +74,11 @@ export type StatusPort =
   | "user lock"
   | "port not match"
   | "preparing";
+
+export type FavoriteOnSimCard = {
+  id: string;
+  createAt: string;
+  updateAt: string;
+  userId: string;
+  simCardId: string;
+};
