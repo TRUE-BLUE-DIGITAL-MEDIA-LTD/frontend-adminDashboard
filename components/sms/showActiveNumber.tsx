@@ -18,6 +18,7 @@ function ShowActiveNumber() {
   const activeNumber = useQuery({
     queryKey: ["active-number"],
     queryFn: () => GetActiveNumberSMSService(),
+    refetchInterval: 1000 * 5,
   });
   console.log("Rendered");
   const handleDeleteNumber = async (tzid: number) => {
