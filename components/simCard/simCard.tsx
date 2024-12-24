@@ -924,7 +924,9 @@ function SimCards({ user }: { user: User }) {
                   activeSimcards?.find((active) => active.id === sim.id)
                     ?.portStatus ?? "-";
 
-                const favorite = favorites.data?.find((f) => f.simCardId === sim.id)
+                const favorite = favorites.data?.find(
+                  (f) => f.simCardId === sim.id,
+                );
 
                 return (
                   <li
@@ -946,10 +948,9 @@ function SimCards({ user }: { user: User }) {
                         createFavorite.isPending || deleteFavorite.isPending
                       }
                       onClick={() => {
-                        if (favorite
-                        ) {
+                        if (favorite) {
                           deleteFavorite.mutate({
-                            favoriteId:favorite.id
+                            favoriteId: favorite.id,
                           });
                         } else {
                           createFavorite.mutate({
@@ -961,11 +962,7 @@ function SimCards({ user }: { user: User }) {
                       className={`absolute right-1 top-1 m-auto flex h-5 w-5 items-center justify-center 
                     text-xl text-red-700 transition hover:scale-105 active:scale-110`}
                     >
-                      {favorite ? (
-                        <MdFavorite />
-                      ) : (
-                        <MdFavoriteBorder />
-                      )}
+                      {favorite ? <MdFavorite /> : <MdFavoriteBorder />}
                     </button>
                     <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 ">
                       <div className="w-max rounded-sm px-2 text-xs text-black  ring-1 ring-black">

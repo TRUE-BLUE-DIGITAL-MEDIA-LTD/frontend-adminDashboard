@@ -23,7 +23,7 @@ function SmsReceive() {
     filterCountry?: string;
     filterService?: string;
   }>({
-    country: 66,
+    country: 44,
   });
 
   const activeNumber = useQuery({
