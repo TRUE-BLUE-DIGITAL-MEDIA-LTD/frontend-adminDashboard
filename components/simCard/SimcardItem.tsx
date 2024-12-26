@@ -84,7 +84,6 @@ function SimcardItem({
   const [noteLoading, setNoteLoading] = useState<boolean>(true);
   const randomShade = getRandomSlateShade();
   const [note, setNote] = useState<string>(sim.simCardNote);
-  console.log(note);
   useEffect(() => {
     setNote(sim.simCardNote);
   }, [sim.simCardNote]);
