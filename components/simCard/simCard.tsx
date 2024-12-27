@@ -90,7 +90,7 @@ const availableSlot = ["available", "unavailable"];
 function SimCards({ user }: { user: User }) {
   const queryClient = useQueryClient();
   const cookies = parseCookies();
-  const [connectedWs, setConnectedWs] = useState<boolean>(false);
+  const [connectingWs, setConnectingWs] = useState<boolean>(true);
   const webSocket = useRef<WebSocket | null>(null);
   const access_token = cookies.access_token;
 
@@ -174,7 +174,11 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["partners-by-manager"],
     queryFn: () =>
       GetPartnerByMangegerService().then((response) => {
-        setSelectPartner(() => response[0]);
+        setSelectPartner(
+          () =>
+            response.find((partner) => partner.id === user.partnerId) ??
+            response[0],
+        );
         return response;
       }),
   });
@@ -215,20 +219,37 @@ function SimCards({ user }: { user: User }) {
   });
 
   // call websocket for active simcard
+
+  if (webSocket.current?.CONNECTING) {
+    Swal.fire({
+      title: "Connecting to WebSocket",
+      text: "Please wait... ",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      willOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
+
+  if (connectingWs) {
+    Swal.fire({
+      title: "Connecting to WebSocket",
+      text: "Please wait... ",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      willOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
+
   useEffect(() => {
     webSocket.current = new WebSocket(
       `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
     );
-    if (!connectedWs && simcardOnPartner.data) {
-      Swal.fire({
-        title: "Connecting to WebSocket",
-        text: "Please wait... ",
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-      });
+
+    if (simcardOnPartner.data) {
       webSocket.current.onopen = function (event) {
         console.log("Connected");
         Swal.fire({
@@ -237,8 +258,20 @@ function SimCards({ user }: { user: User }) {
           icon: "success",
         });
       };
-      setConnectedWs(true);
+
+      setConnectingWs(false);
     }
+
+    webSocket.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      setConnectingWs(false); // Stop loading if there's an error
+    };
+
+    webSocket.current.onclose = () => {
+      console.log("WebSocket closed");
+      setConnectingWs(false); // Cleanup on close
+    };
+
     webSocket.current.onmessage = (event: any) => {
       if (event.data) {
         const dataFromServer = JSON.parse(event.data);
