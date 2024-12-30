@@ -19,6 +19,7 @@ function Index({
   useEffect(() => {
     window.print();
   }, []);
+
   return (
     <>
       {payslips.map((payslip, index) => {
@@ -37,19 +38,33 @@ function Index({
                     fill
                     alt="logo"
                     className="object-contain"
-                    src="https://storage.googleapis.com/storage-oxyclick/public/logoDTST.jpg"
+                    src={
+                      payslip.logo
+                        ? payslip.logo
+                        : "https://storage.googleapis.com/storage-oxyclick/public/logoDTST.jpg"
+                    }
                   />
                 </div>
-                <div className="flex w-max flex-col items-end">
-                  <h1 className="text-sm font-bold">บริษัท ดีทีเอสที จำกัด</h1>
-                  <h1 className="text-sm font-bold">Tax ID: 0445559000236</h1>
-                  <h1 className="text-sm font-normal">
-                    139/70 ถนนถีนานนท์ ตำบลตลาด
-                  </h1>
-                  <h1 className="text-sm font-normal">
-                    อำเภอเมือง จังหวัดมหาสารคาม 44000
-                  </h1>
-                </div>
+                {payslip.address ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: payslip.address,
+                    }}
+                  />
+                ) : (
+                  <div className="flex w-max flex-col items-end">
+                    <h1 className="text-sm font-bold">
+                      บริษัท ดีทีเอสที จำกัด
+                    </h1>
+                    <h1 className="text-sm font-bold">Tax ID: 0445559000236</h1>
+                    <h1 className="text-sm font-normal">
+                      139/70 ถนนถีนานนท์ ตำบลตลาด
+                    </h1>
+                    <h1 className="text-sm font-normal">
+                      อำเภอเมือง จังหวัดมหาสารคาม 44000
+                    </h1>
+                  </div>
+                )}
               </div>
             </div>
             <ul className="mt-5 grid w-11/12 grid-cols-2 border-t-2 border-gray-300 py-5">

@@ -8,6 +8,8 @@ export type Payslip = {
   salary: number;
   socialSecurity: number;
   bonus: number;
+  address?: string | null;
+  logo?: string | null;
   tax: number;
   note: string;
   userId: string;

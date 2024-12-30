@@ -51,6 +51,8 @@ type InputCreatePaySlipService = {
   bonus: number;
   tax: number;
   note?: string;
+  address: string;
+  logo: string;
 };
 
 export async function CreatePaySlipService(
@@ -124,6 +126,8 @@ type InputUpdatePayslipService = {
     tax?: number;
     deduction?: number;
     note?: string;
+    address?: string;
+    logo?: string;
   };
 };
 
