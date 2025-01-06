@@ -63,6 +63,7 @@ function UpdatePayslip({
     tax?: string;
     address?: string;
     logo?: string;
+    engName?: string;
     deductions?: {
       uuid?: string;
       id?: string;
@@ -91,6 +92,7 @@ function UpdatePayslip({
       bonus: selectPayslip.bonus.toLocaleString(),
       tax: selectPayslip.tax.toLocaleString(),
       note: selectPayslip.note,
+      engName: selectPayslip.engName,
       address: selectPayslip.address || "",
       logo: selectPayslip.logo || "",
       deductions:
@@ -133,6 +135,7 @@ function UpdatePayslip({
             payslipData.socialSecurity.replace(/,/g, ""),
             10,
           ),
+          engName: payslipData?.engName,
           address: payslipData?.address,
           logo: payslipData?.logo,
           bonus: parseInt(payslipData.bonus.replace(/,/g, ""), 10),
@@ -300,6 +303,27 @@ function UpdatePayslip({
                   setPayslipData((prev) => ({
                     ...prev,
                     name: e.target.value,
+                  }));
+                }}
+                maxLength={255}
+              />
+              <FieldError className="text-xs text-red-700" />
+            </TextField>
+            <TextField
+              className="flex flex-col"
+              aria-label="Name / Description"
+              isRequired
+            >
+              <Label>English Name</Label>
+              <Input
+                placeholder="English Name"
+                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                type="text"
+                value={payslipData?.engName}
+                onChange={(e) => {
+                  setPayslipData((prev) => ({
+                    ...prev,
+                    engName: e.target.value,
                   }));
                 }}
                 maxLength={255}

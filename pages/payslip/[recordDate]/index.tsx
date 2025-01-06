@@ -70,6 +70,9 @@ function Index({
             <ul className="mt-5 grid w-11/12 grid-cols-2 border-t-2 border-gray-300 py-5">
               <li>
                 <h2 className="text-sm font-semibold">Employee name</h2>
+                {payslip.engName && (
+                  <h2 className="font-noraml text-sm">{payslip.engName}</h2>
+                )}
                 <h2 className="font-noraml text-sm">{payslip.name}</h2>
               </li>
               <li>

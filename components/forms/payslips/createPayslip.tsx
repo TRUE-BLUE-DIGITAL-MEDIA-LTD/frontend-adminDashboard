@@ -51,6 +51,7 @@ function CreatePayslip({
     tax?: string;
     address?: string;
     logo?: string;
+    engName?: string;
     deductions: {
       id: string;
       title: string;
@@ -110,7 +111,8 @@ function CreatePayslip({
         !payslipData.salary ||
         !payslipData.socialSecurity ||
         !payslipData.bonus ||
-        !payslipData.tax
+        !payslipData.tax ||
+        !payslipData.engName
       ) {
         throw new Error("Please fill all required fields");
       }
@@ -124,6 +126,7 @@ function CreatePayslip({
           payslipData.socialSecurity.replace(/,/g, ""),
           10,
         ),
+        engName: payslipData?.engName,
         address: payslipData?.address || "",
         logo: payslipData?.logo || "",
         bonus: parseInt(payslipData.bonus.replace(/,/g, ""), 10),
@@ -222,6 +225,27 @@ function CreatePayslip({
                   setPayslipData((prev) => ({
                     ...prev,
                     name: e.target.value,
+                  }));
+                }}
+                maxLength={255}
+              />
+              <FieldError className="text-xs text-red-700" />
+            </TextField>
+            <TextField
+              className="flex flex-col"
+              aria-label="Name / Description"
+              isRequired
+            >
+              <Label>English Name</Label>
+              <Input
+                placeholder="English Name"
+                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                type="text"
+                value={payslipData?.engName}
+                onChange={(e) => {
+                  setPayslipData((prev) => ({
+                    ...prev,
+                    engName: e.target.value,
                   }));
                 }}
                 maxLength={255}

@@ -310,7 +310,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 <tr className="sticky top-0 z-30 border-2 border-black bg-gray-200 drop-shadow-md">
                   <th className="border-2 border-black px-4 py-2">Date</th>
                   <th className="sticky left-0 border-2 border-black bg-gray-200 px-4 py-2">
-                    Name / Description
+                    Name / English Name
                   </th>
                   <th className="border-2 border-black px-4 py-2">
                     Start Date
@@ -372,7 +372,8 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                             {moment(payslip.recordDate).format("MM/YYYY")}
                           </td>
                           <td className="sticky left-0 max-w-20 truncate border-2 border-black bg-white px-4 py-2 md:max-w-96">
-                            {payslip.name}
+                            {payslip.name}{" "}
+                            {payslip.engName && `(/ ${payslip.engName})`}
                           </td>
                           <td className="border-2 border-black px-4 py-2">
                             {moment(payslip.startDate).format("DD/MM/YYYY")}

@@ -53,6 +53,7 @@ type InputCreatePaySlipService = {
   note?: string;
   address: string;
   logo: string;
+  engName: string;
 };
 
 export async function CreatePaySlipService(
@@ -128,6 +129,7 @@ type InputUpdatePayslipService = {
     note?: string;
     address?: string;
     logo?: string;
+    engName?: string;
   };
 };
 

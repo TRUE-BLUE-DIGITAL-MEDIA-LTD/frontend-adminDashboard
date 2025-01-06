@@ -12,6 +12,7 @@ export type Payslip = {
   logo?: string | null;
   tax: number;
   note: string;
+  engName?: string | undefined;
   userId: string;
 };
 
