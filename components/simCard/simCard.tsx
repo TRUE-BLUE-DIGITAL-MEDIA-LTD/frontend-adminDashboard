@@ -228,20 +228,6 @@ function SimCards({ user }: { user: User }) {
     Swal.fire({
       title: "Connecting to WebSocket",
       text: "Please wait... ",
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      willOpen: () => {
-        Swal.showLoading();
-      },
-    });
-  }
-
-  if (connectingWs) {
-    Swal.fire({
-      title: "Connecting to WebSocket",
-      text: "Please wait... ",
-      showConfirmButton: false,
-      allowOutsideClick: false,
       willOpen: () => {
         Swal.showLoading();
       },
