@@ -193,7 +193,7 @@ function SimCards({ user }: { user: User }) {
       {
         page,
         searchField,
-        selectPartner: selectPartner?.id,
+        ...(selectPartner && { selectPartner: selectPartner.id }),
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
       },
@@ -205,7 +205,7 @@ function SimCards({ user }: { user: User }) {
         searchField,
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
-        partnerId: selectPartner?.id,
+        ...(selectPartner && { partnerId: selectPartner.id }),
       }),
     refetchInterval: 1000 * 5,
     staleTime: 1000 * 5,
