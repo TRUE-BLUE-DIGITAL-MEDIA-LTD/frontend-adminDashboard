@@ -22,7 +22,14 @@ import { Dropdown } from "primereact/dropdown";
 import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
 import { countries } from "../../../data/country";
 const availableSlot = ["available", "unavailable"];
-import { InputSwitch } from "primereact/inputswitch";
+import { GetPartnerByPageService } from "../../../services/admin/partner";
+import {
+  AutoComplete,
+  AutoCompleteChangeEvent,
+  AutoCompleteCompleteEvent,
+} from "primereact/autocomplete";
+import useClickOutside from "../../../hooks/useClickOutside";
+import { FcApproval } from "react-icons/fc";
 
 type AssignPhoneNumberProps = {
   selectPartner: Partner;
@@ -57,6 +64,22 @@ function AssignPhoneNumber({
     currentPage: number;
   }>();
   const [page, setPage] = useState<number>(1);
+  const [selectPartnerSearch, setSelectPartner] = useState<Partner | null>();
+  const searhBoxRef = React.useRef<HTMLDivElement>(null);
+  const [triggerShowBox, setTriggerShowBox] = useState<boolean>(false);
+  const [searchPartner, setSearchPartner] = useState<string>("");
+  const partners = useQuery({
+    queryKey: [
+      "partners-search",
+      { page: page, searchField: searchPartner, limit: 3 },
+    ],
+    queryFn: () =>
+      GetPartnerByPageService({
+        page: 1,
+        searchField: searchPartner,
+        limit: 3,
+      }),
+  });
 
   const simCardOnPartners = useQuery({
     queryKey: ["simCardOnPartners", { partnerId: selectPartner.id }],
@@ -70,6 +93,7 @@ function AssignPhoneNumber({
     queryKey: [
       "simCards",
       {
+        ...(selectPartnerSearch?.id && { partnerId: selectPartnerSearch.id }),
         page,
         searchField,
         availability: selectAvailableSlot,
@@ -81,6 +105,7 @@ function AssignPhoneNumber({
       GetSimCardByPageService({
         limit: 20,
         page: page,
+        ...(selectPartnerSearch?.id && { partnerId: selectPartnerSearch.id }),
         searchField: searchField,
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
@@ -111,6 +136,9 @@ function AssignPhoneNumber({
     }
   }, [simCardOnPartners.data, phoneNumber.data]);
 
+  useClickOutside(searhBoxRef, () => {
+    setTriggerShowBox(() => false);
+  });
   const handleAssignSimCard = async ({
     partnerId,
     simCardId,
@@ -358,6 +386,50 @@ function AssignPhoneNumber({
                 />
               </div>
             </section>
+            <div className="relative flex flex-col">
+              <label className="text-sm font-normal">Select Partner</label>
+              <div className="relative h-10 w-60">
+                <input
+                  type="text"
+                  value={searchPartner}
+                  onChange={(e) => {
+                    setTriggerShowBox(() => true);
+                    if (e.target.value === "") {
+                      setSelectPartner(null);
+                    }
+                    setSearchPartner(e.target.value);
+                  }}
+                  placeholder="Search Partner"
+                  className="h-full rounded-lg  px-2 outline-0 ring-2 ring-icon-color "
+                />
+                {searchPartner === selectPartnerSearch?.name && (
+                  <div className="absolute bottom-0 right-8 top-0 m-auto flex items-center justify-center">
+                    <FcApproval />
+                  </div>
+                )}
+              </div>
+              {triggerShowBox && searchPartner !== "" && (
+                <ul className="absolute top-16 z-50 grid h-max max-h-36 w-full rounded-md border bg-white drop-shadow-md">
+                  {partners.data?.data.map((partner) => {
+                    return (
+                      <li key={partner.id}>
+                        <button
+                          type="button"
+                          className="w-full p-2 hover:bg-gray-200"
+                          onClick={() => {
+                            setSearchPartner(partner.name);
+                            setSelectPartner(partner);
+                            setTriggerShowBox(() => false);
+                          }}
+                        >
+                          {partner.name}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
           </header>
 
           <div className=" h-60 w-max min-w-[30rem] max-w-3xl justify-center overflow-auto  ">
