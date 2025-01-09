@@ -174,11 +174,15 @@ function SimCards({ user }: { user: User }) {
     queryKey: ["partners-by-manager"],
     queryFn: () =>
       GetPartnerByMangegerService().then((response) => {
-        setSelectPartner(
-          () =>
-            response.find((partner) => partner.id === user.partnerId) ??
-            response[0],
-        );
+        setSelectPartner(() => {
+          if (user.role !== "admin") {
+            return (
+              response.find((partner) => partner.id === user.partnerId) ??
+              response[0]
+            );
+          }
+          return undefined;
+        });
         return response;
       }),
   });
