@@ -268,9 +268,10 @@ function SimCards({ user }: { user: User }) {
         })[] = dataFromServer;
 
         const partnerOnSimcards = simcardOnPartner.data;
-        if (!partnerOnSimcards) return [];
 
         if (user.role === "partner" || user.role === "manager") {
+          if (!partnerOnSimcards) return [];
+
           const simcards = response
             .filter(
               (sim) =>
