@@ -239,18 +239,16 @@ function SimCards({ user }: { user: User }) {
       `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
     );
 
-    if (simcardOnPartner.data) {
-      webSocket.current.onopen = function (event) {
-        console.log("Connected");
-        Swal.fire({
-          title: "Connected",
-          text: "WebSocket Connected",
-          icon: "success",
-        });
-      };
+    webSocket.current.onopen = function (event) {
+      console.log("Connected");
+      Swal.fire({
+        title: "Connected",
+        text: "WebSocket Connected",
+        icon: "success",
+      });
+    };
 
-      setConnectingWs(false);
-    }
+    setConnectingWs(false);
 
     webSocket.current.onerror = (error) => {
       console.error("WebSocket error:", error);
