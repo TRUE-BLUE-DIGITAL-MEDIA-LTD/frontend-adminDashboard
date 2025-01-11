@@ -8,6 +8,8 @@ import { menusSidebar } from "../data/menus";
 import { useRouter } from "next/router";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
 import Link from "next/link";
+import AnnoucementShow from "../components/Annoucement/AnnoucementShow";
+import { useGetLatestAnnouncement } from "../react-query";
 
 export default function DashboardLayout({
   children,
@@ -24,7 +26,7 @@ export default function DashboardLayout({
   const [triggerSidebar, setTriggerSidebar] = useState<boolean>(false);
   const pathname = router.pathname; // e.g. "/classroom/setting"
   const lastRoute = pathname.split("/").pop();
-
+  const annoucement = useGetLatestAnnouncement();
   const onLoad = () => {
     setLoadingChat(() => false);
     if (JSON.stringify(tawkMessengerRef.current) === "{}") return;
@@ -146,7 +148,7 @@ export default function DashboardLayout({
           );
         })}
       </ul>
-
+      {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
       <DashboardNavbar
         setTriggerSidebar={setTriggerSidebar}
         user={user}

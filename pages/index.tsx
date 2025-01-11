@@ -93,7 +93,7 @@ function Index({ user }: { user: User }) {
                   ...queryFilterLandingPages,
                 },
               }}
-              className="buttonSuccess px-10 py-2"
+              className="main-button px-10 py-2"
             >
               Enter
             </Link>

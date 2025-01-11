@@ -161,7 +161,7 @@ function CreateAccount({ setTriggerCreateAccount, accounts }: CreateAccount) {
             </MenuItem>
           ))}
         </TextField>
-        <button className="buttonSuccess w-40 font-bold">Enter</button>
+        <button className="main-button w-40 font-bold">Enter</button>
       </form>
       <footer
         onClick={() => {

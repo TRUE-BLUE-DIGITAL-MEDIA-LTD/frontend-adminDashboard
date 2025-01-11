@@ -27,6 +27,7 @@ import { useRouter } from "next/router";
 import PartnerTable from "../../components/tables/partner";
 import AssignPartner from "../../components/forms/accounts/assignPartner";
 import UpdateBonusRate from "../../components/forms/accounts/updateBonusRate";
+import AnnoucementTable from "../../components/Annoucement/AnnoucementTable";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -359,6 +360,8 @@ function Index({ user }: { user: User }) {
           </section>
         )}
         <PartnerTable accounts={accounts} user={user} />
+
+        <AnnoucementTable />
       </main>
     </DashboardLayout>
   );

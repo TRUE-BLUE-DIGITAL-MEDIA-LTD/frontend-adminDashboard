@@ -164,7 +164,7 @@ function UpdatePartner({
           </TextFieldMUI>
         </div>
 
-        <Button type="submit" className="buttonSuccess mt-10 w-40 font-bold">
+        <Button type="submit" className="main-button mt-10 w-40 font-bold">
           Update
         </Button>
       </Form>

@@ -149,7 +149,7 @@ function CreateTagsOnSimcard({
             )}
           />
         </div>
-        <Button type="submit" className="buttonSuccess rounded-md py-1">
+        <Button type="submit" className="main-button rounded-md py-1">
           add
         </Button>
       </Form>

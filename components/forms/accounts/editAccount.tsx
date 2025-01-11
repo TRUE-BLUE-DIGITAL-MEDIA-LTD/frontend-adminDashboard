@@ -120,7 +120,7 @@ function EditAccount({
             </MenuItem>
           ))}
         </TextField>
-        <button type="submit" className="buttonSuccess w-40 font-bold">
+        <button type="submit" className="main-button w-40 font-bold">
           Enter
         </button>
       </form>
