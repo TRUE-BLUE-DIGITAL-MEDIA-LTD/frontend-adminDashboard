@@ -10,18 +10,21 @@ export function CalculateBonus({
   }[];
 }): number {
   let bonus = 0;
-
   for (let i = 0; i < bonusRate.length; i++) {
     const { from, to, rate } = bonusRate[i];
 
-    if (payout > from) {
-      const applicableAmount = Math.min(payout, to) - from;
-      const bonusForRange = applicableAmount * rate;
-      bonus += bonusForRange;
+    if (payout > from && payout > to) {
+      console.log("Skip", from, to, rate);
     }
-
-    if (payout <= to) {
-      break; // Stop iterating if the payout is within the current range
+    if (payout >= from && payout <= to) {
+      console.log("Match", from, to, rate);
+      bonus = payout * rate;
+      break;
+    }
+    if (i === bonusRate.length - 1 && payout > to) {
+      console.log("Last", from, to, rate);
+      bonus = payout * rate;
+      break;
     }
   }
   return bonus;

@@ -85,7 +85,7 @@ function TbodyForEditor({
             {item.columns[0].id}
           </div>
         ) : (
-          <div>{item.columns[1].id}</div>
+          <div>{item.columns[1]?.id}</div>
         )}
       </td>
       <td
@@ -93,7 +93,7 @@ function TbodyForEditor({
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
-        {partner ? partner?.[0] : item.columns[1].label}
+        {partner ? partner?.[0] : item.columns[1]?.label}
       </td>
 
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>

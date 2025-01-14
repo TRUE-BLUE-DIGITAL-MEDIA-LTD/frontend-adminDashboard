@@ -140,22 +140,57 @@ function ParterReport({ user }: { user: User }) {
         endDate: moment(dates?.[1]).toDate(),
         columns: [{ column: "affiliate" }],
       }).then((data) => {
-        const allBonus = data.map((table) => {
-          return table.table.map((item) => {
+        let allBonus: { id: string; bonus: number }[] = [];
+        const tables = data
+          .map((table) => {
+            return table.table;
+          })
+          .flat();
+        if (user.bonusCalculatePeriod === "daily") {
+          allBonus = tables.map((item) => {
             const bonus = CalculateBonus({
               payout: item.reporting.payout,
               bonusRate: bonusRate.data ?? bonusRateDefault,
             });
+            console.log(bonus);
 
             return {
               id: item.columns[0].id,
               bonus: bonus,
             };
           });
-        });
+        }
+        if (user.bonusCalculatePeriod === "monthly") {
+          const totalBonusInEachId = tables.reduce(
+            (acc, item) => {
+              const { id } = item.columns[0];
+              if (!acc[id]) {
+                acc[id] = 0;
+              }
+              acc[id] += item.reporting.payout;
+              return acc;
+            },
+            {} as { [key: string]: number },
+          );
+          console.log(totalBonusInEachId);
 
-        const flatBonus = allBonus.flat();
-        const groupBy = flatBonus.reduce(
+          allBonus = Object.entries(totalBonusInEachId).map(([id, payout]) => {
+            console.log(payout);
+            const bonus = CalculateBonus({
+              payout: payout,
+              bonusRate: bonusRate.data ?? bonusRateDefault,
+            });
+            console.log(bonus);
+
+            return {
+              id: id,
+              bonus: bonus,
+            };
+          });
+        }
+        console.log(allBonus);
+
+        const groupBy = allBonus.reduce(
           (acc, item) => {
             if (!acc[item.id]) {
               acc[item.id] = 0;

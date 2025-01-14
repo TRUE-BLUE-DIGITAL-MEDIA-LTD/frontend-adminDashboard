@@ -1,7 +1,7 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { Partner, Role, User } from "../../models";
+import { BonusCalculatePeriod, Partner, Role, User } from "../../models";
 
 export interface ResponseGetAllAccountByPageService {
   accounts: (User & { partner: Partner | null })[];
@@ -96,9 +96,10 @@ interface ResponseEditAccountService {
   IsResetPassword: boolean;
 }
 interface InputEditAccountService {
-  email: string;
-  name: string;
-  role: Role;
+  email?: string;
+  name?: string;
+  role?: Role;
+  bonusCalculatePeriod?: BonusCalculatePeriod;
   userId: string;
 }
 export async function EditAccountService(

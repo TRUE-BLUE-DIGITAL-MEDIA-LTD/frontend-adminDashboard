@@ -17,7 +17,8 @@ export interface User {
   TOTPhashRecovery: string | null;
   TOTPexpireAt: string | null;
   TOTPurl?: string | null;
+  bonusCalculatePeriod: BonusCalculatePeriod;
 }
-
+export type BonusCalculatePeriod = "daily" | "monthly";
 export type Role = "partner" | "manager" | "admin" | "user";
 export type Provider = "email";

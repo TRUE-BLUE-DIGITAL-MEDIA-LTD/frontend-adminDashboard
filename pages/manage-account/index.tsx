@@ -163,7 +163,8 @@ function Index({ user }: { user: User }) {
 
       {triggerUpdateBonusRate && selectAccount && (
         <UpdateBonusRate
-          userId={selectAccount.id}
+          accounts={accounts}
+          user={selectAccount}
           setTrigger={setTriggerUpdateBonusRate}
         />
       )}
