@@ -10,6 +10,7 @@ import { IoMdArrowDropdownCircle } from "react-icons/io";
 import Link from "next/link";
 import AnnoucementShow from "../components/Annoucement/AnnoucementShow";
 import { useGetLatestAnnouncement } from "../react-query";
+import useClickOutside from "../hooks/useClickOutside";
 
 export default function DashboardLayout({
   children,
@@ -18,15 +19,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
   user: User;
 }) {
-  const router = useRouter();
   const [loadingChat, setLoadingChat] = useState(false);
   const tawkMessengerRef = useRef<TawkInterface>();
-  const [currentMenuIndex, setCurrentMenuIndex] = useState<any>();
-  const [triggerMiniMenu, setTriggerMiniMenu] = useState(false);
   const [triggerSidebar, setTriggerSidebar] = useState<boolean>(false);
-  const pathname = router.pathname; // e.g. "/classroom/setting"
-  const lastRoute = pathname.split("/").pop();
   const annoucement = useGetLatestAnnouncement();
+  const divRef = useRef<HTMLUListElement>(null);
   const onLoad = () => {
     setLoadingChat(() => false);
     if (JSON.stringify(tawkMessengerRef.current) === "{}") return;
@@ -40,21 +37,9 @@ export default function DashboardLayout({
   const onBeforeLoad = () => {
     setLoadingChat(() => true);
   };
-  useEffect(() => {
-    if (lastRoute === "") {
-      setCurrentMenuIndex(() => 0);
-    } else if (lastRoute === "landingPages") {
-      setCurrentMenuIndex(() => 1);
-    } else if (lastRoute === "domain") {
-      setCurrentMenuIndex(() => 2);
-    } else if (lastRoute === "email") {
-      setCurrentMenuIndex(() => 3);
-    } else if (lastRoute === "manage-account") {
-      setCurrentMenuIndex(() => 4);
-    } else if (lastRoute === "tools") {
-      setCurrentMenuIndex(() => 5);
-    }
-  }, [lastRoute]);
+  useClickOutside(divRef, () => {
+    setTriggerSidebar(() => false);
+  });
   return (
     <>
       {loadingChat && (
@@ -71,90 +56,10 @@ export default function DashboardLayout({
           widgetId={process.env.NEXT_PUBLIC_WIDGET_ID}
         />
       )}
-      <ul
-        className={` fixed bottom-0 left-0 right-0 top-0 z-40 m-auto flex 
-        h-screen w-screen flex-col gap-5 bg-gray-800 p-10 pt-20 transition
-         duration-150 md:hidden ${triggerMiniMenu ? "visible translate-y-0" : "invisible hidden -translate-y-14"}`}
-      >
-        {menusSidebar.map((list, index) => {
-          if (user?.role === "partner" && (index == 2 || index == 3)) {
-            return null;
-          }
-          return (
-            <li
-              key={index}
-              className={`hover:text-main-color ${
-                currentMenuIndex === index ? "text-main-color" : "text-white"
-              } text-sm  transition duration-150 active:scale-105 xl:text-lg`}
-            >
-              <Link
-                onClick={() => {
-                  if (list.childs) {
-                    list.trigger = !list.trigger;
-                  } else {
-                    setTriggerMiniMenu(() => false);
-                  }
-                }}
-                className="relative z-20 flex w-full items-center justify-start gap-2 p-3 text-lg text-white hover:bg-gray-800 md:text-sm xl:text-lg"
-                href={list.childs ? "#" : list.url}
-              >
-                <span className="flex w-full items-center justify-start gap-2">
-                  <list.icon />
-                  {list.title}
-                </span>
-                {list.childs && (
-                  <div className="flex w-full justify-end">
-                    <IoMdArrowDropdownCircle />
-                  </div>
-                )}
-              </Link>
-              {list.childs && (
-                <ul
-                  className={`ml-5 flex flex-col gap-2 transition duration-150 ${list.trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
-                >
-                  {list.childs.map((child, index) => {
-                    if (
-                      user.role === "partner" &&
-                      (index === 4 || index === 5)
-                    ) {
-                      return null;
-                    }
-                    return (
-                      <li
-                        key={index}
-                        className={`hover:text-main-color ${
-                          currentMenuIndex === index
-                            ? "text-main-color"
-                            : "text-white"
-                        } text-sm  transition duration-150 active:scale-105 xl:text-lg`}
-                      >
-                        <Link
-                          onClick={() => setTriggerMiniMenu(() => false)}
-                          className="flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
-                          href={
-                            child.url
-                              ? child.url
-                              : list.url + `?option=${child.params}`
-                          }
-                        >
-                          {child.title}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+
       {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
-      <DashboardNavbar
-        setTriggerSidebar={setTriggerSidebar}
-        user={user}
-        setTriggerMiniMenu={setTriggerMiniMenu}
-      />
-      {triggerSidebar && <SidebarDashboard user={user} />}
+      <DashboardNavbar setTriggerSidebar={setTriggerSidebar} user={user} />
+      {triggerSidebar && <SidebarDashboard user={user} ref={divRef} />}
       {children}
     </>
   );

@@ -17,3 +17,4 @@ export * from "./history-record.model";
 export * from "./actions.model";
 export * from "./customer.model";
 export * from "./announcement.model";
+export * from "./sms-pva.model";

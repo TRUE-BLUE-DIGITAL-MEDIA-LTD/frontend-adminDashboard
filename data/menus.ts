@@ -29,6 +29,10 @@ export const menusSidebar = [
       { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
       { title: "Payslip Generator", params: "payslip" },
     ],
-    trigger: false,
   },
-];
+] as const;
+
+// get type from array
+export type MenuSidebar = (typeof menusSidebar)[number] & {
+  childs?: { title: string; params?: string; url?: string }[];
+};

@@ -13,11 +13,9 @@ import { GetImpersonateUser } from "../../services/admin/user";
 
 function DashboardNavbar({
   user,
-  setTriggerMiniMenu,
   setTriggerSidebar,
 }: {
   user: User;
-  setTriggerMiniMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setTriggerSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
@@ -45,12 +43,6 @@ function DashboardNavbar({
       className=" sticky top-0  z-50 flex  h-16 w-full items-center justify-between bg-gray-800
     pl-5 font-Poppins drop-shadow-md "
     >
-      <div
-        onClick={() => setTriggerMiniMenu((prev) => !prev)}
-        className="flex items-center justify-center text-3xl text-white md:hidden"
-      >
-        <IoMdMenu />
-      </div>
       <div className="  flex items-center justify-center gap-2 ">
         <button
           onClick={() => setTriggerSidebar((prev) => !prev)}
