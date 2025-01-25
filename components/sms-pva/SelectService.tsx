@@ -24,7 +24,7 @@ function SelectService({
   onSelectService,
 }: SelectServiceProps) {
   const availableNumbers = useGetAvailableNumberPVA({ country: country });
-  const allPrice = useGetAllPricePVA();
+  // const allPrice = useGetAllPricePVA();
   const [query, setQuery] = React.useState<string>("");
   const [serviceData, setServiceData] = React.useState(services);
   const handleFilterService = (query: string) => {
@@ -57,9 +57,9 @@ function SelectService({
       </SearchField>
       <ul className="  flex h-96 w-96 flex-col gap-2 overflow-auto px-5">
         {serviceData.map((service, index) => {
-          const price = allPrice.data?.find(
-            (price) => price.service === service.code,
-          );
+          // const price = allPrice.data?.find(
+          //   (price) => price.service === service.code,
+          // );
           const numbers = availableNumbers.data?.find(
             (number) => number.service === service.code,
           );
@@ -93,16 +93,16 @@ function SelectService({
                   onClick={() => {
                     onSelectService(service.code ?? "");
                   }}
-                  disabled={allPrice.isLoading || price === undefined}
                   className={`w-24 rounded-lg bg-blue-200 px-2 py-1 text-sm
-                    ${price === undefined ? "pointer-events-none bg-gray-500 text-white" : ""}
+                
                font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105`}
                 >
-                  {allPrice.isLoading
+                  {/* {allPrice.isLoading
                     ? "Loading..."
                     : price
                       ? `${price.price} $`
-                      : "NO SERVICE"}
+                      : "NO SERVICE"} */}
+                  Select
                 </button>
               </div>
             </li>
