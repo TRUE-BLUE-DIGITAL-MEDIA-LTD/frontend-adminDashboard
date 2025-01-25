@@ -46,7 +46,7 @@ function DashboardNavbar({
       <div className="  flex items-center justify-center gap-2 ">
         <button
           onClick={() => setTriggerSidebar((prev) => !prev)}
-          className="hidden items-center justify-center text-4xl text-white md:flex"
+          className=" flex items-center justify-center text-4xl text-white"
         >
           <IoMenu />
         </button>

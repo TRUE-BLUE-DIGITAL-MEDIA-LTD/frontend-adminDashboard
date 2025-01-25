@@ -33,7 +33,7 @@ const SidebarDashboard = forwardRef<HTMLUListElement, { user: User }>(
     return (
       <ul
         ref={ref}
-        className="fixed left-0 top-0 z-40 hidden h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 md:flex "
+        className="fixed left-0 top-0 z-40  flex h-screen w-80 flex-col gap-3 overflow-hidden bg-gray-700 pt-20 "
       >
         {menusSidebar.map((list, index) => {
           if (user?.role === "partner" && (index == 2 || index == 3)) {
@@ -55,5 +55,7 @@ const SidebarDashboard = forwardRef<HTMLUListElement, { user: User }>(
     );
   },
 );
+
+SidebarDashboard.displayName = "SidebarDashboard";
 
 export default SidebarDashboard;

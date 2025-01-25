@@ -23,12 +23,17 @@ export const menusSidebar = [
     icon: BsTools,
     childs: [
       { title: "Partners Performance", params: "partners-performance" },
-      { title: "SMS Online", params: "sms" },
+      { title: "SMS Online", params: "sms-online" },
+      { title: "SMS PVA", params: "sms-pva" },
       { title: "Oxy SMS", params: "sms-etms" },
       { title: "Postcode", params: "postcode" },
-      { title: "Website Builder", url: "https://sitestudio.oxyclick.com" },
+      {
+        title: "Website Builder",
+        url: "https://sitestudio.oxyclick.com",
+        params: "",
+      },
       { title: "Payslip Generator", params: "payslip" },
-    ],
+    ] as const,
   },
 ] as const;
 
@@ -36,3 +41,6 @@ export const menusSidebar = [
 export type MenuSidebar = (typeof menusSidebar)[number] & {
   childs?: { title: string; params?: string; url?: string }[];
 };
+
+export type OxyClickTools =
+  (typeof menusSidebar)[4]["childs"][number]["params"];

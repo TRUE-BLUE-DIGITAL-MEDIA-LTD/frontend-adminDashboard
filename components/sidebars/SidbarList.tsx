@@ -42,6 +42,7 @@ function SidbarList({ isSelect, list, user }: Props) {
             if (user.role === "partner" && (index === 4 || index === 5)) {
               return null;
             }
+
             return (
               <li
                 key={index}

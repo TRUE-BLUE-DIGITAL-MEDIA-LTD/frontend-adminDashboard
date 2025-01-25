@@ -19,22 +19,24 @@ import Postcode from "../../components/postcode/postcode";
 import ParterReport from "../../components/tables/parterReport";
 import { useRouter } from "next/router";
 import PayslipGenerator from "../../components/payslip/payslipGenerator";
-import SmsReceive from "../../components/sms/sms";
+import SmsReceive from "../../components/sms-online/sms";
 import SimCard from "../../components/simCard/simCard";
+import { OxyClickTools } from "../../data/menus";
+import SmsPvas from "../../components/sms-pva/SmsPvas";
 
 function Index({ user }: { user: User }) {
-  const [selectMenu, setSelectMenu] = useState(0);
   const router = useRouter();
+  const menu = router.query.option as OxyClickTools;
+
   return (
     <DashboardLayout user={user}>
       <div className="w-full">
-        {router.query.option === "partners-performance" && (
-          <ParterReport user={user} />
-        )}
-        {router.query.option === "postcode" && <Postcode />}
-        {router.query.option === "payslip" && <PayslipGenerator />}
-        {router.query.option === "sms" && <SmsReceive />}
-        {router.query.option === "sms-etms" && <SimCard user={user} />}
+        {menu === "partners-performance" && <ParterReport user={user} />}
+        {menu === "postcode" && <Postcode />}
+        {menu === "payslip" && <PayslipGenerator />}
+        {menu === "sms-online" && <SmsReceive />}
+        {menu === "sms-etms" && <SimCard user={user} />}
+        {menu === "sms-pva" && <SmsPvas />}
       </div>
     </DashboardLayout>
   );

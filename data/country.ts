@@ -1,5 +1,11 @@
 export const countries = [
   {
+    flag: "https://flagicons.lipis.dev/flags/4x3/gb.svg",
+    country: "England",
+    code: "uk",
+    countryCode: "+44",
+  },
+  {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1e6-1f1e8.svg",
     country: "Ascension Island",
     code: "ac",
@@ -1565,22 +1571,6 @@ export const countries = [
     code: "zw",
     countryCode: "+263",
   },
-  {
-    flag: "https://flagicons.lipis.dev/flags/4x3/gb.svg",
-    country: "England",
-    code: "uk",
-    countryCode: "+44",
-  },
-  {
-    flag: "https://twemoji.maxcdn.com/2/svg/1f3f4-e0067-e0062-e0073-e0063-e0074-e007f.svg",
-    country: "Scotland",
-    code: "uk",
-    countryCode: "+44",
-  },
-  {
-    flag: "https://twemoji.maxcdn.com/2/svg/1f3f4-e0067-e0062-e0077-e006c-e0073-e007f.svg",
-    country: "Wales",
-    code: "uk",
-    countryCode: "+44",
-  },
 ];
+
+export type Countries = typeof countries;

@@ -5,6 +5,7 @@ export type SmsPva = {
   orderId: string;
   phoneNumber: string;
   expireAt: string;
+  serviceCode: string;
   country: string;
   userId: string;
 };
