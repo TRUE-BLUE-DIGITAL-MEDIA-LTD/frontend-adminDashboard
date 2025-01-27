@@ -345,9 +345,6 @@ function SimCards({ user }: { user: User }) {
       setSimcardData(() => activeSimcards?.filter((sim) => sim.messages) ?? []);
       setPage(1);
       setTotalPage(1);
-      router.replace({
-        query: { ...router.query, page: 1 },
-      });
     } else if (simCards.data && selectActiveSimcard === "default") {
       setTotalPage(() => simCards.data?.meta.total);
 
@@ -1012,9 +1009,13 @@ function SimCards({ user }: { user: User }) {
           className="mt-5"
           page={page}
           onChange={(e, page) => {
-            router.replace({
-              query: { ...router.query, page: page },
-            });
+            router.replace(
+              {
+                query: { ...router.query, page: page },
+              },
+              undefined,
+              { shallow: true },
+            );
             setPage(page);
           }}
           count={totalPage}
