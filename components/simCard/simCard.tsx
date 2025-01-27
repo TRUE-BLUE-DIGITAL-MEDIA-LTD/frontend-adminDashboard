@@ -84,16 +84,16 @@ import {
   ResponseGetFavoriteOnSimcardService,
 } from "../../services/simCard/favorite";
 import SimcardItem from "./SimcardItem";
+import { useRouter } from "next/router";
 
 const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
   const queryClient = useQueryClient();
   const cookies = parseCookies();
-  const [connectingWs, setConnectingWs] = useState<boolean>(true);
   const webSocket = useRef<WebSocket | null>(null);
   const access_token = cookies.access_token;
-
+  const router = useRouter();
   const toast = useRef<any>(null);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
@@ -134,6 +134,12 @@ function SimCards({ user }: { user: User }) {
       messages?: MessageOnSimcard[];
     })[]
   >();
+
+  useEffect(() => {
+    if (router.isReady) {
+      setPage(parseInt(router.query.page as string) || 1);
+    }
+  }, [router.isReady]);
 
   const favorites = useQuery({
     queryKey: ["favorites"],
@@ -248,16 +254,12 @@ function SimCards({ user }: { user: User }) {
       });
     };
 
-    setConnectingWs(false);
-
     webSocket.current.onerror = (error) => {
       console.error("WebSocket error:", error);
-      setConnectingWs(false); // Stop loading if there's an error
     };
 
     webSocket.current.onclose = () => {
       console.log("WebSocket closed");
-      setConnectingWs(false); // Cleanup on close
     };
 
     webSocket.current.onmessage = (event: any) => {
@@ -343,6 +345,9 @@ function SimCards({ user }: { user: User }) {
       setSimcardData(() => activeSimcards?.filter((sim) => sim.messages) ?? []);
       setPage(1);
       setTotalPage(1);
+      router.replace({
+        query: { ...router.query, page: 1 },
+      });
     } else if (simCards.data && selectActiveSimcard === "default") {
       setTotalPage(() => simCards.data?.meta.total);
 
@@ -1007,7 +1012,9 @@ function SimCards({ user }: { user: User }) {
           className="mt-5"
           page={page}
           onChange={(e, page) => {
-            window.scrollTo(0, 200);
+            router.replace({
+              query: { ...router.query, page: page },
+            });
             setPage(page);
           }}
           count={totalPage}
