@@ -12,8 +12,10 @@ type Props = {
     fullText?: string;
     status: string;
   };
+  onCancel: (smsPvaId: string) => void;
+  onBlock: (smsPvaId: string) => void;
 };
-function ActiceNumber({ smsPva, sms }: Props) {
+function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
   return (
     <div className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
       <div className="flex justify-between border-b border-gray-400 pb-2">
@@ -44,9 +46,21 @@ function ActiceNumber({ smsPva, sms }: Props) {
               }}
             />
           </h3>
-          {/* <button className=" flex items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700">
-            <GiCancel />
-          </button> */}
+
+          <div className="flex items-center justify-center gap-1">
+            <button
+              onClick={() => onCancel(smsPva.id)}
+              className="flex w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"
+            >
+              refund
+            </button>
+            <button
+              onClick={() => onBlock(smsPva.id)}
+              className="flex w-16 items-center justify-center rounded-sm bg-gray-300 p-1 px-3 text-gray-700"
+            >
+              Ban
+            </button>
+          </div>
         </div>
       </div>
       <div className="mt-2 flex w-full justify-start gap-2">

@@ -2,6 +2,8 @@ import React from "react";
 import SelectCountry from "./SelectCountry";
 import SelectService from "./SelectService";
 import {
+  useBlockSmsPva,
+  useCancelSmsPva,
   useCreateSmsPva,
   useGetAvailableNumberPVA,
   useGetSmsPva,
@@ -13,6 +15,8 @@ import ActiceNumber from "./ActiceNumber";
 
 function SmsPvas() {
   const create = useCreateSmsPva();
+  const cancel = useCancelSmsPva();
+  const banNumner = useBlockSmsPva();
   const [selectCountry, setSelectCountry] = React.useState("uk");
   const [selectService, setSelectService] = React.useState("");
   const activeNumbers = useGetSmsPva();
@@ -58,6 +62,48 @@ function SmsPvas() {
       });
     }
   };
+
+  const handleRemoveActiveSms = async (id: string, type: "cancel" | "ban") => {
+    try {
+      Swal.fire({
+        title: "Loading",
+        html: "Please wait.",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      if (type === "cancel") {
+        await cancel.mutateAsync({
+          smsPvaId: id,
+        });
+      }
+
+      if (type === "ban") {
+        await banNumner.mutateAsync({
+          smsPvaId: id,
+        });
+      }
+
+      Swal.fire({
+        title: "Success",
+        text: "Operation has been successfully completed.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error ? result.error : "Something went wrong!",
+        text: result.message.toString(),
+        footer: result.statusCode
+          ? "Error code: " + result.statusCode?.toString()
+          : "",
+        icon: "error",
+      });
+    }
+  };
   return (
     <>
       <header className="mt-10 flex w-full flex-col items-center justify-center border-b pb-5">
@@ -85,7 +131,17 @@ function SmsPvas() {
           <ul className=" grid w-full grid-cols-3 gap-5">
             {activeNumbers.data?.map((number, index) => {
               return (
-                <ActiceNumber key={index} smsPva={number} sms={number.sms} />
+                <ActiceNumber
+                  key={index}
+                  smsPva={number}
+                  sms={number.sms}
+                  onBlock={(id) => {
+                    handleRemoveActiveSms(id, "ban");
+                  }}
+                  onCancel={(id) => {
+                    handleRemoveActiveSms(id, "cancel");
+                  }}
+                />
               );
             })}
           </ul>

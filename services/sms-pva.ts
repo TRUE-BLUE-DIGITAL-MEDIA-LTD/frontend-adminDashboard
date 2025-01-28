@@ -30,6 +30,60 @@ export async function CreateSMSPVAService(
   }
 }
 
+export type ResponseCancelSMSPVAService = SmsPva;
+export type RequestCancelSMSPVAService = {
+  smsPvaId: string;
+};
+export async function CancelSMSPVAService(
+  input: RequestCancelSMSPVAService,
+): Promise<ResponseCancelSMSPVAService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const sms_pva = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pva/cancel/${input.smsPvaId}`,
+      data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return sms_pva.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseBlockSMSPVAService = SmsPva;
+export type RequestBlockSMSPVAService = {
+  smsPvaId: string;
+};
+export async function BlockSMSPVAService(
+  input: RequestBlockSMSPVAService,
+): Promise<ResponseBlockSMSPVAService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const sms_pva = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pva/block/${input.smsPvaId}`,
+      data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return sms_pva.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetSMSPVAsService = (SmsPva & {
   sms: {
     code?: string | undefined;
