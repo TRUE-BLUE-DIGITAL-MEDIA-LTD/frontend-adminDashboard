@@ -671,7 +671,7 @@ function SimCards({ user }: { user: User }) {
       await SyncSimCardService();
       Swal.fire({
         title: "Success",
-        text: "Syncing Simcard has been done.",
+        text: "We will notify you when it's done on email",
         icon: "success",
       });
     } catch (error) {
