@@ -1,6 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ErrorMessages, SimCard } from "../../models";
+import { Message, Note } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
+import { Editor } from "@tinymce/tinymce-react";
+import moment from "moment";
+import { Calendar } from "primereact/calendar";
+import React, { useEffect, useRef, useState } from "react";
+import Countdown from "react-countdown";
+import {
+  FaCalendarCheck,
+  FaDharmachakra,
+  FaPhone,
+  FaSimCard,
+} from "react-icons/fa6";
+import { FcSimCard } from "react-icons/fc";
+import { IoIosTimer } from "react-icons/io";
+import { MdDevices, MdOutlineSdCard } from "react-icons/md";
+import { InView } from "react-intersection-observer";
+import Swal from "sweetalert2";
+import { ErrorMessages, SimCard } from "../../models";
+import { UpdateMessageOnSimcardService } from "../../services/simCard/message";
 import {
   GetSimCardByIdService,
   GetSimCardMessageService,
@@ -8,23 +25,6 @@ import {
   ResponseGetSimCardMessageService,
   UpdateSimCardService,
 } from "../../services/simCard/simCard";
-import { FcSimCard } from "react-icons/fc";
-import moment from "moment";
-import {
-  FaCalendarCheck,
-  FaDharmachakra,
-  FaPhone,
-  FaSimCard,
-} from "react-icons/fa6";
-import { MdDevices, MdOutlineSdCard } from "react-icons/md";
-import { Message, Note, NoteAdd } from "@mui/icons-material";
-import { Editor } from "@tinymce/tinymce-react";
-import Swal from "sweetalert2";
-import Countdown from "react-countdown";
-import { IoIosTimer } from "react-icons/io";
-import { Calendar } from "primereact/calendar";
-import { InView, useInView } from "react-intersection-observer";
-import { UpdateMessageOnSimcardService } from "../../services/simCard/message";
 
 type ShowMessageProps = {
   setTriggerShowMessage: React.Dispatch<React.SetStateAction<boolean>>;

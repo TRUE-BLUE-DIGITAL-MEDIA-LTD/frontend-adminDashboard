@@ -1,37 +1,19 @@
-import {
-  Facebook,
-  PhoneAndroid,
-  SimCardAlert,
-  SimCardOutlined,
-  Sms,
-} from "@mui/icons-material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { FaDharmachakra, FaServer } from "react-icons/fa6";
-import {
-  DeleteDeviceUserService,
-  GetDeviceUsersService,
-} from "../../services/simCard/deviceUser";
-import {
-  MdDelete,
-  MdDevices,
-  MdFavorite,
-  MdFavoriteBorder,
-} from "react-icons/md";
-import { Input, SearchField, TextArea } from "react-aria-components";
-import { IoSave, IoSearchCircleSharp } from "react-icons/io5";
-import parse from "html-react-parser";
-
-import {
-  ActiveSimCardService,
-  AutoPopulateNumberService,
-  DeactiveSimCardService,
-  GetSimCardActiveService,
-  GetSimCardByPageService,
-  SyncSimCardService,
-  UpdateSimCardService,
-} from "../../services/simCard/simCard";
+import { SimCardOutlined } from "@mui/icons-material";
 import { Pagination } from "@mui/material";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
+import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { Input, SearchField } from "react-aria-components";
+import { FaServer } from "react-icons/fa6";
+import { IoMdPerson } from "react-icons/io";
+import { IoSearchCircleSharp } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
+import Swal from "sweetalert2";
+import { countries } from "../../data/country";
 import {
   DeviceUser,
   ErrorMessages,
@@ -43,38 +25,11 @@ import {
   TagOnSimcard,
   User,
 } from "../../models";
-import ShowMessage from "./showMessage";
-import moment from "moment";
-import CreateDeviceUser from "../forms/createDeviceUser";
-import Swal from "sweetalert2";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import {
-  IoIosPricetags,
-  IoIosRemoveCircle,
-  IoIosTimer,
-  IoMdPerson,
-} from "react-icons/io";
-import { Dropdown } from "primereact/dropdown";
-import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
-import Image from "next/image";
-import { blurDataURL } from "../../data/blurDataURL";
-import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
-import Countdown from "react-countdown";
-import { Toast } from "primereact/toast";
-import { Button } from "primereact/button";
-import { GrStatusInfo, GrStatusPlaceholder } from "react-icons/gr";
-import { BiCheckCircle } from "react-icons/bi";
-import SpinLoading from "../loadings/spinLoading";
-import { Editor } from "@tinymce/tinymce-react";
-import { GiSave } from "react-icons/gi";
-import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
-import { countries } from "../../data/country";
-import { BsFlag } from "react-icons/bs";
-import { parseCookies } from "nookies";
-import {
-  GetSimOnPartnersByPartnerIdService,
-  GetSimOnPartnerUserService,
-} from "../../services/simCard/simOnPartner";
+  DeleteDeviceUserService,
+  GetDeviceUsersService,
+} from "../../services/simCard/deviceUser";
 import {
   CreateFavoriteOnSimcardService,
   DeleteFavoriteOnSimcardService,
@@ -83,12 +38,27 @@ import {
   InputDeleteFavoriteOnSimcardService,
   ResponseGetFavoriteOnSimcardService,
 } from "../../services/simCard/favorite";
+import {
+  ActiveSimCardService,
+  AutoPopulateNumberService,
+  DeactiveSimCardService,
+  GetSimCardByPageService,
+  SyncSimCardService,
+  UpdateSimCardService,
+} from "../../services/simCard/simCard";
+import { GetSimOnPartnersByPartnerIdService } from "../../services/simCard/simOnPartner";
+import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
+import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
+import CreateDeviceUser from "../forms/createDeviceUser";
+import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
+import ShowMessage from "./showMessage";
 import SimcardItem from "./SimcardItem";
-import { useRouter } from "next/router";
+import { useAutoGETICCID } from "../../react-query";
 
 const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
+  const autoGetICCID = useAutoGETICCID();
   const queryClient = useQueryClient();
   const cookies = parseCookies();
   const webSocket = useRef<WebSocket | null>(null);
@@ -637,7 +607,41 @@ function SimCards({ user }: { user: User }) {
       Swal.fire({
         title: "Success",
         text: "Auto Populate Number has been done.",
-        footer: "Please wait for 2 - 5 minutes to see the result",
+        footer: "We will notify you when it's done on email",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
+  const handleAutoGetICCID = async (portServer: string) => {
+    try {
+      Swal.fire({
+        title: "Auto Get ICCID",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await autoGetICCID.mutateAsync({ portServer });
+
+      Swal.fire({
+        title: "Success",
+        text: "Auto Get ICCID has been done.",
+        footer:
+          "We will notify you when it's done on email, usually 5 - 10 minutes",
         icon: "success",
       });
     } catch (error) {
@@ -784,6 +788,13 @@ function SimCards({ user }: { user: User }) {
 
                     <div className="flex w-full items-center justify-start gap-1">
                       <button
+                        onClick={() => handleAutoGetICCID(device.portNumber)}
+                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
+            transition duration-100 hover:bg-blue-400"
+                      >
+                        Auto CCID
+                      </button>
+                      {/* <button
                         onClick={() =>
                           handleAutoPopulateNumber(device.portNumber)
                         }
@@ -791,7 +802,7 @@ function SimCards({ user }: { user: User }) {
             transition duration-100 hover:bg-blue-400"
                       >
                         Auto Populate
-                      </button>
+                      </button> */}
                       <button
                         onClick={() =>
                           handleDeleteDeviceUser({ deviceUserId: device.id })
