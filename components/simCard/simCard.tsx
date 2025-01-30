@@ -67,6 +67,8 @@ function SimCards({ user }: { user: User }) {
   const toast = useRef<any>(null);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(searchField);
+
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
   const [simcardData, setSimcardData] = useState<
@@ -105,6 +107,15 @@ function SimCards({ user }: { user: User }) {
     })[]
   >();
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchField);
+    }, 2000); // 2-second delay
+
+    return () => {
+      clearTimeout(handler); // Clear timeout if query changes before 2 seconds
+    };
+  }, [searchField]);
   useEffect(() => {
     if (router.isReady) {
       setPage(parseInt(router.query.page as string) || 1);
@@ -168,7 +179,7 @@ function SimCards({ user }: { user: User }) {
       "simCards",
       {
         page,
-        searchField,
+        searchField: debouncedQuery,
         ...(selectPartner && { selectPartner: selectPartner.id }),
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
@@ -178,7 +189,7 @@ function SimCards({ user }: { user: User }) {
       GetSimCardByPageService({
         limit: 20,
         page: page,
-        searchField,
+        searchField: debouncedQuery,
         availability: selectAvailableSlot,
         deviceId: selectDeviceUser?.id,
         ...(selectPartner && { partnerId: selectPartner.id }),
@@ -200,16 +211,6 @@ function SimCards({ user }: { user: User }) {
 
   // call websocket for active simcard
 
-  if (webSocket.current?.CONNECTING) {
-    Swal.fire({
-      title: "Connecting to WebSocket",
-      text: "Please wait... ",
-      willOpen: () => {
-        Swal.showLoading();
-      },
-    });
-  }
-
   useEffect(() => {
     webSocket.current = new WebSocket(
       `${process.env.NEXT_PUBLIC_SERVER_OXY_ETMS}/v1/sim-card/stream/active-sim-cards?access_token=${access_token}`,
@@ -217,84 +218,84 @@ function SimCards({ user }: { user: User }) {
 
     webSocket.current.onopen = function (event) {
       console.log("Connected");
-      Swal.fire({
-        title: "Connected",
-        text: "WebSocket Connected",
-        icon: "success",
-      });
     };
 
     webSocket.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.log("WebSocket error: ", error);
     };
 
     webSocket.current.onclose = () => {
       console.log("WebSocket closed");
     };
 
-    webSocket.current.onmessage = (event: any) => {
-      if (event.data) {
-        const dataFromServer = JSON.parse(event.data);
-        let response: (SimCard & {
-          messages?: MessageOnSimcard[] | undefined;
-        })[] = dataFromServer;
-
-        const partnerOnSimcards = simcardOnPartner.data;
-
-        if (user.role === "partner" || user.role === "manager") {
-          if (!partnerOnSimcards) return [];
-
-          const simcards = response
-            .filter(
-              (sim) =>
-                !partnerOnSimcards.some(
-                  (simOnPartner) => simOnPartner.simCardId === sim.id,
-                ),
-            )
-            .map(({ messages, ...sim }) => {
-              return {
-                ...sim,
-              };
-            });
-
-          response = [
-            ...simcards,
-            ...response.filter((sim) =>
-              partnerOnSimcards.some(
-                (simOnPartner) => simOnPartner.simCardId === sim.id,
-              ),
-            ),
-          ];
-        }
-        console.log(response);
-
-        setActiveSimcards(response);
-        setUnavailableSlot(() =>
-          response?.map((sim) => {
-            return {
-              slot: sim.portNumber.split(".")[0],
-              deviceUserId: sim.deviceUserId,
-            };
-          }),
-        );
-        response.forEach((sim) => {
-          sim.messages?.forEach((message) => {
-            if (!message.isRead) {
-              setTrackingUnreadMessage((prev) => {
-                if (prev.find((track) => track.id === message.id)) return prev;
-                showInfo({ message: message, sim: sim });
-                return [...prev, { id: message.id }];
-              });
-            }
-          });
-        });
-      }
-    };
-
     return () => {
       webSocket.current?.close();
     };
-  }, [simcardOnPartner.data, selectPartner]);
+  }, []);
+
+  useEffect(() => {
+    if (webSocket.current) {
+      webSocket.current.onmessage = (event: any) => {
+        if (event.data) {
+          const dataFromServer = JSON.parse(event.data);
+          let response: (SimCard & {
+            messages?: MessageOnSimcard[] | undefined;
+          })[] = dataFromServer;
+          console.log(response);
+          const partnerOnSimcards = simcardOnPartner.data;
+
+          if (user.role === "partner" || user.role === "manager") {
+            if (!partnerOnSimcards) return [];
+
+            const simcards = response
+              .filter(
+                (sim) =>
+                  !partnerOnSimcards.some(
+                    (simOnPartner) => simOnPartner.simCardId === sim.id,
+                  ),
+              )
+              .map(({ messages, ...sim }) => {
+                return {
+                  ...sim,
+                };
+              });
+
+            response = [
+              ...simcards,
+              ...response.filter((sim) =>
+                partnerOnSimcards.some(
+                  (simOnPartner) => simOnPartner.simCardId === sim.id,
+                ),
+              ),
+            ];
+          }
+          console.log(response);
+
+          setActiveSimcards(response);
+          setUnavailableSlot(() =>
+            response?.map((sim) => {
+              return {
+                slot: sim.portNumber.split(".")[0],
+                deviceUserId: sim.deviceUserId,
+              };
+            }),
+          );
+          response.forEach((sim) => {
+            sim.messages?.forEach((message) => {
+              if (!message.isRead) {
+                setTrackingUnreadMessage((prev) => {
+                  if (prev.find((track) => track.id === message.id))
+                    return prev;
+                  showInfo({ message: message, sim: sim });
+                  return [...prev, { id: message.id }];
+                });
+              }
+            });
+          });
+        }
+      };
+    }
+  }, [simcardOnPartner.data, webSocket.current]);
 
   useEffect(() => {
     if (simCards.data && selectActiveSimcard === "default") {
