@@ -89,15 +89,14 @@ function SimcardItem({
   }, [sim.simCardNote]);
   return (
     <li
-      className={`relative flex h-[43rem] w-full
+      className={`relative flex h-max w-full
         flex-col gap-2 rounded-md ${
           slotInUsed
             ? activeSimcards?.find((active) => active.id === sim.id)
               ? "bg-green-200"
               : "bg-slate-400"
             : "bg-slate-200"
-        }  p-2 ring-1
-     ring-gray-400  `}
+        }  p-2   `}
       key={sim.id}
     >
       <button
@@ -411,7 +410,6 @@ bg-green-200 text-start font-semibold text-green-800"
           })}
         </div>
       </div>
-      <div></div>
     </li>
   );
 }

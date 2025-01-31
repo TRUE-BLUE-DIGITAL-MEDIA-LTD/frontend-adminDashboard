@@ -54,6 +54,10 @@ import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
 import ShowMessage from "./showMessage";
 import SimcardItem from "./SimcardItem";
 import { useAutoGETICCID } from "../../react-query";
+import { BsFileExcel } from "react-icons/bs";
+import { FaFileExcel } from "react-icons/fa";
+import PopupLayout from "../../layouts/PopupLayout";
+import AddSimCardFromExcel from "./AddSimCardFromExcel";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -84,7 +88,8 @@ function SimCards({ user }: { user: User }) {
   const [selectSimCard, setSelectSimCard] = useState<SimCard>();
   const [triggerCreateTag, setTriggerCreateTag] = useState<boolean>(false);
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser>();
-
+  const [triggerCreateNumber, setTriggerCreateNumber] =
+    useState<boolean>(false);
   const [selectAvailableSlot, setSelectAvailableSlot] = useState<
     "available" | "unavailable"
   >("available");
@@ -714,6 +719,12 @@ function SimCards({ user }: { user: User }) {
         />
       )}
 
+      {triggerCreateNumber && (
+        <PopupLayout onClose={() => setTriggerCreateNumber(false)}>
+          <AddSimCardFromExcel onClose={() => setTriggerCreateNumber(false)} />
+        </PopupLayout>
+      )}
+
       <header className="mt-20 flex w-full flex-col items-center justify-center gap-5">
         <h1 className="flex items-center justify-center gap-1 text-center text-3xl font-bold ">
           Oxy-ETMS <SimCardOutlined />
@@ -721,13 +732,21 @@ function SimCards({ user }: { user: User }) {
         {user.role === "admin" && (
           <section
             className="bg-gra w-10/12 rounded-md bg-gradient-to-tr from-neutral-50
-         to-neutral-200 p-5 ring-1 ring-gray-400 drop-shadow-lg"
+         to-neutral-200 p-5 ring-1 ring-gray-400 "
           >
             <section className="flex w-full justify-between gap-5">
               <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-black pr-5">
                 Device User <FaServer />
               </h3>
               <div className="flex w-max gap-2">
+                <button
+                  onClick={() => setTriggerCreateNumber(true)}
+                  className="flex items-center justify-center gap-1 rounded-md
+                   bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
+            transition duration-100 hover:bg-green-400"
+                >
+                  <FaFileExcel /> Add Number
+                </button>
                 <button
                   onClick={handleSycnSimcard}
                   className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
