@@ -193,21 +193,6 @@ const ListPhoneNumber = React.memo(
       <tr key={data.id}>
         <td>
           <input
-            value={data.phoneNumber}
-            onChange={(e) => {
-              setData((prev) =>
-                prev.map((item) =>
-                  item.id === data.id
-                    ? { ...item, phoneNumber: e.target.value }
-                    : item,
-                ),
-              );
-            }}
-            className="h-10 w-40 rounded-md border p-1 "
-          />
-        </td>
-        <td>
-          <input
             value={data.iccid}
             onChange={(e) => {
               setData((prev) =>
@@ -221,6 +206,22 @@ const ListPhoneNumber = React.memo(
             className="h-10 w-40 rounded-md border p-1 "
           />
         </td>
+        <td>
+          <input
+            value={data.phoneNumber}
+            onChange={(e) => {
+              setData((prev) =>
+                prev.map((item) =>
+                  item.id === data.id
+                    ? { ...item, phoneNumber: e.target.value }
+                    : item,
+                ),
+              );
+            }}
+            className="h-10 w-40 rounded-md border p-1 "
+          />
+        </td>
+
         <td>
           <div className="flex items-center justify-start gap-2 px-5">
             <button
