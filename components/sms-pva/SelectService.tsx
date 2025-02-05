@@ -56,58 +56,57 @@ function SelectService({
         <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
       </SearchField>
       <ul className="  flex h-96 w-96 flex-col gap-2 overflow-auto px-5">
-        {serviceData.map((service, index) => {
-          // const price = allPrice.data?.find(
-          //   (price) => price.service === service.code,
-          // );
-          const numbers = availableNumbers.data?.find(
-            (number) => number.service === service.code,
-          );
-          return (
-            <li
-              key={index}
-              className={` flex  cursor-pointer items-center justify-between p-2  
+        {serviceData
+          .filter((service) => service.code)
+          .map((service, index) => {
+            const numbers = availableNumbers.data?.find(
+              (number) => number.service === service.code,
+            );
+            return (
+              <li
+                key={index}
+                className={` flex  cursor-pointer items-center justify-between p-2  
            hover:bg-gray-200 ${selectService === service.slug ? "bg-gray-200" : ""}`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <div className="relative h-10 w-10 overflow-hidden ">
-                  <Image
-                    src={service.icon ?? "/favicon.ico"}
-                    fill
-                    alt="flag"
-                    className="object-contain"
-                  />
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <div className="relative h-10 w-10 overflow-hidden ">
+                    <Image
+                      src={service.icon ?? "/favicon.ico"}
+                      fill
+                      alt="flag"
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="col-span-3 text-base">{service.title}</span>
                 </div>
-                <span className="col-span-3 text-base">{service.title}</span>
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                {availableNumbers.isLoading ? (
-                  <div className="h-2 w-5 animate-pulse rounded-full bg-gray-400"></div>
-                ) : (
-                  <span className="text-sm font-normal text-gray-400">
-                    {numbers?.total}
-                  </span>
-                )}
+                <div className="flex items-center justify-end gap-2">
+                  {availableNumbers.isLoading ? (
+                    <div className="h-2 w-5 animate-pulse rounded-full bg-gray-400"></div>
+                  ) : (
+                    <span className="text-sm font-normal text-gray-400">
+                      {numbers?.total}
+                    </span>
+                  )}
 
-                <button
-                  onClick={() => {
-                    onSelectService(service.code ?? "");
-                  }}
-                  className={`w-24 rounded-lg bg-blue-200 px-2 py-1 text-sm
+                  <button
+                    onClick={() => {
+                      onSelectService(service.code ?? "");
+                    }}
+                    className={`w-24 rounded-lg bg-blue-200 px-2 py-1 text-sm
                 
                font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105`}
-                >
-                  {/* {allPrice.isLoading
+                  >
+                    {/* {allPrice.isLoading
                     ? "Loading..."
                     : price
                       ? `${price.price} $`
                       : "NO SERVICE"} */}
-                  Select
-                </button>
-              </div>
-            </li>
-          );
-        })}
+                    Select
+                  </button>
+                </div>
+              </li>
+            );
+          })}
       </ul>
     </section>
   );

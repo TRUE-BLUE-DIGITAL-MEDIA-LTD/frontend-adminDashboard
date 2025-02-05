@@ -31,6 +31,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "smspva.com",
+      },
+      {
+        protocol: "https",
         hostname: "storage.googleapis.com",
       },
       {

@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export type Services = typeof services;
 export type Service = Services[number];
 
@@ -77,6 +79,12 @@ export const services = [
     slug: "twitter",
     code: "opt41",
     icon: "https://img.icons8.com/?size=100&id=13963&format=png&color=000000",
+  },
+  {
+    title: "Badoo",
+    slug: "badoo",
+    code: "opt56",
+    icon: "https://smspva.com/templates/New_Design/images/ico/badoo.png",
   },
   {
     title: "LinkedIn",
