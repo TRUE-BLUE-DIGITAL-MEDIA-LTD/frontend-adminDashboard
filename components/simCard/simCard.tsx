@@ -814,7 +814,7 @@ function SimCards({ user }: { user: User }) {
                       >
                         Auto CCID
                       </button>
-                      {/* <button
+                      <button
                         onClick={() =>
                           handleAutoPopulateNumber(device.portNumber)
                         }
@@ -822,7 +822,7 @@ function SimCards({ user }: { user: User }) {
             transition duration-100 hover:bg-blue-400"
                       >
                         Auto Populate
-                      </button> */}
+                      </button>
                       <button
                         onClick={() =>
                           handleDeleteDeviceUser({ deviceUserId: device.id })
