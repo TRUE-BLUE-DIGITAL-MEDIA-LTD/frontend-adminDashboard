@@ -12,6 +12,7 @@ import {
   useGetAllPricePVA,
   useGetAvailableNumberPVA,
 } from "../../react-query";
+import ServiceCard from "./ServiceCard";
 
 type SelectServiceProps = {
   selectService: string;
@@ -24,6 +25,7 @@ function SelectService({
   onSelectService,
 }: SelectServiceProps) {
   const availableNumbers = useGetAvailableNumberPVA({ country: country });
+
   // const allPrice = useGetAllPricePVA();
   const [query, setQuery] = React.useState<string>("");
   const [serviceData, setServiceData] = React.useState(services);
@@ -57,54 +59,24 @@ function SelectService({
       </SearchField>
       <ul className="  flex h-96 w-96 flex-col gap-2 overflow-auto px-5">
         {serviceData
-          .filter((service) => service.code)
+          .filter(
+            (service): service is typeof service & { code: string } =>
+              !!service.code,
+          )
           .map((service, index) => {
             const numbers = availableNumbers.data?.find(
               (number) => number.service === service.code,
             );
             return (
-              <li
+              <ServiceCard
+                country={country}
                 key={index}
-                className={` flex  cursor-pointer items-center justify-between p-2  
-           hover:bg-gray-200 ${selectService === service.slug ? "bg-gray-200" : ""}`}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <div className="relative h-10 w-10 overflow-hidden ">
-                    <Image
-                      src={service.icon ?? "/favicon.ico"}
-                      fill
-                      alt="flag"
-                      className="object-contain"
-                    />
-                  </div>
-                  <span className="col-span-3 text-base">{service.title}</span>
-                </div>
-                <div className="flex items-center justify-end gap-2">
-                  {availableNumbers.isLoading ? (
-                    <div className="h-2 w-5 animate-pulse rounded-full bg-gray-400"></div>
-                  ) : (
-                    <span className="text-sm font-normal text-gray-400">
-                      {numbers?.total}
-                    </span>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      onSelectService(service.code ?? "");
-                    }}
-                    className={`w-24 rounded-lg bg-blue-200 px-2 py-1 text-sm
-                
-               font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105`}
-                  >
-                    {/* {allPrice.isLoading
-                    ? "Loading..."
-                    : price
-                      ? `${price.price} $`
-                      : "NO SERVICE"} */}
-                    Select
-                  </button>
-                </div>
-              </li>
+                selectService={selectService}
+                service={service}
+                loadingNumberAvailable={availableNumbers.isLoading}
+                totalAvailable={numbers?.total ?? 0}
+                onSelectService={(service) => onSelectService(service)}
+              />
             );
           })}
       </ul>

@@ -5,6 +5,7 @@ import {
   CreateSMSPVAService,
   GetAllPricePVAService,
   GetAvailableNumberPVAService,
+  GetServicePricePVAService,
   GetSMSPVAsService,
   RequestBlockSMSPVAService,
   RequestCancelSMSPVAService,
@@ -31,6 +32,20 @@ export function useGetAvailableNumberPVA(request: { country: string }) {
   return useQuery({
     queryKey: ["available-number-pva", { country: request.country }],
     queryFn: () => GetAvailableNumberPVAService(request),
+  });
+}
+
+export function useGetServicePrice(request: {
+  country: string;
+  service: string;
+}) {
+  return useQuery({
+    queryKey: ["price", { country: request.country, service: request.service }],
+    queryFn: () =>
+      GetServicePricePVAService({
+        service: request.service,
+        country: request.country,
+      }),
   });
 }
 
