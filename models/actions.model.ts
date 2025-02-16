@@ -43,6 +43,15 @@ type SimCardActions = {
 
 type SimCardActionsKey = SimCardActions[keyof SimCardActions];
 
+type SmsPvaActions = {
+  create: "smspva.create";
+  update: "smspva.update";
+  delete: "smspva.delete";
+  get: "smspva.get";
+};
+
+type SmsPvaActionsKey = SmsPvaActions[keyof SmsPvaActions];
+
 type LandingPageActions = {
   create: "landing-page.create";
   update: "landing-page.update";
@@ -173,6 +182,7 @@ export type Action = {
   simCardOnPartner: SimCardOnPartnerActionsKey;
   categoryOnPartner: CategoryOnPartnerActionsKey;
   imageLibrary: ImageLibraryActionsKey;
+  smsPva: SmsPvaActionsKey;
 };
 
 export type ActionKey = Action[keyof Action];

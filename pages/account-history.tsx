@@ -4,7 +4,7 @@ import DashboardLayout from "../layouts/dashboardLayout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { GetUser } from "../services/admin/user";
-import { Partner, User } from "../models";
+import { ActionKey, Partner, User } from "../models";
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "@mui/material";
 import { GetHistoryRecordService } from "../services/history-record";
@@ -19,7 +19,7 @@ import {
 } from "react-icons/fa6";
 import { IconType } from "react-icons";
 import { getRandomSlateShade, getSlateColorStyle } from "../utils/random";
-import { FaSearch, FaUserFriends } from "react-icons/fa";
+import { FaSearch, FaSms, FaUserFriends } from "react-icons/fa";
 import {
   MdDomain,
   MdEmail,
@@ -37,25 +37,6 @@ import { Nullable } from "primereact/ts-helpers";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { Dropdown } from "primereact/dropdown";
 import { GetAllAccountByPageService } from "../services/admin/account";
-
-type ActionListKey =
-  | "user"
-  | "partner"
-  | "bonus-rate"
-  | "responsibility-on-partner"
-  | "simcard"
-  | "landing-page"
-  | "domain"
-  | "category"
-  | "email"
-  | "payslip"
-  | "deduction-on-payslip"
-  | "device-user"
-  | "message-on-simcard"
-  | "tag-on-simcard"
-  | "simcard-on-partner"
-  | "category-on-partner"
-  | "image-library";
 
 const actionsWithIcons = [
   { title: "user", icon: <FaUser /> },
@@ -75,7 +56,11 @@ const actionsWithIcons = [
   { title: "simcard-on-partner", icon: <MdOutlineConnectWithoutContact /> },
   { title: "category-on-partner", icon: <FaListCheck /> },
   { title: "image-library", icon: <BiImages /> },
-];
+  { title: "sms-pva", icon: <FaSms /> },
+] as const;
+
+type ActionListKey = (typeof actionsWithIcons)[number]["title"];
+
 type ActionMethodKey = "create" | "update" | "delete" | "get";
 function Index({ user }: { user: User }) {
   const [page, setPage] = useState<number>(1);
@@ -83,7 +68,7 @@ function Index({ user }: { user: User }) {
   const [selectUser, setSelectUser] = useState<User>();
   const [totalPage, setTotalPage] = useState<number>(1);
   const [filter, setFilter] = useState<{
-    action?: { title: ActionListKey; icon: IconType };
+    action?: { title: ActionKey; icon: IconType };
     data?: string;
     startDate?: string;
     endDate?: string;
@@ -206,7 +191,7 @@ function Index({ user }: { user: User }) {
                   });
                 }}
                 optionLabel="title"
-                options={actionsWithIcons}
+                options={actionsWithIcons as any}
                 placeholder="Select Action"
                 valueTemplate={(option: { title: string; icon: ReactNode }) => (
                   <div className="flex items-center gap-2">
