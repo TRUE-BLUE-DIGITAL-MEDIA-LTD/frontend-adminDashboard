@@ -44,6 +44,7 @@ const actionsWithIcons = [
   { title: "bonus-rate", icon: <FaMoneyBillTrendUp /> },
   { title: "responsibility-on-partner", icon: <MdDomain /> },
   { title: "simcard", icon: <MdSimCard /> },
+  { title: "smspva", icon: <FaSms /> },
   { title: "landing-page", icon: <FaPager /> },
   { title: "domain", icon: <GrDomain /> },
   { title: "category", icon: <BiCategoryAlt /> },
@@ -56,7 +57,6 @@ const actionsWithIcons = [
   { title: "simcard-on-partner", icon: <MdOutlineConnectWithoutContact /> },
   { title: "category-on-partner", icon: <FaListCheck /> },
   { title: "image-library", icon: <BiImages /> },
-  { title: "sms-pva", icon: <FaSms /> },
 ] as const;
 
 type ActionListKey = (typeof actionsWithIcons)[number]["title"];
