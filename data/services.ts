@@ -87,6 +87,12 @@ export const services = [
     icon: "https://smspva.com/templates/New_Design/images/ico/badoo.png",
   },
   {
+    title: "bumble",
+    slug: "bumble",
+    code: "opt145",
+    icon: "https://smspva.com/templates/New_Design_Multilang/images/ico/opt145_666304863ecdf.png",
+  },
+  {
     title: "LinkedIn",
     slug: "linkedin",
     icon: "https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000",
