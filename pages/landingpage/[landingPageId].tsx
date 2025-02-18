@@ -59,7 +59,7 @@ function Index({ user }: { user: User }) {
   const router = useRouter();
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
-
+  const [blurEditor, setBlurEditor] = useState(true);
   const domains = useQuery({
     queryKey: ["domains-list"],
     queryFn: () => GetAllDomains(),
@@ -126,7 +126,6 @@ function Index({ user }: { user: User }) {
       });
       setIcon(() => landingPage?.data?.icon);
       const json = JSON.parse(landingPage?.data?.json);
-
       emailEditorRef?.current?.editor?.loadDesign(json);
     }
   }, [landingPage.isSuccess, isLoadingEditor]);
@@ -274,10 +273,21 @@ function Index({ user }: { user: User }) {
             <span className="text-icon-color">U</span>pdate Landing Page
           </div>
         </div>
-        <main className="relative my-10    font-Poppins 2xl:w-full">
-          {isLoadingEditor && (
-            <div className="absolute flex h-full w-full animate-pulse items-center justify-center bg-second-color text-xl font-semibold text-black">
-              <span className="animate-bounce">Editor Is Loading ...</span>
+        <main className="relative my-10  font-Poppins 2xl:w-full">
+          {blurEditor && (
+            <div
+              className="absolute z-10  flex h-full w-full items-center 
+            justify-center bg-black text-xl font-semibold text-black "
+            >
+              <button
+                onClick={() => {
+                  confirm("Show Editor?");
+                  setBlurEditor(() => false);
+                }}
+                className="main-button"
+              >
+                SHOW
+              </button>
             </div>
           )}
 
