@@ -118,6 +118,7 @@ type InputUpdatePartnerService = {
     userId?: string;
     affiliateId?: string;
     name?: string;
+    isAllowUsingSMSPVA?: boolean;
   };
 };
 export async function UpdatePartnerService(

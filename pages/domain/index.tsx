@@ -99,6 +99,7 @@ function Index({ user }: { user: User }) {
           userId: "all",
           name: "See All",
           id: "all",
+          isAllowUsingSMSPVA: true,
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
         });
@@ -109,6 +110,7 @@ function Index({ user }: { user: User }) {
           userId: "none",
           name: "No Partner",
           id: "no-partner",
+          isAllowUsingSMSPVA: true,
           responsibilityOnPartner: new Array(
             domains.data?.totalNoPartnerDomain,
           ),

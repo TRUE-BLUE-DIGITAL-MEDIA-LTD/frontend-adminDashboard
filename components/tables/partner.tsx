@@ -170,7 +170,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
         )}
       </header>
       <div className=" h-96 w-full justify-center overflow-auto   ">
-        <table className=" w-full table-auto ">
+        <table className=" w-max min-w-full table-auto ">
           <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
             <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
               <th className="px-5">Affiliate ID</th>
@@ -181,6 +181,8 @@ function PartnerTable({ accounts, user }: PartnerProps) {
               )}
               <th className="px-5">Assign Domain</th>
               <th className="px-5">Assign Category</th>
+              <th className="px-5">SMS PVA Permission</th>
+
               {user.role === "admin" && <th className="px-5">Options</th>}
             </tr>
           </thead>
@@ -271,20 +273,33 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                           </button>
                         </div>
                       </td>
-                      {user.role === "admin" && (
-                        <td className=" border-4 border-transparent">
-                          <div className="flex w-full gap-3">
-                            <button
-                              onClick={() => {
-                                setSelectPartner(partner);
-                                document.body.style.overflow = "hidden";
-                                setTriggerUpdatePartner(() => true);
-                              }}
-                              className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                            >
-                              <BiSolidMessageSquareEdit />
-                            </button>
+                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                        <div className="flex w-full items-center justify-center">
+                          {partner.isAllowUsingSMSPVA ? (
+                            <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
+                              Allow
+                            </div>
+                          ) : (
+                            <div className="w-full rounded-md bg-red-200 px-2 text-center text-red-500">
+                              Deny
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className=" border-4 border-transparent">
+                        <div className="flex w-full gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectPartner(partner);
+                              document.body.style.overflow = "hidden";
+                              setTriggerUpdatePartner(() => true);
+                            }}
+                            className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                          >
+                            <BiSolidMessageSquareEdit />
+                          </button>
 
+                          {user.role === "admin" && (
                             <button
                               onClick={() =>
                                 handleDeletePartner({
@@ -296,9 +311,9 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                             >
                               <MdDelete />
                             </button>
-                          </div>
-                        </td>
-                      )}
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}

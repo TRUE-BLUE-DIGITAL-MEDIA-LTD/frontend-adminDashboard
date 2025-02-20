@@ -37,10 +37,12 @@ function UpdatePartner({
     partnerId?: string;
     partnerName?: string;
     userId?: string;
+    isAllowUsingSMSPVA?: boolean;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
     userId: selectPartner.userId,
+    isAllowUsingSMSPVA: selectPartner.isAllowUsingSMSPVA,
   });
 
   const handleChangeupdatePartnerData = (
@@ -72,7 +74,7 @@ function UpdatePartner({
       ) {
         throw new Error("Please fill all the fields");
       }
-      const update = await UpdatePartnerService({
+      await UpdatePartnerService({
         query: {
           partnerId: selectPartner.id,
         },
@@ -80,6 +82,7 @@ function UpdatePartner({
           userId: updatePartnerData?.userId,
           affiliateId: updatePartnerData?.partnerId,
           name: updatePartnerData?.partnerName,
+          isAllowUsingSMSPVA: updatePartnerData.isAllowUsingSMSPVA,
         },
       });
       await partners.refetch();
@@ -101,7 +104,10 @@ function UpdatePartner({
     }
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen  w-screen items-center justify-center font-Poppins ">
+    <div
+      className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen
+      w-screen items-center justify-center font-Poppins "
+    >
       <Form
         onSubmit={handleSummitUpdatePartner}
         className="flex h-max w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7"
@@ -139,7 +145,6 @@ function UpdatePartner({
             select
             className="h-14 w-80"
             value={updatePartnerData?.userId ?? ""}
-            helperText="Please select your partner manager here"
           >
             {accounts.data?.accounts.map((account) => {
               return (
@@ -162,6 +167,26 @@ function UpdatePartner({
               );
             })}
           </TextFieldMUI>
+        </div>
+
+        <div className="flex w-full flex-col gap-1">
+          <span>Allow Partner To Access SMS PVA</span>
+          <select
+            value={updatePartnerData.isAllowUsingSMSPVA ? "allow" : "not-allow"}
+            onChange={(e) => {
+              setUpdatePartnerData((prev) => {
+                return {
+                  ...prev,
+                  isAllowUsingSMSPVA: e.target.value === "allow" ? true : false,
+                };
+              });
+            }}
+            className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+         duration-75 hover:border-black focus:drop-shadow-md"
+          >
+            <option value="allow">allow</option>
+            <option value="not-allow">not allow</option>
+          </select>
         </div>
 
         <Button type="submit" className="main-button mt-10 w-40 font-bold">
