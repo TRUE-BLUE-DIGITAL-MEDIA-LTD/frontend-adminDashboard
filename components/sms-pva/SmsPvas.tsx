@@ -8,15 +8,20 @@ import {
   useGetAvailableNumberPVA,
   useGetSmsPva,
 } from "../../react-query";
-import { ErrorMessages } from "../../models";
+import { ErrorMessages, User } from "../../models";
 import Swal from "sweetalert2";
 import { RiErrorWarningLine } from "react-icons/ri";
 import ActiceNumber from "./ActiceNumber";
+import SmsPvaHistory from "./SmsPvaHistory";
 
-function SmsPvas() {
+type Props = {
+  user: User;
+};
+function SmsPvas({ user }: Props) {
   const create = useCreateSmsPva();
   const cancel = useCancelSmsPva();
   const banNumner = useBlockSmsPva();
+
   const [selectCountry, setSelectCountry] = React.useState("uk");
   const [selectService, setSelectService] = React.useState("");
   const activeNumbers = useGetSmsPva();
@@ -114,7 +119,7 @@ function SmsPvas() {
           SMS messages.
         </span>
       </header>
-      <main className="mt-5 flex w-full flex-col items-center gap-5">
+      <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
         <section className="flex w-10/12  flex-col items-start  justify-start gap-5 ">
           <h1 className="text-lg font-semibold">My numbers</h1>
           {!activeNumbers.data ||
@@ -161,6 +166,8 @@ function SmsPvas() {
             }}
           />
         </section>
+
+        <SmsPvaHistory user={user} />
       </main>
     </>
   );

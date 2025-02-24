@@ -36,7 +36,7 @@ function Index({ user }: { user: User }) {
         {menu === "payslip" && <PayslipGenerator />}
         {menu === "sms-online" && <SmsReceive />}
         {menu === "sms-etms" && <SimCard user={user} />}
-        {menu === "sms-pva" && <SmsPvas />}
+        {menu === "sms-pva" && <SmsPvas user={user} />}
       </div>
     </DashboardLayout>
   );
