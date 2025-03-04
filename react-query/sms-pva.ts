@@ -75,8 +75,11 @@ export function useCancelSmsPva() {
     onSuccess(data, variables, context) {
       queryClient.setQueryData(
         ["sms-pva"],
-        (oldData: ResponseGetSMSPVAsService) => {
-          return oldData.filter((item) => item.id !== variables.smsPvaId);
+        (oldData: ResponseGetSMSPVAsService): ResponseGetSMSPVAsService => {
+          return {
+            sims: oldData.sims.filter((item) => item.id !== variables.smsPvaId),
+            balance: oldData.balance,
+          };
         },
       );
     },
@@ -91,8 +94,11 @@ export function useBlockSmsPva() {
     onSuccess(data, variables, context) {
       queryClient.setQueryData(
         ["sms-pva"],
-        (oldData: ResponseGetSMSPVAsService) => {
-          return oldData.filter((item) => item.id !== variables.smsPvaId);
+        (oldData: ResponseGetSMSPVAsService): ResponseGetSMSPVAsService => {
+          return {
+            balance: oldData.balance,
+            sims: oldData.sims.filter((item) => item.id !== variables.smsPvaId),
+          };
         },
       );
     },

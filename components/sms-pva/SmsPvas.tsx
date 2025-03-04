@@ -118,12 +118,20 @@ function SmsPvas({ user }: Props) {
           from different countries at fair and affordable prices for receiving
           SMS messages.
         </span>
+        {(user.role === "admin" || user.role === "manager") && (
+          <h1 className="mt-5 flex items-center justify-center gap-2 text-3xl">
+            Balance :{" "}
+            <div className="rounded-sm bg-gradient-to-r from-gray-600 to-gray-800 px-2 text-white">
+              {activeNumbers.data?.balance.toLocaleString()}$
+            </div>
+          </h1>
+        )}
       </header>
       <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
         <section className="flex w-10/12  flex-col items-start  justify-start gap-5 ">
           <h1 className="text-lg font-semibold">My numbers</h1>
           {!activeNumbers.data ||
-            (activeNumbers.data.length === 0 && (
+            (activeNumbers.data.sims.length === 0 && (
               <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
                 <RiErrorWarningLine className="text-5xl" />
                 <h3 className="text-xl">No operations.</h3>
@@ -134,7 +142,7 @@ function SmsPvas({ user }: Props) {
               </div>
             ))}
           <ul className=" grid w-full grid-cols-3 gap-5">
-            {activeNumbers.data?.map((number, index) => {
+            {activeNumbers.data?.sims.map((number, index) => {
               return (
                 <ActiceNumber
                   key={index}

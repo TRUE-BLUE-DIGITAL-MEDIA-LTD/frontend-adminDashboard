@@ -146,13 +146,16 @@ export async function BlockSMSPVAService(
   }
 }
 
-export type ResponseGetSMSPVAsService = (SmsPva & {
-  sms: {
-    code?: string | undefined;
-    fullText?: string | undefined;
-    status: string;
-  };
-})[];
+export type ResponseGetSMSPVAsService = {
+  sims: (SmsPva & {
+    sms: {
+      code: string | undefined;
+      fullText: string | undefined;
+      status: string;
+    };
+  })[];
+  balance: number;
+};
 
 export async function GetSMSPVAsService(): Promise<ResponseGetSMSPVAsService> {
   try {
