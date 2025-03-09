@@ -618,6 +618,7 @@ function BulkAssign({
   const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser | null>(
     null,
   );
+  const [loading, setLoading] = useState(false);
   const [selectOption, setSelectOption] = useState<OptionKey>("assign");
   const [number, setNumber] = useState<Nullable<number | null>>(20);
   const deviceUser = useQuery({
@@ -630,21 +631,22 @@ function BulkAssign({
       if (!selectDeviceUser) {
         throw new Error("Please Select Device User");
       }
+      setLoading(() => true);
       const result = await bulk.mutateAsync({
         deviceUserId: selectDeviceUser.id,
         partnerId,
         number: Number(number),
         action: selectOption,
       });
-      console.log(result);
-
       await Promise.all([phoneNumber.refetch(), simCardOnPartners.refetch()]);
+      setLoading(() => false);
       await Swal.fire({
         title: "Success",
         icon: "success",
         text: `${result.length} of ${number} has performed successfully`,
       });
     } catch (error) {
+      setLoading(() => false);
       console.log(error);
       let result = error as ErrorMessages;
       Swal.fire({
@@ -697,11 +699,11 @@ function BulkAssign({
       </div>
       <button
         type="button"
-        disabled={bulk.isPending}
+        disabled={loading}
         onClick={() => handleBulk()}
         className="main-button h-10 w-40 rounded-md"
       >
-        {bulk.isPending ? "Loading..." : "Perform"}
+        {loading ? "Loading..." : "Perform"}
       </button>
     </div>
   );
