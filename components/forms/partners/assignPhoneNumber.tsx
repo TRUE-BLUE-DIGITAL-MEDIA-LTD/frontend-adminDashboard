@@ -1,4 +1,13 @@
+import { Pagination } from "@mui/material";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { Dropdown } from "primereact/dropdown";
 import React, { useEffect, useState } from "react";
+import { Form, Input, SearchField } from "react-aria-components";
+import { FcApproval } from "react-icons/fc";
+import { IoSearchCircleSharp } from "react-icons/io5";
+import Swal from "sweetalert2";
+import { countries } from "../../../data/country";
+import useClickOutside from "../../../hooks/useClickOutside";
 import {
   DeviceUser,
   ErrorMessages,
@@ -7,29 +16,23 @@ import {
   SimCardOnPartner,
   User,
 } from "../../../models";
-import { useQuery } from "@tanstack/react-query";
+import {
+  simcardKeys,
+  useBlukSimcardOnPartner,
+  useDeleteSimcardOnPartner,
+  useGetPartners,
+  useGetSimcardOnPartner,
+  useGetSimcards,
+} from "../../../react-query";
+import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
 import {
   CreateSimOnPartnerService,
-  DeleteSimOnPartnerService,
-  GetSimOnPartnersByPartnerIdService,
+  ResponseGetSimOnPartnersByPartnerIdService,
 } from "../../../services/simCard/simOnPartner";
-import Swal from "sweetalert2";
-import { GetSimCardByPageService } from "../../../services/simCard/simCard";
-import { Form, Input, SearchField, TextArea } from "react-aria-components";
-import { IoSearchCircleSharp } from "react-icons/io5";
-import { Pagination } from "@mui/material";
-import { Dropdown } from "primereact/dropdown";
-import { GetDeviceUsersService } from "../../../services/simCard/deviceUser";
-import { countries } from "../../../data/country";
+import { InputNumber } from "primereact/inputnumber";
+import { Nullable } from "primereact/ts-helpers";
+import { ResponseGetSimCardByPageService } from "../../../services/simCard/simCard";
 const availableSlot = ["available", "unavailable"];
-import { GetPartnerByPageService } from "../../../services/admin/partner";
-import {
-  AutoComplete,
-  AutoCompleteChangeEvent,
-  AutoCompleteCompleteEvent,
-} from "primereact/autocomplete";
-import useClickOutside from "../../../hooks/useClickOutside";
-import { FcApproval } from "react-icons/fc";
 
 type AssignPhoneNumberProps = {
   selectPartner: Partner;
@@ -64,58 +67,49 @@ function AssignPhoneNumber({
     currentPage: number;
   }>();
   const [page, setPage] = useState<number>(1);
+  const [selectBulkAssign, setSelectBulkAssign] = useState(false);
   const [selectPartnerSearch, setSelectPartner] = useState<Partner | null>();
   const searhBoxRef = React.useRef<HTMLDivElement>(null);
   const [triggerShowBox, setTriggerShowBox] = useState<boolean>(false);
   const [searchPartner, setSearchPartner] = useState<string>("");
-  const partners = useQuery({
-    queryKey: [
-      "partners-search",
-      { page: page, searchField: searchPartner, limit: 3 },
-    ],
-    queryFn: () =>
-      GetPartnerByPageService({
-        page: 1,
-        searchField: searchPartner,
-        limit: 3,
-      }),
+  const removeSimcardOnPartner = useDeleteSimcardOnPartner();
+  const simCardOnPartners = useGetSimcardOnPartner({
+    partnerId: selectPartner.id,
   });
-
-  const simCardOnPartners = useQuery({
-    queryKey: ["simCardOnPartners", { partnerId: selectPartner.id }],
-    queryFn: () =>
-      GetSimOnPartnersByPartnerIdService({
-        partnerId: selectPartner.id,
-      }),
+  const partners = useGetPartners({
+    page: 1,
+    searchField: searchPartner,
+    limit: 3,
   });
-
-  const phoneNumber = useQuery({
-    queryKey: [
-      "simCards",
-      {
-        ...(selectPartnerSearch?.id && { partnerId: selectPartnerSearch.id }),
-        page,
-        searchField,
-        availability: selectAvailableSlot,
-        deviceId: selectDeviceUser?.id,
-        getNoPartner,
-      },
-    ],
-    queryFn: () =>
-      GetSimCardByPageService({
-        limit: 20,
-        page: page,
-        ...(selectPartnerSearch?.id && { partnerId: selectPartnerSearch.id }),
-        searchField: searchField,
-        availability: selectAvailableSlot,
-        deviceId: selectDeviceUser?.id,
-        partner: getNoPartner,
-      }),
-  });
+  const phoneNumber = useGetSimcards(
+    {
+      limit: 20,
+      page: page,
+      ...(selectPartnerSearch?.id && { partnerId: selectPartnerSearch.id }),
+      searchField: searchField,
+      availability: selectAvailableSlot,
+      deviceId: selectDeviceUser?.id,
+      partner: getNoPartner,
+    },
+    simcardKeys.all,
+  );
 
   useEffect(() => {
     phoneNumber.refetch();
+    partners.refetch();
+    simCardOnPartners.refetch();
   }, []);
+
+  useEffect(() => {
+    phoneNumber.refetch();
+  }, [
+    page,
+    searchField,
+    selectAvailableSlot,
+    getNoPartner,
+    selectDeviceUser,
+    selectPartnerSearch,
+  ]);
 
   useEffect(() => {
     if (phoneNumber.data) {
@@ -134,7 +128,7 @@ function AssignPhoneNumber({
         };
       });
     }
-  }, [simCardOnPartners.data, phoneNumber.data]);
+  }, [phoneNumber.data]);
 
   useClickOutside(searhBoxRef, () => {
     setTriggerShowBox(() => false);
@@ -167,7 +161,6 @@ function AssignPhoneNumber({
         partnerId: partnerId,
       });
       await phoneNumber.refetch();
-      await simCardOnPartners.refetch();
 
       setSimCardOmPartnerData((prev) => {
         if (!prev) return prev;
@@ -214,9 +207,11 @@ function AssignPhoneNumber({
   const handleDeleteSimCardOnPartner = async ({
     simCardId,
     simCardOnPartnerId,
+    partnerId,
   }: {
     simCardId: string;
     simCardOnPartnerId: string;
+    partnerId: string;
   }) => {
     try {
       setSimCardOmPartnerData((prev) => {
@@ -235,11 +230,11 @@ function AssignPhoneNumber({
         };
       });
 
-      await DeleteSimOnPartnerService({
+      await removeSimcardOnPartner.mutateAsync({
         simOnPartnerId: simCardOnPartnerId,
+        partnerId: partnerId,
       });
       await phoneNumber.refetch();
-      await simCardOnPartners.refetch();
       setSimCardOmPartnerData((prev) => {
         if (!prev) return prev;
         return {
@@ -283,7 +278,10 @@ function AssignPhoneNumber({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
+    <div
+      className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  
+    items-center justify-center gap-5 font-Poppins "
+    >
       <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
         <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
           List of {selectPartner.name}&apos;s phone number
@@ -316,123 +314,151 @@ function AssignPhoneNumber({
           Total Phone Number : {simCardOnPartners.data?.length}
         </footer>
       </ul>
-      <Form className="flex h-max w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
-        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
+      <Form
+        className="relative flex h-full w-max flex-col items-center justify-start
+       gap-2 overflow-auto rounded-xl bg-white p-7"
+      >
+        {phoneNumber.isFetching && (
+          <div className=" absolute right-2 top-2">Loading....</div>
+        )}
+
+        <section
+          className="flex h-full w-full flex-col items-center justify-start 
+        gap-5 overflow-auto rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5"
+        >
           <header className="flex w-full flex-col items-center justify-center gap-2 ">
             <h1 className="flex w-full justify-center font-bold md:text-xl">
               Assign Phone {selectPartner.name}
             </h1>
-            <SearchField
-              value={searchField}
-              onChange={(e) => {
-                setSearchField(() => e);
-              }}
-              className="relative flex w-80 flex-col"
+            <button
+              type="button"
+              onClick={() => setSelectBulkAssign((prev) => !prev)}
+              className="h-10 w-60 rounded-md border bg-gray-100 hover:bg-green-300"
             >
-              <Input
-                placeholder="Search Phone Number Or Note"
-                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+              {selectBulkAssign ? "Close" : "Bulk Assign"}
+            </button>
+            {selectBulkAssign ? (
+              <BulkAssign
+                partnerId={selectPartner.id}
+                phoneNumber={phoneNumber}
+                simCardOnPartners={simCardOnPartners}
               />
-              <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-            </SearchField>
-            <section className="flex w-full justify-center gap-2">
-              <div className="flex flex-col">
-                <label className="text-sm font-normal">
-                  Select Availability
-                </label>
-                <Dropdown
-                  value={selectAvailableSlot}
+            ) : (
+              <>
+                <SearchField
+                  value={searchField}
                   onChange={(e) => {
-                    setPage(1);
-                    setSelectAvailableSlot(() => e.value);
+                    setSearchField(() => e);
                   }}
-                  options={availableSlot}
-                  placeholder="Select Available Slot"
-                  className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                />
-              </div>
-              {user.role === "admin" && (
-                <div className="flex flex-col">
-                  <label className="text-sm font-normal">
-                    Select Device User
-                  </label>
-                  <Dropdown
-                    value={selectDeviceUser}
-                    onChange={(e) => {
-                      setPage(1);
-                      setSelectDeviceUser(() => e.value);
-                    }}
-                    showClear
-                    options={deviceUser.data}
-                    loading={deviceUser.isLoading}
-                    optionLabel="portNumber"
-                    placeholder="Select Available Slot"
-                    className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                  className="relative flex w-80 flex-col"
+                >
+                  <Input
+                    placeholder="Search Phone Number Or Note"
+                    className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
                   />
-                </div>
-              )}
-              <div className="flex flex-col">
-                <label className="text-sm font-normal">Select No Partner</label>
-                <Dropdown
-                  value={getNoPartner}
-                  onChange={(e) => {
-                    setPage(1);
-                    setGetNoPartner(() => e.value);
-                  }}
-                  showClear
-                  options={["no-partner", "partner", "default"]}
-                  placeholder="Filter Partner"
-                  className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                />
-              </div>
-            </section>
-            <div className="relative flex flex-col">
-              <label className="text-sm font-normal">Select Partner</label>
-              <div className="relative h-10 w-60">
-                <input
-                  type="text"
-                  value={searchPartner}
-                  onChange={(e) => {
-                    setTriggerShowBox(() => true);
-                    if (e.target.value === "") {
-                      setSelectPartner(null);
-                    }
-                    setSearchPartner(e.target.value);
-                  }}
-                  placeholder="Search Partner"
-                  className="h-full rounded-lg  px-2 outline-0 ring-2 ring-icon-color "
-                />
-                {searchPartner === selectPartnerSearch?.name && (
-                  <div className="absolute bottom-0 right-8 top-0 m-auto flex items-center justify-center">
-                    <FcApproval />
+                  <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+                </SearchField>
+                <section className="flex w-full justify-center gap-2">
+                  <div className="flex flex-col">
+                    <label className="text-sm font-normal">
+                      Select Availability
+                    </label>
+                    <Dropdown
+                      value={selectAvailableSlot}
+                      onChange={(e) => {
+                        setPage(1);
+                        setSelectAvailableSlot(() => e.value);
+                      }}
+                      options={availableSlot}
+                      placeholder="Select Available Slot"
+                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                    />
                   </div>
-                )}
-              </div>
-              {triggerShowBox && searchPartner !== "" && (
-                <ul className="absolute top-16 z-50 grid h-max max-h-36 w-full rounded-md border bg-white drop-shadow-md">
-                  {partners.data?.data.map((partner) => {
-                    return (
-                      <li key={partner.id}>
-                        <button
-                          type="button"
-                          className="w-full p-2 hover:bg-gray-200"
-                          onClick={() => {
-                            setSearchPartner(partner.name);
-                            setSelectPartner(partner);
-                            setTriggerShowBox(() => false);
-                          }}
-                        >
-                          {partner.name}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
+                  {user.role === "admin" && (
+                    <div className="flex flex-col">
+                      <label className="text-sm font-normal">
+                        Select Device User
+                      </label>
+                      <Dropdown
+                        value={selectDeviceUser}
+                        onChange={(e) => {
+                          setPage(1);
+                          setSelectDeviceUser(() => e.value);
+                        }}
+                        showClear
+                        options={deviceUser.data}
+                        loading={deviceUser.isLoading}
+                        optionLabel="portNumber"
+                        placeholder="Select Available Slot"
+                        className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-normal">
+                      Select No Partner
+                    </label>
+                    <Dropdown
+                      value={getNoPartner}
+                      onChange={(e) => {
+                        setPage(1);
+                        setGetNoPartner(() => e.value);
+                      }}
+                      showClear
+                      options={["no-partner", "partner", "default"]}
+                      placeholder="Filter Partner"
+                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                    />
+                  </div>
+                </section>
+                <div className="relative flex flex-col">
+                  <label className="text-sm font-normal">Select Partner</label>
+                  <div className="relative h-10 w-60">
+                    <input
+                      type="text"
+                      value={searchPartner}
+                      onChange={(e) => {
+                        setTriggerShowBox(() => true);
+                        if (e.target.value === "") {
+                          setSelectPartner(null);
+                        }
+                        setSearchPartner(e.target.value);
+                      }}
+                      placeholder="Search Partner"
+                      className="h-full rounded-lg  px-2 outline-0 ring-2 ring-icon-color "
+                    />
+                    {searchPartner === selectPartnerSearch?.name && (
+                      <div className="absolute bottom-0 right-8 top-0 m-auto flex items-center justify-center">
+                        <FcApproval />
+                      </div>
+                    )}
+                  </div>
+                  {triggerShowBox && searchPartner !== "" && (
+                    <ul className="absolute top-16 z-50 grid h-max max-h-36 w-full rounded-md border bg-white drop-shadow-md">
+                      {partners.data?.data.map((partner) => {
+                        return (
+                          <li key={partner.id}>
+                            <button
+                              type="button"
+                              className="w-full p-2 hover:bg-gray-200"
+                              onClick={() => {
+                                setSearchPartner(partner.name);
+                                setSelectPartner(partner);
+                                setTriggerShowBox(() => false);
+                              }}
+                            >
+                              {partner.name}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              </>
+            )}
           </header>
-
-          <div className=" h-60 w-max min-w-[30rem] max-w-3xl justify-center overflow-auto  ">
+          <div className=" w-max min-w-[30rem] max-w-3xl grow justify-center overflow-auto  ">
             <table className=" w-full table-auto ">
               <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
                 <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
@@ -506,6 +532,7 @@ function AssignPhoneNumber({
                                       simCardId: sim.id,
                                       simCardOnPartnerId:
                                         sim.simcardOnPartner?.id || "",
+                                      partnerId: sim.simcardOnPartner.partnerId,
                                     })
                                   }
                                   type="button"
@@ -532,6 +559,8 @@ function AssignPhoneNumber({
                                         simCardId: sim.id,
                                         simCardOnPartnerId:
                                           sim.simcardOnPartner?.id || "",
+                                        partnerId:
+                                          sim.simcardOnPartner.partnerId,
                                       });
                                     }
                                   }}
@@ -569,3 +598,111 @@ function AssignPhoneNumber({
 }
 
 export default AssignPhoneNumber;
+
+const options = ["assign", "unassign"] as const;
+type OptionKey = (typeof options)[number];
+type PropsBulkAssign = {
+  partnerId: string;
+  simCardOnPartners: UseQueryResult<
+    ResponseGetSimOnPartnersByPartnerIdService,
+    Error
+  >;
+  phoneNumber: UseQueryResult<ResponseGetSimCardByPageService, Error>;
+};
+function BulkAssign({
+  partnerId,
+  phoneNumber,
+  simCardOnPartners,
+}: PropsBulkAssign) {
+  const bulk = useBlukSimcardOnPartner();
+  const [selectDeviceUser, setSelectDeviceUser] = useState<DeviceUser | null>(
+    null,
+  );
+  const [selectOption, setSelectOption] = useState<OptionKey>("assign");
+  const [number, setNumber] = useState<Nullable<number | null>>(20);
+  const deviceUser = useQuery({
+    queryKey: ["deviceUser"],
+    queryFn: () => GetDeviceUsersService(),
+  });
+
+  const handleBulk = async () => {
+    try {
+      if (!selectDeviceUser) {
+        throw new Error("Please Select Device User");
+      }
+      const result = await bulk.mutateAsync({
+        deviceUserId: selectDeviceUser.id,
+        partnerId,
+        number: Number(number),
+        action: selectOption,
+      });
+      console.log(result);
+
+      await Promise.all([phoneNumber.refetch(), simCardOnPartners.refetch()]);
+      await Swal.fire({
+        title: "Success",
+        icon: "success",
+        text: `${result.length} of ${number} has performed successfully`,
+      });
+    } catch (error) {
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+  return (
+    <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col">
+          <label className="text-sm font-normal">Select Device User</label>
+          <Dropdown
+            value={selectDeviceUser}
+            onChange={(e) => {
+              setSelectDeviceUser(() => e.value);
+            }}
+            showClear
+            options={deviceUser.data}
+            loading={deviceUser.isLoading}
+            optionLabel="portNumber"
+            placeholder="Select Available Slot"
+            className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-normal">Select Type Of Perform</label>
+          <Dropdown
+            value={selectOption}
+            onChange={(e) => {
+              setSelectOption(() => e.value as OptionKey);
+            }}
+            options={[...options]}
+            optionLabel="Option"
+            placeholder="Select Available Slot"
+            className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-normal">Select Type Of Perform</label>
+          <InputNumber
+            className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+            value={number}
+            onValueChange={(e) => setNumber(e.value)}
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        disabled={bulk.isPending}
+        onClick={() => handleBulk()}
+        className="main-button h-10 w-40 rounded-md"
+      >
+        {bulk.isPending ? "Loading..." : "Perform"}
+      </button>
+    </div>
+  );
+}

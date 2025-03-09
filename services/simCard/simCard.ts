@@ -51,7 +51,7 @@ export type ResponseGetSimCardByPageService = Pagination<
   }
 >;
 
-type InputGetSimCardByPageService = {
+export type InputGetSimCardByPageService = {
   limit: number;
   page: number;
   searchField: string;

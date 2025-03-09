@@ -29,12 +29,43 @@ export async function GetTotalSimOnPartnersByPartnerIdService(
   }
 }
 
+export type ResponseBulkSimcardOnPartnerService = SimCardOnPartner[];
+
+export type RequestBulkSimcardOnPartnerService = {
+  partnerId: string;
+  deviceUserId: string;
+  number: number;
+  action: "assign" | "unassign";
+};
+export async function BulkSimcardOnPartnerService(
+  input: RequestBulkSimcardOnPartnerService,
+): Promise<ResponseBulkSimcardOnPartnerService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcardOnPartner = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-partner/bulk`,
+      data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcardOnPartner.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetSimOnPartnersByPartnerIdService = (SimCardOnPartner & {
   partner: Partner;
   simCard: SimCard;
 })[];
 
-type InputGetSimOnPartnersByPartnerIdService = {
+export type InputGetSimOnPartnersByPartnerIdService = {
   partnerId: string;
 };
 export async function GetSimOnPartnersByPartnerIdService(
@@ -112,7 +143,7 @@ export async function CreateSimOnPartnerService(
 }
 
 export type ResponseDeleteSimOnPartnerService = { message: string };
-type InputDeleteSimOnPartnerService = {
+export type InputDeleteSimOnPartnerService = {
   simOnPartnerId: string;
 };
 export async function DeleteSimOnPartnerService(

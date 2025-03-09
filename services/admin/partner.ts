@@ -36,7 +36,7 @@ export async function GetPartnerByMangegerService(): Promise<
   }
 }
 
-type InputGetPartnerByPageService = {
+export type InputGetPartnerByPageService = {
   limit: number;
   page: number;
   searchField?: string;

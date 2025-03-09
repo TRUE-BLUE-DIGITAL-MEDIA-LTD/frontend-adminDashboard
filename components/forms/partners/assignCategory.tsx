@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Category, ErrorMessages, Partner, SimCard } from "../../../models";
 import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { Form } from "react-aria-components";
 import Swal from "sweetalert2";
-import { Form, Input, SearchField, TextArea } from "react-aria-components";
+import { Category, ErrorMessages, Partner } from "../../../models";
 import { GetAllCategories } from "../../../services/admin/categories";
 import {
   CreateCategoryOnPartnerService,
@@ -18,7 +18,6 @@ function AssignCategory({
   selectPartner,
   setTriggerAssignCategory,
 }: AssignCategoryProps) {
-  const [searchField, setSearchField] = useState<string>("");
   const [categoryOnPartnerData, setCategoryOnPartnerData] = useState<
     (Category & {
       isLoading: boolean;
