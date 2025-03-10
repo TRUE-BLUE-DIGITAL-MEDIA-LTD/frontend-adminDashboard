@@ -39,6 +39,7 @@ export type RequestGetByPagePVAService = {
   userId?: string;
   startDate?: string;
   endDate?: string;
+  timezone: string;
 };
 export type ResponseGetByPagePVAService = Pagination<SmsPva & { user: User }>;
 export async function GetByPagePVAService(
@@ -68,6 +69,7 @@ export type ResponseCreateSMSPVAService = SmsPva;
 export type RequestCreateSMSPVAService = {
   country: string;
   service: string;
+  timezone: string;
 };
 export async function CreateSMSPVAService(
   input: RequestCreateSMSPVAService,
@@ -155,14 +157,23 @@ export type ResponseGetSMSPVAsService = {
     };
   })[];
   balance: number;
+  totalUsage: number;
+  limit: number;
 };
 
-export async function GetSMSPVAsService(): Promise<ResponseGetSMSPVAsService> {
+export type RequestGetSMSPvaService = {
+  timezone: string;
+};
+
+export async function GetSMSPVAsService(
+  request: RequestGetSMSPvaService,
+): Promise<ResponseGetSMSPVAsService> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const sms_pva = await axios({
       method: "GET",
+      params: request,
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pva`,
       headers: {
         Authorization: "Bearer " + access_token,

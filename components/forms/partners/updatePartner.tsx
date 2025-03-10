@@ -14,6 +14,7 @@ import {
   TextField,
 } from "react-aria-components";
 import { MenuItem } from "@mui/material";
+import { InputNumber } from "primereact/inputnumber";
 type UpdatePartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
   setTriggerUpdatePartner: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,11 +39,13 @@ function UpdatePartner({
     partnerName?: string;
     userId?: string;
     isAllowUsingSMSPVA?: boolean;
+    dailyLimitSMSPVA?: number;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
     userId: selectPartner.userId,
     isAllowUsingSMSPVA: selectPartner.isAllowUsingSMSPVA,
+    dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
   });
 
   const handleChangeupdatePartnerData = (
@@ -83,6 +86,7 @@ function UpdatePartner({
           affiliateId: updatePartnerData?.partnerId,
           name: updatePartnerData?.partnerName,
           isAllowUsingSMSPVA: updatePartnerData.isAllowUsingSMSPVA,
+          dailyLimitSMSPVA: updatePartnerData.dailyLimitSMSPVA,
         },
       });
       await partners.refetch();
@@ -110,13 +114,14 @@ function UpdatePartner({
     >
       <Form
         onSubmit={handleSummitUpdatePartner}
-        className="flex h-max w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7"
+        className=" grid min-h-max  grid-cols-2 items-center
+         justify-start gap-2 rounded-xl bg-white p-5 md:w-10/12 lg:w-7/12"
       >
-        <TextField className="flex flex-col gap-1" isRequired>
+        <TextField className="flex  flex-col gap-1" isRequired>
           <Label>Partner ID</Label>
           <Input
             value={updatePartnerData?.partnerId ?? ""}
-            className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
         duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
             name="partnerId"
@@ -128,7 +133,7 @@ function UpdatePartner({
         <TextField className="flex flex-col gap-1" isRequired>
           <Label>Partner Name</Label>
           <Input
-            className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
          duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
             value={updatePartnerData?.partnerName ?? ""}
@@ -143,7 +148,7 @@ function UpdatePartner({
           <TextFieldMUI
             required
             select
-            className="h-14 w-80"
+            className="h-14 w-full"
             value={updatePartnerData?.userId ?? ""}
           >
             {accounts.data?.accounts.map((account) => {
@@ -181,15 +186,39 @@ function UpdatePartner({
                 };
               });
             }}
-            className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
          duration-75 hover:border-black focus:drop-shadow-md"
           >
             <option value="allow">allow</option>
             <option value="not-allow">not allow</option>
           </select>
         </div>
+        <TextField className="flex flex-col gap-1" isRequired>
+          <Label>Daily Limit On Using PVA</Label>
+          <InputNumber
+            currency="USD"
+            locale="en-US"
+            mode="currency"
+            className=" h-14 rounded-sm border border-gray-400 bg-white outline-none transition
+         duration-75 hover:border-black focus:drop-shadow-md"
+            type="text"
+            value={updatePartnerData?.dailyLimitSMSPVA ?? 0}
+            onChange={(e) => {
+              setUpdatePartnerData((prev) => {
+                return {
+                  ...prev,
+                  dailyLimitSMSPVA: Number(e.value),
+                };
+              });
+            }}
+          />
+          <FieldError className="text-xs text-red-600" />
+        </TextField>
 
-        <Button type="submit" className="main-button mt-10 w-40 font-bold">
+        <Button
+          type="submit"
+          className="main-button col-span-2 mt-10 w-40 font-bold"
+        >
           Update
         </Button>
       </Form>

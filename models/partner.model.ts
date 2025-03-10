@@ -5,6 +5,7 @@ export type Partner = {
   affiliateId: string;
   userId: string;
   isAllowUsingSMSPVA: boolean;
+  dailyLimitSMSPVA: number;
   name: string;
 };
 

@@ -1,30 +1,32 @@
 import React from "react";
-import SelectCountry from "./SelectCountry";
-import SelectService from "./SelectService";
+import { RiErrorWarningLine } from "react-icons/ri";
+import Swal from "sweetalert2";
+import { ErrorMessages, User } from "../../models";
 import {
   useBlockSmsPva,
   useCancelSmsPva,
   useCreateSmsPva,
-  useGetAvailableNumberPVA,
   useGetSmsPva,
 } from "../../react-query";
-import { ErrorMessages, User } from "../../models";
-import Swal from "sweetalert2";
-import { RiErrorWarningLine } from "react-icons/ri";
 import ActiceNumber from "./ActiceNumber";
+import SelectCountry from "./SelectCountry";
+import SelectService from "./SelectService";
 import SmsPvaHistory from "./SmsPvaHistory";
 
 type Props = {
   user: User;
 };
 function SmsPvas({ user }: Props) {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const create = useCreateSmsPva();
   const cancel = useCancelSmsPva();
   const banNumner = useBlockSmsPva();
 
   const [selectCountry, setSelectCountry] = React.useState("uk");
   const [selectService, setSelectService] = React.useState("");
-  const activeNumbers = useGetSmsPva();
+  const activeNumbers = useGetSmsPva({
+    timezone: userTimezone,
+  });
   const handleSelectService = async (value: string) => {
     try {
       if (!selectCountry) {
@@ -47,6 +49,7 @@ function SmsPvas({ user }: Props) {
       const response = await create.mutateAsync({
         country: selectCountry,
         service: value,
+        timezone: userTimezone,
       });
       await activeNumbers.refetch();
       Swal.fire({
@@ -126,6 +129,15 @@ function SmsPvas({ user }: Props) {
             </div>
           </h1>
         )}
+        {user.role === "partner" && (
+          <h1 className="mt-5 flex items-center justify-center gap-2 text-3xl">
+            Usage:{" "}
+            <div className="rounded-sm bg-gradient-to-r from-gray-600 to-gray-800 px-2 text-white">
+              {activeNumbers.data?.totalUsage.toLocaleString()}$ /{" "}
+              {activeNumbers.data?.limit.toLocaleString()}$
+            </div>
+          </h1>
+        )}
       </header>
       <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
         <section className="flex w-10/12  flex-col items-start  justify-start gap-5 ">
@@ -174,8 +186,7 @@ function SmsPvas({ user }: Props) {
             }}
           />
         </section>
-
-        <SmsPvaHistory user={user} />
+        {user.role !== "partner" && <SmsPvaHistory user={user} />}
       </main>
     </>
   );

@@ -12,13 +12,15 @@ import {
   RequestCancelSMSPVAService,
   RequestCreateSMSPVAService,
   RequestGetByPagePVAService,
+  RequestGetServicePricePVAService,
+  RequestGetSMSPvaService,
   ResponseGetSMSPVAsService,
 } from "../services/sms-pva";
 
-export function useGetSmsPva() {
+export function useGetSmsPva(request: RequestGetSMSPvaService) {
   return useQuery({
     queryKey: ["sms-pva"],
-    queryFn: () => GetSMSPVAsService(),
+    queryFn: () => GetSMSPVAsService(request),
     refetchInterval: 5000,
   });
 }
@@ -44,17 +46,10 @@ export function useGetByPageSmsPva(request: RequestGetByPagePVAService) {
   });
 }
 
-export function useGetServicePrice(request: {
-  country: string;
-  service: string;
-}) {
+export function useGetServicePrice(request: RequestGetServicePricePVAService) {
   return useQuery({
     queryKey: ["price", { country: request.country, service: request.service }],
-    queryFn: () =>
-      GetServicePricePVAService({
-        service: request.service,
-        country: request.country,
-      }),
+    queryFn: () => GetServicePricePVAService(request),
   });
 }
 
@@ -79,6 +74,8 @@ export function useCancelSmsPva() {
           return {
             sims: oldData.sims.filter((item) => item.id !== variables.smsPvaId),
             balance: oldData.balance,
+            limit: oldData.limit,
+            totalUsage: oldData.totalUsage,
           };
         },
       );
@@ -98,6 +95,8 @@ export function useBlockSmsPva() {
           return {
             balance: oldData.balance,
             sims: oldData.sims.filter((item) => item.id !== variables.smsPvaId),
+            limit: oldData.limit,
+            totalUsage: oldData.totalUsage,
           };
         },
       );

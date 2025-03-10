@@ -100,6 +100,7 @@ function Index({ user }: { user: User }) {
           name: "See All",
           id: "all",
           isAllowUsingSMSPVA: true,
+          dailyLimitSMSPVA: 20,
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
         });
@@ -109,6 +110,7 @@ function Index({ user }: { user: User }) {
           affiliateId: "none",
           userId: "none",
           name: "No Partner",
+          dailyLimitSMSPVA: 20,
           id: "no-partner",
           isAllowUsingSMSPVA: true,
           responsibilityOnPartner: new Array(

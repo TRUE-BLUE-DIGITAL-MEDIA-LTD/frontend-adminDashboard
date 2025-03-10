@@ -15,6 +15,8 @@ type Props = {
   user: User;
 };
 function SmsPvaHistory({ user }: Props) {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const account = useQuery({
     queryKey: ["account", { page: 1, limit: 100 }],
     queryFn: () => GetAllAccountByPageService({ page: 1, limit: 100 }),
@@ -29,7 +31,8 @@ function SmsPvaHistory({ user }: Props) {
     endDate: dates?.[1]?.toISOString(),
     limit: 100,
     page,
-    userId: selectUser?.id,
+    userId: selectUser?.id ?? user.id,
+    timezone: userTimezone,
   });
   return (
     <div>
@@ -108,11 +111,16 @@ function SmsPvaHistory({ user }: Props) {
           />
         </label>
       </div>
-      <div className="mt-10">
-        Total Spending $
-        {smsPvas.data?.data.reduce((prev, current) => {
-          return prev + current.price;
-        }, 0)}
+      <div className="mt-10 flex w-full justify-between">
+        <div>
+          Total Spending $
+          {smsPvas.data?.data
+            .reduce((prev, current) => {
+              return prev + current.price;
+            }, 0)
+            .toFixed(3)}
+        </div>
+        <div>{smsPvas.isLoading && "loading..."}</div>
       </div>
       <div className="mt-1 w-full overflow-auto">
         <table className="w-max min-w-full border">
