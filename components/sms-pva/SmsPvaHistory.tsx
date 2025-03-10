@@ -24,14 +24,16 @@ function SmsPvaHistory({ user }: Props) {
   });
 
   const [page, setPage] = useState<number>(1);
-  const [selectUser, setSelectUser] = useState<User | undefined>();
+  const [selectUser, setSelectUser] = useState<User | undefined>(
+    user.role !== "admin" ? user : undefined,
+  );
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const smsPvas = useGetByPageSmsPva({
     startDate: dates?.[0]?.toISOString(),
     endDate: dates?.[1]?.toISOString(),
     limit: 100,
     page,
-    userId: selectUser?.id ?? user.id,
+    userId: selectUser?.id,
     timezone: userTimezone,
   });
   return (
