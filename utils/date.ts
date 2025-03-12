@@ -58,3 +58,21 @@ export const timeAgo = ({ pastTime }: { pastTime: string }): string => {
   if (minutes > 0) return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
   return `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
 };
+
+export function convertToUTC(date: Date | undefined | null) {
+  if (!date) {
+    return date;
+  }
+  const utcDate = new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds(),
+    ),
+  );
+
+  return utcDate;
+}

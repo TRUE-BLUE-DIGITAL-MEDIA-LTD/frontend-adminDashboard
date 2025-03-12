@@ -10,6 +10,7 @@ import { Nullable } from "primereact/ts-helpers";
 import moment from "moment";
 import { countries } from "../../data/country";
 import { services } from "../../data/services";
+import { convertToUTC } from "../../utils";
 
 type Props = {
   user: User;
@@ -29,8 +30,8 @@ function SmsPvaHistory({ user }: Props) {
   );
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const smsPvas = useGetByPageSmsPva({
-    startDate: dates?.[0]?.toISOString(),
-    endDate: dates?.[1]?.toISOString(),
+    startDate: convertToUTC(dates?.[0])?.toISOString(),
+    endDate: convertToUTC(dates?.[1])?.toISOString(),
     limit: 100,
     page,
     userId: selectUser?.id,
