@@ -63,16 +63,16 @@ function TbodyForEditor({
         }`}
       >
         {activePartnerDropdowns?.find(
-          (value) => value.key === partner?.[1].summary.columns[0].label,
+          (value) => value.key === partner?.[1].summary.columns[0].id,
         )?.active === true ||
         activePartnerDropdowns?.find(
-          (value) => value.key === partner?.[1].summary.columns[0].label,
+          (value) => value.key === partner?.[1].summary.columns[0].id,
         )?.active === false ? (
           <div
             onClick={() => {
               setActivePartnerDropdowns?.((prev) =>
                 prev?.map((value) =>
-                  value.key === partner?.[1].summary.columns[0].label
+                  value.key === partner?.[1].summary.columns[0].id
                     ? { ...value, active: !value.active }
                     : value,
                 ),
@@ -85,7 +85,7 @@ function TbodyForEditor({
             {item.columns[0].id}
           </div>
         ) : (
-          <div>{item.columns[1]?.id}</div>
+          <div>{item.columns[0].id}</div>
         )}
       </td>
       <td

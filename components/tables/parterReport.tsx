@@ -48,6 +48,7 @@ const columns = [
   { name: "Offer", code: "offer" },
   { name: "Country", code: "country" },
   { name: "Sub1", code: "sub1" },
+  { name: "Hour", code: "hour" },
 ];
 
 function ParterReport({ user }: { user: User }) {
@@ -58,10 +59,12 @@ function ParterReport({ user }: { user: User }) {
       name: string;
       code: column_type;
     };
-    child: {
-      name: string;
-      code: column_type;
-    };
+    child:
+      | {
+          name: string;
+          code: column_type;
+        }
+      | undefined;
   }>({
     parent: {
       name: "Partner",
@@ -107,9 +110,13 @@ function ParterReport({ user }: { user: User }) {
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
         columns: [
-          { column: selectColumns.parent?.code },
-          { column: selectColumns.child?.code },
-        ],
+          selectColumns.parent?.code
+            ? { column: selectColumns.parent?.code }
+            : undefined,
+          selectColumns?.child?.code
+            ? { column: selectColumns?.child?.code }
+            : undefined,
+        ].filter(Boolean),
       }).then((data) => {
         const group = data;
         setActivePartnerDropdowns(() => {
@@ -239,12 +246,25 @@ function ParterReport({ user }: { user: User }) {
             Parent
           </label>
           <Dropdown
+            showClear
             value={selectColumns.parent}
             onChange={(e) =>
               setSelectColumns((prev) => {
-                if (prev.child.code === e.value.code) {
+                if (e.value === undefined) {
+                  return {
+                    parent: undefined,
+                    child: prev.child,
+                  };
+                }
+                if (prev.child?.code === e.value.code) {
                   return {
                     ...prev,
+                  };
+                }
+                if (e.value.code === "hour") {
+                  return {
+                    parent: e.value,
+                    child: undefined,
                   };
                 }
                 return {
@@ -268,8 +288,15 @@ function ParterReport({ user }: { user: User }) {
           </label>
           <Dropdown
             value={selectColumns.child}
+            showClear
             onChange={(e) =>
               setSelectColumns((prev) => {
+                if (e.value === undefined) {
+                  return {
+                    parent: prev.parent,
+                    child: undefined,
+                  };
+                }
                 if (prev.parent.code === e.value.code) {
                   return {
                     ...prev,
@@ -281,7 +308,7 @@ function ParterReport({ user }: { user: User }) {
                 };
               })
             }
-            options={columns}
+            options={columns.filter((f) => f.code !== "hour")}
             optionLabel="name"
             placeholder="Select a Child"
             className="w-full"
@@ -391,8 +418,9 @@ function ParterReport({ user }: { user: User }) {
                   ?.sort((a, b) => {
                     if (querySort.sort === "up") {
                       if (querySort.title === "Network Affliate ID") {
-                        return a[1].summary.columns[0].id.localeCompare(
-                          b[1].summary.columns[0].id,
+                        return (
+                          Number(a[1].summary.columns[0].id) -
+                          Number(b[1].summary.columns[0].id)
                         );
                       } else if (querySort.title === "Affilate Name") {
                         return a[1].summary.columns[0].label.localeCompare(
@@ -623,9 +651,10 @@ function ParterReport({ user }: { user: User }) {
                             item={partner[1].summary as TableEntry}
                           />
                         )}
+
                         {activePartnerDropdowns?.find(
                           (value) =>
-                            value.key === partner[1].summary.columns[0].label,
+                            value.key === partner[1].summary.columns[0].id,
                         )?.active === true &&
                           partner[1].entries.map((item, index) => {
                             const oddChild = index % 2;

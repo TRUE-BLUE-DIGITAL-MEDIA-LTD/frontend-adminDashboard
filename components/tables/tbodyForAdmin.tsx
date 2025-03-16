@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
-import { TableEntry } from "../../services/everflow/partner";
-import {
-  DefinedQueryObserverResult,
-  UseQueryResult,
-} from "@tanstack/react-query";
-import { MdArrowDropDownCircle } from "react-icons/md";
+import { UseQueryResult } from "@tanstack/react-query";
+import React from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { TableEntry } from "../../services/everflow/partner";
 
 type TbodyForEditorProps = {
   odd: number;
@@ -65,16 +61,16 @@ function TbodyForAdmin({
         }`}
       >
         {activePartnerDropdowns?.find(
-          (value) => value.key === partner?.[1].summary.columns[0].label,
+          (value) => value.key === partner?.[1].summary.columns[0].id,
         )?.active === true ||
         activePartnerDropdowns?.find(
-          (value) => value.key === partner?.[1].summary.columns[0].label,
+          (value) => value.key === partner?.[1].summary.columns[0].id,
         )?.active === false ? (
           <div
             onClick={() => {
               setActivePartnerDropdowns?.((prev) =>
                 prev?.map((value) =>
-                  value.key === partner?.[1].summary.columns[0].label
+                  value.key === partner?.[1].summary.columns[0].id
                     ? { ...value, active: !value.active }
                     : value,
                 ),
@@ -87,7 +83,7 @@ function TbodyForAdmin({
             {item.columns[0].id}
           </div>
         ) : (
-          <div>{item.columns[1].id}</div>
+          <div>{item.columns[0].id}</div>
         )}
       </td>
       <td
@@ -95,7 +91,7 @@ function TbodyForAdmin({
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
-        {partner ? partner?.[0] : item.columns[1].label}
+        {partner ? item.columns[0].label : item.columns[1].label}
       </td>
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.total_click.toLocaleString()}</td>

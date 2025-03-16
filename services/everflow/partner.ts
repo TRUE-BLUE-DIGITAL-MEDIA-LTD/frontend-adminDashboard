@@ -5,9 +5,7 @@ import { parseCookies } from "nookies";
 type RequestGetParterPerfomacesByDate = {
   startDate: Date;
   endDate: Date;
-  columns: {
-    column: column_type;
-  }[];
+  columns: ({ column: column_type } | undefined)[]; // columns can be undefined or an array of objects with a column property of column_type or undefined
 };
 export type ResponseGetParterPerfomacesByDate = {
   table: TableEntry[];
