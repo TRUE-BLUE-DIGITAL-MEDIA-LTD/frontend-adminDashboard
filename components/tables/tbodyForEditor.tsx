@@ -93,7 +93,11 @@ function TbodyForEditor({
           odd === 0 ? "bg-[#F7F6FE]" : "bg-white"
         }`}
       >
-        {partner ? partner?.[0] : item.columns[1]?.label}
+        {partner
+          ? item.columns[0].label
+          : item.columns[1]
+            ? item.columns[1].label
+            : item.columns[0].label}
       </td>
 
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
