@@ -20,6 +20,7 @@ export interface LandingPage {
   categoryId: string | null;
   creatorId: string;
   domainId: string | null;
+  route: string | undefined | null;
 }
 
 export type Language =

@@ -17,6 +17,7 @@ export interface InputCreateLandingPageService {
   icon?: string | null;
   description: string;
   googleAnalyticsId?: string | null;
+  route?: string;
 }
 export async function CreateLandingPageService(
   input: InputCreateLandingPageService,
@@ -65,6 +66,7 @@ interface InputUpdateLandingPageService {
     googleAnalyticsId?: string;
     secondOffer?: string | null;
     backOffer?: string | null;
+    route?: string;
   };
 }
 export async function UpdateLandingPageService(

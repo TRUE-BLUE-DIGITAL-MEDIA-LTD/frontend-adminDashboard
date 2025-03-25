@@ -52,6 +52,7 @@ interface UpdateLandingPageData {
   secondOffer: string;
   backOffer: string;
   googleAnalyticsId: string | null;
+  route: string | undefined | null;
 }
 
 function Index({ user }: { user: User }) {
@@ -103,6 +104,7 @@ function Index({ user }: { user: User }) {
       googleAnalyticsId: "",
       secondOffer: "",
       backOffer: "",
+      route: "",
     },
   );
 
@@ -122,6 +124,7 @@ function Index({ user }: { user: User }) {
           googleAnalyticsId: landingPage?.data?.googleAnalyticsId as string,
           secondOffer: landingPage?.data?.secondOffer as string,
           backOffer: landingPage?.data?.backOffer as string,
+          route: landingPage.data.route,
         };
       });
       setIcon(() => landingPage?.data?.icon);
@@ -188,6 +191,7 @@ function Index({ user }: { user: User }) {
               landingPageData.backOffer === ""
                 ? null
                 : landingPageData.backOffer,
+            ...(landingPageData.route && { route: landingPageData.route }),
           },
         });
         setMessage(() => {
@@ -281,8 +285,9 @@ function Index({ user }: { user: User }) {
             >
               <button
                 onClick={() => {
-                  confirm("Show Editor?");
-                  setBlurEditor(() => false);
+                  if (confirm("Show Editor?")) {
+                    setBlurEditor(() => false);
+                  }
                 }}
                 className="main-button"
               >
@@ -294,7 +299,6 @@ function Index({ user }: { user: User }) {
           <EmailEditor
             ref={emailEditorRef}
             onReady={handleOnReadyEmailEditor}
-            projectId={222117}
             style={{ height: "40rem", width: "80%" }}
             options={{ displayMode: "web" }}
           />
@@ -337,6 +341,13 @@ function Index({ user }: { user: User }) {
                 );
               })}
             </TextField>
+            <TextField
+              onChange={handleChangeLandingPageData}
+              name="route"
+              label="add route example /profile/oxy"
+              variant="outlined"
+              value={landingPageData.route}
+            />
           </div>
         </div>
         <div className="flex w-full justify-start">

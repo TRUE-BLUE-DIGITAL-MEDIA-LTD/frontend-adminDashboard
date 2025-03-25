@@ -2,7 +2,13 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
 import { GetUser } from "../../services/admin/user";
-import { Language, Message, UnlayerMethods, User } from "../../models";
+import {
+  ErrorMessages,
+  Language,
+  Message,
+  UnlayerMethods,
+  User,
+} from "../../models";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { GetAllDomains } from "../../services/admin/domain";
@@ -20,6 +26,7 @@ import Image, { ImageLoaderProps } from "next/image";
 import { GetAllCategories } from "../../services/admin/categories";
 import { MdDomainVerification } from "react-icons/md";
 import { Editor, EditorRef, EmailEditorProps } from "react-email-editor";
+import Swal from "sweetalert2";
 const EmailEditor = dynamic(() => import("react-email-editor"), {
   ssr: false,
 });
@@ -35,6 +42,7 @@ interface CreateLandingPageData {
   categoryId?: string;
   googleAnalyticsId?: string | null;
   language: Language;
+  route?: string | undefined;
 }
 
 function Index({ user }: { user: User }) {
@@ -55,10 +63,6 @@ function Index({ user }: { user: User }) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<Message>({
-    status: "success",
-    message: "",
-  });
 
   const [open, setOpen] = useState(false);
   const [landingPageData, setLandingPageData] = useState<CreateLandingPageData>(
@@ -73,6 +77,7 @@ function Index({ user }: { user: User }) {
       categoryId: "",
       googleAnalyticsId: "",
       language: "en",
+      route: "",
     },
   );
 
@@ -117,6 +122,7 @@ function Index({ user }: { user: User }) {
           language: landingPageData.language,
           description: landingPageData.description,
           googleAnalyticsId: landingPageData?.googleAnalyticsId,
+          ...(landingPageData.route && { route: landingPageData.route }),
         };
         if (landingPageData.domainId) {
           createLandingPageData.domainId = landingPageData.domainId;
@@ -132,40 +138,26 @@ function Index({ user }: { user: User }) {
           icon: icon,
           ...createLandingPageData,
         });
-        setMessage(() => {
-          return {
-            status: "success",
-            message: "create successfully",
-          };
+        Swal.fire({
+          icon: "success",
+          title: "Create Success",
         });
         setOpen(() => true);
         router.push("/");
         setIsLoading(() => false);
-      } catch (err: any) {
-        if (err.message === "Unauthorized") {
-          location.reload();
-        }
-        console.log(err);
-        setOpen(() => true);
+      } catch (error) {
         setIsLoading(() => false);
-        setMessage(() => {
-          return {
-            status: "error",
-            message: err.message?.toString()
-              ? err.message?.toString()
-              : "something went worng",
-          };
+        let result = error as ErrorMessages;
+        Swal.fire({
+          title: result.error,
+          text: result.message.toString(),
+          footer: "Error Code :" + result.statusCode?.toString(),
+          icon: "error",
         });
       }
     });
   };
-  const handleClose = (event: React.SyntheticEvent | Event, reason: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
 
-    setOpen(false);
-  };
   //handle icon image update
   const handleFileInputChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -176,12 +168,6 @@ function Index({ user }: { user: User }) {
       const formFiles = new FormData();
       formFiles.append("file", file as File);
       const res = await UploadURLSingtureFavorIconService({ formFiles });
-      setMessage(() => {
-        return {
-          status: "success",
-          message: "Successfully Uploaded Image",
-        };
-      });
       setOpen(() => true);
       setIcon(() => res.originalURL);
       setIsLoadingUploadIcon(() => false);
@@ -192,11 +178,6 @@ function Index({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert variant="filled" severity={message?.status}>
-          {message?.message}
-        </Alert>
-      </Snackbar>
       {isLoadingEditor && <FullLoading />}
       <div className="w-full">
         <div className="mt-5 flex w-full justify-start bg-white">
@@ -245,6 +226,13 @@ function Index({ user }: { user: User }) {
                 );
               })}
             </TextField>
+            <TextField
+              onChange={handleChangeLandingPageData}
+              name="route"
+              label="add route example /profile/oxy"
+              variant="outlined"
+              value={landingPageData.route}
+            />
           </div>
         </div>
         <div className="flex w-full justify-start">
