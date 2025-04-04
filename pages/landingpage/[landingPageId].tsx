@@ -301,6 +301,7 @@ function Index({ user }: { user: User }) {
             onReady={handleOnReadyEmailEditor}
             style={{ height: "40rem", width: "80%" }}
             options={{ displayMode: "web" }}
+            projectId={270222}
           />
           <div className="mt-5 flex w-11/12 justify-end">
             <ImageLibaray />

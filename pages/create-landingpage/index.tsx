@@ -190,6 +190,7 @@ function Index({ user }: { user: User }) {
             ref={emailEditorRef}
             onReady={handleOnReadyEmailEditor}
             options={{ displayMode: "web" }}
+            projectId={270222}
           />
         </main>
         <div className="flex w-full justify-start">
