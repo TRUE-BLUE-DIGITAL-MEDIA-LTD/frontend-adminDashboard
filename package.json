@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 8080",
-    "build": "next build",
+    "build": "npm run convert:tsx && next build",
+    "convert:tsx": "tsc -p tsconfig.tool.json",
     "start": "next start -p 8080",
     "lint": "next lint"
   },
@@ -37,7 +38,7 @@
     "react-aria-components": "^1.1.1",
     "react-countdown": "^2.3.5",
     "react-dom": "^18",
-    "react-email-editor": "^1.7.9",
+    "react-email-editor": "^1.7.11",
     "react-icons": "^4.12.0",
     "react-intersection-observer": "^9.10.2",
     "react-spring": "^9.7.3",

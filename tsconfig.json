@@ -21,9 +21,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "data/languages.ts",
-    "data/tools.js",
-    "tailwind.config.ts"
+    "tailwind.config.ts",
+    "next.config.js"
   ],
   "exclude": ["node_modules", "../../servers/**/*"]
 }

@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
-const { hostname } = require("os");
-
 const nextConfig = {
   webpack(config, options) {
     config.plugins.push(
@@ -16,6 +14,8 @@ const nextConfig = {
       }),
     );
 
+    if (!options.isServer) {
+    }
     return config;
   },
   reactStrictMode: true,
