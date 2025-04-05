@@ -2,13 +2,14 @@ interface Window {
   formValue: formValue;
 }
 type formValue = {
+  mainLink: string;
   steps: {
     id: number;
     title: string;
+    type: string;
     options: { display: string; value: string; id: number }[];
   }[];
 };
-let currentValue;
 
 unlayer.registerPropertyEditor({
   name: "form",
@@ -22,6 +23,17 @@ unlayer.registerPropertyEditor({
       value: formValue,
       updateValue: (value: formValue) => void,
     ) {
+      const inputDisplay = node.getElementsByClassName(
+        `input_url`,
+      )[0] as HTMLInputElement;
+      inputDisplay.value = value.mainLink;
+      inputDisplay.onchange = (e) => {
+        const target = e.target as HTMLInputElement;
+        updateValue({
+          ...value,
+          mainLink: target.value,
+        });
+      };
       for (const step of value.steps) {
         const inputTitle = node.getElementsByClassName(
           `form_${step.id}_input_title`,
@@ -30,9 +42,26 @@ unlayer.registerPropertyEditor({
         inputTitle.onchange = (event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
+            mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
                 return { ...prev, title: target.value };
+              }
+              return prev;
+            }),
+          });
+        };
+        const inputType = node.getElementsByClassName(
+          `form_${step.id}_input_type`,
+        )[0] as HTMLInputElement;
+        inputType.value = step.type;
+        inputType.onchange = (event) => {
+          const target = event.target as HTMLInputElement;
+          updateValue({
+            mainLink: value.mainLink,
+            steps: value.steps.map((prev) => {
+              if (prev.id === step.id) {
+                return { ...prev, type: target.value };
               }
               return prev;
             }),
@@ -43,10 +72,12 @@ unlayer.registerPropertyEditor({
         )[0] as HTMLButtonElement;
         addMoreStep.onclick = function (event: Event) {
           updateValue({
+            mainLink: value.mainLink,
             steps: [
               ...value.steps,
               {
                 title: "",
+                type: "",
                 id: value.steps.length + 1,
                 options: [{ display: "", value: "", id: 1 }],
               },
@@ -64,6 +95,7 @@ unlayer.registerPropertyEditor({
               (prevStep) => prevStep.id !== step.id,
             );
             updateValue({
+              mainLink: value.mainLink,
               steps: updated.map((data, index) => {
                 return {
                   ...data,
@@ -83,6 +115,7 @@ unlayer.registerPropertyEditor({
               (s) => s.id !== step.id,
             );
             updateValue({
+              mainLink: value.mainLink,
               steps: [
                 ...noneUpdateDataLists,
                 {
@@ -110,6 +143,7 @@ unlayer.registerPropertyEditor({
                 (s) => s.id !== step.id,
               );
               updateValue({
+                mainLink: value.mainLink,
                 steps: [
                   ...noneUpdateDataLists,
                   {
@@ -132,6 +166,7 @@ unlayer.registerPropertyEditor({
             );
 
             updateValue({
+              mainLink: value.mainLink,
               steps: [
                 ...noneUpdateDataLists,
                 {
@@ -158,6 +193,7 @@ unlayer.registerPropertyEditor({
             );
 
             updateValue({
+              mainLink: value.mainLink,
               steps: [
                 ...noneUpdateDataLists,
                 {
@@ -237,23 +273,17 @@ function multipleForm(value: formValue) {
   div.style.width = "100%";
   div.style.flexDirection = "column";
   div.style.gap = "0.5rem";
-  const step1 = createformStep({
-    number: 1,
-    options: value.steps.find((step) => step.id === 1)?.options ?? [],
-  });
-  div.appendChild(step1);
+  const inputURL = createTextInput("URL", "input_url");
+  div.appendChild(inputURL);
 
-  if (value.steps.length > 1) {
-    value.steps
-      .filter((step) => step.id !== 1)
-      .forEach((step) => {
-        const createStep = createformStep({
-          number: step.id,
-          options:
-            value.steps.find((list) => list.id === step.id)?.options ?? [],
-        });
-        div.appendChild(createStep);
+  if (value.steps.length > 0) {
+    value.steps.forEach((step) => {
+      const createStep = createformStep({
+        number: step.id,
+        options: value.steps.find((list) => list.id === step.id)?.options ?? [],
       });
+      div.appendChild(createStep);
+    });
   }
 
   return div;
@@ -290,6 +320,8 @@ function createformStep(data: {
     `form_${data.number}_input_title`,
   );
   div.appendChild(inputTitle);
+  const inputType = createTextInput("Type", `form_${data.number}_input_type`);
+  div.appendChild(inputType);
   const groupButtons = document.createElement("div");
   groupButtons.style.display = "flex";
   groupButtons.style.gap = "0.5rem";
@@ -298,6 +330,7 @@ function createformStep(data: {
     width: "9rem",
     backgroundColor: "#05df72",
     textColor: "#000000",
+    fontSize: "1rem",
   });
   addMore.className = `add_more_step_${data.number}`;
 
@@ -306,6 +339,7 @@ function createformStep(data: {
     width: "7rem",
     backgroundColor: "#fb2c36",
     textColor: "#fff",
+    fontSize: "1rem",
   });
   remove.className = `remove_step_${data.number}`;
 
@@ -364,6 +398,7 @@ const createOptionButton = (
     width: "7rem",
     backgroundColor: "#05df72",
     textColor: "#000000",
+    fontSize: "1rem",
   });
   addOption.className = `${formId}_add_option_${id}`;
   const removeOption = createButton({
@@ -371,6 +406,7 @@ const createOptionButton = (
     width: "8rem",
     backgroundColor: "#fb2c36",
     textColor: "#000000",
+    fontSize: "1rem",
   });
   removeOption.className = `${formId}_remove_option_${id}`;
   if (id !== 1) {
@@ -433,19 +469,28 @@ const createButton = (input: {
   width: string;
   backgroundColor: string;
   textColor: string;
+  fontSize: string;
+  value?: { [key: string]: string };
 }) => {
   const button = document.createElement("button");
   button.textContent = input.text;
-  button.style.width = input.width;
+  button.style.minWidth = input.width;
+  button.style.width = "max-content";
   button.style.borderRadius = "0.375rem";
   button.style.backgroundColor = input.backgroundColor;
   button.style.paddingTop = "0.25rem";
+  button.style.paddingInline = "0.35rem";
   button.style.paddingBottom = "0.25rem";
+  button.style.fontSize = input.fontSize;
   button.style.color = input.textColor;
   button.style.cursor = "pointer";
   button.style.transition = "background-color 0.3s ease"; // Smooth transiti
   button.style.boxShadow =
     "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
+
+  if (input.value) {
+    button.setAttribute("value", JSON.stringify(input.value));
+  }
   return button;
 };
 
@@ -454,8 +499,11 @@ function displayForm(value: formValue) {
   const body = document.createElement("div");
   // Create the "Pick your age!" span
   const script = document.createElement("script");
-  script.src = "http://localhost:8080/unlayer-custom/script-multiple-form.js"; // Path to your JS file
+  script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
   script.type = "text/javascript";
+  script.className = "script_multiple_form";
+  script.setAttribute("value", JSON.stringify({ link: value.mainLink }));
+
   script.defer = true; // Optional: load after parsing HTML
   body.appendChild(script); // or document.head.appendChild(script);
 
@@ -473,16 +521,28 @@ function displayForm(value: formValue) {
     container.style.gap = "3px";
     container.className = `form_step`;
     container.id = `form_step_${step.id}`;
-    const titleSpan = document.createElement("span");
+    const titleSpan = document.createElement("div");
     titleSpan.textContent = step.title;
+    titleSpan.style.backgroundColor = "#fff";
+    titleSpan.style.padding = "0.25rem";
+    titleSpan.style.minWidth = "15rem";
+    titleSpan.style.textAlign = "center";
+    titleSpan.style.paddingInline = "0.45rem";
+    titleSpan.style.borderRadius = "0.375rem";
     container.appendChild(titleSpan);
-
+    const divider = document.createElement("div");
+    divider.style.minWidth = "15rem";
+    divider.style.height = "2px";
+    divider.style.backgroundColor = "#000";
+    container.appendChild(divider);
     for (const option of step.options) {
       const button = createButton({
         text: option.display,
         width: "15rem",
         backgroundColor: "#dc2626",
         textColor: "#fff",
+        value: { [step.type]: option.value },
+        fontSize: "1.5rem",
       });
       button.className = `form_${step.id}_button_${option.id}`;
 
@@ -504,17 +564,6 @@ unlayer.registerTool({
     default: {
       title: null,
     },
-    alignment: {
-      title: "Alignment",
-      position: 1,
-      options: {
-        textAlignment: {
-          label: "Text Alignment",
-          defaultValue: "center",
-          widget: "alignment",
-        },
-      },
-    },
     dropdown: {
       title: "Edit Form Info",
       position: 2,
@@ -522,10 +571,12 @@ unlayer.registerTool({
         form: {
           label: "Edit Form Info",
           defaultValue: {
+            mainLink: "",
             steps: [
               {
                 id: 1,
                 title: "",
+                type: "",
                 options: [{ display: "", value: "", id: 1 }],
               },
             ],
@@ -553,23 +604,3 @@ unlayer.registerTool({
     },
   },
 });
-
-// function customJavascript(values: MultipleFormValues) {
-//   for (const step of values.form.steps) {
-//     for (const option of step.options) {
-//       script += `
-//         document.addEventListener("DOMContentLoaded", function () {
-//           const form_${step.id}_button_${option.id} = document.getElementsByClassName("form_${step.id}_button_${option.id}")[0];
-//           if (form_${step.id}_button_${option.id}) {
-//             form_${step.id}_button_${option.id}.onclick = function(event) {
-//               console.log("Click: form ${step.id}, option ${option.id}");
-//               page = ${step.id + 1}
-//             };
-//           }
-//         });
-//       `;
-//     }
-//   }
-
-//   return script;
-// }
