@@ -1,0 +1,24 @@
+// tsconfig.tool.json
+{
+  "compilerOptions": {
+    "target": "es2015", // Or "es6", etc.
+    "module": "esnext", // Or "commonjs", etc.
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "public/unlayer-custom",
+    "declaration": false,
+    "noEmitOnError": true,
+    "downlevelIteration": true,
+    "isolatedModules": true,
+    "moduleDetection": "auto" // Add this line
+  },
+  "include": [
+    "public/unlayer-custom/multiple-form.ts",
+    "public/unlayer-custom/script-multiple-form.ts",
+    "unlayer.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

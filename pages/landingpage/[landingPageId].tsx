@@ -1,9 +1,16 @@
+import { Alert, MenuItem, Snackbar, TextField } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import React, { useEffect, useRef, useState } from "react";
-import { GetUser } from "../../services/admin/user";
-import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
+import { BiUpload } from "react-icons/bi";
+import Swal from "sweetalert2";
+import { languages } from "../../data/languages";
+import DashboardLayout from "../../layouts/dashboardLayout";
+import { Category, Language, Message, User } from "../../models";
 import {
   DomainWithLandingPage,
   GetAllDomains,
@@ -13,31 +20,16 @@ import {
   UpdateLandingPageService,
   UploadURLSingtureFavorIconService,
 } from "../../services/admin/landingPage";
-import Swal from "sweetalert2";
-import {
-  Category,
-  Domain,
-  Language,
-  Message,
-  UnlayerMethods,
-  User,
-} from "../../models";
-import DashboardLayout from "../../layouts/dashboardLayout";
-import { Alert, MenuItem, Skeleton, Snackbar, TextField } from "@mui/material";
-import FullLoading from "../../components/loadings/fullLoading";
-import { languages } from "../../data/languages";
-import { BiUpload } from "react-icons/bi";
-import Image from "next/image";
-import dynamic from "next/dynamic";
+import { GetUser } from "../../services/admin/user";
 // import EmailEditor from "react-email-editor";
-import { GetAllCategories } from "../../services/admin/categories";
-import { MdDomainVerification } from "react-icons/md";
-import { EditorRef, EmailEditorProps } from "react-email-editor";
 import { Dropdown } from "primereact/dropdown";
+import EmailEditor, { EditorRef, EmailEditorProps } from "react-email-editor";
+import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
-const EmailEditor = dynamic(() => import("react-email-editor"), {
-  ssr: false,
-});
+import { GetAllCategories } from "../../services/admin/categories";
+// const EmailEditor = dynamic(() => import("react-email-editor"), {
+//   ssr: false,
+// });
 
 interface UpdateLandingPageData {
   name: string;
@@ -83,7 +75,6 @@ function Index({ user }: { user: User }) {
   if (landingPage.error) {
     router.push("/404");
   }
-  const [isLoadingEditor, setIsLoadingEditor] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<Message>({
     status: "success",
@@ -109,7 +100,7 @@ function Index({ user }: { user: User }) {
   );
 
   useEffect(() => {
-    if (landingPage.isSuccess && isLoadingEditor === false) {
+    if (landingPage.isSuccess) {
       setLandingPageData(() => {
         return {
           name: landingPage.data.name,
@@ -131,15 +122,14 @@ function Index({ user }: { user: User }) {
       const json = JSON.parse(landingPage?.data?.json);
       emailEditorRef?.current?.editor?.loadDesign(json);
     }
-  }, [landingPage.isSuccess, isLoadingEditor]);
+  }, [landingPage.isSuccess]);
 
   const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
-    emailEditorRef.current = { editor: unlayer };
-    unlayer.exportHtml((data) => {
-      const { design, html } = data;
-    });
-    document.body.style.overflow = "auto";
-    setIsLoadingEditor(() => false);
+    // emailEditorRef.current = { editor: unlayer };
+    // unlayer.exportHtml((data) => {
+    //   const { design, html } = data;
+    // });
+    // document.body.style.overflow = "auto";
     // unlayer.loadDesign(json);
   };
 
@@ -155,7 +145,7 @@ function Index({ user }: { user: User }) {
     });
   };
 
-  const handleCrateLandingPage = async () => {
+  const handleUpdateLandingPage = async () => {
     setIsLoading(() => true);
     emailEditorRef.current?.editor?.exportHtml(async (data) => {
       try {
@@ -263,6 +253,7 @@ function Index({ user }: { user: User }) {
       console.log(err);
     }
   };
+
   return (
     <DashboardLayout user={user}>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -271,7 +262,6 @@ function Index({ user }: { user: User }) {
         </Alert>
       </Snackbar>
       <div className="w-full ">
-        {(landingPage.isLoading || isLoadingEditor) && <FullLoading />}
         <div className="mt-20 flex w-full justify-start bg-white">
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             <span className="text-icon-color">U</span>pdate Landing Page
@@ -297,14 +287,20 @@ function Index({ user }: { user: User }) {
           )}
 
           <EmailEditor
+            editorId="editor"
             ref={emailEditorRef}
             onReady={handleOnReadyEmailEditor}
             style={{ height: "40rem", width: "80%" }}
-            options={{ displayMode: "web" }}
+            options={{
+              displayMode: "web",
+              customJS: [
+                "https://oxyclick.com/unlayer-custom/multiple-form.js",
+              ],
+            }}
             projectId={270222}
           />
           <div className="mt-5 flex w-11/12 justify-end">
-            <ImageLibaray />
+            <ImageLibaray />{" "}
           </div>
         </main>
 
@@ -552,18 +548,12 @@ function Index({ user }: { user: User }) {
           </div>
         </div>
         <div className="flex w-full justify-center pb-10">
-          {isLoading || isLoadingEditor ? (
-            <div className="w-40 animate-pulse rounded-full bg-main-color py-2 text-center font-Poppins text-lg text-white">
-              loading ...
-            </div>
-          ) : (
-            <button
-              onClick={handleCrateLandingPage}
-              className="w-40 rounded-full bg-main-color py-2 font-Poppins text-lg text-white transition duration-150 hover:scale-105 active:bg-blue-700"
-            >
-              update
-            </button>
-          )}
+          <button
+            onClick={handleUpdateLandingPage}
+            className="w-40 rounded-full bg-main-color py-2 font-Poppins text-lg text-white transition duration-150 hover:scale-105 active:bg-blue-700"
+          >
+            update
+          </button>
         </div>
       </div>
     </DashboardLayout>
