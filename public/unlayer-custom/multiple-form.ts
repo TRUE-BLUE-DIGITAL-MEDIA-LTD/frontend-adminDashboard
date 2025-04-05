@@ -14,7 +14,7 @@ type formValue = {
 (unlayer.registerPropertyEditor as any)({
   name: "form",
   layout: "bottom",
-  Widget: unlayer.createWidget({
+  Widget: (unlayer.createWidget as any)({
     render(value: formValue) {
       return multipleForm(value).outerHTML;
     },
@@ -588,7 +588,7 @@ function displayForm(value: formValue) {
   } as MultipleFormOptions,
   values: {},
   renderer: {
-    Viewer: unlayer.createViewer({
+    Viewer: (unlayer.createViewer as any)({
       render(values: MultipleFormValues) {
         return displayForm(values.form).outerHTML;
       },
