@@ -22,7 +22,8 @@
     "**/*.ts",
     "**/*.tsx",
     "tailwind.config.ts",
-    "next.config.js"
+    "next.config.js",
+    "unlayer.d.ts"
   ],
   "exclude": ["node_modules", "../../servers/**/*"]
 }
