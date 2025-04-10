@@ -1,4 +1,4 @@
-export type SmsPva = {
+export type SmsPool = {
   id: string;
   createAt: string;
   updateAt: string;
@@ -9,4 +9,18 @@ export type SmsPva = {
   serviceCode: string;
   country: string;
   userId: string;
+};
+
+export type Country = {
+  ID: number;
+  name: string;
+  short_name: string;
+  cc: string;
+  region: string;
+};
+
+export type Service = {
+  ID: number;
+  name: string;
+  favourite: number;
 };
