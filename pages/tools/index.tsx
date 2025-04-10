@@ -23,6 +23,7 @@ import SmsReceive from "../../components/sms-online/sms";
 import SimCard from "../../components/simCard/simCard";
 import { OxyClickTools } from "../../data/menus";
 import SmsPvas from "../../components/sms-pva/SmsPvas";
+import SmsPool from "../../components/sms-pool/SmsPool";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -37,6 +38,7 @@ function Index({ user }: { user: User }) {
         {menu === "sms-online" && <SmsReceive />}
         {menu === "sms-etms" && <SimCard user={user} />}
         {menu === "sms-pva" && <SmsPvas user={user} />}
+        {menu === "sms-pool" && <SmsPool user={user} />}
       </div>
     </DashboardLayout>
   );

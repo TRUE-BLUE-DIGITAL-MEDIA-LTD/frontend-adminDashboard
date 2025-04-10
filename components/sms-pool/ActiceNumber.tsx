@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Countdown from "react-countdown";
 import { services } from "../../data/services";
-import { SmsPva } from "../../models";
+import { SMSPool, SmsPva } from "../../models";
+import { useGetCountrySMSPool } from "../../react-query/sms-pool";
 
 type Props = {
-  smsPva: SmsPva;
+  smsPool: SMSPool;
   sms?: {
     code?: string;
     fullText?: string;
@@ -13,25 +14,27 @@ type Props = {
   onCancel: (smsPvaId: string) => void;
   onBlock: (smsPvaId: string) => void;
 };
-function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
+function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
+  const countries = useGetCountrySMSPool();
+  const country = countries.data?.find((c) => c.name === smsPool.country);
   return (
     <div className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
       <div className="flex justify-between border-b border-gray-400 pb-2">
         <div className="flex items-center justify-start gap-2">
           <div className="relative h-5 w-7 overflow-hidden ">
             <Image
-              src={`/image/flags/1x1/${smsPva.country}.svg`}
+              src={`/image/flags/1x1/${country?.short_name}.svg`}
               alt="country flag"
               fill
               className="object-contain"
             />
           </div>
-          <h3 className="text-lg font-semibold">{smsPva.phoneNumber}</h3>
+          <h3 className="text-lg font-semibold">{smsPool.phoneNumber}</h3>
         </div>
         <div className="flex items-center justify-start gap-2">
           <h3 className="rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
             <Countdown
-              date={new Date(smsPva.expireAt)}
+              date={new Date(smsPool.expireAt)}
               intervalDelay={0}
               precision={3}
               onComplete={() => {}}
@@ -47,17 +50,17 @@ function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
 
           <div className="flex items-center justify-center gap-1">
             <button
-              onClick={() => onCancel(smsPva.id)}
+              onClick={() => onCancel(smsPool.id)}
               className="flex w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"
             >
               refund
             </button>
-            <button
-              onClick={() => onBlock(smsPva.id)}
+            {/* <button
+              onClick={() => onBlock(smsPool.id)}
               className="flex w-16 items-center justify-center rounded-sm bg-gray-300 p-1 px-3 text-gray-700"
             >
               Ban
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
@@ -65,7 +68,7 @@ function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
         <div className="relative h-5 w-7 overflow-hidden ">
           <Image
             src={
-              services.find((service) => service.code === smsPva.serviceCode)
+              services.find((service) => service.code === smsPool.serviceCode)
                 ?.icon as string
             }
             alt="Service Icon"
@@ -75,7 +78,7 @@ function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
         </div>
         <span>
           {
-            services.find((service) => service.code === smsPva.serviceCode)
+            services.find((service) => service.code === smsPool.serviceCode)
               ?.title as string
           }
         </span>

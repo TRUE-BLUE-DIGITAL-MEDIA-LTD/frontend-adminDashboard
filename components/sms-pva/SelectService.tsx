@@ -1,17 +1,9 @@
-import Image from "next/image";
-import React, { useEffect } from "react";
+import React from "react";
 import { Input, SearchField } from "react-aria-components";
-import { FaRegCircle } from "react-icons/fa6";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { services } from "../../data/services";
 
-import { ErrorMessages } from "../../models";
-import Swal from "sweetalert2";
-import {
-  useCreateSmsPva,
-  useGetAllPricePVA,
-  useGetAvailableNumberPVA,
-} from "../../react-query";
+import { useGetAvailableNumberPVA } from "../../react-query";
 import ServiceCard from "./ServiceCard";
 
 type SelectServiceProps = {

@@ -18,3 +18,4 @@ export * from "./actions.model";
 export * from "./customer.model";
 export * from "./announcement.model";
 export * from "./sms-pva.model";
+export * from "./sms-pool.model";
