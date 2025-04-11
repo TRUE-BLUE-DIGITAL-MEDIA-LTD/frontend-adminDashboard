@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Countdown from "react-countdown";
 import { services } from "../../data/services";
-import { SMSPool, SmsPva } from "../../models";
+import { SMSPool } from "../../models";
 import { useGetCountrySMSPool } from "../../react-query/sms-pool";
 
 type Props = {

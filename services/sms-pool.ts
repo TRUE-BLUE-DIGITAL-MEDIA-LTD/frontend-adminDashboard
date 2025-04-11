@@ -56,7 +56,6 @@ export async function GetStockNumberService(
 ): Promise<ResponseGetStockNumberService> {
   try {
     const cookies = parseCookies();
-
     const access_token = cookies.access_token;
     const smsPool = await axios({
       method: "POST",
