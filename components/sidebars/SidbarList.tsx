@@ -39,7 +39,11 @@ function SidbarList({ isSelect, list, user }: Props) {
           className={`ml-5 flex flex-col gap-2 overflow-auto bg-gray-600 transition duration-100  lg:max-h-52 2xl:max-h-60 ${trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
         >
           {list.childs.map((child, index) => {
-            if (user.role === "partner" && (index === 4 || index === 5)) {
+            if (
+              user.role === "partner" &&
+              (child.title === "Payslip Generator" ||
+                child.title === "Website Builder")
+            ) {
               return null;
             }
 
@@ -53,7 +57,9 @@ function SidbarList({ isSelect, list, user }: Props) {
                 <Link
                   className="flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
                   href={
-                    child.url ? child.url : list.url + `?option=${child.params}`
+                    child.title === "Website Builder"
+                      ? child.url
+                      : list.url + `?option=${child.params}`
                   }
                 >
                   {child.title}

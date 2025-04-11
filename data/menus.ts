@@ -38,10 +38,8 @@ export const menusSidebar = [
   },
 ] as const;
 
-// get type from array
 export type MenuSidebar = (typeof menusSidebar)[number] & {
-  childs?: { title: string; params?: string; url?: string }[];
+  childs?: (typeof menusSidebar)[4]["childs"];
 };
-
 export type OxyClickTools =
   (typeof menusSidebar)[4]["childs"][number]["params"];
