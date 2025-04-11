@@ -182,6 +182,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
               <th className="px-5">Assign Domain</th>
               <th className="px-5">Assign Category</th>
               <th className="px-5">SMS PVA Permission</th>
+              <th className="px-5">SMS POOL Permission</th>
 
               {user.role === "admin" && <th className="px-5">Options</th>}
             </tr>
@@ -276,6 +277,19 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         <div className="flex w-full items-center justify-center">
                           {partner.isAllowUsingSMSPVA ? (
+                            <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
+                              Allow
+                            </div>
+                          ) : (
+                            <div className="w-full rounded-md bg-red-200 px-2 text-center text-red-500">
+                              Deny
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                        <div className="flex w-full items-center justify-center">
+                          {partner.isAllowUsingSMSPOOL ? (
                             <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
                               Allow
                             </div>

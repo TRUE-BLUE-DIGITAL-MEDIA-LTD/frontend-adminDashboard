@@ -119,6 +119,7 @@ type InputUpdatePartnerService = {
     affiliateId?: string;
     name?: string;
     isAllowUsingSMSPVA?: boolean;
+    isAllowUsingSMSPOOL?: boolean;
     dailyLimitSMSPVA?: number;
   };
 };
