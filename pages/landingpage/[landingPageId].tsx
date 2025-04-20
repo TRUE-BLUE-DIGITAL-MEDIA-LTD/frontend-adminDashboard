@@ -27,9 +27,6 @@ import EmailEditor, { EditorRef, EmailEditorProps } from "react-email-editor";
 import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import { GetAllCategories } from "../../services/admin/categories";
-// const EmailEditor = dynamic(() => import("react-email-editor"), {
-//   ssr: false,
-// });
 
 interface UpdateLandingPageData {
   name: string;
@@ -100,7 +97,7 @@ function Index({ user }: { user: User }) {
   );
 
   useEffect(() => {
-    if (landingPage.isSuccess) {
+    if (landingPage.data) {
       setLandingPageData(() => {
         return {
           name: landingPage.data.name,
@@ -122,7 +119,7 @@ function Index({ user }: { user: User }) {
       const json = JSON.parse(landingPage?.data?.json);
       emailEditorRef?.current?.editor?.loadDesign(json);
     }
-  }, [landingPage.isSuccess]);
+  }, [landingPage.data, blurEditor, emailEditorRef.current]);
 
   const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
     // emailEditorRef.current = { editor: unlayer };
@@ -267,10 +264,10 @@ function Index({ user }: { user: User }) {
             <span className="text-icon-color">U</span>pdate Landing Page
           </div>
         </div>
-        <main className="relative my-10  font-Poppins 2xl:w-full">
-          {blurEditor && (
+        <main className="relative my-10   font-Poppins 2xl:w-full">
+          {blurEditor ? (
             <div
-              className="absolute z-10  flex h-full w-full items-center 
+              className="z-10  flex h-full min-h-[40rem] w-full  items-center
             justify-center bg-black text-xl font-semibold text-black "
             >
               <button
@@ -284,21 +281,25 @@ function Index({ user }: { user: User }) {
                 SHOW
               </button>
             </div>
+          ) : (
+            <EmailEditor
+              editorId="editor"
+              ref={emailEditorRef}
+              onReady={handleOnReadyEmailEditor}
+              style={{ height: "40rem", width: "80%" }}
+              options={{
+                displayMode: "web",
+                customJS: [
+                  window.location.hostname === "localhost" ||
+                  window.location.href.includes("localhost")
+                    ? "http://localhost:8080/unlayer-custom/multiple-form.js"
+                    : "https://oxyclick.com/unlayer-custom/multiple-form.js",
+                ],
+              }}
+              projectId={270222}
+            />
           )}
 
-          <EmailEditor
-            editorId="editor"
-            ref={emailEditorRef}
-            onReady={handleOnReadyEmailEditor}
-            style={{ height: "40rem", width: "80%" }}
-            options={{
-              displayMode: "web",
-              customJS: [
-                "https://oxyclick.com/unlayer-custom/multiple-form.js",
-              ],
-            }}
-            projectId={270222}
-          />
           <div className="mt-5 flex w-11/12 justify-end">
             <ImageLibaray />{" "}
           </div>

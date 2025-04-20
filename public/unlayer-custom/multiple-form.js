@@ -42,6 +42,77 @@ unlayer.registerPropertyEditor({
                         }),
                     });
                 };
+                const displayImage = node.getElementsByClassName(`${step.id}_previewImage`)[0];
+                const inputImage = node.getElementsByClassName(`${step.id}_imageInput`)[0];
+                const inputURL = node.getElementsByClassName(`${step.id}_imageUrlInput`)[0];
+                const toggleCheckbox = node.getElementsByClassName(`${step.id}_toggleCheckbox`)[0];
+                const rangeSlider = node.getElementsByClassName(`${step.id}_rangeSlider`)[0];
+                if (step.picture.url) {
+                    inputURL.value = step.picture.url;
+                }
+                inputURL.onchange = (event) => {
+                    const target = event.target;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: target.value }) });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
+                inputImage.onchange = (event) => {
+                    const target = event.target;
+                    const file = target.files ? target.files[0] : null;
+                    if (file) {
+                        const url = URL.createObjectURL(file);
+                        updateValue({
+                            mainLink: value.mainLink,
+                            steps: value.steps.map((prev) => {
+                                if (prev.id === step.id) {
+                                    return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: url }) });
+                                }
+                                return prev;
+                            }),
+                        });
+                        displayImage.src = url;
+                        displayImage.style.display = "block";
+                    }
+                    else {
+                        displayImage.src = "#";
+                        displayImage.style.display = "none";
+                    }
+                };
+                toggleCheckbox.checked = step.picture.width_auto;
+                toggleCheckbox.onchange = (e) => {
+                    const target = e.target;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { width_auto: target.checked }) });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
+                rangeSlider.value = step.picture.width;
+                rangeSlider.textContent = `${rangeSlider.value}%`;
+                rangeSlider.disabled = step.picture.width_auto;
+                rangeSlider.onchange = (e) => {
+                    const target = e.target;
+                    target.textContent = `${target.value}%`;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { width: target.value }) });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
                 const addMoreStep = node.getElementsByClassName(`add_more_step_${step.id}`)[0];
                 addMoreStep.onclick = function (event) {
                     updateValue({
@@ -51,6 +122,11 @@ unlayer.registerPropertyEditor({
                             {
                                 title: "",
                                 type: "",
+                                picture: {
+                                    url: null,
+                                    width_auto: true,
+                                    width: "",
+                                },
                                 id: value.steps.length + 1,
                                 options: [{ display: "", value: "", id: 1 }],
                             },
@@ -183,6 +259,8 @@ function createformStep(data) {
     div.appendChild(inputTitle);
     const inputType = createTextInput("Type", `form_${data.number}_input_type`);
     div.appendChild(inputType);
+    const inputImage = createImageBlock(data.number.toString());
+    div.appendChild(inputImage);
     const groupButtons = document.createElement("div");
     groupButtons.style.display = "flex";
     groupButtons.style.gap = "0.5rem";
@@ -219,6 +297,197 @@ function createformStep(data) {
     });
     div.appendChild(body);
     return div; // Return the DOM element
+}
+function createImageBlock(id) {
+    const container = document.createElement("div");
+    // --- Inject Minimal Necessary CSS ---
+    // Styles that are hard/impossible to set purely with element.style
+    const minimalCSS = `
+      /* Basic Body Styling (can be done inline, but cleaner here) */
+      body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          background-color: #f8f9fa;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding-top: 50px;
+          min-height: 100vh;
+          margin: 0;
+      }
+
+      /* Toggle Switch Appearance & Behavior */
+      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+      .toggle-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+      .toggle-switch input:checked + .slider { background-color: #343a40; }
+      .toggle-switch input:checked + .slider:before { transform: translateX(20px); }
+
+      /* Range Slider Thumb/Track Styling */
+      .range-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; cursor: pointer; }
+      .range-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; margin-top: -5px; }
+      .range-slider::-moz-range-thumb { width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; border: none; }
+
+      /* Basic Hover Effects (simpler than JS listeners for this demo) */
+       .btn-primary:hover { background-color: #23272b !important; border-color: #1d2124 !important; }
+       .btn-secondary:hover { background-color: #f8f9fa !important; border-color: #adb5bd !important; }
+       .input-field:focus { outline: none; border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
+
+       /* Dropdown Arrow for Secondary Button */
+       .btn-secondary .arrow { margin-left: 8px; font-size: 10px; color: #6c757d; }
+
+  `;
+    const styleElement = document.createElement("style");
+    styleElement.textContent = minimalCSS;
+    document.head.appendChild(styleElement);
+    // --- Apply Styles to Container ---
+    container.style.backgroundColor = "#ffffff";
+    container.style.borderRadius = "8px";
+    // --- 1. Create Button Row ---
+    const buttonRow = document.createElement("div");
+    // Apply styles directly
+    buttonRow.style.display = "flex";
+    buttonRow.style.marginBottom = "20px";
+    buttonRow.style.gap = "10px";
+    // Upload Button
+    const uploadLabel = document.createElement("label");
+    uploadLabel.textContent = "Upload Image";
+    uploadLabel.className = "btn-primary"; // Use class for hover (defined in injected CSS)
+    // Apply styles directly
+    uploadLabel.style.flex = "1";
+    uploadLabel.style.padding = "10px 15px";
+    uploadLabel.style.border = "1px solid #343a40";
+    uploadLabel.style.borderRadius = "6px";
+    uploadLabel.style.fontSize = "14px";
+    uploadLabel.style.fontWeight = "500";
+    uploadLabel.style.cursor = "pointer";
+    uploadLabel.style.transition =
+        "background-color 0.2s ease, border-color 0.2s ease";
+    uploadLabel.style.backgroundColor = "#343a40";
+    uploadLabel.style.color = "#ffffff";
+    const inputElement = document.createElement("input");
+    inputElement.type = "file";
+    inputElement.className = `${id}_imageInput`;
+    inputElement.accept = "image/*";
+    inputElement.style.display = "none";
+    uploadLabel.appendChild(inputElement);
+    // Create the image element for preview
+    const imageElement = document.createElement("img");
+    imageElement.className = `${id}_previewImage`;
+    imageElement.src = "#";
+    imageElement.alt = "Preview";
+    imageElement.style.display = "none";
+    imageElement.style.width = "200px"; // or whatever size you want
+    // Add an event listener to the input element
+    // Create a container div (optional, but good practice)
+    // More Images Button
+    // Add text and arrow span (since ::after isn't possible with element.style)
+    buttonRow.appendChild(uploadLabel);
+    container.appendChild(buttonRow);
+    // --- 3. Create Image URL Input ---
+    const imageUrlGroup = document.createElement("div");
+    // Apply styles directly
+    imageUrlGroup.style.marginBottom = "20px";
+    const imageUrlLabelRow = document.createElement("div");
+    // Apply styles directly
+    imageUrlLabelRow.style.display = "flex";
+    imageUrlLabelRow.style.justifyContent = "space-between";
+    imageUrlLabelRow.style.alignItems = "baseline";
+    imageUrlLabelRow.style.marginBottom = "8px";
+    imageUrlLabelRow.style.fontSize = "14px";
+    const imageUrlLabel = document.createElement("span");
+    imageUrlLabel.textContent = "Image URL";
+    // Apply styles directly
+    imageUrlLabel.style.color = "#495057";
+    imageUrlLabel.style.fontWeight = "500";
+    const imageUrlHint = document.createElement("span");
+    imageUrlHint.textContent = "1600 × 400"; // Example dimensions
+    // Apply styles directly
+    imageUrlHint.style.color = "#6c757d";
+    imageUrlHint.style.fontSize = "12px";
+    imageUrlLabelRow.appendChild(imageUrlLabel);
+    imageUrlLabelRow.appendChild(imageUrlHint);
+    const imageUrlInput = document.createElement("input");
+    imageUrlInput.type = "text";
+    imageUrlInput.placeholder = "Enter image URL";
+    imageUrlInput.className = `${id}_imageUrlInput`;
+    // Apply styles directly
+    imageUrlInput.style.width = "100%";
+    imageUrlInput.style.padding = "8px 12px";
+    imageUrlInput.style.border = "1px solid #ced4da";
+    imageUrlInput.style.borderRadius = "6px";
+    imageUrlInput.style.fontSize = "14px";
+    imageUrlInput.style.boxSizing = "border-box";
+    imageUrlInput.style.color = "#495057";
+    // Focus style handled by injected CSS
+    imageUrlGroup.appendChild(imageUrlLabelRow);
+    imageUrlGroup.appendChild(imageUrlInput);
+    container.appendChild(imageUrlGroup);
+    container.appendChild(imageElement);
+    // --- 4. Create Width Control ---
+    const widthControl = document.createElement("div");
+    // Apply styles directly
+    widthControl.style.marginTop = "20px";
+    widthControl.style.marginBottom = "20px";
+    container.appendChild(widthControl);
+    const widthLabelToggleRow = document.createElement("div");
+    // Apply styles directly
+    widthLabelToggleRow.style.display = "flex";
+    widthLabelToggleRow.style.justifyContent = "space-between";
+    widthLabelToggleRow.style.alignItems = "center";
+    widthLabelToggleRow.style.marginBottom = "15px";
+    const widthLabel = document.createElement("span");
+    widthLabel.textContent = "Width";
+    // Apply styles directly
+    widthLabel.style.color = "#495057";
+    widthLabel.style.fontWeight = "500";
+    widthLabel.style.fontSize = "14px";
+    // Toggle Switch Container
+    const toggleContainer = document.createElement("div");
+    // Apply styles directly
+    toggleContainer.style.display = "flex";
+    toggleContainer.style.alignItems = "center";
+    toggleContainer.style.gap = "8px";
+    const toggleText = document.createElement("span");
+    toggleText.textContent = "Auto On";
+    // Apply styles directly
+    toggleText.style.color = "#6c757d";
+    toggleText.style.fontSize = "12px";
+    // Toggle Switch uses classes defined in injected CSS for appearance
+    const toggleSwitchLabel = document.createElement("label");
+    toggleSwitchLabel.className = "toggle-switch"; // Use class for structure/style
+    // Apply styles directly (positioning)
+    toggleSwitchLabel.style.position = "relative";
+    toggleSwitchLabel.style.display = "inline-block";
+    toggleSwitchLabel.style.width = "40px";
+    toggleSwitchLabel.style.height = "20px";
+    const toggleCheckbox = document.createElement("input");
+    toggleCheckbox.type = "checkbox";
+    toggleCheckbox.checked = true; // Initial state
+    toggleCheckbox.className = `${id}_toggleCheckbox`;
+    const sliderSpan = document.createElement("span");
+    sliderSpan.className = "slider"; // Use class for appearance/animation
+    toggleSwitchLabel.appendChild(toggleCheckbox);
+    toggleSwitchLabel.appendChild(sliderSpan);
+    toggleContainer.appendChild(toggleText);
+    toggleContainer.appendChild(toggleSwitchLabel);
+    widthLabelToggleRow.appendChild(widthLabel);
+    widthLabelToggleRow.appendChild(toggleContainer);
+    container.appendChild(widthLabelToggleRow);
+    // Range Slider
+    const rangeSlider = document.createElement("input");
+    rangeSlider.type = "range";
+    rangeSlider.min = "0";
+    rangeSlider.max = "100";
+    rangeSlider.classList.add("range-slider", `${id}_rangeSlider`);
+    const rangeValueDisplay = document.createElement("div");
+    // Apply styles directly
+    rangeValueDisplay.style.textAlign = "right";
+    rangeValueDisplay.style.fontSize = "12px";
+    rangeValueDisplay.style.color = "#6c757d";
+    rangeValueDisplay.style.marginTop = "5px";
+    container.appendChild(rangeSlider);
+    container.appendChild(rangeValueDisplay);
+    return container;
 }
 const createOptionButton = (formId, id, display, value) => {
     const option = document.createElement("div");
@@ -313,6 +582,7 @@ const createButton = (input) => {
 };
 function displayForm(value) {
     // Create the main div container
+    console.log(value);
     const body = document.createElement("div");
     // Create the "Pick your age!" span
     const script = document.createElement("script");
@@ -346,6 +616,15 @@ function displayForm(value) {
         titleSpan.style.paddingInline = "0.45rem";
         titleSpan.style.borderRadius = "0.375rem";
         container.appendChild(titleSpan);
+        const imageElement = document.createElement("img");
+        if (step.picture && step.picture.url) {
+            imageElement.className = "previewImage";
+            imageElement.src = step.picture.url;
+            imageElement.alt = "Preview";
+            imageElement.style.width =
+                step.picture.width_auto === true ? "100%" : `${step.picture.width}%`; // or whatever size you want
+            container.appendChild(imageElement);
+        }
         const divider = document.createElement("div");
         divider.style.minWidth = "15rem";
         divider.style.height = "2px";
@@ -386,9 +665,14 @@ unlayer.registerTool({
                         mainLink: "",
                         steps: [
                             {
-                                id: 1,
                                 title: "",
                                 type: "",
+                                picture: {
+                                    url: null,
+                                    width_auto: true,
+                                    width: "",
+                                },
+                                id: 1,
                                 options: [{ display: "", value: "", id: 1 }],
                             },
                         ],

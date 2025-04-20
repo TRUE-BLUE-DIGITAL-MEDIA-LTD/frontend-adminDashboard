@@ -15,10 +15,6 @@
     "isolatedModules": true,
     "moduleDetection": "auto" // Add this line
   },
-  "include": [
-    "public/unlayer-custom/multiple-form.ts",
-    "public/unlayer-custom/script-multiple-form.ts",
-    "unlayer.d.ts"
-  ],
+  "include": ["public/unlayer-custom/", "unlayer.d.ts"],
   "exclude": ["node_modules"]
 }
