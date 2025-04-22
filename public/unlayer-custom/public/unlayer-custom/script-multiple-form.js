@@ -33,15 +33,12 @@ for (let i = 1; i <= multipleforms.length; i++) {
         if (child.tagName === "BUTTON") {
             const button = child;
             console.log(`Button ${j + 1}:`, button.textContent);
-            const value = JSON.parse(button.getAttribute("value"));
             button.onclick = (event) => {
                 const currentForm = document.getElementById(`form_step_${i}`);
                 const nextPage = document.getElementById(`form_step_${i + 1}`);
-                if (value.url && value.url !== "") {
-                    window.open(value.url, "_blank");
-                }
+                const value = button.getAttribute("value");
                 if (value) {
-                    multipleFormData.push(value);
+                    multipleFormData.push(JSON.parse(value));
                 }
                 if (i === multipleforms.length) {
                     const object = convertToObject(multipleFormData);

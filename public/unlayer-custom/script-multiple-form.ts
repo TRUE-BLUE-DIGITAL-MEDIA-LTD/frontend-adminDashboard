@@ -8,6 +8,7 @@ let multipleFormData: FormDataItem[] = [];
 const script = document.getElementsByClassName(
   "script_multiple_form",
 )[0] as HTMLScriptElement;
+
 const mainLink = JSON.parse(script.getAttribute("value") as string) as {
   link: string;
 };
@@ -46,13 +47,20 @@ for (let i = 1; i <= multipleforms.length; i++) {
     if (child.tagName === "BUTTON") {
       const button = child as HTMLButtonElement;
       console.log(`Button ${j + 1}:`, button.textContent);
+
+      const value = JSON.parse(button.getAttribute("value") as string) as {
+        [key: string]: string;
+        url: string;
+      };
+
       button.onclick = (event) => {
         const currentForm = document.getElementById(`form_step_${i}`);
         const nextPage = document.getElementById(`form_step_${i + 1}`);
-        const value = button.getAttribute("value");
-
+        if (value.url && value.url !== "") {
+          window.open(value.url, "_blank");
+        }
         if (value) {
-          multipleFormData.push(JSON.parse(value));
+          multipleFormData.push(value);
         }
         if (i === multipleforms.length) {
           const object = convertToObject(multipleFormData);

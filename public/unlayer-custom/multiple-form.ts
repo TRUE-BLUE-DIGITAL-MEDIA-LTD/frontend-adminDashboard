@@ -1,6 +1,34 @@
+/// <reference path="../../unlayer.d.ts" />
+
+type HTMLInputTypeAttribute =
+  | "button"
+  | "checkbox"
+  | "color"
+  | "date"
+  | "datetime-local"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week"
+  | (string & {});
+
 interface Window {
   formValue: formValue;
 }
+
 type formValue = {
   mainLink: string;
   steps: {
@@ -12,7 +40,12 @@ type formValue = {
       width_auto: boolean;
       width: string;
     };
-    options: { display: string; value: string; id: number }[];
+    options: {
+      display: string;
+      value: string;
+      id: number;
+      url: string;
+    }[];
   }[];
 };
 type SingleStepType = formValue["steps"][number];
@@ -29,11 +62,16 @@ unlayer.registerPropertyEditor({
       value: formValue,
       updateValue: (value: formValue) => void,
     ) {
-      const inputDisplay = node.getElementsByClassName(
+      const form = node.getElementsByClassName("form")[0] as HTMLFormElement;
+      const mainInputURL = node.getElementsByClassName(
         `input_url`,
       )[0] as HTMLInputElement;
-      inputDisplay.value = value.mainLink;
-      inputDisplay.onchange = (e) => {
+      mainInputURL.value = value.mainLink;
+      mainInputURL.required = true;
+      mainInputURL.onblur = (e) => {
+        form.reportValidity();
+      };
+      mainInputURL.onchange = (e) => {
         const target = e.target as HTMLInputElement;
         updateValue({
           ...value,
@@ -45,6 +83,10 @@ unlayer.registerPropertyEditor({
           `form_${step.id}_input_title`,
         )[0] as HTMLInputElement;
         inputTitle.value = step.title;
+        inputTitle.required = true;
+        inputTitle.onblur = (e) => {
+          form.reportValidity();
+        };
         inputTitle.onchange = (event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
@@ -61,6 +103,10 @@ unlayer.registerPropertyEditor({
           `form_${step.id}_input_type`,
         )[0] as HTMLInputElement;
         inputType.value = step.type;
+        inputType.required = true;
+        inputType.onblur = (e) => {
+          form.reportValidity();
+        };
         inputType.onchange = (event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
@@ -93,6 +139,9 @@ unlayer.registerPropertyEditor({
           inputURL.value = step.picture.url;
         }
 
+        inputURL.onblur = (e) => {
+          form.reportValidity();
+        };
         inputURL.onchange = (event: Event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
@@ -112,13 +161,23 @@ unlayer.registerPropertyEditor({
           });
         };
 
-        inputImage.onchange = (event: Event) => {
+        inputImage.onchange = async (event: Event) => {
           const target = event.target as HTMLInputElement;
           const file: File | null = target.files ? target.files[0] : null;
 
           if (file) {
             const url = URL.createObjectURL(file);
-
+            const signURL = await GetSignURLService({
+              fileName: file.name,
+              fileType: file.type,
+              category: "other-library",
+            });
+            await UploadSignURLService({
+              file: file,
+              signURL: signURL.signURL,
+              contentType: file.type,
+            });
+            console.log(signURL);
             updateValue({
               mainLink: value.mainLink,
               steps: value.steps.map((prev) => {
@@ -127,14 +186,14 @@ unlayer.registerPropertyEditor({
                     ...prev,
                     picture: {
                       ...prev.picture,
-                      url: url,
+                      url: signURL.originalURL,
                     },
                   };
                 }
                 return prev;
               }),
             });
-            displayImage.src = url;
+            displayImage.src = signURL.originalURL;
             displayImage.style.display = "block";
           } else {
             displayImage.src = "#";
@@ -201,7 +260,7 @@ unlayer.registerPropertyEditor({
                   width: "",
                 },
                 id: value.steps.length + 1,
-                options: [{ display: "", value: "", id: 1 }],
+                options: [{ display: "", value: "", id: 1, url: "" }],
               },
             ],
           });
@@ -233,24 +292,26 @@ unlayer.registerPropertyEditor({
             `form_${step.id}_add_option_${option.id}`,
           )[0] as HTMLButtonElement;
           addOption.onclick = function (event: Event) {
-            const noneUpdateDataLists = value.steps.filter(
-              (s) => s.id !== step.id,
-            );
             updateValue({
               mainLink: value.mainLink,
               steps: [
-                ...noneUpdateDataLists,
-                {
-                  ...step,
-                  options: [
-                    ...step.options,
-                    {
-                      id: step.options.length + 1,
-                      display: "",
-                      value: "",
-                    },
-                  ],
-                },
+                ...value.steps.map((s) => {
+                  if (s.id === step.id) {
+                    return {
+                      ...s,
+                      options: [
+                        ...step.options,
+                        {
+                          id: step.options.length + 1,
+                          display: "",
+                          value: "",
+                          url: "",
+                        },
+                      ],
+                    };
+                  }
+                  return s;
+                }),
               ],
             });
           };
@@ -281,25 +342,61 @@ unlayer.registerPropertyEditor({
             `form_${step.id}_input_display_${option.id}`,
           )[0] as HTMLInputElement;
           inputDisplay.value = option.display;
+          inputDisplay.required = true;
+          inputDisplay.onblur = (e) => {
+            form.reportValidity();
+          };
           inputDisplay.onchange = (e) => {
             const target = e.target as HTMLInputElement;
-            const noneUpdateDataLists = value.steps.filter(
-              (s) => s.id !== step.id,
-            );
 
             updateValue({
               mainLink: value.mainLink,
               steps: [
-                ...noneUpdateDataLists,
-                {
-                  ...step,
-                  options: step.options.map((old) => {
-                    if (old.id === option.id) {
-                      return { ...old, display: target.value };
-                    }
-                    return old;
-                  }),
-                },
+                ...value.steps.map((s) => {
+                  if (s.id === step.id) {
+                    return {
+                      ...s,
+                      options: step.options.map((old) => {
+                        if (old.id === option.id) {
+                          return { ...old, display: target.value };
+                        }
+                        return old;
+                      }),
+                    };
+                  }
+                  return s;
+                }),
+              ],
+            });
+          };
+
+          const optionInputURL = node.getElementsByClassName(
+            `form_${step.id}_input_url_${option.id}`,
+          )[0] as HTMLInputElement;
+
+          optionInputURL.value = option.url;
+          optionInputURL.onblur = (event) => {
+            form.reportValidity();
+          };
+          optionInputURL.onchange = (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            updateValue({
+              mainLink: value.mainLink,
+              steps: [
+                ...value.steps.map((s) => {
+                  if (s.id === step.id) {
+                    return {
+                      ...s,
+                      options: step.options.map((old) => {
+                        if (old.id === option.id) {
+                          return { ...old, url: target.value };
+                        }
+                        return old;
+                      }),
+                    };
+                  }
+                  return s;
+                }),
               ],
             });
           };
@@ -308,25 +405,30 @@ unlayer.registerPropertyEditor({
             `form_${step.id}_input_value_${option.id}`,
           )[0] as HTMLInputElement;
           inputValue.value = option.value;
+          inputValue.required = true;
+          inputValue.onblur = (e) => {
+            form.reportValidity();
+          };
           inputValue.onchange = (e) => {
             const target = e.target as HTMLInputElement;
-            const noneUpdateDataLists = value.steps.filter(
-              (s) => s.id !== step.id,
-            );
 
             updateValue({
               mainLink: value.mainLink,
               steps: [
-                ...noneUpdateDataLists,
-                {
-                  ...step,
-                  options: step.options.map((old) => {
-                    if (old.id === option.id) {
-                      return { ...old, value: target.value };
-                    }
-                    return old;
-                  }),
-                },
+                ...value.steps.map((s) => {
+                  if (s.id === step.id) {
+                    return {
+                      ...s,
+                      options: step.options.map((old) => {
+                        if (old.id === option.id) {
+                          return { ...old, value: target.value };
+                        }
+                        return old;
+                      }),
+                    };
+                  }
+                  return s;
+                }),
               ],
             });
           };
@@ -390,13 +492,14 @@ type MultipleFormValues = {
 };
 
 function multipleForm(value: formValue) {
-  const div = document.createElement("div");
-  div.style.display = "flex";
-  div.style.width = "100%";
-  div.style.flexDirection = "column";
-  div.style.gap = "0.5rem";
-  const inputURL = createTextInput("URL", "input_url");
-  div.appendChild(inputURL);
+  const form = document.createElement("form");
+  form.style.display = "flex";
+  form.style.width = "100%";
+  form.style.flexDirection = "column";
+  form.style.gap = "0.5rem";
+  form.className = "form";
+  const inputURL = createTextInput("URL", "input_url", "url");
+  form.appendChild(inputURL);
 
   if (value.steps.length > 0) {
     value.steps.forEach((step) => {
@@ -404,11 +507,11 @@ function multipleForm(value: formValue) {
         number: step.id,
         options: value.steps.find((list) => list.id === step.id)?.options ?? [],
       });
-      div.appendChild(createStep);
+      form.appendChild(createStep);
     });
   }
 
-  return div;
+  return form;
 }
 
 //  DOM Manipulation with TypeScript
@@ -440,10 +543,15 @@ function createformStep(data: {
   const inputTitle = createTextInput(
     "Title",
     `form_${data.number}_input_title`,
+    "text",
   );
 
   div.appendChild(inputTitle);
-  const inputType = createTextInput("Type", `form_${data.number}_input_type`);
+  const inputType = createTextInput(
+    "Type",
+    `form_${data.number}_input_type`,
+    "text",
+  );
   div.appendChild(inputType);
 
   const inputImage = createImageBlock(data.number.toString());
@@ -485,12 +593,7 @@ function createformStep(data: {
   body.style.gap = "0.5rem";
 
   data.options.forEach((option) => {
-    const createOption = createOptionButton(
-      `form_${data.number}`,
-      option.id,
-      option.display,
-      option.value,
-    );
+    const createOption = createOptionButton(`form_${data.number}`, option.id);
 
     body.appendChild(createOption);
   });
@@ -724,12 +827,7 @@ function createImageBlock(id: string) {
   return container;
 }
 
-const createOptionButton = (
-  formId: string,
-  id: number,
-  display: string,
-  value: string,
-) => {
+const createOptionButton = (formId: string, id: number) => {
   const option = document.createElement("div");
   option.style.padding = "0.5rem";
   option.style.border = "0.5px solid";
@@ -770,17 +868,28 @@ const createOptionButton = (
   const inputDisplay = createTextInput(
     "Display Text",
     `${formId}_input_display_${id}`,
+    "text",
   );
 
-  const inputValue = createTextInput("Value", `${formId}_input_value_${id}`);
+  const inputValue = createTextInput(
+    "Value",
+    `${formId}_input_value_${id}`,
+    "text",
+  );
+  const inputUrl = createTextInput("URL", `${formId}_input_url_${id}`, "url");
 
   option.appendChild(inputDisplay);
   option.appendChild(inputValue);
+  option.appendChild(inputUrl);
 
   return option;
 };
 
-const createTextInput = (labelText: string, id: string): HTMLDivElement => {
+const createTextInput = (
+  labelText: string,
+  id: string,
+  type: HTMLInputTypeAttribute,
+): HTMLDivElement => {
   // Create the main container div
   const container = document.createElement("div");
 
@@ -792,7 +901,7 @@ const createTextInput = (labelText: string, id: string): HTMLDivElement => {
 
   // Create the input element
   const input = document.createElement("input");
-  input.type = "text";
+  input.type = type;
   input.className = id;
   container.appendChild(input);
 
@@ -848,11 +957,12 @@ const createButton = (input: {
 
 function displayForm(value: formValue) {
   // Create the main div container
-  console.log(value);
   const body = document.createElement("div");
   // Create the "Pick your age!" span
   const script = document.createElement("script");
-  script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+  // script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+  script.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+
   script.type = "text/javascript";
   script.className = "script_multiple_form";
   script.setAttribute("value", JSON.stringify({ link: value.mainLink }));
@@ -904,7 +1014,10 @@ function displayForm(value: formValue) {
         width: "15rem",
         backgroundColor: "#dc2626",
         textColor: "#fff",
-        value: { [step.type]: option.value },
+        value: {
+          [step.type]: option.value,
+          ...(option.url !== "" && { url: option.url }),
+        },
         fontSize: "1.5rem",
       });
       button.className = `form_${step.id}_button_${option.id}`;
@@ -945,7 +1058,7 @@ unlayer.registerTool({
                   width: "",
                 },
                 id: 1,
-                options: [{ display: "", value: "", id: 1 }],
+                options: [{ display: "", value: "", id: 1, url: "" }],
               } as SingleStepType,
             ],
           },
@@ -972,3 +1085,88 @@ unlayer.registerTool({
     },
   },
 });
+
+type CategoryFile =
+  | "image-library"
+  | "favicon-library"
+  | "video-library"
+  | "document-library"
+  | "audio-library"
+  | "other-library";
+
+type RequestGetSignURLService = {
+  fileName: string;
+  fileType: string;
+  category: CategoryFile;
+};
+
+function parseCookies(): { [key: string]: string } {
+  const cookies: { [key: string]: string } = {};
+  if (typeof document === "undefined") {
+    return {};
+  }
+  document.cookie.split(";").forEach((cookie) => {
+    const [key, ...value] = cookie.trim().split("=");
+    cookies[key] = value.join("=");
+  });
+  return cookies;
+}
+
+async function GetSignURLService(input: RequestGetSignURLService): Promise<{
+  signURL: string;
+  originalURL: string;
+  contentType: string;
+  fileName: string;
+}> {
+  try {
+    console.log(window);
+    const url = new URL(
+      `http://localhost:3000/v1/cloud-storage/get-signURL/public`,
+    );
+    url.search = new URLSearchParams(input).toString();
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(errorData);
+      throw errorData;
+    }
+
+    const signURLData = await response.json();
+    return signURLData;
+  } catch (error: any) {
+    console.error(error);
+    throw error;
+  }
+}
+
+type RequestUploadSignURLService = {
+  contentType: string;
+  file: File;
+  signURL: string;
+};
+async function UploadSignURLService(
+  input: RequestUploadSignURLService,
+): Promise<{
+  message: "success" | "error";
+}> {
+  try {
+    await fetch(input.signURL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": `${input.contentType}`,
+      },
+      body: input.file,
+    });
+    return { message: "success" };
+  } catch (error: any) {
+    console.error(error.response.data);
+    throw "error";
+  }
+}
