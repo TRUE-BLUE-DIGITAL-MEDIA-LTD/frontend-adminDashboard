@@ -26,6 +26,7 @@ function convertToObject(filters: FormDataItem[]): FormDataItem {
 
   return query;
 }
+
 function buildQueryString(params: FormDataItem) {
   const queryString = Object.entries(params)
     .map(([key, value]) => {

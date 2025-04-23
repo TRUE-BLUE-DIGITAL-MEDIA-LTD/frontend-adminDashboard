@@ -150,6 +150,34 @@ unlayer.registerPropertyEditor({
                         }),
                     });
                 };
+                const button_color = node.getElementsByClassName(`${step.id}_color_button`)[0];
+                button_color.value = step.button_color;
+                button_color.onchange = (e) => {
+                    const target = e.target;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { button_color: target.value });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
+                const text_color = node.getElementsByClassName(`${step.id}_color_text`)[0];
+                text_color.value = step.text_color;
+                text_color.onchange = (e) => {
+                    const target = e.target;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { text_color: target.value });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
                 const addMoreStep = node.getElementsByClassName(`add_more_step_${step.id}`)[0];
                 addMoreStep.onclick = function (event) {
                     updateValue({
@@ -164,6 +192,8 @@ unlayer.registerPropertyEditor({
                                     width_auto: true,
                                     width: "",
                                 },
+                                button_color: "#dc2626",
+                                text_color: "#fff",
                                 id: value.steps.length + 1,
                                 options: [{ display: "", value: "", id: 1, url: "" }],
                             },
@@ -341,6 +371,10 @@ function createformStep(data) {
     div.appendChild(inputType);
     const inputImage = createImageBlock(data.number.toString());
     div.appendChild(inputImage);
+    const buttonColor = createTextInput("Color Buttons", `${data.number}_color_button`, "color");
+    div.appendChild(buttonColor);
+    const textColor = createTextInput("Color Text", `${data.number}_color_text`, "color");
+    div.appendChild(textColor);
     const groupButtons = document.createElement("div");
     groupButtons.style.display = "flex";
     groupButtons.style.gap = "0.5rem";
@@ -634,11 +668,15 @@ const createTextInput = (labelText, id, type) => {
     container.style.gap = "0.2rem"; // Adjust spacing as needed
     container.style.marginBottom = "1rem"; // Add some margin below the input group
     label.style.marginRight = "0.5rem";
-    input.style.flexGrow = "1"; // Allow input to take up available space
-    input.style.padding = "0.5rem";
-    input.style.width = "100%";
-    input.style.border = "1px solid #ccc";
-    input.style.borderRadius = "0.25rem";
+    if (type === "color") {
+    }
+    else {
+        input.style.flexGrow = "1"; // Allow input to take up available space
+        input.style.padding = "0.5rem";
+        input.style.width = "100%";
+        input.style.border = "1px solid #ccc";
+        input.style.borderRadius = "0.25rem";
+    }
     return container;
 };
 const createButton = (input) => {
@@ -716,8 +754,8 @@ function displayForm(value) {
             const button = createButton({
                 text: option.display,
                 width: "15rem",
-                backgroundColor: "#dc2626",
-                textColor: "#fff",
+                backgroundColor: step.button_color,
+                textColor: step.text_color,
                 value: Object.assign({ [step.type]: option.value }, (option.url !== "" && { url: option.url })),
                 fontSize: "1.5rem",
             });
@@ -754,6 +792,8 @@ unlayer.registerTool({
                                     width_auto: true,
                                     width: "",
                                 },
+                                button_color: "#dc2626",
+                                text_color: "#fff",
                                 id: 1,
                                 options: [{ display: "", value: "", id: 1, url: "" }],
                             },
