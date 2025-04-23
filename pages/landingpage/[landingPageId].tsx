@@ -116,18 +116,14 @@ function Index({ user }: { user: User }) {
         };
       });
       setIcon(() => landingPage?.data?.icon);
+    }
+  }, [landingPage.data]);
+
+  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
+    if (landingPage.data) {
       const json = JSON.parse(landingPage?.data?.json);
       emailEditorRef?.current?.editor?.loadDesign(json);
     }
-  }, [landingPage.data, blurEditor, emailEditorRef.current]);
-
-  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
-    // emailEditorRef.current = { editor: unlayer };
-    // unlayer.exportHtml((data) => {
-    //   const { design, html } = data;
-    // });
-    // document.body.style.overflow = "auto";
-    // unlayer.loadDesign(json);
   };
 
   const handleChangeLandingPageData = (

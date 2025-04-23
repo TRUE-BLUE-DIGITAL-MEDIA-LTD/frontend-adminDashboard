@@ -65,6 +65,7 @@ unlayer.registerPropertyEditor({
                         }),
                     });
                 };
+                const loadingImage = node.getElementsByClassName(`${step.id}_loading_image`)[0];
                 const displayImage = node.getElementsByClassName(`${step.id}_previewImage`)[0];
                 const inputImage = node.getElementsByClassName(`${step.id}_imageInput`)[0];
                 const inputURL = node.getElementsByClassName(`${step.id}_imageUrlInput`)[0];
@@ -92,29 +93,36 @@ unlayer.registerPropertyEditor({
                     const target = event.target;
                     const file = target.files ? target.files[0] : null;
                     if (file) {
-                        const url = URL.createObjectURL(file);
-                        const signURL = yield GetSignURLService({
-                            fileName: file.name,
-                            fileType: file.type,
-                            category: "other-library",
-                        });
-                        yield UploadSignURLService({
-                            file: file,
-                            signURL: signURL.signURL,
-                            contentType: file.type,
-                        });
-                        console.log(signURL);
-                        updateValue({
-                            mainLink: value.mainLink,
-                            steps: value.steps.map((prev) => {
-                                if (prev.id === step.id) {
-                                    return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: signURL.originalURL }) });
-                                }
-                                return prev;
-                            }),
-                        });
-                        displayImage.src = signURL.originalURL;
-                        displayImage.style.display = "block";
+                        try {
+                            loadingImage.textContent = "...Loading";
+                            const signURL = yield GetSignURLService({
+                                fileName: file.name,
+                                fileType: file.type,
+                                category: "other-library",
+                            });
+                            yield UploadSignURLService({
+                                file: file,
+                                signURL: signURL.signURL,
+                                contentType: file.type,
+                            });
+                            loadingImage.textContent = "";
+                            updateValue({
+                                mainLink: value.mainLink,
+                                steps: value.steps.map((prev) => {
+                                    if (prev.id === step.id) {
+                                        return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: signURL.originalURL }) });
+                                    }
+                                    return prev;
+                                }),
+                            });
+                            displayImage.src = signURL.originalURL;
+                            displayImage.style.display = "block";
+                            console.log(signURL);
+                        }
+                        catch (error) {
+                            loadingImage.textContent = "";
+                            alert("Upload File Error");
+                        }
                     }
                     else {
                         displayImage.src = "#";
@@ -191,6 +199,7 @@ unlayer.registerPropertyEditor({
                                     url: null,
                                     width_auto: true,
                                     width: "",
+                                    loading: "",
                                 },
                                 button_color: "#dc2626",
                                 text_color: "#fff",
@@ -496,6 +505,10 @@ function createImageBlock(id) {
     // More Images Button
     // Add text and arrow span (since ::after isn't possible with element.style)
     buttonRow.appendChild(uploadLabel);
+    const loadingIndicator = document.createElement("span");
+    loadingIndicator.className = `${id}_loading_image`;
+    loadingIndicator.textContent = "";
+    container.appendChild(loadingIndicator);
     container.appendChild(buttonRow);
     // --- 3. Create Image URL Input ---
     const imageUrlGroup = document.createElement("div");

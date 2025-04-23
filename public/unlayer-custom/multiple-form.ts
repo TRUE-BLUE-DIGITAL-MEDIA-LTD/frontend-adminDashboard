@@ -39,6 +39,7 @@ type formValue = {
       url: string | null;
       width_auto: boolean;
       width: string;
+      loading: string;
     };
     button_color: string;
     text_color: string;
@@ -121,6 +122,9 @@ unlayer.registerPropertyEditor({
             }),
           });
         };
+        const loadingImage = node.getElementsByClassName(
+          `${step.id}_loading_image`,
+        )[0] as HTMLSpanElement;
         const displayImage = node.getElementsByClassName(
           `${step.id}_previewImage`,
         )[0] as HTMLImageElement;
@@ -168,35 +172,41 @@ unlayer.registerPropertyEditor({
           const file: File | null = target.files ? target.files[0] : null;
 
           if (file) {
-            const url = URL.createObjectURL(file);
-            const signURL = await GetSignURLService({
-              fileName: file.name,
-              fileType: file.type,
-              category: "other-library",
-            });
-            await UploadSignURLService({
-              file: file,
-              signURL: signURL.signURL,
-              contentType: file.type,
-            });
-            console.log(signURL);
-            updateValue({
-              mainLink: value.mainLink,
-              steps: value.steps.map((prev) => {
-                if (prev.id === step.id) {
-                  return {
-                    ...prev,
-                    picture: {
-                      ...prev.picture,
-                      url: signURL.originalURL,
-                    },
-                  };
-                }
-                return prev;
-              }),
-            });
-            displayImage.src = signURL.originalURL;
-            displayImage.style.display = "block";
+            try {
+              loadingImage.textContent = "...Loading";
+              const signURL = await GetSignURLService({
+                fileName: file.name,
+                fileType: file.type,
+                category: "other-library",
+              });
+              await UploadSignURLService({
+                file: file,
+                signURL: signURL.signURL,
+                contentType: file.type,
+              });
+              loadingImage.textContent = "";
+              updateValue({
+                mainLink: value.mainLink,
+                steps: value.steps.map((prev) => {
+                  if (prev.id === step.id) {
+                    return {
+                      ...prev,
+                      picture: {
+                        ...prev.picture,
+                        url: signURL.originalURL,
+                      },
+                    };
+                  }
+                  return prev;
+                }),
+              });
+              displayImage.src = signURL.originalURL;
+              displayImage.style.display = "block";
+              console.log(signURL);
+            } catch (error) {
+              loadingImage.textContent = "";
+              alert("Upload File Error");
+            }
           } else {
             displayImage.src = "#";
             displayImage.style.display = "none";
@@ -301,6 +311,7 @@ unlayer.registerPropertyEditor({
                   url: null,
                   width_auto: true,
                   width: "",
+                  loading: "",
                 },
                 button_color: "#dc2626",
                 text_color: "#fff",
@@ -754,6 +765,12 @@ function createImageBlock(id: string) {
   // Add text and arrow span (since ::after isn't possible with element.style)
 
   buttonRow.appendChild(uploadLabel);
+
+  const loadingIndicator = document.createElement("span");
+  loadingIndicator.className = `${id}_loading_image`;
+  loadingIndicator.textContent = "";
+
+  container.appendChild(loadingIndicator);
   container.appendChild(buttonRow);
 
   // --- 3. Create Image URL Input ---
