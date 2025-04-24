@@ -97,18 +97,35 @@ function Index({ user }: { user: User }) {
         },
       },
     ],
-    queryFn: () =>
-      GetHistoryRecordService({
-        page,
-        limit: 100,
-        filter: {
-          action: filter.action?.title,
-          data: filter.data,
-          userId: selectUser?.id,
-          startDate: dates?.[0]?.toISOString(),
-          endDate: dates?.[1]?.toISOString(),
-        },
-      }),
+    queryFn: () => {
+      if (dates?.[0] && dates?.[1]) {
+        const startDate = new Date(dates[0]);
+        const endDate = new Date(dates[1]);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        return GetHistoryRecordService({
+          page,
+          limit: 100,
+          filter: {
+            action: filter.action?.title,
+            data: filter.data,
+            userId: selectUser?.id,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+          },
+        });
+      } else {
+        return GetHistoryRecordService({
+          page,
+          limit: 100,
+          filter: {
+            action: filter.action?.title,
+            data: filter.data,
+            userId: selectUser?.id,
+          },
+        });
+      }
+    },
   });
   useEffect(() => {
     if (history.data) {
