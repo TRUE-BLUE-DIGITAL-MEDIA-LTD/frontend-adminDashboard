@@ -4,7 +4,9 @@ import { HistoryRecord, Pagination, User } from "../models";
 
 export type ResponseGetHistoryRecordService = Pagination<
   HistoryRecord & { user: User }
->;
+> & {
+  total_active_simcards: number;
+};
 type InputGetHistoryRecordService = {
   page: number;
   limit: number;
