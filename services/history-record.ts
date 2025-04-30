@@ -14,6 +14,7 @@ type InputGetHistoryRecordService = {
     userId?: string;
     startDate?: string;
     endDate?: string;
+    check_usage: "normal" | "oxy_sms";
   };
 };
 export async function GetHistoryRecordService(

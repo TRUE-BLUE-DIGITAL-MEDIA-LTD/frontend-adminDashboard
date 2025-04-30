@@ -1,7 +1,6 @@
 import { Alert, MenuItem, Snackbar, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
@@ -26,6 +25,7 @@ import { Dropdown } from "primereact/dropdown";
 import EmailEditor, { EditorRef, EmailEditorProps } from "react-email-editor";
 import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
+import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
 
 interface UpdateLandingPageData {
@@ -138,81 +138,85 @@ function Index({ user }: { user: User }) {
     });
   };
 
-  const handleUpdateLandingPage = async () => {
-    setIsLoading(() => true);
-    emailEditorRef.current?.editor?.exportHtml(async (data) => {
-      try {
-        const { design, html } = data;
-        const json = JSON.stringify(design);
+  const handleUpdateLandingPage = async (
+    designData: any | undefined,
+    htmlData: string | undefined,
+  ) => {
+    try {
+      setIsLoading(() => true);
+      const design = designData;
+      const html = htmlData;
 
-        await UpdateLandingPageService({
-          query: {
-            id: router?.query?.landingPageId as string,
-          },
-          body: {
-            title: landingPageData.title,
-            domainId: landingPageData?.domainId,
-            html: html,
-            json: json,
-            backgroundImage: landingPageData.imageLink,
-            mainButton: landingPageData.mainButton,
-            directLink:
-              landingPageData.directLink === ""
-                ? null
-                : landingPageData.directLink,
-            name: landingPageData.name,
-            icon: icon,
-            categoryId: landingPageData.categoryId,
-            language: landingPageData.language,
-            description: landingPageData.description,
-            googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
-            secondOffer:
-              landingPageData.secondOffer === ""
-                ? null
-                : landingPageData.secondOffer,
-            backOffer:
-              landingPageData.backOffer === ""
-                ? null
-                : landingPageData.backOffer,
-            ...(landingPageData.route && { route: landingPageData.route }),
-          },
-        });
-        setMessage(() => {
-          return {
-            status: "success",
-            message: "update successfully",
-          };
-        });
-        const domain = domains?.data?.filter(
-          (list) => list.id === landingPageData.domainId,
-        );
+      console.log("design-outside", design);
+      console.log("html-outside", html);
 
-        Swal.fire({
-          icon: "success",
-          title: "success",
-          text: "update successfully",
-          footer: `<a target="_blank" href=${
-            "https://" + domain?.[0]?.name
-          }>click to open : ${domain?.[0]?.name}</a>`,
-        });
-        setIsLoading(() => false);
-        setOpen(() => true);
-      } catch (err: any) {
-        if (err.message === "Unauthorized") {
-          location.reload();
-        }
-        setOpen(() => true);
-        setIsLoading(() => false);
-        setMessage(() => {
-          return {
-            status: "error",
-            message: err.message?.toString()
-              ? err.message?.toString()
-              : "something went worng",
-          };
-        });
+      const json = JSON.stringify(design);
+
+      await UpdateLandingPageService({
+        query: {
+          id: router?.query?.landingPageId as string,
+        },
+        body: {
+          title: landingPageData.title,
+          domainId: landingPageData?.domainId,
+          html: html,
+          json: json,
+          backgroundImage: landingPageData.imageLink,
+          mainButton: landingPageData.mainButton,
+          directLink:
+            landingPageData.directLink === ""
+              ? null
+              : landingPageData.directLink,
+          name: landingPageData.name,
+          icon: icon,
+          categoryId: landingPageData.categoryId,
+          language: landingPageData.language,
+          description: landingPageData.description,
+          googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
+          secondOffer:
+            landingPageData.secondOffer === ""
+              ? null
+              : landingPageData.secondOffer,
+          backOffer:
+            landingPageData.backOffer === "" ? null : landingPageData.backOffer,
+          ...(landingPageData.route && { route: landingPageData.route }),
+        },
+      });
+      setMessage(() => {
+        return {
+          status: "success",
+          message: "update successfully",
+        };
+      });
+      const domain = domains?.data?.filter(
+        (list) => list.id === landingPageData.domainId,
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "success",
+        text: "update successfully",
+        footer: `<a target="_blank" href=${
+          "https://" + domain?.[0]?.name
+        }>click to open : ${domain?.[0]?.name}</a>`,
+      });
+      setIsLoading(() => false);
+      setOpen(() => true);
+    } catch (err: any) {
+      if (err.message === "Unauthorized") {
+        location.reload();
       }
-    });
+      setOpen(() => true);
+      setIsLoading(() => false);
+      setMessage(() => {
+        return {
+          status: "error",
+          message: err.message?.toString()
+            ? err.message?.toString()
+            : "something went worng",
+        };
+      });
+    }
   };
   const handleClose = (event: React.SyntheticEvent | Event, reason: string) => {
     if (reason === "clickaway") {
@@ -546,10 +550,21 @@ function Index({ user }: { user: User }) {
         </div>
         <div className="flex w-full justify-center pb-10">
           <button
-            onClick={handleUpdateLandingPage}
-            className="w-40 rounded-full bg-main-color py-2 font-Poppins text-lg text-white transition duration-150 hover:scale-105 active:bg-blue-700"
+            disabled={isLoading}
+            onClick={() => {
+              if (emailEditorRef.current?.editor) {
+                emailEditorRef.current?.editor?.exportHtml((data) => {
+                  const { design, html } = data;
+                  // Call a function to process the data
+                  handleUpdateLandingPage(design, html);
+                });
+              } else {
+                handleUpdateLandingPage(undefined, undefined);
+              }
+            }}
+            className="flex w-40 items-center justify-center rounded-full bg-main-color py-2 font-Poppins text-lg text-white transition duration-150 hover:scale-105 active:bg-blue-700"
           >
-            update
+            {isLoading ? <SpinLoading /> : "update"}
           </button>
         </div>
       </div>

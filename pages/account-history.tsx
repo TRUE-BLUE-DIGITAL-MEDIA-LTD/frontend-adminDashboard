@@ -37,6 +37,7 @@ import { Nullable } from "primereact/ts-helpers";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { Dropdown } from "primereact/dropdown";
 import { GetAllAccountByPageService } from "../services/admin/account";
+import SpinLoading from "../components/loadings/spinLoading";
 
 const actionsWithIcons = [
   { title: "user", icon: <FaUser /> },
@@ -68,20 +69,22 @@ function Index({ user }: { user: User }) {
   const [selectUser, setSelectUser] = useState<User>();
   const [totalPage, setTotalPage] = useState<number>(1);
   const [filter, setFilter] = useState<{
-    action?: { title: ActionKey; icon: IconType };
+    action?: { title: ActionListKey; icon: IconType };
     data?: string;
     startDate?: string;
     endDate?: string;
+    sms_oxy?: boolean;
   }>({
     action: undefined,
     data: "",
+    sms_oxy: false,
   });
   const account = useQuery({
     queryKey: ["account", { page: 1, limit: 100 }],
     queryFn: () => GetAllAccountByPageService({ page: 1, limit: 100 }),
     enabled: user.role === "admin" || user.role === "manager",
   });
-
+  console.log(dates);
   const history = useQuery({
     queryKey: [
       "history",
@@ -94,6 +97,7 @@ function Index({ user }: { user: User }) {
           startDate: dates?.[0],
           endDate: dates?.[1],
           userId: selectUser?.id,
+          sms_oxy: filter.sms_oxy,
         },
       },
     ],
@@ -107,11 +111,13 @@ function Index({ user }: { user: User }) {
           page,
           limit: 100,
           filter: {
-            action: filter.action?.title,
+            action:
+              filter.sms_oxy === true ? "simcard.update" : filter.action?.title,
             data: filter.data,
             userId: selectUser?.id,
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
+            check_usage: filter.sms_oxy === true ? "oxy_sms" : "normal",
           },
         });
       } else {
@@ -119,9 +125,11 @@ function Index({ user }: { user: User }) {
           page,
           limit: 100,
           filter: {
-            action: filter.action?.title,
+            action:
+              filter.sms_oxy === true ? "simcard.update" : filter.action?.title,
             data: filter.data,
             userId: selectUser?.id,
+            check_usage: filter.sms_oxy === true ? "oxy_sms" : "normal",
           },
         });
       }
@@ -132,6 +140,15 @@ function Index({ user }: { user: User }) {
       setTotalPage(history.data.meta.lastPage);
     }
   }, [history.data]);
+
+  const uniqueNumber = history.data?.data
+    .map((value) => value.data.split(" ")[2])
+    .filter((item, index, array) => {
+      return array.indexOf(item) == index;
+    });
+
+  console.log(uniqueNumber);
+
   return (
     <>
       <Head>
@@ -143,7 +160,7 @@ function Index({ user }: { user: User }) {
           <div className="flex w-full">
             <h1 className="text-2xl font-semibold">Account History</h1>
           </div>
-          <section className="py flex w-full flex-wrap justify-end gap-3 border-t border-gray-200 p-2">
+          <section className="py flex w-full flex-wrap justify-start gap-3 border-t border-gray-200 p-2">
             <div
               className={`${user.role === "admin" || user.role === "manager" ? "flex" : "hidden"} flex-col`}
             >
@@ -256,6 +273,40 @@ function Index({ user }: { user: User }) {
                 showButtonBar
                 showIcon
               />
+            </label>
+            <label className="flex  w-72 items-center justify-center  gap-2 rounded-md border border-gray-400  px-2">
+              <span className="text-xs">Check Oxy SMS usage</span>
+              {account.isLoading ? (
+                <SpinLoading />
+              ) : (
+                <input
+                  checked={filter.sms_oxy}
+                  onChange={(e) => {
+                    setFilter((prev) => {
+                      if (e.target.checked === true) {
+                        setSelectUser(() => account.data?.accounts[0]);
+                        setDates(() => [new Date(), new Date()]);
+                        return {
+                          ...prev,
+                          data: "Active simcard: ",
+                          action: {
+                            title: "simcard",
+                            icon: (<MdSimCard />) as unknown as IconType,
+                          },
+                          sms_oxy: e.target.checked,
+                        };
+                      } else {
+                        return {
+                          ...prev,
+                          sms_oxy: e.target.checked,
+                        };
+                      }
+                    });
+                  }}
+                  className="h-10 w-5"
+                  type="checkbox"
+                />
+              )}
             </label>
           </section>
           <div
