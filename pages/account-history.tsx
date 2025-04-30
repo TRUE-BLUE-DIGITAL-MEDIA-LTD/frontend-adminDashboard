@@ -4,7 +4,7 @@ import DashboardLayout from "../layouts/dashboardLayout";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 import { GetUser } from "../services/admin/user";
-import { ActionKey, Partner, User } from "../models";
+import { ActionKey, HistoryRecord, Partner, User } from "../models";
 import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "@mui/material";
 import { GetHistoryRecordService } from "../services/history-record";
@@ -68,6 +68,9 @@ function Index({ user }: { user: User }) {
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const [selectUser, setSelectUser] = useState<User>();
   const [totalPage, setTotalPage] = useState<number>(1);
+  const [historyRecords, setHistoryRecords] = useState<
+    (HistoryRecord & { user: User })[]
+  >([]);
   const [filter, setFilter] = useState<{
     action?: { title: ActionListKey; icon: IconType };
     data?: string;
@@ -141,14 +144,29 @@ function Index({ user }: { user: User }) {
     }
   }, [history.data]);
 
-  const uniqueNumber = history.data?.data
-    .map((value) => value.data.split(" ")[2])
+  const uniqueNumbers = history.data?.data
+    .map((value) => ({
+      ...value,
+      phoneNumber: value.data.split(" ")[2],
+    }))
     .filter((item, index, array) => {
-      return array.indexOf(item) == index;
+      // Find the first index where the phoneNumber matches the current item's phoneNumber
+      const firstIndex = array.findIndex(
+        (otherItem) => otherItem.phoneNumber === item.phoneNumber,
+      );
+      // Return true if the current index is the first index found
+      return index === firstIndex;
     });
 
-  console.log(uniqueNumber);
+  useEffect(() => {
+    if (history.data && filter.sms_oxy === true && uniqueNumbers) {
+      setHistoryRecords(() => uniqueNumbers);
+    } else if (history.data) {
+      setHistoryRecords(() => history.data?.data);
+    }
+  }, [history.data, filter.sms_oxy]);
 
+  console.log(uniqueNumbers);
   return (
     <>
       <Head>
@@ -308,6 +326,12 @@ function Index({ user }: { user: User }) {
                 />
               )}
             </label>
+            <div className="flex w-72 items-center justify-center gap-2 rounded-md border border-gray-400 px-2">
+              {uniqueNumbers?.length} / {history.data?.total_active_simcards}{" "}
+              <span className="text-xs text-gray-500">
+                total active simcards
+              </span>
+            </div>
           </section>
           <div
             className="  min-h-60 w-full justify-center overflow-auto
@@ -350,7 +374,7 @@ function Index({ user }: { user: User }) {
                         </tr>
                       );
                     })
-                  : history?.data?.data.map((record, index) => {
+                  : historyRecords.map((record, index) => {
                       const action: ActionListKey = record.action.split(
                         ".",
                       )[0] as ActionListKey;
@@ -402,6 +426,7 @@ function Index({ user }: { user: User }) {
                         >
                           <td className="pl-5">
                             <section className="flex items-center gap-2">
+                              <span>{index + 1}</span>
                               <div className="relative h-10 w-10 rounded-lg ">
                                 <Image
                                   src={record.user.image}

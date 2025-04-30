@@ -147,9 +147,6 @@ function Index({ user }: { user: User }) {
       const design = designData;
       const html = htmlData;
 
-      console.log("design-outside", design);
-      console.log("html-outside", html);
-
       const json = JSON.stringify(design);
 
       await UpdateLandingPageService({
