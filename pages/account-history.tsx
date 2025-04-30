@@ -326,12 +326,14 @@ function Index({ user }: { user: User }) {
                 />
               )}
             </label>
-            <div className="flex w-72 items-center justify-center gap-2 rounded-md border border-gray-400 px-2">
-              {uniqueNumbers?.length} / {history.data?.total_active_simcards}{" "}
-              <span className="text-xs text-gray-500">
-                total active simcards
-              </span>
-            </div>
+            {filter.sms_oxy === true && (
+              <div className="flex w-72 items-center justify-center gap-2 rounded-md border border-gray-400 px-2">
+                {uniqueNumbers?.length} / {history.data?.total_active_simcards}{" "}
+                <span className="text-xs text-gray-500">
+                  total active simcards
+                </span>
+              </div>
+            )}
           </section>
           <div
             className="  min-h-60 w-full justify-center overflow-auto
