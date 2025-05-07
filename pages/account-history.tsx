@@ -1,15 +1,18 @@
-import Head from "next/head";
-import React, { ReactNode, useEffect, useState } from "react";
-import DashboardLayout from "../layouts/dashboardLayout";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
-import { GetUser } from "../services/admin/user";
-import { ActionKey, HistoryRecord, Partner, User } from "../models";
-import { useQuery } from "@tanstack/react-query";
 import { Pagination } from "@mui/material";
-import { GetHistoryRecordService } from "../services/history-record";
-import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import { parseCookies } from "nookies";
+import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
+import { Nullable } from "primereact/ts-helpers";
+import { ReactNode, useEffect, useState } from "react";
+import { IconType } from "react-icons";
+import { BiCategoryAlt, BiImages } from "react-icons/bi";
+import { BsDeviceSsdFill } from "react-icons/bs";
+import { FaSms, FaUserFriends } from "react-icons/fa";
 import {
   FaListCheck,
   FaMoneyBillTrendUp,
@@ -17,9 +20,10 @@ import {
   FaTags,
   FaUser,
 } from "react-icons/fa6";
-import { IconType } from "react-icons";
-import { getRandomSlateShade, getSlateColorStyle } from "../utils/random";
-import { FaSearch, FaSms, FaUserFriends } from "react-icons/fa";
+import { FcSms } from "react-icons/fc";
+import { GiPayMoney } from "react-icons/gi";
+import { GrDomain } from "react-icons/gr";
+import { IoSearchCircleSharp } from "react-icons/io5";
 import {
   MdDomain,
   MdEmail,
@@ -27,17 +31,13 @@ import {
   MdOutlineMoneyOff,
   MdSimCard,
 } from "react-icons/md";
-import { BiCategoryAlt, BiImages } from "react-icons/bi";
-import { GrDevice, GrDomain } from "react-icons/gr";
-import { BsDeviceSsdFill } from "react-icons/bs";
-import { FcSms } from "react-icons/fc";
-import { GiPayMoney } from "react-icons/gi";
-import { Calendar } from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
-import { IoSearchCircleSharp } from "react-icons/io5";
-import { Dropdown } from "primereact/dropdown";
-import { GetAllAccountByPageService } from "../services/admin/account";
 import SpinLoading from "../components/loadings/spinLoading";
+import DashboardLayout from "../layouts/dashboardLayout";
+import { HistoryRecord, Partner, User } from "../models";
+import { GetAllAccountByPageService } from "../services/admin/account";
+import { GetUser } from "../services/admin/user";
+import { GetHistoryRecordService } from "../services/history-record";
+import { getRandomSlateShade, getSlateColorStyle } from "../utils/random";
 
 const actionsWithIcons = [
   { title: "user", icon: <FaUser /> },
@@ -65,7 +65,15 @@ type ActionListKey = (typeof actionsWithIcons)[number]["title"];
 type ActionMethodKey = "create" | "update" | "delete" | "get";
 function Index({ user }: { user: User }) {
   const [page, setPage] = useState<number>(1);
-  const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
+  const [dateStart, setDateStart] = useState<{
+    actual?: Nullable<Date | null>;
+    delay?: Nullable<Date | null>;
+  }>();
+  const [dateEnd, setDateEnd] = useState<{
+    actual?: Nullable<Date | null>;
+    delay?: Nullable<Date | null>;
+  }>();
+
   const [selectUser, setSelectUser] = useState<User>();
   const [totalPage, setTotalPage] = useState<number>(1);
   const [historyRecords, setHistoryRecords] = useState<
@@ -87,7 +95,6 @@ function Index({ user }: { user: User }) {
     queryFn: () => GetAllAccountByPageService({ page: 1, limit: 100 }),
     enabled: user.role === "admin" || user.role === "manager",
   });
-  console.log(dates);
   const history = useQuery({
     queryKey: [
       "history",
@@ -97,19 +104,17 @@ function Index({ user }: { user: User }) {
         filter: {
           action: filter.action?.title,
           data: filter.data,
-          startDate: dates?.[0],
-          endDate: dates?.[1],
+          startDate: dateStart?.actual,
+          endDate: dateEnd?.actual,
           userId: selectUser?.id,
           sms_oxy: filter.sms_oxy,
         },
       },
     ],
     queryFn: () => {
-      if (dates?.[0] && dates?.[1]) {
-        const startDate = new Date(dates[0]);
-        const endDate = new Date(dates[1]);
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(23, 59, 59, 999);
+      if (dateStart?.actual && dateEnd?.actual) {
+        const startDate = new Date(dateStart.actual);
+        const endDate = new Date(dateEnd.actual);
         return GetHistoryRecordService({
           page,
           limit: 100,
@@ -138,6 +143,33 @@ function Index({ user }: { user: User }) {
       }
     },
   });
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      setDateStart((prev) => {
+        return {
+          ...prev,
+          actual: prev?.delay,
+        };
+      });
+    }, 2000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [dateStart]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      setDateEnd((prev) => {
+        return {
+          ...prev,
+          actual: prev?.delay,
+        };
+      });
+    }, 2000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [dateEnd]);
+
   useEffect(() => {
     if (history.data) {
       setTotalPage(history.data.meta.lastPage);
@@ -280,12 +312,37 @@ function Index({ user }: { user: User }) {
               </div>
             </label>
             <label className="flex flex-col">
-              <span className="text-xs">Pick Time Range</span>
+              <span className="text-xs">Pick Time Start</span>
               <Calendar
                 className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
-                value={dates}
-                onChange={(e) => setDates(e.value)}
-                selectionMode="range"
+                value={dateStart?.delay}
+                showTime
+                hourFormat="24"
+                onChange={(e) =>
+                  setDateStart((prev) => ({
+                    ...prev,
+                    delay: e.value,
+                  }))
+                }
+                readOnlyInput
+                hideOnRangeSelection
+                showButtonBar
+                showIcon
+              />
+            </label>
+            <label className="flex flex-col">
+              <span className="text-xs">Pick Time End</span>
+              <Calendar
+                className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+                value={dateEnd?.delay}
+                showTime
+                hourFormat="24"
+                onChange={(e) => {
+                  setDateEnd((prev) => ({
+                    ...prev,
+                    delay: e.value,
+                  }));
+                }}
                 readOnlyInput
                 hideOnRangeSelection
                 showButtonBar
@@ -303,7 +360,18 @@ function Index({ user }: { user: User }) {
                     setFilter((prev) => {
                       if (e.target.checked === true) {
                         setSelectUser(() => account.data?.accounts[0]);
-                        setDates(() => [new Date(), new Date()]);
+                        const startDate = new Date();
+                        const endDate = new Date();
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate.setHours(23, 59, 59, 999);
+                        setDateStart((prev) => ({
+                          actual: startDate,
+                          delay: startDate,
+                        }));
+                        setDateEnd((prev) => ({
+                          actual: endDate,
+                          delay: endDate,
+                        }));
                         return {
                           ...prev,
                           data: "Active simcard: ",
