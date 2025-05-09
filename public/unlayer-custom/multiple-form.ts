@@ -65,6 +65,7 @@ interface Window {
 
 type formValue = {
   mainLink: string;
+  viewOnstep: number;
   steps: {
     id: number;
     title: string;
@@ -123,13 +124,13 @@ unlayer.registerPropertyEditor({
           `form_${step.id}_input_title`,
         )[0] as HTMLInputElement;
         inputTitle.value = step.title;
-        inputTitle.required = true;
         inputTitle.onblur = (e) => {
           form.reportValidity();
         };
         inputTitle.onchange = (event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -150,6 +151,7 @@ unlayer.registerPropertyEditor({
         inputType.onchange = (event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -188,6 +190,7 @@ unlayer.registerPropertyEditor({
         inputURL.onchange = (event: Event) => {
           const target = event.target as HTMLInputElement;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -223,6 +226,7 @@ unlayer.registerPropertyEditor({
               });
               loadingImage.textContent = "";
               updateValue({
+                viewOnstep: step.id,
                 mainLink: value.mainLink,
                 steps: value.steps.map((prev) => {
                   if (prev.id === step.id) {
@@ -254,6 +258,7 @@ unlayer.registerPropertyEditor({
           const target = e.target as HTMLInputElement;
 
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -276,6 +281,7 @@ unlayer.registerPropertyEditor({
           const target = e.target as HTMLInputElement;
           target.textContent = `${target.value}%`;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -300,6 +306,7 @@ unlayer.registerPropertyEditor({
         button_color.onchange = (e) => {
           const target = e.target as HTMLInputElement;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -320,6 +327,7 @@ unlayer.registerPropertyEditor({
         text_color.onchange = (e) => {
           const target = e.target as HTMLInputElement;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -342,6 +350,7 @@ unlayer.registerPropertyEditor({
           const target = e.target as HTMLInputElement;
           target.textContent = `${target.value}%`;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -364,6 +373,7 @@ unlayer.registerPropertyEditor({
           const target = e.target as HTMLInputElement;
           target.textContent = `${target.value}%`;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -386,6 +396,7 @@ unlayer.registerPropertyEditor({
           const target = e.target as HTMLInputElement;
           target.textContent = `${target.value}%`;
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: value.steps.map((prev) => {
               if (prev.id === step.id) {
@@ -404,6 +415,7 @@ unlayer.registerPropertyEditor({
         )[0] as HTMLButtonElement;
         addMoreStep.onclick = function (event: Event) {
           updateValue({
+            viewOnstep: step.id,
             mainLink: value.mainLink,
             steps: [
               ...value.steps,
@@ -438,6 +450,7 @@ unlayer.registerPropertyEditor({
               (prevStep) => prevStep.id !== step.id,
             );
             updateValue({
+              viewOnstep: step.id,
               mainLink: value.mainLink,
               steps: updated.map((data, index) => {
                 return {
@@ -455,6 +468,7 @@ unlayer.registerPropertyEditor({
           )[0] as HTMLButtonElement;
           addOption.onclick = function (event: Event) {
             updateValue({
+              viewOnstep: step.id,
               mainLink: value.mainLink,
               steps: [
                 ...value.steps.map((s) => {
@@ -484,18 +498,18 @@ unlayer.registerPropertyEditor({
 
           if (removeOption) {
             removeOption.onclick = function (event: Event) {
-              const noneUpdateDataLists = value.steps.filter(
-                (s) => s.id !== step.id,
-              );
               updateValue({
+                viewOnstep: step.id,
                 mainLink: value.mainLink,
-                steps: [
-                  ...noneUpdateDataLists,
-                  {
-                    ...step,
+                steps: value.steps.map((s) => {
+                  if (s.id !== step.id) {
+                    return s;
+                  }
+                  return {
+                    ...s,
                     options: step.options.filter((f) => f.id !== option.id),
-                  },
-                ],
+                  };
+                }),
               });
             };
           }
@@ -512,6 +526,7 @@ unlayer.registerPropertyEditor({
             const target = e.target as HTMLInputElement;
 
             updateValue({
+              viewOnstep: step.id,
               mainLink: value.mainLink,
               steps: [
                 ...value.steps.map((s) => {
@@ -543,6 +558,7 @@ unlayer.registerPropertyEditor({
           optionInputURL.onchange = (e: Event) => {
             const target = e.target as HTMLInputElement;
             updateValue({
+              viewOnstep: step.id,
               mainLink: value.mainLink,
               steps: [
                 ...value.steps.map((s) => {
@@ -575,6 +591,7 @@ unlayer.registerPropertyEditor({
             const target = e.target as HTMLInputElement;
 
             updateValue({
+              viewOnstep: step.id,
               mainLink: value.mainLink,
               steps: [
                 ...value.steps.map((s) => {
@@ -599,48 +616,6 @@ unlayer.registerPropertyEditor({
     },
   }),
 });
-
-interface MultipleFormOptions {
-  default: {
-    title: null;
-  };
-  alignment: {
-    title: string;
-    position: number;
-    options: {
-      textAlignment: {
-        label: string;
-        defaultValue: string;
-        widget: string;
-      };
-    };
-  };
-  dropdown: {
-    title: string;
-    position: number;
-    options: {
-      form: {
-        label: string;
-        defaultValue: formValue;
-        widget: string;
-      };
-    };
-  };
-}
-
-type MultipleFormValues = {
-  [K in keyof MultipleFormOptions as NonNullable<
-    MultipleFormOptions[K]
-  > extends { options: any }
-    ? keyof NonNullable<MultipleFormOptions[K]>["options"]
-    : never]: NonNullable<MultipleFormOptions[K]> extends {
-    options: { [key: string]: { defaultValue: infer T } };
-  }
-    ? {
-        [key in keyof NonNullable<MultipleFormOptions[K]>["options"]]: T;
-      }[keyof NonNullable<MultipleFormOptions[K]>["options"]]
-    : never;
-};
 
 function multipleForm(value: formValue) {
   // --- Inject Minimal Necessary CSS ---
@@ -1114,9 +1089,13 @@ const createButton = (input: {
   fontSize: string;
   padding?: string;
   rounded?: string;
+  fontFamily?: string;
   value?: { [key: string]: string };
 }) => {
   const button = document.createElement("button");
+  if (input.fontFamily) {
+    button.style.fontFamily = input.fontFamily;
+  }
   button.textContent = input.text;
   button.style.minWidth = input.width;
   button.style.width = "max-content";
@@ -1140,13 +1119,18 @@ const createButton = (input: {
   return button;
 };
 
-function displayForm(value: formValue) {
+function displayForm(data: MultipleFormValues, isViewer: boolean) {
+  const value = data.form;
+
   // Create the main div container
+
   const body = document.createElement("div");
+  if (data?.text) {
+    body.style.fontFamily = data.text.value;
+  }
   // Create the "Pick your age!" span
   const script = document.createElement("script");
   script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
-  // script.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
 
   script.type = "text/javascript";
   script.className = "script_multiple_form";
@@ -1155,9 +1139,25 @@ function displayForm(value: formValue) {
   script.defer = true; // Optional: load after parsing HTML
   body.appendChild(script); // or document.head.appendChild(script);
 
+  const scriptDevelopment = document.createElement("script");
+  scriptDevelopment.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+
+  scriptDevelopment.type = "text/javascript";
+  scriptDevelopment.className = "script_multiple_form";
+  scriptDevelopment.setAttribute(
+    "value",
+    JSON.stringify({ link: value.mainLink }),
+  );
+
+  scriptDevelopment.defer = true; // Optional: load after parsing HTML
+  body.appendChild(scriptDevelopment); // or document.head.appendChild(script);
   for (const step of value.steps) {
     const container = document.createElement("div");
-    if (step.id === 1) {
+    if (step.id === 1 && isViewer === false) {
+      container.style.display = "flex";
+    } else if (isViewer === true && value.viewOnstep === step.id) {
+      container.style.display = "flex";
+    } else if (isViewer === true && !value.viewOnstep && step.id === 1) {
       container.style.display = "flex";
     } else {
       container.style.display = "none";
@@ -1169,15 +1169,19 @@ function displayForm(value: formValue) {
     container.style.gap = "3px";
     container.className = `form_step`;
     container.id = `form_step_${step.id}`;
-    const titleSpan = document.createElement("div");
-    titleSpan.textContent = step.title;
-    titleSpan.style.backgroundColor = "#fff";
-    titleSpan.style.padding = "0.25rem";
-    titleSpan.style.minWidth = "15rem";
-    titleSpan.style.textAlign = "center";
-    titleSpan.style.paddingInline = "0.45rem";
-    titleSpan.style.borderRadius = "0.375rem";
-    container.appendChild(titleSpan);
+
+    if (step.title && step.title !== "") {
+      const titleSpan = document.createElement("div");
+      titleSpan.textContent = step.title;
+      titleSpan.style.backgroundColor = "#fff";
+      titleSpan.style.padding = "0.25rem";
+      titleSpan.style.minWidth = "15rem";
+      titleSpan.style.textAlign = "center";
+      titleSpan.style.paddingInline = "0.45rem";
+      titleSpan.style.borderRadius = "0.375rem";
+      titleSpan.style.marginBottom = "1rem";
+      container.appendChild(titleSpan);
+    }
 
     const imageElement = document.createElement("img");
     if (step.picture && step.picture.url) {
@@ -1208,6 +1212,7 @@ function displayForm(value: formValue) {
         padding: step.button_size,
         rounded: step.button_rounded,
         backgroundColor: step.button_color,
+        ...(data.text && data.text.value && { fontFamily: data.text.value }),
         textColor: step.text_color,
         value: {
           [step.type]: option.value,
@@ -1227,23 +1232,60 @@ function displayForm(value: formValue) {
   return body; // Return the container element
 }
 
+interface MultipleFormOptions {
+  dropdown: {
+    title: string;
+    position: number;
+    options: {
+      text: {
+        label: "Font Family"; // Label for Property
+        defaultValue: {
+          label: string;
+          value: string;
+        };
+        widget: "font_family"; // Property Editor Widget: color_picker
+      };
+      form: {
+        label: string;
+        defaultValue: formValue;
+        widget: string;
+      };
+    };
+  };
+}
+
+type ExtractDefaultValues<
+  T extends { dropdown: { options: Record<string, { defaultValue: any }> } },
+> = {
+  [K in keyof T["dropdown"]["options"]]: T["dropdown"]["options"][K]["defaultValue"];
+};
+
+// ✅ Final Result
+type MultipleFormValues = ExtractDefaultValues<MultipleFormOptions>;
+
 unlayer.registerTool({
   name: "multiple_form",
   label: "Multiple Form",
   icon: "fa-list",
   supportedDisplayModes: ["web"],
   options: {
-    default: {
-      title: null,
-    },
     dropdown: {
       title: "Edit Form Info",
-      position: 2,
+      position: 1,
       options: {
+        text: {
+          label: "Font Family",
+          defaultValue: {
+            label: "Arial",
+            value: "arial,helvetica,sans-serif",
+          },
+          widget: "font_family",
+        },
         form: {
           label: "Edit Form Info",
           defaultValue: {
             mainLink: "",
+            viewOnstep: 1,
             steps: [
               {
                 title: "",
@@ -1272,12 +1314,12 @@ unlayer.registerTool({
   renderer: {
     Viewer: unlayer.createViewer({
       render(values: MultipleFormValues) {
-        return displayForm(values.form).outerHTML;
+        return displayForm(values, true).outerHTML;
       },
     }),
     exporters: {
       web: function (values: MultipleFormValues) {
-        return displayForm(values.form).outerHTML;
+        return displayForm(values, false).outerHTML;
       },
     },
     head: {

@@ -65,13 +65,13 @@ unlayer.registerPropertyEditor({
             for (const step of value.steps) {
                 const inputTitle = node.getElementsByClassName(`form_${step.id}_input_title`)[0];
                 inputTitle.value = step.title;
-                inputTitle.required = true;
                 inputTitle.onblur = (e) => {
                     form.reportValidity();
                 };
                 inputTitle.onchange = (event) => {
                     const target = event.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -90,6 +90,7 @@ unlayer.registerPropertyEditor({
                 inputType.onchange = (event) => {
                     const target = event.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -114,6 +115,7 @@ unlayer.registerPropertyEditor({
                 inputURL.onchange = (event) => {
                     const target = event.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -141,6 +143,7 @@ unlayer.registerPropertyEditor({
                             });
                             loadingImage.textContent = "";
                             updateValue({
+                                viewOnstep: step.id,
                                 mainLink: value.mainLink,
                                 steps: value.steps.map((prev) => {
                                     if (prev.id === step.id) {
@@ -167,6 +170,7 @@ unlayer.registerPropertyEditor({
                 toggleCheckbox.onchange = (e) => {
                     const target = e.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -183,6 +187,7 @@ unlayer.registerPropertyEditor({
                     const target = e.target;
                     target.textContent = `${target.value}%`;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -197,6 +202,7 @@ unlayer.registerPropertyEditor({
                 button_color.onchange = (e) => {
                     const target = e.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -211,6 +217,7 @@ unlayer.registerPropertyEditor({
                 text_color.onchange = (e) => {
                     const target = e.target;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -226,6 +233,7 @@ unlayer.registerPropertyEditor({
                     const target = e.target;
                     target.textContent = `${target.value}%`;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -241,6 +249,7 @@ unlayer.registerPropertyEditor({
                     const target = e.target;
                     target.textContent = `${target.value}%`;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -256,6 +265,7 @@ unlayer.registerPropertyEditor({
                     const target = e.target;
                     target.textContent = `${target.value}%`;
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
@@ -268,6 +278,7 @@ unlayer.registerPropertyEditor({
                 const addMoreStep = node.getElementsByClassName(`add_more_step_${step.id}`)[0];
                 addMoreStep.onclick = function (event) {
                     updateValue({
+                        viewOnstep: step.id,
                         mainLink: value.mainLink,
                         steps: [
                             ...value.steps,
@@ -296,6 +307,7 @@ unlayer.registerPropertyEditor({
                     removeStep.onclick = function (event) {
                         const updated = value.steps.filter((prevStep) => prevStep.id !== step.id);
                         updateValue({
+                            viewOnstep: step.id,
                             mainLink: value.mainLink,
                             steps: updated.map((data, index) => {
                                 return Object.assign(Object.assign({}, data), { step: index + 1 });
@@ -307,6 +319,7 @@ unlayer.registerPropertyEditor({
                     const addOption = node.getElementsByClassName(`form_${step.id}_add_option_${option.id}`)[0];
                     addOption.onclick = function (event) {
                         updateValue({
+                            viewOnstep: step.id,
                             mainLink: value.mainLink,
                             steps: [
                                 ...value.steps.map((s) => {
@@ -329,13 +342,15 @@ unlayer.registerPropertyEditor({
                     const removeOption = node.getElementsByClassName(`form_${step.id}_remove_option_${option.id}`)[0];
                     if (removeOption) {
                         removeOption.onclick = function (event) {
-                            const noneUpdateDataLists = value.steps.filter((s) => s.id !== step.id);
                             updateValue({
+                                viewOnstep: step.id,
                                 mainLink: value.mainLink,
-                                steps: [
-                                    ...noneUpdateDataLists,
-                                    Object.assign(Object.assign({}, step), { options: step.options.filter((f) => f.id !== option.id) }),
-                                ],
+                                steps: value.steps.map((s) => {
+                                    if (s.id !== step.id) {
+                                        return s;
+                                    }
+                                    return Object.assign(Object.assign({}, s), { options: step.options.filter((f) => f.id !== option.id) });
+                                }),
                             });
                         };
                     }
@@ -348,6 +363,7 @@ unlayer.registerPropertyEditor({
                     inputDisplay.onchange = (e) => {
                         const target = e.target;
                         updateValue({
+                            viewOnstep: step.id,
                             mainLink: value.mainLink,
                             steps: [
                                 ...value.steps.map((s) => {
@@ -372,6 +388,7 @@ unlayer.registerPropertyEditor({
                     optionInputURL.onchange = (e) => {
                         const target = e.target;
                         updateValue({
+                            viewOnstep: step.id,
                             mainLink: value.mainLink,
                             steps: [
                                 ...value.steps.map((s) => {
@@ -397,6 +414,7 @@ unlayer.registerPropertyEditor({
                     inputValue.onchange = (e) => {
                         const target = e.target;
                         updateValue({
+                            viewOnstep: step.id,
                             mainLink: value.mainLink,
                             steps: [
                                 ...value.steps.map((s) => {
@@ -768,6 +786,9 @@ const createTextInput = (labelText, id, type) => {
 };
 const createButton = (input) => {
     const button = document.createElement("button");
+    if (input.fontFamily) {
+        button.style.fontFamily = input.fontFamily;
+    }
     button.textContent = input.text;
     button.style.minWidth = input.width;
     button.style.width = "max-content";
@@ -789,21 +810,37 @@ const createButton = (input) => {
     }
     return button;
 };
-function displayForm(value) {
+function displayForm(data, isViewer) {
+    const value = data.form;
     // Create the main div container
     const body = document.createElement("div");
+    if (data === null || data === void 0 ? void 0 : data.text) {
+        body.style.fontFamily = data.text.value;
+    }
     // Create the "Pick your age!" span
     const script = document.createElement("script");
     script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
-    // script.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
     script.type = "text/javascript";
     script.className = "script_multiple_form";
     script.setAttribute("value", JSON.stringify({ link: value.mainLink }));
     script.defer = true; // Optional: load after parsing HTML
     body.appendChild(script); // or document.head.appendChild(script);
+    const scriptDevelopment = document.createElement("script");
+    scriptDevelopment.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+    scriptDevelopment.type = "text/javascript";
+    scriptDevelopment.className = "script_multiple_form";
+    scriptDevelopment.setAttribute("value", JSON.stringify({ link: value.mainLink }));
+    scriptDevelopment.defer = true; // Optional: load after parsing HTML
+    body.appendChild(scriptDevelopment); // or document.head.appendChild(script);
     for (const step of value.steps) {
         const container = document.createElement("div");
-        if (step.id === 1) {
+        if (step.id === 1 && isViewer === false) {
+            container.style.display = "flex";
+        }
+        else if (isViewer === true && value.viewOnstep === step.id) {
+            container.style.display = "flex";
+        }
+        else if (isViewer === true && !value.viewOnstep && step.id === 1) {
             container.style.display = "flex";
         }
         else {
@@ -816,15 +853,18 @@ function displayForm(value) {
         container.style.gap = "3px";
         container.className = `form_step`;
         container.id = `form_step_${step.id}`;
-        const titleSpan = document.createElement("div");
-        titleSpan.textContent = step.title;
-        titleSpan.style.backgroundColor = "#fff";
-        titleSpan.style.padding = "0.25rem";
-        titleSpan.style.minWidth = "15rem";
-        titleSpan.style.textAlign = "center";
-        titleSpan.style.paddingInline = "0.45rem";
-        titleSpan.style.borderRadius = "0.375rem";
-        container.appendChild(titleSpan);
+        if (step.title && step.title !== "") {
+            const titleSpan = document.createElement("div");
+            titleSpan.textContent = step.title;
+            titleSpan.style.backgroundColor = "#fff";
+            titleSpan.style.padding = "0.25rem";
+            titleSpan.style.minWidth = "15rem";
+            titleSpan.style.textAlign = "center";
+            titleSpan.style.paddingInline = "0.45rem";
+            titleSpan.style.borderRadius = "0.375rem";
+            titleSpan.style.marginBottom = "1rem";
+            container.appendChild(titleSpan);
+        }
         const imageElement = document.createElement("img");
         if (step.picture && step.picture.url) {
             imageElement.className = "previewImage";
@@ -848,16 +888,7 @@ function displayForm(value) {
         buttonContaner.style.gap = step.spacing ? `${step.spacing}px` : "5px";
         buttonContaner.className = "button-containers";
         for (const option of step.options) {
-            const button = createButton({
-                text: option.display,
-                width: "15rem",
-                padding: step.button_size,
-                rounded: step.button_rounded,
-                backgroundColor: step.button_color,
-                textColor: step.text_color,
-                value: Object.assign({ [step.type]: option.value }, (option.url !== "" && { url: option.url })),
-                fontSize: "1.5rem",
-            });
+            const button = createButton(Object.assign(Object.assign({ text: option.display, width: "15rem", padding: step.button_size, rounded: step.button_rounded, backgroundColor: step.button_color }, (data.text && data.text.value && { fontFamily: data.text.value })), { textColor: step.text_color, value: Object.assign({ [step.type]: option.value }, (option.url !== "" && { url: option.url })), fontSize: "1.5rem" }));
             button.className = `form_${step.id}_button_${option.id}`;
             buttonContaner.appendChild(button);
         }
@@ -872,17 +903,23 @@ unlayer.registerTool({
     icon: "fa-list",
     supportedDisplayModes: ["web"],
     options: {
-        default: {
-            title: null,
-        },
         dropdown: {
             title: "Edit Form Info",
-            position: 2,
+            position: 1,
             options: {
+                text: {
+                    label: "Font Family",
+                    defaultValue: {
+                        label: "Arial",
+                        value: "arial,helvetica,sans-serif",
+                    },
+                    widget: "font_family",
+                },
                 form: {
                     label: "Edit Form Info",
                     defaultValue: {
                         mainLink: "",
+                        viewOnstep: 1,
                         steps: [
                             {
                                 title: "",
@@ -911,12 +948,12 @@ unlayer.registerTool({
     renderer: {
         Viewer: unlayer.createViewer({
             render(values) {
-                return displayForm(values.form).outerHTML;
+                return displayForm(values, true).outerHTML;
             },
         }),
         exporters: {
             web: function (values) {
-                return displayForm(values.form).outerHTML;
+                return displayForm(values, false).outerHTML;
             },
         },
         head: {
