@@ -67,7 +67,21 @@ for (let i = 1; i <= multipleforms.length; i++) {
             const object = convertToObject(multipleFormData);
             const query = buildQueryString(object);
 
-            window.open(`${mainLink.link}?${query}`, "_self");
+            const [baseUrl, existingQuery] = mainLink.link.split("?");
+            let finalQuery = "";
+
+            if (existingQuery) {
+              // Combine existing query and new query
+              finalQuery = `${existingQuery}&${query}`;
+            } else {
+              finalQuery = query;
+            }
+
+            console.log("baseUrl", baseUrl);
+            console.log("existingQuery", existingQuery);
+            const finalUrl = `${baseUrl}?${finalQuery}`;
+
+            window.open(finalUrl, "_self");
           }
 
           if (currentForm) {
