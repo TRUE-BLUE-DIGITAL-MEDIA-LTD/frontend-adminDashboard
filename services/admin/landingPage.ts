@@ -66,7 +66,7 @@ interface InputUpdateLandingPageService {
     googleAnalyticsId?: string;
     secondOffer?: string | null;
     backOffer?: string | null;
-    route?: string;
+    route?: string | null;
   };
 }
 export async function UpdateLandingPageService(

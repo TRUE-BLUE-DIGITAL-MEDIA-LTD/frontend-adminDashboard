@@ -158,6 +158,7 @@ function Index({ user }: { user: User }) {
           domainId: landingPageData?.domainId,
           html: html,
           json: json,
+          route: landingPageData.route ?? null,
           backgroundImage: landingPageData.imageLink,
           mainButton: landingPageData.mainButton,
           directLink:
