@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="../../unlayer.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,6 +8,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+/// <reference path="../../unlayer.d.ts" />
+const minimalCSS = `
+/* Basic Body Styling (can be done inline, but cleaner here) */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Toggle Switch Appearance & Behavior */
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+.toggle-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+.toggle-switch input:checked + .slider { background-color: #343a40; }
+.toggle-switch input:checked + .slider:before { transform: translateX(20px); }
+
+/* Range Slider Thumb/Track Styling */
+.range-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; cursor: pointer; }
+.range-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; margin-top: -5px; }
+.range-slider::-moz-range-thumb { width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; border: none; }
+
+/* Basic Hover Effects (simpler than JS listeners for this demo) */
+ .btn-primary:hover { background-color: #23272b !important; border-color: #1d2124 !important; }
+ .btn-secondary:hover { background-color: #f8f9fa !important; border-color: #adb5bd !important; }
+ .input-field:focus { outline: none; border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
+
+ /* Dropdown Arrow for Secondary Button */
+ .btn-secondary .arrow { margin-left: 8px; font-size: 10px; color: #6c757d; }
+
+`;
 unlayer.registerPropertyEditor({
     name: "form",
     layout: "bottom",
@@ -70,7 +104,7 @@ unlayer.registerPropertyEditor({
                 const inputImage = node.getElementsByClassName(`${step.id}_imageInput`)[0];
                 const inputURL = node.getElementsByClassName(`${step.id}_imageUrlInput`)[0];
                 const toggleCheckbox = node.getElementsByClassName(`${step.id}_toggleCheckbox`)[0];
-                const rangeSlider = node.getElementsByClassName(`${step.id}_rangeSlider`)[0];
+                const rangeSlider = node.getElementsByClassName(`${step.id}_rangeSlider_image`)[0];
                 if (step.picture.url) {
                     inputURL.value = step.picture.url;
                 }
@@ -186,6 +220,51 @@ unlayer.registerPropertyEditor({
                         }),
                     });
                 };
+                const rangeSlider_button = node.getElementsByClassName(`spacing_${step.id}_rangeSlider`)[0];
+                rangeSlider_button.value = step.spacing;
+                rangeSlider_button.onchange = (e) => {
+                    const target = e.target;
+                    target.textContent = `${target.value}%`;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { spacing: target.value });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
+                const rangeSlider_button_size = node.getElementsByClassName(`button_size_${step.id}_rangeSlider`)[0];
+                rangeSlider_button_size.value = step.button_size;
+                rangeSlider_button_size.onchange = (e) => {
+                    const target = e.target;
+                    target.textContent = `${target.value}%`;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { button_size: target.value });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
+                const rangeSlider_button_rounded = node.getElementsByClassName(`button_rounded_${step.id}_rangeSlider`)[0];
+                rangeSlider_button_rounded.value = step.button_rounded;
+                rangeSlider_button_rounded.onchange = (e) => {
+                    const target = e.target;
+                    target.textContent = `${target.value}%`;
+                    updateValue({
+                        mainLink: value.mainLink,
+                        steps: value.steps.map((prev) => {
+                            if (prev.id === step.id) {
+                                return Object.assign(Object.assign({}, prev), { button_rounded: target.value });
+                            }
+                            return prev;
+                        }),
+                    });
+                };
                 const addMoreStep = node.getElementsByClassName(`add_more_step_${step.id}`)[0];
                 addMoreStep.onclick = function (event) {
                     updateValue({
@@ -201,6 +280,9 @@ unlayer.registerPropertyEditor({
                                     width: "",
                                     loading: "",
                                 },
+                                spacing: "5px",
+                                button_rounded: "3px",
+                                button_size: "5px",
                                 button_color: "#dc2626",
                                 text_color: "#fff",
                                 id: value.steps.length + 1,
@@ -337,6 +419,11 @@ unlayer.registerPropertyEditor({
     }),
 });
 function multipleForm(value) {
+    // --- Inject Minimal Necessary CSS ---
+    // Styles that are hard/impossible to set purely with element.style
+    const styleElement = document.createElement("style");
+    styleElement.textContent = minimalCSS;
+    document.head.appendChild(styleElement);
     const form = document.createElement("form");
     form.style.display = "flex";
     form.style.width = "100%";
@@ -384,6 +471,12 @@ function createformStep(data) {
     div.appendChild(buttonColor);
     const textColor = createTextInput("Color Text", `${data.number}_color_text`, "color");
     div.appendChild(textColor);
+    const spacing = createSliderInput(`spacing_${data.number}`, "Spacing Between Buttons");
+    div.appendChild(spacing);
+    const button_size = createSliderInput(`button_size_${data.number}`, "Button Size");
+    div.appendChild(button_size);
+    const button_rounded = createSliderInput(`button_rounded_${data.number}`, "Button Rounded");
+    div.appendChild(button_rounded);
     const groupButtons = document.createElement("div");
     groupButtons.style.display = "flex";
     groupButtons.style.gap = "0.5rem";
@@ -421,47 +514,28 @@ function createformStep(data) {
     div.appendChild(body);
     return div; // Return the DOM element
 }
+function createSliderInput(id, placeholder) {
+    const container = document.createElement("div");
+    const span = document.createElement("span");
+    span.textContent = placeholder;
+    container.appendChild(span);
+    const rangeSlider = document.createElement("input");
+    rangeSlider.type = "range";
+    rangeSlider.min = "0";
+    rangeSlider.max = "100";
+    rangeSlider.classList.add("range-slider", `${id}_rangeSlider`);
+    const rangeValueDisplay = document.createElement("div");
+    // Apply styles directly
+    rangeValueDisplay.style.textAlign = "right";
+    rangeValueDisplay.style.fontSize = "12px";
+    rangeValueDisplay.style.color = "#6c757d";
+    rangeValueDisplay.style.marginTop = "5px";
+    container.appendChild(rangeSlider);
+    container.appendChild(rangeValueDisplay);
+    return container;
+}
 function createImageBlock(id) {
     const container = document.createElement("div");
-    // --- Inject Minimal Necessary CSS ---
-    // Styles that are hard/impossible to set purely with element.style
-    const minimalCSS = `
-      /* Basic Body Styling (can be done inline, but cleaner here) */
-      body {
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-          background-color: #f8f9fa;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          padding-top: 50px;
-          min-height: 100vh;
-          margin: 0;
-      }
-
-      /* Toggle Switch Appearance & Behavior */
-      .toggle-switch input { opacity: 0; width: 0; height: 0; }
-      .toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
-      .toggle-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
-      .toggle-switch input:checked + .slider { background-color: #343a40; }
-      .toggle-switch input:checked + .slider:before { transform: translateX(20px); }
-
-      /* Range Slider Thumb/Track Styling */
-      .range-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; cursor: pointer; }
-      .range-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; margin-top: -5px; }
-      .range-slider::-moz-range-thumb { width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; border: none; }
-
-      /* Basic Hover Effects (simpler than JS listeners for this demo) */
-       .btn-primary:hover { background-color: #23272b !important; border-color: #1d2124 !important; }
-       .btn-secondary:hover { background-color: #f8f9fa !important; border-color: #adb5bd !important; }
-       .input-field:focus { outline: none; border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
-
-       /* Dropdown Arrow for Secondary Button */
-       .btn-secondary .arrow { margin-left: 8px; font-size: 10px; color: #6c757d; }
-
-  `;
-    const styleElement = document.createElement("style");
-    styleElement.textContent = minimalCSS;
-    document.head.appendChild(styleElement);
     // --- Apply Styles to Container ---
     container.style.backgroundColor = "#ffffff";
     container.style.borderRadius = "8px";
@@ -563,7 +637,7 @@ function createImageBlock(id) {
     widthLabelToggleRow.style.alignItems = "center";
     widthLabelToggleRow.style.marginBottom = "15px";
     const widthLabel = document.createElement("span");
-    widthLabel.textContent = "Width";
+    widthLabel.textContent = "Width Image";
     // Apply styles directly
     widthLabel.style.color = "#495057";
     widthLabel.style.fontWeight = "500";
@@ -605,7 +679,7 @@ function createImageBlock(id) {
     rangeSlider.type = "range";
     rangeSlider.min = "0";
     rangeSlider.max = "100";
-    rangeSlider.classList.add("range-slider", `${id}_rangeSlider`);
+    rangeSlider.classList.add("range-slider", `${id}_rangeSlider_image`);
     const rangeValueDisplay = document.createElement("div");
     // Apply styles directly
     rangeValueDisplay.style.textAlign = "right";
@@ -697,11 +771,13 @@ const createButton = (input) => {
     button.textContent = input.text;
     button.style.minWidth = input.width;
     button.style.width = "max-content";
-    button.style.borderRadius = "0.375rem";
+    button.style.borderRadius = input.rounded ? `${input.rounded}px` : "0.35rem";
     button.style.backgroundColor = input.backgroundColor;
-    button.style.paddingTop = "0.25rem";
-    button.style.paddingInline = "0.35rem";
-    button.style.paddingBottom = "0.25rem";
+    button.style.paddingTop = input.padding ? `${input.padding}px` : "0.25rem";
+    button.style.paddingInline = input.padding
+        ? `${Number(input.padding) * 1.05}px`
+        : "0.35rem";
+    button.style.paddingBottom = input.padding ? `${input.padding}px` : "0.25rem";
     button.style.fontSize = input.fontSize;
     button.style.color = input.textColor;
     button.style.cursor = "pointer";
@@ -718,8 +794,8 @@ function displayForm(value) {
     const body = document.createElement("div");
     // Create the "Pick your age!" span
     const script = document.createElement("script");
-    script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
-    // script.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+    // script.src = `https://oxyclick.com/unlayer-custom/script-multiple-form.js`; // Path to your JS file
+    script.src = `http://localhost:8080/unlayer-custom/script-multiple-form.js`; // Path to your JS file
     script.type = "text/javascript";
     script.className = "script_multiple_form";
     script.setAttribute("value", JSON.stringify({ link: value.mainLink }));
@@ -763,18 +839,29 @@ function displayForm(value) {
         divider.style.height = "2px";
         divider.style.backgroundColor = "#000";
         container.appendChild(divider);
+        const buttonContaner = document.createElement("div");
+        buttonContaner.style.display = "flex";
+        buttonContaner.style.width = "100%";
+        buttonContaner.style.flexDirection = "column";
+        buttonContaner.style.alignItems = "center";
+        buttonContaner.style.justifyContent = "center";
+        buttonContaner.style.gap = step.spacing ? `${step.spacing}px` : "5px";
+        buttonContaner.className = "button-containers";
         for (const option of step.options) {
             const button = createButton({
                 text: option.display,
                 width: "15rem",
+                padding: step.button_size,
+                rounded: step.button_rounded,
                 backgroundColor: step.button_color,
                 textColor: step.text_color,
                 value: Object.assign({ [step.type]: option.value }, (option.url !== "" && { url: option.url })),
                 fontSize: "1.5rem",
             });
             button.className = `form_${step.id}_button_${option.id}`;
-            container.appendChild(button);
+            buttonContaner.appendChild(button);
         }
+        container.appendChild(buttonContaner);
         body.appendChild(container);
     }
     return body; // Return the container element
@@ -805,6 +892,9 @@ unlayer.registerTool({
                                     width_auto: true,
                                     width: "",
                                 },
+                                spacing: "",
+                                button_rounded: "",
+                                button_size: "",
                                 button_color: "#dc2626",
                                 text_color: "#fff",
                                 id: 1,

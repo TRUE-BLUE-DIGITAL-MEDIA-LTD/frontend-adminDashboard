@@ -42,41 +42,42 @@ function buildQueryString(params: FormDataItem) {
 
 for (let i = 1; i <= multipleforms.length; i++) {
   const form = multipleforms[i - 1];
+
   for (let j = 0; j < form.children.length; j++) {
     const child = form.children[j];
     // Check if the child is a button
-    if (child.tagName === "BUTTON") {
-      const button = child as HTMLButtonElement;
-      console.log(`Button ${j + 1}:`, button.textContent);
+    if (child.classList.contains("button-containers")) {
+      for (let d = 0; d < child.children.length; d++) {
+        const button = child.children[d] as HTMLButtonElement;
+        const value = JSON.parse(button.getAttribute("value") as string) as {
+          [key: string]: string;
+          url: string;
+        };
 
-      const value = JSON.parse(button.getAttribute("value") as string) as {
-        [key: string]: string;
-        url: string;
-      };
+        button.onclick = (event) => {
+          const currentForm = document.getElementById(`form_step_${i}`);
+          const nextPage = document.getElementById(`form_step_${i + 1}`);
+          if (value.url && value.url !== "") {
+            window.open(value.url, "_blank");
+          }
+          if (value) {
+            multipleFormData.push(value);
+          }
+          if (i === multipleforms.length) {
+            const object = convertToObject(multipleFormData);
+            const query = buildQueryString(object);
 
-      button.onclick = (event) => {
-        const currentForm = document.getElementById(`form_step_${i}`);
-        const nextPage = document.getElementById(`form_step_${i + 1}`);
-        if (value.url && value.url !== "") {
-          window.open(value.url, "_blank");
-        }
-        if (value) {
-          multipleFormData.push(value);
-        }
-        if (i === multipleforms.length) {
-          const object = convertToObject(multipleFormData);
-          const query = buildQueryString(object);
+            window.open(`${mainLink.link}?${query}`, "_self");
+          }
 
-          window.open(`${mainLink.link}?${query}`, "_self");
-        }
-
-        if (currentForm) {
-          currentForm.style.display = "none";
-        }
-        if (nextPage) {
-          nextPage.style.display = "flex";
-        }
-      };
+          if (currentForm) {
+            currentForm.style.display = "none";
+          }
+          if (nextPage) {
+            nextPage.style.display = "flex";
+          }
+        };
+      }
     }
   }
 }

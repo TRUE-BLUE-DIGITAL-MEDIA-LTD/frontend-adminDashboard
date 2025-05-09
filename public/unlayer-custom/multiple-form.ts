@@ -1,4 +1,38 @@
 /// <reference path="../../unlayer.d.ts" />
+const minimalCSS = `
+/* Basic Body Styling (can be done inline, but cleaner here) */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Toggle Switch Appearance & Behavior */
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+.toggle-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+.toggle-switch input:checked + .slider { background-color: #343a40; }
+.toggle-switch input:checked + .slider:before { transform: translateX(20px); }
+
+/* Range Slider Thumb/Track Styling */
+.range-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; cursor: pointer; }
+.range-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; margin-top: -5px; }
+.range-slider::-moz-range-thumb { width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; border: none; }
+
+/* Basic Hover Effects (simpler than JS listeners for this demo) */
+ .btn-primary:hover { background-color: #23272b !important; border-color: #1d2124 !important; }
+ .btn-secondary:hover { background-color: #f8f9fa !important; border-color: #adb5bd !important; }
+ .input-field:focus { outline: none; border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
+
+ /* Dropdown Arrow for Secondary Button */
+ .btn-secondary .arrow { margin-left: 8px; font-size: 10px; color: #6c757d; }
+
+`;
 
 type HTMLInputTypeAttribute =
   | "button"
@@ -41,6 +75,9 @@ type formValue = {
       width: string;
       loading: string;
     };
+    spacing: string;
+    button_size: string;
+    button_rounded: string;
     button_color: string;
     text_color: string;
     options: {
@@ -138,7 +175,7 @@ unlayer.registerPropertyEditor({
           `${step.id}_toggleCheckbox`,
         )[0] as HTMLInputElement;
         const rangeSlider = node.getElementsByClassName(
-          `${step.id}_rangeSlider`,
+          `${step.id}_rangeSlider_image`,
         )[0] as HTMLInputElement;
 
         if (step.picture.url) {
@@ -296,6 +333,72 @@ unlayer.registerPropertyEditor({
           });
         };
 
+        const rangeSlider_button = node.getElementsByClassName(
+          `spacing_${step.id}_rangeSlider`,
+        )[0] as HTMLInputElement;
+
+        rangeSlider_button.value = step.spacing;
+        rangeSlider_button.onchange = (e: Event) => {
+          const target = e.target as HTMLInputElement;
+          target.textContent = `${target.value}%`;
+          updateValue({
+            mainLink: value.mainLink,
+            steps: value.steps.map((prev) => {
+              if (prev.id === step.id) {
+                return {
+                  ...prev,
+                  spacing: target.value,
+                };
+              }
+              return prev;
+            }),
+          });
+        };
+
+        const rangeSlider_button_size = node.getElementsByClassName(
+          `button_size_${step.id}_rangeSlider`,
+        )[0] as HTMLInputElement;
+
+        rangeSlider_button_size.value = step.button_size;
+        rangeSlider_button_size.onchange = (e: Event) => {
+          const target = e.target as HTMLInputElement;
+          target.textContent = `${target.value}%`;
+          updateValue({
+            mainLink: value.mainLink,
+            steps: value.steps.map((prev) => {
+              if (prev.id === step.id) {
+                return {
+                  ...prev,
+                  button_size: target.value,
+                };
+              }
+              return prev;
+            }),
+          });
+        };
+
+        const rangeSlider_button_rounded = node.getElementsByClassName(
+          `button_rounded_${step.id}_rangeSlider`,
+        )[0] as HTMLInputElement;
+
+        rangeSlider_button_rounded.value = step.button_rounded;
+        rangeSlider_button_rounded.onchange = (e: Event) => {
+          const target = e.target as HTMLInputElement;
+          target.textContent = `${target.value}%`;
+          updateValue({
+            mainLink: value.mainLink,
+            steps: value.steps.map((prev) => {
+              if (prev.id === step.id) {
+                return {
+                  ...prev,
+                  button_rounded: target.value,
+                };
+              }
+              return prev;
+            }),
+          });
+        };
+
         const addMoreStep = node.getElementsByClassName(
           `add_more_step_${step.id}`,
         )[0] as HTMLButtonElement;
@@ -313,6 +416,9 @@ unlayer.registerPropertyEditor({
                   width: "",
                   loading: "",
                 },
+                spacing: "5px",
+                button_rounded: "3px",
+                button_size: "5px",
                 button_color: "#dc2626",
                 text_color: "#fff",
                 id: value.steps.length + 1,
@@ -520,17 +626,6 @@ interface MultipleFormOptions {
       };
     };
   };
-  color_picker: {
-    title: string;
-    position: number;
-    options: {
-      color_picker: {
-        label: string;
-        defaultValue: string;
-        widget: string;
-      };
-    };
-  };
 }
 
 type MultipleFormValues = {
@@ -548,6 +643,12 @@ type MultipleFormValues = {
 };
 
 function multipleForm(value: formValue) {
+  // --- Inject Minimal Necessary CSS ---
+  // Styles that are hard/impossible to set purely with element.style
+
+  const styleElement = document.createElement("style");
+  styleElement.textContent = minimalCSS;
+  document.head.appendChild(styleElement);
   const form = document.createElement("form");
   form.style.display = "flex";
   form.style.width = "100%";
@@ -626,6 +727,27 @@ function createformStep(data: {
   );
 
   div.appendChild(textColor);
+  const spacing = createSliderInput(
+    `spacing_${data.number}`,
+    "Spacing Between Buttons",
+  );
+
+  div.appendChild(spacing);
+
+  const button_size = createSliderInput(
+    `button_size_${data.number}`,
+    "Button Size",
+  );
+
+  div.appendChild(button_size);
+
+  const button_rounded = createSliderInput(
+    `button_rounded_${data.number}`,
+    "Button Rounded",
+  );
+
+  div.appendChild(button_rounded);
+
   const groupButtons = document.createElement("div");
   groupButtons.style.display = "flex";
   groupButtons.style.gap = "0.5rem";
@@ -671,48 +793,30 @@ function createformStep(data: {
   return div; // Return the DOM element
 }
 
+function createSliderInput(id: string, placeholder: string) {
+  const container = document.createElement("div");
+  const span = document.createElement("span");
+  span.textContent = placeholder;
+  container.appendChild(span);
+  const rangeSlider = document.createElement("input");
+  rangeSlider.type = "range";
+  rangeSlider.min = "0";
+  rangeSlider.max = "100";
+  rangeSlider.classList.add("range-slider", `${id}_rangeSlider`);
+  const rangeValueDisplay = document.createElement("div");
+  // Apply styles directly
+  rangeValueDisplay.style.textAlign = "right";
+  rangeValueDisplay.style.fontSize = "12px";
+  rangeValueDisplay.style.color = "#6c757d";
+  rangeValueDisplay.style.marginTop = "5px";
+  container.appendChild(rangeSlider);
+  container.appendChild(rangeValueDisplay);
+
+  return container;
+}
+
 function createImageBlock(id: string) {
   const container = document.createElement("div");
-
-  // --- Inject Minimal Necessary CSS ---
-  // Styles that are hard/impossible to set purely with element.style
-  const minimalCSS = `
-      /* Basic Body Styling (can be done inline, but cleaner here) */
-      body {
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-          background-color: #f8f9fa;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          padding-top: 50px;
-          min-height: 100vh;
-          margin: 0;
-      }
-
-      /* Toggle Switch Appearance & Behavior */
-      .toggle-switch input { opacity: 0; width: 0; height: 0; }
-      .toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
-      .toggle-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
-      .toggle-switch input:checked + .slider { background-color: #343a40; }
-      .toggle-switch input:checked + .slider:before { transform: translateX(20px); }
-
-      /* Range Slider Thumb/Track Styling */
-      .range-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; cursor: pointer; }
-      .range-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; margin-top: -5px; }
-      .range-slider::-moz-range-thumb { width: 16px; height: 16px; background: #343a40; border-radius: 50%; cursor: pointer; border: none; }
-
-      /* Basic Hover Effects (simpler than JS listeners for this demo) */
-       .btn-primary:hover { background-color: #23272b !important; border-color: #1d2124 !important; }
-       .btn-secondary:hover { background-color: #f8f9fa !important; border-color: #adb5bd !important; }
-       .input-field:focus { outline: none; border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
-
-       /* Dropdown Arrow for Secondary Button */
-       .btn-secondary .arrow { margin-left: 8px; font-size: 10px; color: #6c757d; }
-
-  `;
-  const styleElement = document.createElement("style");
-  styleElement.textContent = minimalCSS;
-  document.head.appendChild(styleElement);
 
   // --- Apply Styles to Container ---
   container.style.backgroundColor = "#ffffff";
@@ -836,7 +940,7 @@ function createImageBlock(id: string) {
   widthLabelToggleRow.style.marginBottom = "15px";
 
   const widthLabel = document.createElement("span");
-  widthLabel.textContent = "Width";
+  widthLabel.textContent = "Width Image";
   // Apply styles directly
   widthLabel.style.color = "#495057";
   widthLabel.style.fontWeight = "500";
@@ -888,7 +992,7 @@ function createImageBlock(id: string) {
   rangeSlider.type = "range";
   rangeSlider.min = "0";
   rangeSlider.max = "100";
-  rangeSlider.classList.add("range-slider", `${id}_rangeSlider`);
+  rangeSlider.classList.add("range-slider", `${id}_rangeSlider_image`);
   const rangeValueDisplay = document.createElement("div");
   // Apply styles directly
   rangeValueDisplay.style.textAlign = "right";
@@ -1008,17 +1112,21 @@ const createButton = (input: {
   backgroundColor: string;
   textColor: string;
   fontSize: string;
+  padding?: string;
+  rounded?: string;
   value?: { [key: string]: string };
 }) => {
   const button = document.createElement("button");
   button.textContent = input.text;
   button.style.minWidth = input.width;
   button.style.width = "max-content";
-  button.style.borderRadius = "0.375rem";
+  button.style.borderRadius = input.rounded ? `${input.rounded}px` : "0.35rem";
   button.style.backgroundColor = input.backgroundColor;
-  button.style.paddingTop = "0.25rem";
-  button.style.paddingInline = "0.35rem";
-  button.style.paddingBottom = "0.25rem";
+  button.style.paddingTop = input.padding ? `${input.padding}px` : "0.25rem";
+  button.style.paddingInline = input.padding
+    ? `${Number(input.padding) * 1.05}px`
+    : "0.35rem";
+  button.style.paddingBottom = input.padding ? `${input.padding}px` : "0.25rem";
   button.style.fontSize = input.fontSize;
   button.style.color = input.textColor;
   button.style.cursor = "pointer";
@@ -1085,10 +1193,20 @@ function displayForm(value: formValue) {
     divider.style.height = "2px";
     divider.style.backgroundColor = "#000";
     container.appendChild(divider);
+    const buttonContaner = document.createElement("div");
+    buttonContaner.style.display = "flex";
+    buttonContaner.style.width = "100%";
+    buttonContaner.style.flexDirection = "column";
+    buttonContaner.style.alignItems = "center";
+    buttonContaner.style.justifyContent = "center";
+    buttonContaner.style.gap = step.spacing ? `${step.spacing}px` : "5px";
+    buttonContaner.className = "button-containers";
     for (const option of step.options) {
       const button = createButton({
         text: option.display,
         width: "15rem",
+        padding: step.button_size,
+        rounded: step.button_rounded,
         backgroundColor: step.button_color,
         textColor: step.text_color,
         value: {
@@ -1099,8 +1217,9 @@ function displayForm(value: formValue) {
       });
       button.className = `form_${step.id}_button_${option.id}`;
 
-      container.appendChild(button);
+      buttonContaner.appendChild(button);
     }
+    container.appendChild(buttonContaner);
 
     body.appendChild(container);
   }
@@ -1134,6 +1253,9 @@ unlayer.registerTool({
                   width_auto: true,
                   width: "",
                 },
+                spacing: "",
+                button_rounded: "",
+                button_size: "",
                 button_color: "#dc2626",
                 text_color: "#fff",
                 id: 1,
