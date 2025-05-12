@@ -37,8 +37,10 @@ for (let i = 1; i <= multipleforms.length; i++) {
                 button.onclick = (event) => {
                     const currentForm = document.getElementById(`form_step_${i}`);
                     const nextPage = document.getElementById(`form_step_${i + 1}`);
+                    console.log("value", value);
                     if (value.url && value.url !== "") {
                         window.open(value.url, "_blank");
+                        return;
                     }
                     if (value) {
                         multipleFormData.push(value);
