@@ -68,24 +68,24 @@ for (let i = 1; i <= multipleforms.length; i++) {
           }
 
           if (i === multipleforms.length) {
-            const object = convertToObject(multipleFormData);
-            const query = buildQueryString(object);
+            // const object = convertToObject(multipleFormData);
+            // const query = buildQueryString(object);
 
-            const [baseUrl, existingQuery] = mainLink.link.split("?");
-            let finalQuery = "";
+            // const [baseUrl, existingQuery] = mainLink.link.split("?");
+            // let finalQuery = "";
 
-            if (existingQuery) {
-              // Combine existing query and new query
-              finalQuery = `${existingQuery}&${query}`;
-            } else {
-              finalQuery = query;
-            }
+            // if (existingQuery) {
+            //   // Combine existing query and new query
+            //   finalQuery = `${existingQuery}&${query}`;
+            // } else {
+            //   finalQuery = query;
+            // }
 
-            console.log("baseUrl", baseUrl);
-            console.log("existingQuery", existingQuery);
-            const finalUrl = `${baseUrl}?${finalQuery}`;
+            // console.log("baseUrl", baseUrl);
+            // console.log("existingQuery", existingQuery);
+            // const finalUrl = `${baseUrl}?${finalQuery}`;
 
-            window.open(finalUrl, "_self");
+            window.open(mainLink.link, "_self");
           }
 
           if (currentForm) {
