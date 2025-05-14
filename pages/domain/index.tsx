@@ -1,87 +1,58 @@
+import { Pagination, Skeleton } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
-import React, { useEffect, useState } from "react";
-import { GetUser } from "../../services/admin/user";
-import { useRouter } from "next/router";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  DeleteDomainNameService,
-  GetAllDomainsByPage,
-} from "../../services/admin/domain";
-import Swal from "sweetalert2";
+import { Dropdown } from "primereact/dropdown";
+import { useEffect, useState } from "react";
+import { Input, SearchField } from "react-aria-components";
+import { IoMdPerson } from "react-icons/io";
+import { IoSearchCircleSharp } from "react-icons/io5";
+import ListDomain from "../../components/domain/listDomain";
+import DomainCreate from "../../components/forms/domains/domainCreate";
+import DomainUpdate from "../../components/forms/domains/domainUpdate";
+import { loadingNumber } from "../../data/loadingNumber";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import {
   Domain,
   Partner,
   ResponsibilityOnPartner,
   SimCardOnPartner,
-  SiteBuild,
   User,
 } from "../../models";
-import { loadingNumber } from "../../data/loadingNumber";
-import { Pagination, Skeleton } from "@mui/material";
-import { BiSolidMessageSquareEdit } from "react-icons/bi";
-import SpinLoading from "../../components/loadings/spinLoading";
-import { MdDelete, MdViewTimeline } from "react-icons/md";
-import DomainCreate from "../../components/forms/domains/domainCreate";
-import DomainUpdate from "../../components/forms/domains/domainUpdate";
-import VerifyDomain from "../../components/domain/verifyDomain";
-import moment from "moment";
-import { Input, SearchField } from "react-aria-components";
-import { IoSearchCircleSharp } from "react-icons/io5";
+import { useGetDomainsByPage } from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
-import { Dropdown } from "primereact/dropdown";
-import { IoMdPerson } from "react-icons/io";
-import Link from "next/link";
+import { GetUser } from "../../services/admin/user";
 
-interface HandleDeleteDomain {
-  domainNameId: string;
-  name: string;
-}
 function Index({ user }: { user: User }) {
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [selectPartner, setSelectPartner] = useState<Partner>();
-
+  const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
   const [triggerUpdateDomain, setTriggerUpdateDomain] =
     useState<boolean>(false);
-  const [currentUpdateDomain, setCurrentUpdateDomain] =
-    useState<Domain | null>();
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const domains = useQuery({
-    queryKey: [
-      "domains-byPage",
-      {
-        page,
-        searchField,
-        partnerId: selectPartner?.id,
-        filter:
-          selectPartner?.id === "no-partner"
-            ? "no-partner"
-            : selectPartner?.id === "all"
-              ? "all"
-              : undefined,
-      },
-    ],
-    queryFn: () =>
-      GetAllDomainsByPage({
-        page: page,
-        searchField: searchField,
-        partnerId: selectPartner?.id,
-        filter:
-          selectPartner?.id === "no-partner"
-            ? "no-partner"
-            : selectPartner?.id === "all"
-              ? "all"
-              : undefined,
-      }),
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 60 * 5,
+  const [currentUpdateDomain, setCurrentUpdateDomain] = useState<
+    Domain | undefined
+  >();
+
+  const domains = useGetDomainsByPage({
+    page: page,
+    searchField: searchField,
+    partnerId: selectPartner?.id,
+    filter:
+      selectPartner?.id === "no-partner"
+        ? "no-partner"
+        : selectPartner?.id === "all"
+          ? "all"
+          : undefined,
   });
+
+  useEffect(() => {
+    if (domains.data) {
+      setTotalPage(() => domains.data.totalPages);
+    }
+  }, [domains.data]);
 
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
@@ -126,79 +97,6 @@ function Index({ user }: { user: User }) {
       }),
     enabled: domains.isSuccess,
   });
-
-  // handle delete domain
-
-  const handleDeleteDomain = async ({
-    domainNameId,
-    name,
-  }: HandleDeleteDomain) => {
-    const replacedText = name.replace(/ /g, "_");
-    let content = document.createElement("div");
-    content.innerHTML =
-      "<div>Please type this</div> <strong>" +
-      replacedText +
-      "</strong> <div>to confirm deleting</div>";
-    const { value } = await Swal.fire({
-      title: "Delete Domain",
-      input: "text",
-      footer:
-        "Please keep it mind if you delete domain, the landing pages that is connected to this domain also be deleted",
-      html: content,
-      showCancelButton: true,
-      inputValidator: (value) => {
-        if (value !== replacedText) {
-          return "Please Type Correctly";
-        }
-      },
-    });
-    if (value) {
-      try {
-        Swal.fire({
-          title: "Trying To Delete",
-          html: "Loading....",
-          allowEscapeKey: false,
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        await DeleteDomainNameService({
-          domainNameId: domainNameId,
-        });
-        await domains.refetch();
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-      } catch (err: any) {
-        console.log(err);
-        Swal.fire("error!", err.message?.toString(), "error");
-      }
-    }
-  };
-
-  const handleViewNameServer = ({
-    nameServer,
-    domain,
-  }: {
-    nameServer: string[];
-    domain: string;
-  }) => {
-    if (nameServer.length === 0) {
-      Swal.fire({
-        title: `Nameserver of ${domain}`,
-        html: `No Nameserver Found`,
-      });
-    } else {
-      Swal.fire({
-        title: `Nameserver of ${domain}`,
-        html: `${nameServer
-          .map((list, index) => {
-            return `<div>${list}</div>`;
-          })
-          .join("")}`,
-      });
-    }
-  };
 
   return (
     <DashboardLayout user={user}>
@@ -286,16 +184,15 @@ function Index({ user }: { user: User }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div
-            className=" h-96 w-80 justify-center overflow-auto   md:w-[30rem] 
-          lg:w-[45rem] xl:w-[60rem] 2xl:w-[70rem] "
-          >
+          <div className=" h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12 ">
             <table className="w-max min-w-full border-collapse ">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
                 <tr className="sticky top-0 z-40 bg-white ">
                   <td className=" px-5">Domain Name</td>
                   <td className="">Updated At</td>
                   <td>Site Status</td>
+                  <td>Verify On Google</td>
+                  <td>Sitemap Status</td>
                   <td>DNS Status</td>
                   <td>Nameserver</td>
                   <td>Partners</td>
@@ -311,21 +208,11 @@ function Index({ user }: { user: User }) {
                         className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
                         key={index}
                       >
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
+                        {Array.from({ length: 10 }).map((_, i) => (
+                          <th key={i}>
+                            <Skeleton />
+                          </th>
+                        ))}
                       </tr>
                     );
                   })
@@ -334,149 +221,14 @@ function Index({ user }: { user: User }) {
                 ) : (
                   domains.data?.domains.map((list, index) => {
                     return (
-                      <tr
-                        className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                      <ListDomain
                         key={index}
-                      >
-                        <td className="px-2">
-                          {domains.isFetching ? (
-                            <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
-                          ) : (
-                            list?.name
-                          )}
-                        </td>
-                        <td className=" px-2">
-                          {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
-                        </td>
-                        <td className="px-2">
-                          {list.siteBuild?.deploy_state === "ready" ? (
-                            <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
-                              READY
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "building" ? (
-                            <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
-                              Building
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "error" ? (
-                            <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
-                              Error
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "enqueued" ? (
-                            <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                              Enqueued
-                            </div>
-                          ) : list.siteBuild?.deploy_state === "new" ? (
-                            <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
-                              In Queue
-                            </div>
-                          ) : (
-                            <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
-                              Unknow Status
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-2">
-                          <VerifyDomain domainName={list.name} />
-                        </td>
-                        <td className="px-2">
-                          <button
-                            onClick={() =>
-                              handleViewNameServer({
-                                nameServer: list.dns_servers,
-                                domain: list.name,
-                              })
-                            }
-                            className=" flex w-max items-center justify-center rounded-lg
-                            bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 
-                              hover:scale-105"
-                          >
-                            {" "}
-                            <MdViewTimeline />
-                            View
-                          </button>
-                        </td>
-                        <td className="px-2 ">
-                          <div className="flex max-w-40 flex-wrap">
-                            {list.partner ? (
-                              <div
-                                key={index}
-                                className="rounded-md  px-2 py-1 text-xs text-gray-500"
-                              >
-                                <div className="w-40 truncate">
-                                  NAME: {list.partner.name}
-                                </div>
-                                <div className="w-40 truncate">
-                                  PARTNER ID: {list.partner.affiliateId}
-                                </div>
-                              </div>
-                            ) : (
-                              <div
-                                key={index}
-                                className="rounded-md bg-red-200 px-2 py-1 text-red-500"
-                              >
-                                <span>No Partner</span>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-2 ">
-                          <div className="flex flex-col gap-2">
-                            {list.landingPages.length > 0 ? (
-                              list.landingPages.map((landingPage, index) => {
-                                return (
-                                  <Link
-                                    target="_blank"
-                                    href={`/landingpage/${landingPage.id}`}
-                                    key={landingPage.id}
-                                    className="flex max-w-36 items-start  truncate rounded-md
-                                     px-2 py-1 text-start text-xs text-gray-500 underline"
-                                  >
-                                    <div className="w-40 truncate">
-                                      Title: {landingPage.title}
-                                    </div>
-                                  </Link>
-                                );
-                              })
-                            ) : (
-                              <div
-                                key={index}
-                                className="rounded-md bg-red-200 px-2 py-1 text-red-500"
-                              >
-                                <span>No Landing Page</span>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="flex h-14 w-20 gap-2">
-                          <button
-                            onClick={() => {
-                              setTriggerUpdateDomain(() => true);
-                              setCurrentUpdateDomain(() => list as Domain);
-                              document.body.style.overflow = "hidden";
-                            }}
-                            className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-                          >
-                            <BiSolidMessageSquareEdit />
-                          </button>
-                          {isLoading ? (
-                            <SpinLoading />
-                          ) : (
-                            user.role === "admin" && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteDomain({
-                                    domainNameId: list.id,
-                                    name: list.name,
-                                  })
-                                }
-                                className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                              >
-                                <MdDelete />
-                              </button>
-                            )
-                          )}
-                        </td>
-                      </tr>
+                        list={list}
+                        domains={domains}
+                        setCurrentUpdateDomain={setCurrentUpdateDomain}
+                        setTriggerUpdateDomain={setTriggerUpdateDomain}
+                        user={user}
+                      />
                     );
                   })
                 )}
@@ -487,7 +239,7 @@ function Index({ user }: { user: User }) {
             <Pagination
               onChange={(e, page) => setPage(page)}
               page={page}
-              count={domains?.data?.totalPages}
+              count={totalPage}
               color="primary"
             />
           </div>

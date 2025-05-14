@@ -1,5 +1,4 @@
 import axios from "axios";
-import Error from "next/error";
 import { parseCookies } from "nookies";
 import {
   Domain,
@@ -8,6 +7,7 @@ import {
   ResponsibilityOnPartner,
   SiteBuild,
 } from "../../models";
+import { siteVerification_v1, webmasters_v3 } from "googleapis";
 
 export type DomainWithLandingPage = Domain & {
   landingPages: {
@@ -47,7 +47,7 @@ export interface ResponseGetAllDomainsByPage {
   currentPage: number;
   totalDomain: number;
 }
-interface InputGetAllDomainsByPage {
+export interface InputGetAllDomainsByPage {
   page: number;
   searchField?: string;
   partnerId?: string;
@@ -212,6 +212,63 @@ export async function DeleteDomainNameService(
       },
     );
 
+    return domain.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseVerifyDomainOnGoogleService = Domain;
+export interface InputVerifyDomainOnGoogleService {
+  domainId: string;
+}
+export async function VerifyDomainOnGoogleService(
+  input: InputVerifyDomainOnGoogleService,
+): Promise<ResponseVerifyDomainOnGoogleService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const domain = await axios.patch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/verify-google`,
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+    return domain.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseSummitSitemapDomainService = {
+  verified: siteVerification_v1.Schema$SiteVerificationWebResourceResource;
+  site: webmasters_v3.Schema$WmxSite;
+  sitemap: webmasters_v3.Schema$WmxSitemap;
+  domain: Domain;
+};
+export interface InputSummitSitemapDomainService {
+  domainId: string;
+}
+export async function SummitSitemapDomainService(
+  input: InputSummitSitemapDomainService,
+): Promise<ResponseSummitSitemapDomainService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const domain = await axios.patch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/sitemap`,
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
     return domain.data;
   } catch (err: any) {
     console.log(err);

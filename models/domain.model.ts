@@ -8,6 +8,8 @@ export interface Domain {
   netlify_siteId: string;
   netlify_dns_zoneId: string;
   dns_servers: string[];
+  google_domain_id: string | null;
+  sitemap_status: "NOT_FOUND" | "PEDDING" | "COMPLETED";
 }
 
 export type SiteBuild = {
