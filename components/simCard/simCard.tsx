@@ -8,12 +8,14 @@ import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
+import { FaFileExcel } from "react-icons/fa";
 import { FaServer } from "react-icons/fa6";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
 import { countries } from "../../data/country";
+import PopupLayout from "../../layouts/PopupLayout";
 import {
   DeviceUser,
   ErrorMessages,
@@ -25,6 +27,11 @@ import {
   TagOnSimcard,
   User,
 } from "../../models";
+import {
+  useAutoGETICCID,
+  useGetPartnerByManager,
+  useGetPartners,
+} from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import {
   DeleteDeviceUserService,
@@ -51,13 +58,9 @@ import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
 import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
 import CreateDeviceUser from "../forms/createDeviceUser";
 import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
+import AddSimCardFromExcel from "./AddSimCardFromExcel";
 import ShowMessage from "./showMessage";
 import SimcardItem from "./SimcardItem";
-import { useAutoGETICCID } from "../../react-query";
-import { BsFileExcel } from "react-icons/bs";
-import { FaFileExcel } from "react-icons/fa";
-import PopupLayout from "../../layouts/PopupLayout";
-import AddSimCardFromExcel from "./AddSimCardFromExcel";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -162,22 +165,21 @@ function SimCards({ user }: { user: User }) {
     },
   });
 
-  const partners = useQuery({
-    queryKey: ["partners-by-manager"],
-    queryFn: () =>
-      GetPartnerByMangegerService().then((response) => {
-        setSelectPartner(() => {
-          if (user.role !== "admin") {
-            return (
-              response.find((partner) => partner.id === user.partnerId) ??
-              response[0]
-            );
-          }
-          return undefined;
-        });
-        return response;
-      }),
-  });
+  const partners = useGetPartnerByManager(user.id);
+
+  useEffect(() => {
+    if (partners.data) {
+      setSelectPartner(() => {
+        if (user.role !== "admin") {
+          return (
+            partners.data.find((partner) => partner.id === user.partnerId) ??
+            partners.data[0]
+          );
+        }
+        return undefined;
+      });
+    }
+  }, [partners.data]);
 
   const simCards = useQuery({
     queryKey: [

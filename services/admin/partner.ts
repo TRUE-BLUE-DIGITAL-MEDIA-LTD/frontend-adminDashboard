@@ -13,6 +13,7 @@ export async function GetPartnerByMangegerService(): Promise<
   (Partner & {
     responsibilityOnPartner: ResponsibilityOnPartner[];
     simCardOnPartner: SimCardOnPartner[];
+    account: User;
   })[]
 > {
   {
