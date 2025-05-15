@@ -1,5 +1,5 @@
 import { MdAccountCircle, MdDataUsage } from "react-icons/md";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 import { useGetPartnerByManager } from "../../react-query";
 import SummaryList from "./SummaryList";
 import { RequestUseGetHistories } from "../../react-query/account-history";
@@ -41,7 +41,9 @@ function SummaryUsageSimcard({ user, filter }: Props) {
                     return (
                       <SummaryList
                         key={index}
-                        partner={partner}
+                        partner={
+                          partner as unknown as Partner & { account: User }
+                        }
                         filter={filter}
                       />
                     );

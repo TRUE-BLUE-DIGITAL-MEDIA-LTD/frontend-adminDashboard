@@ -75,6 +75,7 @@ function Index({ user }: { user: User }) {
           dailyLimitSMSPVA: 20,
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
+          account: null,
         });
         addSeeAll.push({
           createAt: new Date(),
@@ -86,6 +87,7 @@ function Index({ user }: { user: User }) {
           dailyLimitSMSPVA: 20,
           id: "no-partner",
           isAllowUsingSMSPVA: true,
+          account: null,
           responsibilityOnPartner: new Array(
             domains.data?.totalNoPartnerDomain,
           ),
