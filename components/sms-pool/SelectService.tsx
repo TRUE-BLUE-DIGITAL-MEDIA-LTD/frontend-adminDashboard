@@ -121,7 +121,7 @@ function SelectService({ activeNumbers }: Props) {
       <Dropdown
         value={selectedCountry}
         onChange={(e: DropdownChangeEvent) => setSelectedCountry(e.value)}
-        options={country.data}
+        options={country.data?.sort((a, b) => a.name.localeCompare(b.name))}
         loading={country.isLoading}
         optionLabel="name"
         placeholder="Select a Country"

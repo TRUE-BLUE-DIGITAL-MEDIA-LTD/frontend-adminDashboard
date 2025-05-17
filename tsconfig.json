@@ -22,7 +22,8 @@
     "**/*.ts",
     "**/*.tsx",
     "tailwind.config.ts",
-    "next.config.js"
+    "next.config.js",
+    "types/tawk.to__tawk-messenger-react.d.ts"
   ],
   "exclude": ["node_modules", "../../servers/**/*", "public/unlayer-custom/"]
 }
