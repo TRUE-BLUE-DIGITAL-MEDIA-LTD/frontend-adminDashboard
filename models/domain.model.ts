@@ -5,6 +5,7 @@ export interface Domain {
   name: string;
   note: string;
   googleAnalyticsId: string;
+  oxyeyeAnalyticsId: string | null;
   netlify_siteId: string;
   netlify_dns_zoneId: string;
   dns_servers: string[];

@@ -116,13 +116,7 @@ export async function GetDomainService(
   }
 }
 
-interface ResponseCreateDomainService {
-  id: string;
-  createAt: string;
-  updateAt: string;
-  name: string;
-  googleAnalyticsId: string | null;
-}
+type ResponseCreateDomainService = Domain;
 interface InputCreateDomainService {
   domainName: string;
 }
@@ -156,6 +150,7 @@ export interface InputUpdateDomainService {
   name: string;
   domainNameId: string;
   googleAnalyticsId?: string | null;
+  oxyeyeAnalyticsId?: string | null | undefined;
   note?: string;
   landingPages: {
     name?: string;

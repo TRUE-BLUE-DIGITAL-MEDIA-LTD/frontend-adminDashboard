@@ -4,7 +4,6 @@ import {
   GetDomainService,
   InputUpdateDomainService,
   ResponseGetAllDomainsByPage,
-  ResponseGetDomainService,
   UpdateDomainService,
 } from "../../../services/admin/domain";
 import { Domain, LandingPage } from "../../../models";
@@ -38,6 +37,7 @@ function DomainUpdate({
     note: "",
     domainNameId: "",
     googleAnalyticsId: "",
+    oxyeyeAnalyticsId: "",
   });
   const [isVaildDomain, setIsVildDomain] = useState(true);
   const domainPattern = /^(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -54,6 +54,7 @@ function DomainUpdate({
         domainNameId: domainUpdate.data?.domain.id as string,
         googleAnalyticsId: domainUpdate.data?.domain
           .googleAnalyticsId as string,
+        oxyeyeAnalyticsId: domainUpdate.data?.domain.oxyeyeAnalyticsId,
         note: domainUpdate.data?.domain.note as string,
         landingPages: domainUpdate.data?.landingPages as {
           name: string;
@@ -72,6 +73,7 @@ function DomainUpdate({
         domainNameId: domain.id,
         note: domainData.note,
         landingPages: domainData.landingPages,
+        oxyeyeAnalyticsId: domainData.oxyeyeAnalyticsId,
         googleAnalyticsId: domainData?.googleAnalyticsId,
       });
       await domainUpdate.refetch();
@@ -136,6 +138,20 @@ function DomainUpdate({
                 setDomainData((prev) => {
                   return {
                     ...prev,
+                    oxyeyeAnalyticsId: e.target.value,
+                  };
+                })
+              }
+              value={domainData?.oxyeyeAnalyticsId || ""}
+              className="col-span-2 w-full"
+              name="Oxy AnalyticsId"
+              label="Oxy Analytics Id"
+            />
+            <TextField
+              onChange={(e) =>
+                setDomainData((prev) => {
+                  return {
+                    ...prev,
                     googleAnalyticsId: e.target.value,
                   };
                 })
@@ -144,7 +160,6 @@ function DomainUpdate({
               className="w-60"
               name="googleAnalyticsId"
               label="google analytics id"
-              id="fullWidth"
             />
             <TextField
               onChange={(e) =>
@@ -159,7 +174,6 @@ function DomainUpdate({
               className="w-60"
               name="note"
               label="note"
-              id="fullWidth"
             />
           </section>
         )}
