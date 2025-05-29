@@ -6,7 +6,9 @@ import {
   GetSmsPoolService,
   GetStockNumberService,
   RequestCencelSMSPoolService,
+  RequestResendSMSPOOLService,
   RequestReserveSMSPOOLNumberService,
+  ResendSMSPOOLService,
   ReserveSMSPOOLNumberService,
 } from "../services/sms-pool";
 
@@ -20,6 +22,7 @@ export const smsPoolKeys = {
   create: ["smspool-create"],
   get: (data: { userId: string }) => ["smspool-get", { userId: data.userId }],
   cancelSMS: ["smspool-cancel"],
+  resend: ["smspool-resend"],
 } as const;
 
 export function useGetCountrySMSPool() {
@@ -64,5 +67,21 @@ export function useCanelSMSPool() {
     mutationKey: smsPoolKeys.cancelSMS,
     mutationFn: (request: RequestCencelSMSPoolService) =>
       CencelSMSPoolService(request),
+  });
+}
+
+export function useResendSMSPool() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: smsPoolKeys.resend,
+    mutationFn: (request: RequestResendSMSPOOLService) =>
+      ResendSMSPOOLService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: smsPoolKeys.get({
+          userId: data.userId,
+        }),
+      });
+    },
   });
 }

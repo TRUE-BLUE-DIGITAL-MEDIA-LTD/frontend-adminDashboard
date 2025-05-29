@@ -74,6 +74,33 @@ export async function GetStockNumberService(
   }
 }
 
+export type ResponseResendSMSPOOLService = SMSPool;
+export type RequestResendSMSPOOLService = {
+  id: string;
+};
+export async function ResendSMSPOOLService(
+  input: RequestResendSMSPOOLService,
+): Promise<ResponseResendSMSPOOLService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const smsPool = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pools/resend`,
+      data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return smsPool.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseReserveSMSPOOLNumberService = SMSPool;
 export type RequestReserveSMSPOOLNumberService = {
   country: string;
