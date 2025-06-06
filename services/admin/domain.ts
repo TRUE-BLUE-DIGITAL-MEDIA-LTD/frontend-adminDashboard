@@ -47,12 +47,14 @@ export interface ResponseGetAllDomainsByPage {
   currentPage: number;
   totalDomain: number;
 }
+
 export interface InputGetAllDomainsByPage {
   page: number;
   searchField?: string;
   partnerId?: string;
   filter?: "all" | "no-partner";
 }
+
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
 ): Promise<ResponseGetAllDomainsByPage> {
@@ -87,9 +89,12 @@ export interface ResponseGetDomainService {
     name: string;
     percent: number;
   }[];
+  sitemap: webmasters_v3.Schema$WmxSitemap;
+  analytics: webmasters_v3.Schema$SearchAnalyticsQueryResponse;
 }
 interface InputGetDomainService {
   domainId: string;
+  days: number;
 }
 export async function GetDomainService(
   input: InputGetDomainService,

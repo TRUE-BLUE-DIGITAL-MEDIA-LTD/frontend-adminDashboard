@@ -113,7 +113,6 @@ function Index({ user }: { user: User }) {
         <DomainUpdate
           domain={currentUpdateDomain as Domain}
           setTriggerUpdateDomain={setTriggerUpdateDomain}
-          domains={domains}
         />
       )}
       <div className="w-full">
