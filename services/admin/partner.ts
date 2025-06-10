@@ -122,6 +122,7 @@ type InputUpdatePartnerService = {
     isAllowUsingSMSPVA?: boolean;
     isAllowUsingSMSPOOL?: boolean;
     dailyLimitSMSPVA?: number;
+    smartLink?: string;
   };
 };
 export async function UpdatePartnerService(

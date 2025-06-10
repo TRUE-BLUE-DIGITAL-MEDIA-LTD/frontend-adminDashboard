@@ -41,6 +41,7 @@ function UpdatePartner({
     isAllowUsingSMSPVA?: boolean;
     dailyLimitSMSPVA?: number;
     isAllowUsingSMSPOOL?: boolean;
+    smartLink?: string;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
@@ -48,6 +49,7 @@ function UpdatePartner({
     isAllowUsingSMSPVA: selectPartner.isAllowUsingSMSPVA,
     dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
     isAllowUsingSMSPOOL: selectPartner.isAllowUsingSMSPOOL,
+    smartLink: selectPartner.smartLink,
   });
 
   const handleChangeupdatePartnerData = (
@@ -90,6 +92,7 @@ function UpdatePartner({
           isAllowUsingSMSPVA: updatePartnerData.isAllowUsingSMSPVA,
           dailyLimitSMSPVA: updatePartnerData.dailyLimitSMSPVA,
           isAllowUsingSMSPOOL: updatePartnerData.isAllowUsingSMSPOOL,
+          smartLink: updatePartnerData.smartLink,
         },
       });
       await partners.refetch();
@@ -239,7 +242,19 @@ function UpdatePartner({
           />
           <FieldError className="text-xs text-red-600" />
         </TextField>
-
+        <TextField className="flex flex-col gap-1" isRequired>
+          <Label>Smart Link</Label>
+          <Input
+            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+         duration-75 hover:border-black focus:drop-shadow-md"
+            type="text"
+            value={updatePartnerData?.smartLink ?? ""}
+            name="smartLink"
+            onChange={handleChangeupdatePartnerData}
+            maxLength={255}
+          />
+          <FieldError className="text-xs text-red-600" />
+        </TextField>
         <Button
           type="submit"
           className="main-button col-span-2 mt-10 w-40 font-bold"
