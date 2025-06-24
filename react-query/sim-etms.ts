@@ -1,9 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AutoGetICCIDNumberService,
+  AutoGetUUSDService,
   CreateSimCardService,
   GetSimCardByPageService,
   InputAutoGetICCIDNumberService,
+  InputAutoGetUUSDService,
   InputCreateSimCardService,
   InputGetSimCardByPageService,
 } from "../services/simCard/simCard";
@@ -20,6 +22,14 @@ export function useAutoGETICCID() {
     mutationKey: ["auto-get-iccid"],
     mutationFn: (request: InputAutoGetICCIDNumberService) =>
       AutoGetICCIDNumberService(request),
+  });
+}
+
+export function useAutoGETUUSD() {
+  return useMutation({
+    mutationKey: ["auto-get-uusd"],
+    mutationFn: (request: InputAutoGetUUSDService) =>
+      AutoGetUUSDService(request),
   });
 }
 

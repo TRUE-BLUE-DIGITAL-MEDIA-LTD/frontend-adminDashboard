@@ -29,6 +29,7 @@ import {
 } from "../../models";
 import {
   useAutoGETICCID,
+  useAutoGETUUSD,
   useGetPartnerByManager,
   useGetPartners,
 } from "../../react-query";
@@ -67,6 +68,7 @@ const availableSlot = ["available", "unavailable"];
 function SimCards({ user }: { user: User }) {
   const autoGetICCID = useAutoGETICCID();
   const queryClient = useQueryClient();
+  const autoUUSD = useAutoGETUUSD();
   const cookies = parseCookies();
   const webSocket = useRef<WebSocket | null>(null);
   const access_token = cookies.access_token;
@@ -630,6 +632,39 @@ function SimCards({ user }: { user: User }) {
       });
     }
   };
+  const handleAutoUUSD = async (portServer: string, uusd_code: string) => {
+    try {
+      Swal.fire({
+        title: "Auto UUSD",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await autoUUSD.mutateAsync({ portServer, uusd_code: uusd_code });
+
+      Swal.fire({
+        title: "Success",
+        text: "Auto Get UUSD has been done.",
+        footer:
+          "We will notify you when it's done on email, usually 5 - 10 minutes",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
 
   const handleAutoGetICCID = async (portServer: string) => {
     try {
@@ -815,6 +850,26 @@ function SimCards({ user }: { user: User }) {
             transition duration-100 hover:bg-blue-400"
                       >
                         Auto CCID
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const { value } = await Swal.fire({
+                            title: "Input ussd code",
+                            input: "text",
+                            footer:
+                              "UUSD is used to get the number and upload to ETMS dashboard, then press synce to sysnce oxyclick and ETMS",
+                            inputLabel: "Enter Provider USSD Code",
+                            inputPlaceholder:
+                              "Enter Provider USSD Code example: *#100#",
+                          });
+                          if (value) {
+                            handleAutoUUSD(device.portNumber, value);
+                          }
+                        }}
+                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
+            transition duration-100 hover:bg-blue-400"
+                      >
+                        Auto UUSD
                       </button>
                       <button
                         onClick={() =>
