@@ -10,7 +10,7 @@ import {
 import { MdDevices, MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import moment from "moment";
 import { Sms } from "@mui/icons-material";
-import { FcPhoneAndroid } from "react-icons/fc";
+import { FcPhoneAndroid, FcSimCard } from "react-icons/fc";
 import { BsFlag } from "react-icons/bs";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ResponseGetDeviceUsersService } from "../../services/simCard/deviceUser";
@@ -224,6 +224,16 @@ function SimcardItem({
   text-start font-semibold text-black"
         >
           {sim.portNumber}
+        </span>
+        <span className="flex  w-full items-center justify-start gap-1">
+          <FcSimCard />
+          Provider:{" "}
+        </span>
+        <span
+          className="w-full bg-slate-200 
+  text-start font-semibold text-black"
+        >
+          {sim.provider}
         </span>
 
         <span className="col-span-2 flex w-full  items-center justify-center gap-1">

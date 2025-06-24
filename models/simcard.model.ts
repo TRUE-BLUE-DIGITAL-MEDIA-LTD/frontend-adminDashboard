@@ -14,6 +14,7 @@ export type SimCard = {
   portStatus: StatusPort;
   isActive: boolean;
   expireAt: Date;
+  provider: string;
 };
 
 export type StatusSimCard = "active" | "inactive";
