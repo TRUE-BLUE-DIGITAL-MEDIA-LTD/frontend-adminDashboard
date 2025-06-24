@@ -378,6 +378,7 @@ export async function AutoGetICCIDNumberService(
 export type InputCreateSimCardService = {
   iccid: string;
   phoneNumber: string;
+  provider: string;
 };
 export async function CreateSimCardService(
   input: InputCreateSimCardService,

@@ -16,7 +16,13 @@ function AddSimCardFromExcel({ onClose }: Props) {
   const [textData, setTextData] = React.useState("");
   const tableRef = React.useRef<HTMLDivElement>(null);
   const [simcardData, setSimcardData] = React.useState<
-    { id: string; phoneNumber: string; iccid: string; error?: string }[]
+    {
+      id: string;
+      phoneNumber: string;
+      iccid: string;
+      error?: string;
+      provider: string;
+    }[]
   >([]);
   const [loading, setLoading] = React.useState(false);
   const [successLists, setSuccessList] = React.useState<
@@ -24,6 +30,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
       id: string;
       phoneNumber: string;
       iccid: string;
+      provider: string;
     }[]
   >([]);
   const [errorLists, setErrorList] = React.useState<
@@ -31,6 +38,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
       id: string;
       phoneNumber: string;
       iccid: string;
+      provider: string;
       error: string;
     }[]
   >([]);
@@ -44,11 +52,12 @@ function AddSimCardFromExcel({ onClose }: Props) {
     }
 
     const data = textData.split("\n").map((item) => {
-      const [iccid, phoneNumber] = item.split("\t");
+      const [iccid, phoneNumber, provider] = item.split("\t");
       return {
         id: crypto.randomBytes(16).toString("hex"),
         iccid,
         phoneNumber,
+        provider,
       };
     });
 
@@ -63,6 +72,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
         const data = await create.mutateAsync({
           phoneNumber: item.phoneNumber,
           iccid: item.iccid,
+          provider: item.provider,
         });
         setSuccessList((prev) => [...prev, item]);
       } catch (error) {
@@ -106,6 +116,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
                 <tr className="sticky top-0 h-10 bg-gray-200">
                   <th className="text-left">ICCID</th>
                   <th className="text-left">Phone Number</th>
+                  <th className="text-left">Provider</th>
                   <th className="text-left">Action</th>
                   <th className="text-left">ERROR MESSAGE</th>
                 </tr>
@@ -135,7 +146,8 @@ function AddSimCardFromExcel({ onClose }: Props) {
             ></textarea>
             <span className="text-sm text-red-500">
               **Please make sure the data is in the correct format. The data
-              must be in the following format: | ICCID | Phone Number |
+              must be in the following format: | ICCID | Phone Number | Provider
+              |
             </span>
           </>
         )}
@@ -175,13 +187,20 @@ export default AddSimCardFromExcel;
 type ListPhoneNumberProps = {
   tableRef: React.RefObject<HTMLDivElement>;
   length: number;
-  data: { id: string; phoneNumber: string; iccid: string; error?: string };
+  data: {
+    id: string;
+    phoneNumber: string;
+    iccid: string;
+    error?: string;
+    provider: string;
+  };
   setData: React.Dispatch<
     React.SetStateAction<
       {
         id: string;
         phoneNumber: string;
         iccid: string;
+        provider: string;
       }[]
     >
   >;
@@ -221,6 +240,21 @@ const ListPhoneNumber = React.memo(
             className="h-10 w-40 rounded-md border p-1 "
           />
         </td>
+        <td>
+          <input
+            value={data.provider}
+            onChange={(e) => {
+              setData((prev) =>
+                prev.map((item) =>
+                  item.id === data.id
+                    ? { ...item, provider: e.target.value }
+                    : item,
+                ),
+              );
+            }}
+            className="h-10 w-40 rounded-md border p-1 "
+          />
+        </td>
 
         <td>
           <div className="flex items-center justify-start gap-2 px-5">
@@ -250,6 +284,7 @@ const ListPhoneNumber = React.memo(
                         id: crypto.randomBytes(16).toString("hex"),
                         phoneNumber: "",
                         iccid: "",
+                        provider: "",
                       },
                     ];
                   });
