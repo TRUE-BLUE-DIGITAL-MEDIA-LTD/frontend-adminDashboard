@@ -12,6 +12,7 @@ import {
   DeviceUser,
   ErrorMessages,
   Partner,
+  ResponsibilityOnPartner,
   SimCard,
   SimCardOnPartner,
   User,
@@ -32,6 +33,7 @@ import {
 import { InputNumber } from "primereact/inputnumber";
 import { Nullable } from "primereact/ts-helpers";
 import { ResponseGetSimCardByPageService } from "../../../services/simCard/simCard";
+import { IoMdPerson } from "react-icons/io";
 const availableSlot = ["available", "unavailable"];
 
 type AssignPhoneNumberProps = {
@@ -68,19 +70,18 @@ function AssignPhoneNumber({
   }>();
   const [page, setPage] = useState<number>(1);
   const [selectBulkAssign, setSelectBulkAssign] = useState(false);
-  const [selectPartnerSearch, setSelectPartner] = useState<Partner | null>();
-  const searhBoxRef = React.useRef<HTMLDivElement>(null);
-  const [triggerShowBox, setTriggerShowBox] = useState<boolean>(false);
-  const [searchPartner, setSearchPartner] = useState<string>("");
+  const [selectPartnerSearch, setSelectPartnerSearch] =
+    useState<Partner | null>();
   const removeSimcardOnPartner = useDeleteSimcardOnPartner();
   const simCardOnPartners = useGetSimcardOnPartner({
     partnerId: selectPartner.id,
   });
   const partners = useGetPartners({
     page: 1,
-    searchField: searchPartner,
-    limit: 3,
+    searchField: "",
+    limit: 40,
   });
+
   const phoneNumber = useGetSimcards(
     {
       limit: 20,
@@ -130,9 +131,6 @@ function AssignPhoneNumber({
     }
   }, [phoneNumber.data]);
 
-  useClickOutside(searhBoxRef, () => {
-    setTriggerShowBox(() => false);
-  });
   const handleAssignSimCard = async ({
     partnerId,
     simCardId,
@@ -374,26 +372,26 @@ function AssignPhoneNumber({
                       className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
                     />
                   </div>
-                  {user.role === "admin" && (
-                    <div className="flex flex-col">
-                      <label className="text-sm font-normal">
-                        Select Device User
-                      </label>
-                      <Dropdown
-                        value={selectDeviceUser}
-                        onChange={(e) => {
-                          setPage(1);
-                          setSelectDeviceUser(() => e.value);
-                        }}
-                        showClear
-                        options={deviceUser.data}
-                        loading={deviceUser.isLoading}
-                        optionLabel="portNumber"
-                        placeholder="Select Available Slot"
-                        className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                      />
-                    </div>
-                  )}
+
+                  <div className="flex flex-col">
+                    <label className="text-sm font-normal">
+                      Select Device User
+                    </label>
+                    <Dropdown
+                      value={selectDeviceUser}
+                      onChange={(e) => {
+                        setPage(1);
+                        setSelectDeviceUser(() => e.value);
+                      }}
+                      showClear
+                      options={deviceUser.data}
+                      loading={deviceUser.isLoading}
+                      optionLabel="portNumber"
+                      placeholder="Select Available Slot"
+                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
+                    />
+                  </div>
+
                   <div className="flex flex-col">
                     <label className="text-sm font-normal">
                       Select No Partner
@@ -411,49 +409,29 @@ function AssignPhoneNumber({
                     />
                   </div>
                 </section>
-                <div className="relative flex flex-col">
+                <div className="flex flex-col">
                   <label className="text-sm font-normal">Select Partner</label>
-                  <div className="relative h-10 w-60">
-                    <input
-                      type="text"
-                      value={searchPartner}
-                      onChange={(e) => {
-                        setTriggerShowBox(() => true);
-                        if (e.target.value === "") {
-                          setSelectPartner(null);
-                        }
-                        setSearchPartner(e.target.value);
-                      }}
-                      placeholder="Search Partner"
-                      className="h-full rounded-lg  px-2 outline-0 ring-2 ring-icon-color "
-                    />
-                    {searchPartner === selectPartnerSearch?.name && (
-                      <div className="absolute bottom-0 right-8 top-0 m-auto flex items-center justify-center">
-                        <FcApproval />
-                      </div>
-                    )}
-                  </div>
-                  {triggerShowBox && searchPartner !== "" && (
-                    <ul className="absolute top-16 z-50 grid h-max max-h-36 w-full rounded-md border bg-white drop-shadow-md">
-                      {partners.data?.data.map((partner) => {
-                        return (
-                          <li key={partner.id}>
-                            <button
-                              type="button"
-                              className="w-full p-2 hover:bg-gray-200"
-                              onClick={() => {
-                                setSearchPartner(partner.name);
-                                setSelectPartner(partner);
-                                setTriggerShowBox(() => false);
-                              }}
-                            >
-                              {partner.name}
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
+                  <Dropdown
+                    value={selectPartnerSearch}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSelectPartnerSearch(() => e.value);
+                    }}
+                    itemTemplate={(partner: Partner) => {
+                      return (
+                        <div className="n flex w-full items-center gap-2">
+                          <IoMdPerson />
+                          <span>{partner.name}</span>
+                        </div>
+                      );
+                    }}
+                    optionLabel="name"
+                    showClear
+                    loading={partners.isLoading}
+                    options={partners.data?.data}
+                    placeholder="Select Partner"
+                    className="h-10 w-96  rounded-lg outline-0 ring-2 ring-icon-color "
+                  />
                 </div>
               </>
             )}

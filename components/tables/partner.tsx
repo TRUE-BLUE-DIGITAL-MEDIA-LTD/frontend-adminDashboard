@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import AssignDomain from "../forms/partners/assignDomain";
 import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
 import AssignCategory from "../forms/partners/assignCategory";
+import { useGetPartners } from "../../react-query";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
@@ -33,14 +34,11 @@ function PartnerTable({ accounts, user }: PartnerProps) {
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [searchField, setSearchField] = useState("");
   const [page, setPage] = useState(1);
-  const partners = useQuery({
-    queryKey: ["partners", { page: page, searchField: searchField }],
-    queryFn: () =>
-      GetPartnerByPageService({
-        page: page,
-        searchField: searchField,
-        limit: 20,
-      }),
+
+  const partners = useGetPartners({
+    page: page,
+    searchField: searchField,
+    limit: 40,
   });
 
   const handleDeletePartner = async ({
@@ -128,7 +126,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
         />
       )}
 
-      {triggerAssignNumber && selectPartner && user.role === "admin" && (
+      {triggerAssignNumber && selectPartner && (
         <AssignPhoneNumber
           user={user}
           setTriggerAssignNumber={setTriggerAssignNumber}
@@ -227,23 +225,23 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         {partner.user.email}
                       </td>
-                      {user.role === "admin" && (
-                        <td className="truncate border-4 border-transparent font-semibold text-black">
-                          <div className="flex items-center justify-center">
-                            <button
-                              onClick={() => {
-                                setSelectPartner(partner);
-                                setTriggerAssignNumber(() => true);
-                                document.body.style.overflow = "hidden";
-                              }}
-                              className="rounded-md bg-green-400 px-5 py-1 text-black
+
+                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => {
+                              setSelectPartner(partner);
+                              setTriggerAssignNumber(() => true);
+                              document.body.style.overflow = "hidden";
+                            }}
+                            className="rounded-md bg-green-400 px-5 py-1 text-black
                            transition duration-150 hover:bg-green-500"
-                            >
-                              phone number
-                            </button>
-                          </div>
-                        </td>
-                      )}
+                          >
+                            phone number
+                          </button>
+                        </div>
+                      </td>
+
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         <div className="flex items-center justify-center">
                           <button
