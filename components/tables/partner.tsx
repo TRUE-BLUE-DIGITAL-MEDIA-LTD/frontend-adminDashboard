@@ -174,9 +174,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
               <th className="px-5">Affiliate ID</th>
               <th className="px-5">Name</th>
               <th className="px-5">Partner Manager</th>
-              {user.role === "admin" && (
-                <th className="px-5">Assign Phone Number</th>
-              )}
+              <th className="px-5">Assign Phone Number</th>
               <th className="px-5">Assign Domain</th>
               <th className="px-5">Assign Category</th>
               <th className="px-5">SMS PVA Permission</th>
