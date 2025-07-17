@@ -162,7 +162,7 @@ function DomainUpdate({ domain, setTriggerUpdateDomain }: DomainUpdate) {
             <MdClose />
           </button>
         </header>
-        <main className="w-full grow overflow-auto px-10">
+        <main className="h-96 w-full overflow-auto px-10">
           {getDomain.isFetching ? (
             <Skeleton width={400} height={60} />
           ) : (
@@ -302,7 +302,7 @@ function DomainUpdate({ domain, setTriggerUpdateDomain }: DomainUpdate) {
                       justify-center gap-2 rounded-md bg-red-300  px-5 py-1 text-sm
                        text-red-500 drop-shadow-md transition duration-150 hover:bg-red-500 hover:text-white active:scale-105"
                         >
-                          Remove LandingPage
+                          Remove
                           <MdRemoveCircle />
                         </button>
                       </li>

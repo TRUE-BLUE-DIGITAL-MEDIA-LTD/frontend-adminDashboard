@@ -3,28 +3,6 @@ const multipleforms = document.getElementsByClassName("form_step");
 let multipleFormData = [];
 const script = document.getElementsByClassName("script_multiple_form")[0];
 const mainLink = JSON.parse(script.getAttribute("value"));
-function convertToObject(filters) {
-    let query = {};
-    filters.forEach((filter) => {
-        const key = Object.keys(filter)[0];
-        const value = filter[key];
-        if (key && value) {
-            query[key] = value;
-        }
-    });
-    return query;
-}
-function buildQueryString(params) {
-    const queryString = Object.entries(params)
-        .map(([key, value]) => {
-        // Encode the key and value for URL safety
-        const encodedKey = encodeURIComponent(key);
-        const encodedValue = encodeURIComponent(value);
-        return `${encodedKey}=${encodedValue}`;
-    })
-        .join("&");
-    return queryString;
-}
 for (let i = 1; i <= multipleforms.length; i++) {
     const form = multipleforms[i - 1];
     for (let j = 0; j < form.children.length; j++) {
@@ -46,19 +24,6 @@ for (let i = 1; i <= multipleforms.length; i++) {
                         multipleFormData.push(value);
                     }
                     if (i === multipleforms.length) {
-                        // const object = convertToObject(multipleFormData);
-                        // const query = buildQueryString(object);
-                        // const [baseUrl, existingQuery] = mainLink.link.split("?");
-                        // let finalQuery = "";
-                        // if (existingQuery) {
-                        //   // Combine existing query and new query
-                        //   finalQuery = `${existingQuery}&${query}`;
-                        // } else {
-                        //   finalQuery = query;
-                        // }
-                        // console.log("baseUrl", baseUrl);
-                        // console.log("existingQuery", existingQuery);
-                        // const finalUrl = `${baseUrl}?${finalQuery}`;
                         window.open(mainLink.link, "_self");
                     }
                     if (currentForm) {

@@ -1,4 +1,4 @@
-/// <reference path="../../unlayer.d.ts" />
+/// <reference path="../../types/unlayer.d.ts" />
 const minimalCSS = `
 /* Basic Body Styling (can be done inline, but cleaner here) */
 body {
