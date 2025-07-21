@@ -30,6 +30,7 @@ import {
 import {
   useAutoGETICCID,
   useAutoGETUUSD,
+  useAutoTHREE,
   useGetPartnerByManager,
   useGetPartners,
 } from "../../react-query";
@@ -67,6 +68,7 @@ const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
   const autoGetICCID = useAutoGETICCID();
+  const autoGetTHREE = useAutoTHREE();
   const queryClient = useQueryClient();
   const autoUUSD = useAutoGETUUSD();
   const cookies = parseCookies();
@@ -666,6 +668,40 @@ function SimCards({ user }: { user: User }) {
     }
   };
 
+  const handleAutoTHREE = async (portServer: string) => {
+    try {
+      Swal.fire({
+        title: "Auto Grabing THREE",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await autoGetTHREE.mutateAsync({ portServer });
+
+      Swal.fire({
+        title: "Success",
+        text: "Auto Get UUSD has been done.",
+        footer:
+          "We will notify you when it's done on email, usually 5 - 10 minutes",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
+    }
+  };
+
   const handleAutoGetICCID = async (portServer: string) => {
     try {
       Swal.fire({
@@ -809,21 +845,33 @@ function SimCards({ user }: { user: User }) {
                     className=" relative flex w-96 flex-col items-center  justify-center gap-1  
                   rounded-sm bg-white p-2 ring-1  ring-gray-700"
                   >
-                    <div
-                      className="absolute right-1 top-1 m-auto h-7 w-10
+                    <div className="absolute right-2 top-2 flex w-40 items-center justify-end gap-3">
+                      <div
+                        className="  m-auto h-7 w-10
                       overflow-hidden rounded-md "
-                    >
-                      <Image
-                        fill
-                        src={
-                          countries.find(
-                            (country) => country.country === device.country,
-                          )?.flag ?? "/favicon.ico"
+                      >
+                        <Image
+                          fill
+                          src={
+                            countries.find(
+                              (country) => country.country === device.country,
+                            )?.flag ?? "/favicon.ico"
+                          }
+                          alt="flag"
+                          className="object-contain"
+                        />
+                      </div>
+                      <button
+                        onClick={() =>
+                          handleDeleteDeviceUser({ deviceUserId: device.id })
                         }
-                        alt="flag"
-                        className="object-contain"
-                      />
+                        className="  flex h-7 w-10 items-center justify-center rounded-md bg-red-300 text-sm text-red-600 drop-shadow-lg 
+            transition duration-100 hover:bg-red-400"
+                      >
+                        <MdDelete />
+                      </button>
                     </div>
+
                     <span className="grid w-full grid-cols-2">
                       <span>Port Number: </span>
                       <span className="font-semibold">{device.portNumber}</span>
@@ -843,13 +891,17 @@ function SimCards({ user }: { user: User }) {
                       <span className="font-semibold">{device.password}</span>
                     </span>
 
-                    <div className="flex w-full items-center justify-start gap-1">
+                    <div className="flex w-full flex-wrap items-center justify-start gap-1">
                       <button
-                        onClick={() => handleAutoGetICCID(device.portNumber)}
-                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
+                        onClick={() => {
+                          if (confirm("Are you sure?")) {
+                            handleAutoGetICCID(device.portNumber);
+                          }
+                        }}
+                        className="h-8 w-max rounded-md bg-white px-2 text-sm text-blue-600 ring-1 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
                       >
-                        Auto CCID
+                        Read old sims
                       </button>
                       <button
                         onClick={async () => {
@@ -866,28 +918,32 @@ function SimCards({ user }: { user: User }) {
                             handleAutoUUSD(device.portNumber, value);
                           }
                         }}
-                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
+                        className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
                       >
-                        Auto UUSD
+                        Read Vodafone
                       </button>
                       <button
-                        onClick={() =>
-                          handleAutoPopulateNumber(device.portNumber)
-                        }
-                        className="h-8 w-28 rounded-md bg-blue-300 text-sm text-blue-600 drop-shadow-lg 
+                        onClick={() => {
+                          if (confirm("Are you sure?")) {
+                            handleAutoPopulateNumber(device.portNumber);
+                          }
+                        }}
+                        className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
                       >
-                        Auto Populate
+                        Read EE EE
                       </button>
                       <button
-                        onClick={() =>
-                          handleDeleteDeviceUser({ deviceUserId: device.id })
-                        }
-                        className="flex h-8 w-10 items-center justify-center rounded-md bg-red-300 text-sm text-red-600 drop-shadow-lg 
-            transition duration-100 hover:bg-red-400"
+                        onClick={() => {
+                          if (confirm("Are you sure?")) {
+                            handleAutoPopulateNumber(device.portNumber);
+                          }
+                        }}
+                        className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
+            transition duration-100 hover:bg-blue-400"
                       >
-                        <MdDelete />
+                        Read THREE
                       </button>
                     </div>
                   </li>

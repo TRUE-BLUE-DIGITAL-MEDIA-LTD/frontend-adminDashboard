@@ -2,10 +2,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AutoGetICCIDNumberService,
   AutoGetUUSDService,
+  AutoGrabThreeSimService,
   CreateSimCardService,
   GetSimCardByPageService,
   InputAutoGetICCIDNumberService,
   InputAutoGetUUSDService,
+  InputAutoGrabThreeSimService,
   InputCreateSimCardService,
   InputGetSimCardByPageService,
 } from "../services/simCard/simCard";
@@ -30,6 +32,13 @@ export function useAutoGETUUSD() {
     mutationKey: ["auto-get-uusd"],
     mutationFn: (request: InputAutoGetUUSDService) =>
       AutoGetUUSDService(request),
+  });
+}
+export function useAutoTHREE() {
+  return useMutation({
+    mutationKey: ["auto-get-three"],
+    mutationFn: (request: InputAutoGrabThreeSimService) =>
+      AutoGrabThreeSimService(request),
   });
 }
 

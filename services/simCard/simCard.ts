@@ -375,6 +375,32 @@ export async function AutoGetICCIDNumberService(
   }
 }
 
+export type InputAutoGrabThreeSimService = {
+  portServer: string;
+};
+export async function AutoGrabThreeSimService(
+  input: InputAutoGrabThreeSimService,
+): Promise<DeviceUser> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const simcard = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/auto-threesim/${input.portServer}`,
+
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return simcard.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type InputAutoGetUUSDService = {
   portServer: string;
   uusd_code: string;
