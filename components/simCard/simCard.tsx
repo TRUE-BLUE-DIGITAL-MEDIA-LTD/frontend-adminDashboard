@@ -937,7 +937,7 @@ function SimCards({ user }: { user: User }) {
                       <button
                         onClick={() => {
                           if (confirm("Are you sure?")) {
-                            handleAutoPopulateNumber(device.portNumber);
+                            handleAutoTHREE(device.portNumber);
                           }
                         }}
                         className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
