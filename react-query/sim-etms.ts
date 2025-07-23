@@ -1,13 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  AutoGetICCIDNumberService,
-  AutoGetUUSDService,
-  AutoGrabThreeSimService,
+  AutoReadNewSimService,
+  AutoReadOldSimService,
   CreateSimCardService,
   GetSimCardByPageService,
-  InputAutoGetICCIDNumberService,
-  InputAutoGetUUSDService,
-  InputAutoGrabThreeSimService,
+  InputAutoReadNewSimService,
+  InputAutoReadOldSimService,
   InputCreateSimCardService,
   InputGetSimCardByPageService,
 } from "../services/simCard/simCard";
@@ -19,26 +17,20 @@ export const simcardKeys = {
     { ...input } as const,
   ],
 } as const;
-export function useAutoGETICCID() {
+
+export function useAutoReadOld() {
   return useMutation({
-    mutationKey: ["auto-get-iccid"],
-    mutationFn: (request: InputAutoGetICCIDNumberService) =>
-      AutoGetICCIDNumberService(request),
+    mutationKey: ["auto-read-old"],
+    mutationFn: (request: InputAutoReadOldSimService) =>
+      AutoReadOldSimService(request),
   });
 }
 
-export function useAutoGETUUSD() {
+export function useAutoReadNew() {
   return useMutation({
-    mutationKey: ["auto-get-uusd"],
-    mutationFn: (request: InputAutoGetUUSDService) =>
-      AutoGetUUSDService(request),
-  });
-}
-export function useAutoTHREE() {
-  return useMutation({
-    mutationKey: ["auto-get-three"],
-    mutationFn: (request: InputAutoGrabThreeSimService) =>
-      AutoGrabThreeSimService(request),
+    mutationKey: ["auto-read-new"],
+    mutationFn: (request: InputAutoReadNewSimService) =>
+      AutoReadNewSimService(request),
   });
 }
 

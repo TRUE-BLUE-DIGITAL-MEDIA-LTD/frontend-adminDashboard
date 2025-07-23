@@ -1,4 +1,5 @@
 import axios from "axios";
+import { EventSourcePolyfill } from "event-source-polyfill";
 import { parseCookies } from "nookies";
 import {
   DeviceUser,
@@ -11,7 +12,6 @@ import {
   StatusPort,
   TagOnSimcard,
 } from "../../models";
-import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
 
 export type ResponseGetSimCardByDeviceUserIdService = SimCard[];
 
@@ -297,71 +297,18 @@ export async function DeactiveSimCardService(
   }
 }
 
-export type ResponseAutoPopulateNumberService = {
-  type: string;
-  seq: number;
-  expires: number;
-  mac: string;
-  ip: string;
-  ver: string;
-  "max-ports": number;
-  "max-slot": number;
-  status: {
-    port: string;
-    sim: string;
-    seq: number;
-    st: number;
-    imei: string;
-    active: number;
-    inserted: number;
-    slot_active: number;
-    iccid: string;
-    imsi: string;
-    sn: string;
-    opr: string;
-    bal: string;
-    sig: number;
-  }[];
-};
-
-type InputAutoPopulateNumberService = {
+export type InputAutoReadOldSimService = {
   portServer: string;
 };
-export async function AutoPopulateNumberService(
-  input: InputAutoPopulateNumberService,
-): Promise<ResponseAutoPopulateNumberService> {
-  try {
-    const cookies = parseCookies();
-    const access_token = cookies.access_token;
-    const simcard = await axios({
-      method: "POST",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/populate-sn`,
-      data: input,
-      headers: {
-        Authorization: "Bearer " + access_token,
-      },
-      responseType: "json",
-    });
-
-    return simcard.data;
-  } catch (err: any) {
-    console.log(err);
-    throw err.response.data;
-  }
-}
-export type InputAutoGetICCIDNumberService = {
-  portServer: string;
-};
-export async function AutoGetICCIDNumberService(
-  input: InputAutoGetICCIDNumberService,
+export async function AutoReadOldSimService(
+  input: InputAutoReadOldSimService,
 ): Promise<DeviceUser> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const simcard = await axios({
       method: "POST",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/auto-ccid/${input.portServer}`,
-
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/read-old/${input.portServer}`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
@@ -375,46 +322,19 @@ export async function AutoGetICCIDNumberService(
   }
 }
 
-export type InputAutoGrabThreeSimService = {
+export type InputAutoReadNewSimService = {
   portServer: string;
 };
-export async function AutoGrabThreeSimService(
-  input: InputAutoGrabThreeSimService,
+export async function AutoReadNewSimService(
+  input: InputAutoReadNewSimService,
 ): Promise<DeviceUser> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const simcard = await axios({
       method: "POST",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/auto-threesim/${input.portServer}`,
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/read-new/${input.portServer}`,
 
-      headers: {
-        Authorization: "Bearer " + access_token,
-      },
-      responseType: "json",
-    });
-
-    return simcard.data;
-  } catch (err: any) {
-    console.log(err);
-    throw err.response.data;
-  }
-}
-
-export type InputAutoGetUUSDService = {
-  portServer: string;
-  uusd_code: string;
-};
-export async function AutoGetUUSDService(
-  input: InputAutoGetUUSDService,
-): Promise<DeviceUser> {
-  try {
-    const cookies = parseCookies();
-    const access_token = cookies.access_token;
-    const simcard = await axios({
-      method: "POST",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/auto-uusd`,
-      params: input,
       headers: {
         Authorization: "Bearer " + access_token,
       },

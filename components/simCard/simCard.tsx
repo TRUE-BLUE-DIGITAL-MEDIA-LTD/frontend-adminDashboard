@@ -28,13 +28,10 @@ import {
   User,
 } from "../../models";
 import {
-  useAutoGETICCID,
-  useAutoGETUUSD,
-  useAutoTHREE,
+  useAutoReadNew,
+  useAutoReadOld,
   useGetPartnerByManager,
-  useGetPartners,
 } from "../../react-query";
-import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import {
   DeleteDeviceUserService,
   GetDeviceUsersService,
@@ -49,7 +46,6 @@ import {
 } from "../../services/simCard/favorite";
 import {
   ActiveSimCardService,
-  AutoPopulateNumberService,
   DeactiveSimCardService,
   GetSimCardByPageService,
   SyncSimCardService,
@@ -67,10 +63,9 @@ import SimcardItem from "./SimcardItem";
 const availableSlot = ["available", "unavailable"];
 
 function SimCards({ user }: { user: User }) {
-  const autoGetICCID = useAutoGETICCID();
-  const autoGetTHREE = useAutoTHREE();
+  const autoReadNew = useAutoReadNew();
+  const autoReadOld = useAutoReadOld();
   const queryClient = useQueryClient();
-  const autoUUSD = useAutoGETUUSD();
   const cookies = parseCookies();
   const webSocket = useRef<WebSocket | null>(null);
   const access_token = cookies.access_token;
@@ -604,40 +599,10 @@ function SimCards({ user }: { user: User }) {
     });
   };
 
-  const handleAutoPopulateNumber = async (portServer: string) => {
+  const handleReadNew = async (portServer: string) => {
     try {
       Swal.fire({
-        title: "Auto Populate Number",
-        text: "Please wait...",
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      await AutoPopulateNumberService({ portServer });
-      Swal.fire({
-        title: "Success",
-        text: "Auto Populate Number has been done.",
-        footer: "We will notify you when it's done on email",
-        icon: "success",
-      });
-    } catch (error) {
-      console.log(error);
-
-      let result = error as ErrorMessages;
-      Swal.fire({
-        title: result.error,
-        text: result.message.toString(),
-        footer: "Error Code :" + result.statusCode?.toString(),
-        icon: "error",
-      });
-    }
-  };
-  const handleAutoUUSD = async (portServer: string, uusd_code: string) => {
-    try {
-      Swal.fire({
-        title: "Auto UUSD",
+        title: "Auto Read New Sims",
         text: "Please wait...",
         showConfirmButton: false,
         allowOutsideClick: false,
@@ -646,11 +611,11 @@ function SimCards({ user }: { user: User }) {
         },
       });
 
-      await autoUUSD.mutateAsync({ portServer, uusd_code: uusd_code });
+      await autoReadNew.mutateAsync({ portServer });
 
       Swal.fire({
         title: "Success",
-        text: "Auto Get UUSD has been done.",
+        text: "Auto Read New Sim",
         footer:
           "We will notify you when it's done on email, usually 5 - 10 minutes",
         icon: "success",
@@ -668,10 +633,10 @@ function SimCards({ user }: { user: User }) {
     }
   };
 
-  const handleAutoTHREE = async (portServer: string) => {
+  const handleReadOld = async (portServer: string) => {
     try {
       Swal.fire({
-        title: "Auto Grabing THREE",
+        title: "Auto Read Old Sims",
         text: "Please wait...",
         showConfirmButton: false,
         allowOutsideClick: false,
@@ -680,45 +645,11 @@ function SimCards({ user }: { user: User }) {
         },
       });
 
-      await autoGetTHREE.mutateAsync({ portServer });
+      await autoReadOld.mutateAsync({ portServer });
 
       Swal.fire({
         title: "Success",
-        text: "Auto Get UUSD has been done.",
-        footer:
-          "We will notify you when it's done on email, usually 5 - 10 minutes",
-        icon: "success",
-      });
-    } catch (error) {
-      console.log(error);
-
-      let result = error as ErrorMessages;
-      Swal.fire({
-        title: result.error,
-        text: result.message.toString(),
-        footer: "Error Code :" + result.statusCode?.toString(),
-        icon: "error",
-      });
-    }
-  };
-
-  const handleAutoGetICCID = async (portServer: string) => {
-    try {
-      Swal.fire({
-        title: "Auto Get ICCID",
-        text: "Please wait...",
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      await autoGetICCID.mutateAsync({ portServer });
-
-      Swal.fire({
-        title: "Success",
-        text: "Auto Get ICCID has been done.",
+        text: "Auto Read Old Sims has been done.",
         footer:
           "We will notify you when it's done on email, usually 5 - 10 minutes",
         icon: "success",
@@ -894,8 +825,10 @@ function SimCards({ user }: { user: User }) {
                     <div className="flex w-full flex-wrap items-center justify-start gap-1">
                       <button
                         onClick={() => {
-                          if (confirm("Are you sure?")) {
-                            handleAutoGetICCID(device.portNumber);
+                          if (
+                            confirm("Are you sure to trigger read old sim?")
+                          ) {
+                            handleReadOld(device.portNumber);
                           }
                         }}
                         className="h-8 w-max rounded-md bg-white px-2 text-sm text-blue-600 ring-1 drop-shadow-lg 
@@ -904,46 +837,17 @@ function SimCards({ user }: { user: User }) {
                         Read old sims
                       </button>
                       <button
-                        onClick={async () => {
-                          const { value } = await Swal.fire({
-                            title: "Input ussd code",
-                            input: "text",
-                            footer:
-                              "UUSD is used to get the number and upload to ETMS dashboard, then press synce to sysnce oxyclick and ETMS",
-                            inputLabel: "Enter Provider USSD Code",
-                            inputPlaceholder:
-                              "Enter Provider USSD Code example: *#100#",
-                          });
-                          if (value) {
-                            handleAutoUUSD(device.portNumber, value);
-                          }
-                        }}
-                        className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
-            transition duration-100 hover:bg-blue-400"
-                      >
-                        Read Vodafone
-                      </button>
-                      <button
                         onClick={() => {
-                          if (confirm("Are you sure?")) {
-                            handleAutoPopulateNumber(device.portNumber);
+                          if (
+                            confirm("Are you sure to trigger read new sim?")
+                          ) {
+                            handleReadNew(device.portNumber);
                           }
                         }}
                         className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
                       >
-                        Read EE EE
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm("Are you sure?")) {
-                            handleAutoTHREE(device.portNumber);
-                          }
-                        }}
-                        className="h-8 w-max rounded-md bg-blue-300 px-2 text-sm text-blue-600 drop-shadow-lg 
-            transition duration-100 hover:bg-blue-400"
-                      >
-                        Read THREE
+                        Read New Sim
                       </button>
                     </div>
                   </li>
