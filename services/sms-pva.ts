@@ -89,7 +89,6 @@ export async function CreateSMSPVAService(
 
     return sms_pva.data;
   } catch (err: any) {
-    console.log(err);
     throw err.response.data;
   }
 }

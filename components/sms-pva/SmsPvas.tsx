@@ -46,7 +46,7 @@ function SmsPvas({ user }: Props) {
           Swal.showLoading();
         },
       });
-      const response = await create.mutateAsync({
+      await create.mutateAsync({
         country: selectCountry,
         service: value,
         timezone: userTimezone,
@@ -61,8 +61,10 @@ function SmsPvas({ user }: Props) {
       console.log(error);
       let result = error as ErrorMessages;
       Swal.fire({
-        title: result.error ? result.error : "Something went wrong!",
-        text: result.message.toString(),
+        title: result?.error
+          ? JSON.stringify(result.error)
+          : "Something went wrong!",
+        text: result.message?.toString(),
         footer: result.statusCode
           ? "Error code: " + result.statusCode?.toString()
           : "",
