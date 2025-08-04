@@ -1,29 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { User } from "../../models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
-import { GetUser } from "../../services/admin/user";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  GetPostalCodesByStateService,
-  GetProvincesInCountryService,
-} from "../../services/tools/postcode";
-import DashboardLayout from "../../layouts/dashboardLayout";
-import { toolsData } from "../../data/tools";
-import CountryInput from "../../components/postcode/countryInput";
-import ProvinceInput from "../../components/postcode/provinceInput";
-import { Skeleton } from "@mui/material";
-import { loadingNumber } from "../../data/loadingNumber";
-import Cities from "../../components/postcode/cities";
-import Postcode from "../../components/postcode/postcode";
-import ParterReport from "../../components/tables/parterReport";
 import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
 import PayslipGenerator from "../../components/payslip/payslipGenerator";
-import SmsReceive from "../../components/sms-online/sms";
+import Postcode from "../../components/postcode/postcode";
 import SimCard from "../../components/simCard/simCard";
-import { OxyClickTools } from "../../data/menus";
-import SmsPvas from "../../components/sms-pva/SmsPvas";
 import SmsPool from "../../components/sms-pool/SmsPool";
+import SmsPvas from "../../components/sms-pva/SmsPvas";
+import ParterReport from "../../components/tables/parterReport";
+import { OxyClickTools } from "../../data/menus";
+import DashboardLayout from "../../layouts/dashboardLayout";
+import { User } from "../../models";
+import { GetUser } from "../../services/admin/user";
+import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -35,10 +23,10 @@ function Index({ user }: { user: User }) {
         {menu === "partners-performance" && <ParterReport user={user} />}
         {menu === "postcode" && <Postcode />}
         {menu === "payslip" && <PayslipGenerator />}
-        {menu === "sms-online" && <SmsReceive />}
         {menu === "sms-etms" && <SimCard user={user} />}
         {menu === "sms-pva" && <SmsPvas user={user} />}
         {menu === "sms-pool" && <SmsPool user={user} />}
+        {menu === "sms-textverified" && <SmsTextVerified user={user} />}
       </div>
     </DashboardLayout>
   );

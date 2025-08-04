@@ -41,6 +41,7 @@ function UpdatePartner({
     isAllowUsingSMSPVA?: boolean;
     dailyLimitSMSPVA?: number;
     isAllowUsingSMSPOOL?: boolean;
+    isAllowUsingSMS_TEXTVERIFIED?: boolean;
     smartLink?: string;
   }>({
     partnerId: selectPartner.affiliateId,
@@ -49,6 +50,7 @@ function UpdatePartner({
     isAllowUsingSMSPVA: selectPartner.isAllowUsingSMSPVA,
     dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
     isAllowUsingSMSPOOL: selectPartner.isAllowUsingSMSPOOL,
+    isAllowUsingSMS_TEXTVERIFIED: selectPartner.isAllowUsingSMS_TEXTVERIFIED,
     smartLink: selectPartner.smartLink,
   });
 
@@ -93,6 +95,8 @@ function UpdatePartner({
           dailyLimitSMSPVA: updatePartnerData.dailyLimitSMSPVA,
           isAllowUsingSMSPOOL: updatePartnerData.isAllowUsingSMSPOOL,
           smartLink: updatePartnerData.smartLink,
+          isAllowUsingSMS_TEXTVERIFIED:
+            updatePartnerData.isAllowUsingSMS_TEXTVERIFIED,
         },
       });
       await partners.refetch();
@@ -210,6 +214,30 @@ function UpdatePartner({
                 return {
                   ...prev,
                   isAllowUsingSMSPOOL:
+                    e.target.value === "allow" ? true : false,
+                };
+              });
+            }}
+            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
+         duration-75 hover:border-black focus:drop-shadow-md"
+          >
+            <option value="allow">allow</option>
+            <option value="not-allow">not allow</option>
+          </select>
+        </div>
+        <div className="flex w-full flex-col gap-1">
+          <span>Allow Partner To Access SMS TextVerified</span>
+          <select
+            value={
+              updatePartnerData.isAllowUsingSMS_TEXTVERIFIED
+                ? "allow"
+                : "not-allow"
+            }
+            onChange={(e) => {
+              setUpdatePartnerData((prev) => {
+                return {
+                  ...prev,
+                  isAllowUsingSMS_TEXTVERIFIED:
                     e.target.value === "allow" ? true : false,
                 };
               });

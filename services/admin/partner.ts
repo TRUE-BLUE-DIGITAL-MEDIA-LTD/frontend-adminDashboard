@@ -121,6 +121,7 @@ type InputUpdatePartnerService = {
     name?: string;
     isAllowUsingSMSPVA?: boolean;
     isAllowUsingSMSPOOL?: boolean;
+    isAllowUsingSMS_TEXTVERIFIED?: boolean;
     dailyLimitSMSPVA?: number;
     smartLink?: string;
   };

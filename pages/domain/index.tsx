@@ -72,6 +72,7 @@ function Index({ user }: { user: User }) {
           id: "all",
           isAllowUsingSMSPOOL: true,
           isAllowUsingSMSPVA: true,
+          isAllowUsingSMS_TEXTVERIFIED: true,
           dailyLimitSMSPVA: 20,
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
@@ -79,6 +80,7 @@ function Index({ user }: { user: User }) {
         });
         addSeeAll.push({
           createAt: new Date(),
+          isAllowUsingSMS_TEXTVERIFIED: true,
           updateAt: new Date(),
           affiliateId: "none",
           userId: "none",

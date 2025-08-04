@@ -4,6 +4,7 @@ import {
   CreateTextVerifiedService,
   GetListAearCodeOnTextVerifiedService,
   GetListServiceOnTextVerifiedService,
+  GetPriceOnTextVerifiedService,
   GetTextVerifiedService,
   GetTextVerifiedsService,
   ReactiveTextVerifiedService,
@@ -11,6 +12,7 @@ import {
   RequestCancelTextVerifiedService,
   RequestCreateTextVerifiedService,
   RequestGetListServiceOnTextVerifiedService,
+  RequestGetPriceOnTextVerifiedService,
   RequestGetTextVerifiedService,
   RequestGetTextVerifiedsService,
   RequestReactiveTextVerifiedService,
@@ -59,12 +61,26 @@ const keyTextverifieds = {
     keyTextverifieds.item,
     { id: request.smsTextVerifiedId },
   ],
+  getPrice: (request: RequestGetPriceOnTextVerifiedService) => [
+    `price-${keyTextverifieds.item}`,
+    { request },
+  ],
 } as const;
+
+export function useGetPriceOnVerifiedService(
+  request: RequestGetPriceOnTextVerifiedService,
+) {
+  return useQuery({
+    queryKey: keyTextverifieds.getPrice(request),
+    queryFn: () => GetPriceOnTextVerifiedService(request),
+  });
+}
 
 export function useGetTextverifieds(request: RequestGetTextVerifiedsService) {
   return useQuery({
     queryKey: keyTextverifieds.get(request),
     queryFn: () => GetTextVerifiedsService(request),
+    refetchInterval: 1000 * 5,
   });
 }
 

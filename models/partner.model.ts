@@ -6,6 +6,7 @@ export type Partner = {
   userId: string;
   isAllowUsingSMSPVA: boolean;
   isAllowUsingSMSPOOL: boolean;
+  isAllowUsingSMS_TEXTVERIFIED: boolean;
   dailyLimitSMSPVA: number;
   smartLink?: string | undefined;
   name: string;

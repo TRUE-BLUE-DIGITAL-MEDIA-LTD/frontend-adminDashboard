@@ -23,9 +23,9 @@ export const menusSidebar = [
     icon: BsTools,
     childs: [
       { title: "Partners Performance", params: "partners-performance" },
-      { title: "SMS Online", params: "sms-online" },
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Pool", params: "sms-pool" },
+      { title: "Oxy Textverified", params: "sms-textverified" },
       { title: "Oxy SMS", params: "sms-etms" },
       { title: "Postcode", params: "postcode" },
       {

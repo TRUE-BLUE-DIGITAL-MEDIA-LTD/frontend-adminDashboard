@@ -58,6 +58,37 @@ export async function GetListAearCodeOnTextVerifiedService(): Promise<ResponseGe
   }
 }
 
+export type ResponseGetPriceOnTextVerifiedService = number;
+export type RequestGetPriceOnTextVerifiedService = {
+  serviceName: string;
+  areaCode: boolean;
+  carrier: boolean;
+  numberType: "mobile" | "voip" | "landline";
+  capability: "sms" | "voice" | "smsAndVoiceCombo";
+};
+export async function GetPriceOnTextVerifiedService(
+  input: RequestGetPriceOnTextVerifiedService,
+): Promise<ResponseGetPriceOnTextVerifiedService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const services = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-textverifieds/check/price`,
+      data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return services.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseCreateTextVerifiedService = SmsTextVerified;
 export type RequestCreateTextVerifiedService = {
   areaCodeSelectOption?: string;
@@ -87,11 +118,19 @@ export async function CreateTextVerifiedService(
   }
 }
 
-export type ResponseGetTextVerifiedsService = (SmsTextVerified & {
-  sms: Sms[];
-})[];
+export type ResponseGetTextVerifiedsService = {
+  data: (SmsTextVerified & {
+    sms: Sms[];
+  })[];
+  totalUsage: number;
+  limit: number;
+  balance: number;
+  totalPage?: number;
+};
 export type RequestGetTextVerifiedsService = {
   isComplete: "complete" | "non-complete";
+  limit?: number;
+  page?: number;
 };
 export async function GetTextVerifiedsService(
   input: RequestGetTextVerifiedsService,
