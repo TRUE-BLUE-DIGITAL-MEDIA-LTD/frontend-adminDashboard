@@ -15,6 +15,7 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ResponseGetSmsPoolService } from "../../services/sms-pool";
+import { poolList } from "../../data/sms-pool-list";
 
 type Props = {
   activeNumbers: UseQueryResult<ResponseGetSmsPoolService, Error>;
@@ -26,9 +27,14 @@ function SelectService({ activeNumbers }: Props) {
   const buy = useCreateSMSPool();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [selectService, setSelectService] = useState<Service | null>(null);
+  const [selectPool, setSelectPool] = useState<{ ID: number; name: string }>({
+    ID: 0,
+    name: "Default",
+  });
   const stock = useGetStockSMSpool({
     service: selectService?.ID.toString() as string,
     country: selectedCountry?.ID.toString() as string,
+    pool: selectPool.ID.toString(),
   });
 
   const panelFooterTemplate = () => {
@@ -94,6 +100,7 @@ function SelectService({ activeNumbers }: Props) {
       await buy.mutateAsync({
         service: selectService?.ID.toString() as string,
         country: selectedCountry?.ID.toString() as string,
+        pool: selectPool.ID.toString(),
       });
       await activeNumbers.refetch();
       Swal.fire({
@@ -140,17 +147,34 @@ function SelectService({ activeNumbers }: Props) {
         placeholder="Select a Service"
         className="w-96 border"
         itemTemplate={serviceOptionTemplate}
-        panelFooterTemplate={panelFooterTemplate}
+      />
+
+      <Dropdown
+        value={selectPool}
+        onChange={(e: DropdownChangeEvent) => setSelectPool(e.value)}
+        options={poolList}
+        optionLabel="name"
+        placeholder="Select a Pool"
+        className="w-96 border"
+        itemTemplate={serviceOptionTemplate}
       />
 
       <div className="flex h-10 w-96 items-center justify-center rounded-md border bg-white font-semibold text-gray-500">
         {stock.isLoading && "Loading.."}
         {stock.isError && "-"}
-        {stock.data && `${stock.data.amount.toLocaleString()} AMOUNT`}
+        {stock.data && stock.data.success !== 1 && `${stock.data.message}`}
+        {stock.data &&
+          stock.data.success === 1 &&
+          `${stock.data.amount.toLocaleString()} AMOUNT`}
       </div>
       <button
         onClick={handleBuySms}
-        disabled={!!!selectService || !!!selectedCountry || loading}
+        disabled={
+          !!!selectService ||
+          !!!selectedCountry ||
+          loading ||
+          stock.data?.success !== 1
+        }
         className="border-md bg- h-10 w-96 rounded-md bg-gradient-to-r
        from-neutral-300 to-stone-400 text-white transition hover:from-neutral-400 hover:to-stone-600 active:scale-105"
       >

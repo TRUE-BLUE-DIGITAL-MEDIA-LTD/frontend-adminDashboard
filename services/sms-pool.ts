@@ -46,10 +46,15 @@ export async function GetServiceSMSPoolService(): Promise<ResponseGetServiceSMSP
   }
 }
 
-export type ResponseGetStockNumberService = { success: 1; amount: number };
+export type ResponseGetStockNumberService = {
+  success: 1 | 0;
+  amount: number;
+  message?: string;
+};
 export type RequestGetStockNumberService = {
   country: string;
   service: string;
+  pool: string;
 };
 export async function GetStockNumberService(
   input: RequestGetStockNumberService,
@@ -105,6 +110,7 @@ export type ResponseReserveSMSPOOLNumberService = SMSPool;
 export type RequestReserveSMSPOOLNumberService = {
   country: string;
   service: string;
+  pool: string;
 };
 export async function ReserveSMSPOOLNumberService(
   input: RequestReserveSMSPOOLNumberService,

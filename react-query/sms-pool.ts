@@ -15,9 +15,9 @@ import {
 export const smsPoolKeys = {
   getCountry: ["smspool-country"],
   getService: ["smspool-service"],
-  getStock: (data: { country: string; service: string }) => [
+  getStock: (data: { country: string; service: string; pool: string }) => [
     "smspool-stock",
-    { country: data.country, service: data.service },
+    { country: data.country, service: data.service, pool: data.pool },
   ],
   create: ["smspool-create"],
   get: (data: { userId: string }) => ["smspool-get", { userId: data.userId }],
@@ -39,10 +39,15 @@ export function useGetServiceSMSPool() {
   });
 }
 
-export function useGetStockSMSpool(data: { country: string; service: string }) {
+export function useGetStockSMSpool(data: {
+  country: string;
+  service: string;
+  pool: string;
+}) {
   return useQuery({
     queryKey: smsPoolKeys.getStock(data),
     queryFn: () => GetStockNumberService(data),
+    enabled: !!data.country && !!data.service && !!data.pool,
   });
 }
 
