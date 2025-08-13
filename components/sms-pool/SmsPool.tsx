@@ -56,11 +56,13 @@ function SmsPool({ user }: Props) {
   return (
     <>
       <header className="mt-10 flex w-full flex-col items-center justify-center border-b pb-5">
-        <ul className="flex w-full flex-wrap items-center justify-center gap-3">
-          {accounts.data?.map((a) => {
-            return <SmsPoolAccount account={a} key={a.id} user={user} />;
-          })}
-        </ul>
+        {(user.role === "manager" || user.role === "admin") && (
+          <ul className="flex w-full flex-wrap items-center justify-center gap-3">
+            {accounts.data?.map((a) => {
+              return <SmsPoolAccount account={a} key={a.id} user={user} />;
+            })}
+          </ul>
+        )}
         <h1 className="text-4xl font-semibold text-gray-800">Oxy Pool</h1>
         <span className="text-sm text-gray-500">
           OxyPva provides the opportunity to use short-term temp phone numbers
