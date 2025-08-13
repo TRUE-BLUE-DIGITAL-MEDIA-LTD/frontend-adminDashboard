@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   CencelSMSPoolService,
   GetCountrySMSPoolService,
@@ -11,6 +16,12 @@ import {
   ResendSMSPOOLService,
   ReserveSMSPOOLNumberService,
 } from "../services/sms-pool";
+import {
+  GetSmsPoolAccountsService,
+  RequestSwitchSmsPoolAccountsService,
+  ResponseGetSmsPoolAccountsService,
+  SwitchSmsPoolAccountsService,
+} from "../services/sms-pool-account";
 
 export const smsPoolKeys = {
   getCountry: ["smspool-country"],
@@ -36,6 +47,31 @@ export function useGetServiceSMSPool() {
   return useQuery({
     queryKey: smsPoolKeys.getService,
     queryFn: () => GetServiceSMSPoolService(),
+  });
+}
+
+export function useGetSmsPoolAccounts() {
+  return useQuery({
+    queryKey: ["sms-pool-account"],
+    queryFn: () => GetSmsPoolAccountsService(),
+  });
+}
+
+export function useSwitchSmsPoolAccount(input: { userId: string }) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["switch-sms-pool-account"],
+    mutationFn: (request: RequestSwitchSmsPoolAccountsService) =>
+      SwitchSmsPoolAccountsService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: smsPoolKeys.get({ userId: input.userId }),
+      });
+      queryClient.setQueryData(
+        ["sms-pool-account"],
+        (): ResponseGetSmsPoolAccountsService => data,
+      );
+    },
   });
 }
 

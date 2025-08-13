@@ -25,3 +25,12 @@ export type Service = {
   name: string;
   favourite: number;
 };
+
+export type SmsPoolAccount = {
+  id: string;
+  createAt: Date;
+  updateAt: Date;
+  username: string;
+  isActive: boolean;
+  lastActiveAt: Date;
+};
