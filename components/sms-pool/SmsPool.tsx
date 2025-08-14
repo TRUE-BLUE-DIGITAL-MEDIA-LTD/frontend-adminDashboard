@@ -1,5 +1,5 @@
 import React from "react";
-import { ErrorMessages, User } from "../../models";
+import { ErrorMessages, Partner, User } from "../../models";
 import {
   useCanelSMSPool,
   useGetServiceSMSPool,
@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 import SmsPoolAccount from "./SmsPoolAccount";
 
 type Props = {
-  user: User;
+  user: User & { partner: Partner | null };
 };
 function SmsPool({ user }: Props) {
   const activeNumbers = useGetSMSPool({ userId: user.id });
@@ -56,7 +56,9 @@ function SmsPool({ user }: Props) {
   return (
     <>
       <header className="mt-10 flex w-full flex-col items-center justify-center border-b pb-5">
-        {(user.role === "manager" || user.role === "admin") && (
+        {(user.role === "manager" ||
+          user.role === "admin" ||
+          user.partner?.isAllowSmsPoolAccount === true) && (
           <ul className="flex w-full flex-wrap items-center justify-center gap-3">
             {accounts.data?.map((a) => {
               return <SmsPoolAccount account={a} key={a.id} user={user} />;

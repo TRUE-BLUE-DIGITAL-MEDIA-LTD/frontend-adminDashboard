@@ -7,7 +7,7 @@ import {
 } from "../../services/admin/partner";
 import { Pagination } from "@mui/material";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdSettings } from "react-icons/md";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import CreatePartner from "../forms/partners/createPartner";
@@ -19,6 +19,8 @@ import AssignDomain from "../forms/partners/assignDomain";
 import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
 import AssignCategory from "../forms/partners/assignCategory";
 import { useGetPartners } from "../../react-query";
+import UpdatePermissionPartner from "../forms/partners/updatePermissionPartner";
+import PopupLayout from "../../layouts/PopupLayout";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
@@ -30,7 +32,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
   const [triggerUpdatePartner, setTriggerUpdatePartner] = useState(false);
   const [triggerAssignDomain, setTriggerAssignDomain] = useState(false);
   const [triggerAssignCategory, setTriggerAssignCategory] = useState(false);
-
+  const [triggerUpdatePermission, setTriggerUpdatePermission] = useState(false);
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [searchField, setSearchField] = useState("");
   const [page, setPage] = useState(1);
@@ -112,6 +114,20 @@ function PartnerTable({ accounts, user }: PartnerProps) {
         />
       )}
 
+      {triggerUpdatePermission && selectPartner && (
+        <PopupLayout
+          onClose={() => {
+            setTriggerUpdatePermission(() => false);
+            setSelectPartner(undefined);
+          }}
+        >
+          <UpdatePermissionPartner
+            partners={partners}
+            selectPartner={selectPartner}
+          />
+        </PopupLayout>
+      )}
+
       {triggerAssignDomain && selectPartner && (
         <AssignDomain
           selectPartner={selectPartner}
@@ -177,10 +193,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
               <th className="px-5">Assign Phone Number</th>
               <th className="px-5">Assign Domain</th>
               <th className="px-5">Assign Category</th>
-              <th className="px-5">SMS PVA Permission</th>
-              <th className="px-5">SMS POOL Permission</th>
-              <th className="px-5">SMS TextVerified Permission</th>
-
+              <th className="px-5">Permission</th>
               {user.role === "admin" && <th className="px-5">Options</th>}
             </tr>
           </thead>
@@ -273,45 +286,21 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                       </td>
                       <td className="truncate border-4 border-transparent font-semibold text-black">
                         <div className="flex w-full items-center justify-center">
-                          {partner.isAllowUsingSMSPVA ? (
-                            <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
-                              Allow
-                            </div>
-                          ) : (
-                            <div className="w-full rounded-md bg-red-200 px-2 text-center text-red-500">
-                              Deny
-                            </div>
-                          )}
+                          <button
+                            onClick={() => {
+                              setSelectPartner(partner);
+                              document.body.style.overflow = "hidden";
+                              setTriggerUpdatePermission(() => true);
+                            }}
+                            className="flex items-center justify-center gap-1 rounded-lg bg-gray-800 px-5 py-1 text-white hover:bg-gray-900 active:ring-2"
+                          >
+                            <MdSettings /> Permission Setting
+                          </button>
                         </div>
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
-                        <div className="flex w-full items-center justify-center">
-                          {partner.isAllowUsingSMSPOOL ? (
-                            <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
-                              Allow
-                            </div>
-                          ) : (
-                            <div className="w-full rounded-md bg-red-200 px-2 text-center text-red-500">
-                              Deny
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
-                        <div className="flex w-full items-center justify-center">
-                          {partner.isAllowUsingSMS_TEXTVERIFIED ? (
-                            <div className="w-full rounded-md bg-green-200 px-2 text-center text-green-500">
-                              Allow
-                            </div>
-                          ) : (
-                            <div className="w-full rounded-md bg-red-200 px-2 text-center text-red-500">
-                              Deny
-                            </div>
-                          )}
-                        </div>
-                      </td>
+
                       <td className=" border-4 border-transparent">
-                        <div className="flex w-full gap-3">
+                        <div className="flex w-full items-center justify-center gap-3">
                           <button
                             onClick={() => {
                               setSelectPartner(partner);

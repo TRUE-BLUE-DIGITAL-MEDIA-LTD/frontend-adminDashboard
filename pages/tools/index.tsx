@@ -9,11 +9,11 @@ import SmsPvas from "../../components/sms-pva/SmsPvas";
 import ParterReport from "../../components/tables/parterReport";
 import { OxyClickTools } from "../../data/menus";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
 
-function Index({ user }: { user: User }) {
+function Index({ user }: { user: User & { partner: Partner | null } }) {
   const router = useRouter();
   const menu = router.query.option as OxyClickTools;
 

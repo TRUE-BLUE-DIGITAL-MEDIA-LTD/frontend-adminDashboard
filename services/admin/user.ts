@@ -1,8 +1,7 @@
 import axios from "axios";
-import Error from "next/error";
 import { parseCookies } from "nookies";
-import { User } from "../../models";
-type ResponseGetUser = User;
+import { Partner, User } from "../../models";
+type ResponseGetUser = User & { partner: Partner };
 interface InputGetUser {
   access_token?: string;
 }

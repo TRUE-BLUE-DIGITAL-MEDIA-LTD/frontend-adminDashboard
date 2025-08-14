@@ -38,19 +38,15 @@ function UpdatePartner({
     partnerId?: string;
     partnerName?: string;
     userId?: string;
-    isAllowUsingSMSPVA?: boolean;
     dailyLimitSMSPVA?: number;
-    isAllowUsingSMSPOOL?: boolean;
-    isAllowUsingSMS_TEXTVERIFIED?: boolean;
+
     smartLink?: string;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
     userId: selectPartner.userId,
-    isAllowUsingSMSPVA: selectPartner.isAllowUsingSMSPVA,
     dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
-    isAllowUsingSMSPOOL: selectPartner.isAllowUsingSMSPOOL,
-    isAllowUsingSMS_TEXTVERIFIED: selectPartner.isAllowUsingSMS_TEXTVERIFIED,
+
     smartLink: selectPartner.smartLink,
   });
 
@@ -91,12 +87,10 @@ function UpdatePartner({
           userId: updatePartnerData?.userId,
           affiliateId: updatePartnerData?.partnerId,
           name: updatePartnerData?.partnerName,
-          isAllowUsingSMSPVA: updatePartnerData.isAllowUsingSMSPVA,
+
           dailyLimitSMSPVA: updatePartnerData.dailyLimitSMSPVA,
-          isAllowUsingSMSPOOL: updatePartnerData.isAllowUsingSMSPOOL,
+
           smartLink: updatePartnerData.smartLink,
-          isAllowUsingSMS_TEXTVERIFIED:
-            updatePartnerData.isAllowUsingSMS_TEXTVERIFIED,
         },
       });
       await partners.refetch();
@@ -184,71 +178,6 @@ function UpdatePartner({
           </TextFieldMUI>
         </div>
 
-        <div className="flex w-full flex-col gap-1">
-          <span>Allow Partner To Access SMS PVA</span>
-          <select
-            value={updatePartnerData.isAllowUsingSMSPVA ? "allow" : "not-allow"}
-            onChange={(e) => {
-              setUpdatePartnerData((prev) => {
-                return {
-                  ...prev,
-                  isAllowUsingSMSPVA: e.target.value === "allow" ? true : false,
-                };
-              });
-            }}
-            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
-         duration-75 hover:border-black focus:drop-shadow-md"
-          >
-            <option value="allow">allow</option>
-            <option value="not-allow">not allow</option>
-          </select>
-        </div>
-        <div className="flex w-full flex-col gap-1">
-          <span>Allow Partner To Access SMS Pool</span>
-          <select
-            value={
-              updatePartnerData.isAllowUsingSMSPOOL ? "allow" : "not-allow"
-            }
-            onChange={(e) => {
-              setUpdatePartnerData((prev) => {
-                return {
-                  ...prev,
-                  isAllowUsingSMSPOOL:
-                    e.target.value === "allow" ? true : false,
-                };
-              });
-            }}
-            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
-         duration-75 hover:border-black focus:drop-shadow-md"
-          >
-            <option value="allow">allow</option>
-            <option value="not-allow">not allow</option>
-          </select>
-        </div>
-        <div className="flex w-full flex-col gap-1">
-          <span>Allow Partner To Access SMS TextVerified</span>
-          <select
-            value={
-              updatePartnerData.isAllowUsingSMS_TEXTVERIFIED
-                ? "allow"
-                : "not-allow"
-            }
-            onChange={(e) => {
-              setUpdatePartnerData((prev) => {
-                return {
-                  ...prev,
-                  isAllowUsingSMS_TEXTVERIFIED:
-                    e.target.value === "allow" ? true : false,
-                };
-              });
-            }}
-            className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition
-         duration-75 hover:border-black focus:drop-shadow-md"
-          >
-            <option value="allow">allow</option>
-            <option value="not-allow">not allow</option>
-          </select>
-        </div>
         <TextField className="flex flex-col gap-1" isRequired>
           <Label>Daily Limit On Using PVA</Label>
           <InputNumber

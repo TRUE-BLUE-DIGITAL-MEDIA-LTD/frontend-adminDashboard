@@ -122,6 +122,11 @@ type InputUpdatePartnerService = {
     isAllowUsingSMSPVA?: boolean;
     isAllowUsingSMSPOOL?: boolean;
     isAllowUsingSMS_TEXTVERIFIED?: boolean;
+    isAllowSmsPoolAccount?: boolean;
+    isAllowManageSmsOxy?: boolean;
+    isAllowManageAssignPhoneNumber?: boolean;
+    isAllowManageAssignDomain?: boolean;
+    isAllowManageAssginCategory?: boolean;
     dailyLimitSMSPVA?: number;
     smartLink?: string;
   };
