@@ -17,7 +17,7 @@ type Props = {
   >;
 };
 
-function updatePermissionPartner({ selectPartner, partners }: Props) {
+function UpdatePermissionPartner({ selectPartner, partners }: Props) {
   const [permissionLists, setPermissionLists] = useState([
     {
       title: "Allow Using SMS Pva",
@@ -119,4 +119,4 @@ function updatePermissionPartner({ selectPartner, partners }: Props) {
   );
 }
 
-export default updatePermissionPartner;
+export default UpdatePermissionPartner;
