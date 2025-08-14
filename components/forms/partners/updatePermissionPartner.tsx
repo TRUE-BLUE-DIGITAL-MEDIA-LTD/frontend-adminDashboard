@@ -74,6 +74,7 @@ function updatePermissionPartner({ selectPartner, partners }: Props) {
           if (permission.allow === true) {
             return (
               <button
+                key={index}
                 onClick={async () => {
                   setPermissionLists((prev) => {
                     return prev.map((p) => {
@@ -94,6 +95,7 @@ function updatePermissionPartner({ selectPartner, partners }: Props) {
           }
           return (
             <button
+              key={index}
               onClick={async () => {
                 setPermissionLists((prev) => {
                   return prev.map((p) => {
