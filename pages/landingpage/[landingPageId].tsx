@@ -486,6 +486,7 @@ function Index({ user }: { user: User }) {
             <div className="flex w-full flex-col ">
               <label>Select domain</label>
               <Dropdown
+                filter
                 placeholder="Select Domain"
                 value={domains.data?.find(
                   (d) => d.id === landingPageData.domainId,
