@@ -297,3 +297,42 @@ export async function DeleteResponsibilityOnPartnerService(
     throw err.response.data;
   }
 }
+
+type ResponseGetPartnerLeagueTableService = {
+  affiliateInfo: {
+    country: string;
+    event: number;
+  }[];
+  partnerName: string;
+  partnerId: string;
+  sumEvent: number;
+}[];
+
+export type RequestGetPartnerLeagueTableService = {
+  startDate: string;
+  endDate: string;
+  country: string;
+};
+export async function GetPartnerLeagueTableService(
+  input: RequestGetPartnerLeagueTableService,
+): Promise<ResponseGetPartnerLeagueTableService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/league-table`,
+      params: {
+        ...input,
+      },
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}

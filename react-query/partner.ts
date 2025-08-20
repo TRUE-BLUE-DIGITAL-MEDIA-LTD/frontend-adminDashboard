@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import {
   GetPartnerByMangegerService,
   GetPartnerByPageService,
+  GetPartnerLeagueTableService,
   InputGetPartnerByPageService,
+  RequestGetPartnerLeagueTableService,
 } from "../services/admin/partner";
 
 const keyPartners = {
@@ -39,5 +41,22 @@ export function useGetPartnerByManager(managerId: string) {
   return useQuery({
     queryKey: keyPartners.get_by_manager(managerId),
     queryFn: () => GetPartnerByMangegerService(),
+  });
+}
+
+/**
+ * Uses get partner league table
+ * @param startDate should be string
+ * @param endDate should be string
+ * @param country should be string
+ * @example
+ * useGetPartnerLeagueTable(startDate:"2025-08-01", endDate:"2025-08-20", country:"United States")
+ */
+export function useGetPartnerLeagueTable(
+  input: RequestGetPartnerLeagueTableService,
+) {
+  return useQuery({
+    queryKey: ["league-table", input],
+    queryFn: () => GetPartnerLeagueTableService(input),
   });
 }
