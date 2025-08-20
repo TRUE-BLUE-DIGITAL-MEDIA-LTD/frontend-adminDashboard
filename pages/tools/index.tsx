@@ -12,6 +12,7 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
+import PartnerLeague from "../../components/partner-league/PartnerLeague";
 
 function Index({ user }: { user: User & { partner: Partner | null } }) {
   const router = useRouter();
@@ -27,6 +28,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-pva" && <SmsPvas user={user} />}
         {menu === "sms-pool" && <SmsPool user={user} />}
         {menu === "sms-textverified" && <SmsTextVerified user={user} />}
+        {menu === "league-table" && <PartnerLeague />}
       </div>
     </DashboardLayout>
   );

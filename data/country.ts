@@ -1,7 +1,7 @@
 export const countries = [
   {
     flag: "https://flagicons.lipis.dev/flags/4x3/gb.svg",
-    country: "England",
+    country: "United Kingdom",
     code: "uk",
     countryCode: "+44",
   },
@@ -1465,7 +1465,7 @@ export const countries = [
   },
   {
     flag: "https://flagicons.lipis.dev/flags/4x3/um.svg",
-    country: "USA",
+    country: "United States",
     code: "us",
     countryCode: "+1",
   },

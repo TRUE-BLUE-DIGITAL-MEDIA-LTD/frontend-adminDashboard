@@ -23,6 +23,7 @@ export const menusSidebar = [
     icon: BsTools,
     childs: [
       { title: "Partners Performance", params: "partners-performance" },
+      { title: "Partners Events Ranking", params: "league-table" },
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Pool", params: "sms-pool" },
       { title: "Oxy Text", params: "sms-textverified" },
