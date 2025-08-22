@@ -12,7 +12,13 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
-import PartnerLeague from "../../components/partner-league/PartnerLeague";
+import dynamic from "next/dynamic";
+
+// Dynamically import your component with SSR turned off
+const PartnerLeague = dynamic(
+  () => import("../../components/partner-league/PartnerLeague"), // Adjust the path to your component
+  { ssr: false },
+);
 
 function Index({ user }: { user: User & { partner: Partner | null } }) {
   const router = useRouter();

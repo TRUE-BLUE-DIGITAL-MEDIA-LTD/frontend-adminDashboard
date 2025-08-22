@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useGetPartnerLeagueTable } from "../../react-query";
 import { Skeleton } from "@mui/material";
 import { countries } from "../../data/country";
-
-// // Assuming countries data is available. If not, you can use a placeholder.
-// const countries = [
-//   { country: "United States" },
-//   { country: "Canada" },
-//   { country: "United Kingdom" },
-//   { country: "Australia" },
-//   { country: "Indonesia" },
-// ];
+import { a } from "react-spring";
 
 const timePeriods = [
   "Last 30 Days",
   "Today",
   "Yesterday",
-  "This Week",
-  "Last Week",
   "This Month",
   "Last Month",
   "Custom Range",
@@ -27,27 +17,40 @@ type TimePeriod = (typeof timePeriods)[number];
 
 // Helper function to format a Date object to "YYYY-MM-DD" string
 const formatDate = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is zero-based
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
-
 function PartnerLeague() {
   // State for the selected time period
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>("Last 30 Days");
+  const sortedCountries = useMemo(() => {
+    // By using .slice(), we create a copy and avoid mutating the original array
+    return countries.slice().sort((a, b) => a.country.localeCompare(b.country));
+  }, []); // The empty dependency array [] means this runs only once
+
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>("Today");
   const [selectPartner, setSelectPartner] = useState<{
     affiliateInfo: {
       country: string;
       event: number;
+      cv: number;
+      cvr: number;
+      evr: number;
+      click: number;
     }[];
     partnerName: string;
     partnerId: string;
     sumEvent: number;
+    sumCv: number;
+    sumClick: number;
   } | null>(null);
   // State for the 'from' date
   const [fromDate, setFromDate] = useState("");
   // State for the 'to' date
   const [toDate, setToDate] = useState("");
   // State for the selected country
-  const [country, setCountry] = useState(countries[0].country);
+  const [country, setCountry] = useState("United States");
 
   const table = useGetPartnerLeagueTable({
     startDate: fromDate,
@@ -70,18 +73,6 @@ function PartnerLeague() {
         newFromDate.setDate(today.getDate() - 1);
         newToDate.setDate(today.getDate() - 1);
         break;
-      case "This Week":
-        // Assuming week starts on Sunday
-        const firstDayOfWeek = today.getDate() - today.getDay();
-        newFromDate.setDate(firstDayOfWeek);
-        newToDate = today;
-        break;
-      case "Last Week":
-        // Sunday of last week
-        newFromDate.setDate(today.getDate() - today.getDay() - 7);
-        // Saturday of last week
-        newToDate.setDate(today.getDate() - today.getDay() - 1);
-        break;
       case "This Month":
         newFromDate = new Date(today.getFullYear(), today.getMonth(), 1);
         newToDate = today;
@@ -101,11 +92,12 @@ function PartnerLeague() {
         setToDate("");
         return; // Exit early
     }
-
+    console.log("newFromDate", newFromDate);
     setFromDate(formatDate(newFromDate));
     setToDate(formatDate(newToDate));
   }, [timePeriod]); // This effect runs whenever timePeriod changes
 
+  console.log(fromDate);
   return (
     <div className="min-h-screen bg-gray-50 p-4 font-sans">
       <header className="flex w-full flex-col items-center justify-center gap-5 p-5">
@@ -156,13 +148,11 @@ function PartnerLeague() {
               onChange={(e) => setCountry(e.target.value)}
               className="h-10 w-60 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
-              {countries
-                .sort((a, b) => a.country.localeCompare(b.country))
-                .map((c, index) => (
-                  <option key={index} value={c.country}>
-                    {c.country}
-                  </option>
-                ))}
+              {sortedCountries.map((c, index) => (
+                <option key={index} value={c.country}>
+                  {c.country}
+                </option>
+              ))}
             </select>
           </div>
           {/* From Date Input */}
@@ -239,13 +229,31 @@ function PartnerLeague() {
                           scope="col"
                           className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
                         >
-                          <div className="flex items-center gap-1">Events</div>
+                          <div className="flex items-center gap-1">CV</div>
                         </th>
                         <th
                           scope="col"
                           className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
                         >
-                          Country
+                          <div className="flex items-center gap-1">CVR</div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                        >
+                          <div className="flex items-center gap-1">EVT</div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                        >
+                          <div className="flex items-center gap-1">EVR</div>
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                        >
+                          <div className="flex items-center gap-1">GEO</div>
                         </th>
                       </tr>
                     </thead>
@@ -273,7 +281,24 @@ function PartnerLeague() {
                               </div>
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                              {partner.sumCv}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                              {(
+                                (partner.sumCv / partner.sumClick) *
+                                100
+                              ).toFixed(2)}
+                              %
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
                               {partner.sumEvent}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                              {(
+                                (partner.sumEvent / partner.sumCv) *
+                                100
+                              ).toFixed(2)}
+                              %
                             </td>
                             <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
                               {country}
@@ -294,25 +319,36 @@ function PartnerLeague() {
                             </td>
                           </tr>
                           {selectPartner?.partnerId === partner.partnerId &&
-                            partner.affiliateInfo.map((a, childIndex) => {
-                              return (
-                                <tr
-                                  key={a.country}
-                                  className="bg-gray-100 transition-colors duration-200 "
-                                >
-                                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700"></td>
-                                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
-                                    <div className="flex items-center"></div>
-                                  </td>
-                                  <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                                    {a.event}
-                                  </td>
-                                  <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
-                                    {a.country}
-                                  </td>
-                                </tr>
-                              );
-                            })}
+                            partner.affiliateInfo
+                              .sort((a, b) => b.event - a.event)
+                              .map((a, childIndex) => {
+                                return (
+                                  <tr
+                                    key={a.country}
+                                    className="bg-gray-50 transition-colors duration-200 "
+                                  >
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-500"></td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                      <div className="flex items-center"></div>
+                                    </td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      {a.cv}
+                                    </td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      {a.cvr.toFixed(2)}%
+                                    </td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      {a.event}
+                                    </td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      {a.evr.toFixed(2)}%
+                                    </td>
+                                    <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-500 hover:cursor-pointer">
+                                      {a.country}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                         </>
                       ))}
                     </tbody>

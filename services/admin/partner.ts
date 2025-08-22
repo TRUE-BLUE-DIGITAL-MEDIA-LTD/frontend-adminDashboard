@@ -302,10 +302,16 @@ type ResponseGetPartnerLeagueTableService = {
   affiliateInfo: {
     country: string;
     event: number;
+    cv: number;
+    cvr: number;
+    evr: number;
+    click: number;
   }[];
   partnerName: string;
   partnerId: string;
   sumEvent: number;
+  sumCv: number;
+  sumClick: number;
 }[];
 
 export type RequestGetPartnerLeagueTableService = {
