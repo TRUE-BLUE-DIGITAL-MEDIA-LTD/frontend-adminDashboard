@@ -3,6 +3,9 @@ import { useGetPartnerLeagueTable } from "../../react-query";
 import { Skeleton } from "@mui/material";
 import { countries } from "../../data/country";
 import { a } from "react-spring";
+import { FaAward, FaChartBar, FaCrown, FaPeopleGroup } from "react-icons/fa6";
+import { MdEvent } from "react-icons/md";
+import { User } from "../../models";
 
 const timePeriods = [
   "Last 30 Days",
@@ -15,6 +18,23 @@ const timePeriods = [
 
 type TimePeriod = (typeof timePeriods)[number];
 
+const stats_overviews = [
+  {
+    title: "Total Partners",
+    icon: <FaPeopleGroup />,
+    color: "red",
+  },
+  {
+    title: "Total CV",
+    icon: <FaChartBar />,
+    color: "blue",
+  },
+  {
+    title: "Total EVT",
+    icon: <MdEvent />,
+    color: "orange",
+  },
+] as const;
 // Helper function to format a Date object to "YYYY-MM-DD" string
 const formatDate = (date: Date): string => {
   const year = date.getFullYear();
@@ -22,7 +42,11 @@ const formatDate = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-function PartnerLeague() {
+
+type Props = {
+  user: User;
+};
+function PartnerLeague({ user }: Props) {
   // State for the selected time period
   const sortedCountries = useMemo(() => {
     // By using .slice(), we create a copy and avoid mutating the original array
@@ -57,6 +81,30 @@ function PartnerLeague() {
     endDate: toDate,
     country: country,
   });
+
+  function parseName(inputString: string): {
+    fullName: string;
+    inParentheses: string[];
+  } {
+    // 1. Get the full name (everything before the first parenthesis)
+    // The match might be null if there are no parentheses, so we handle that case.
+    const nameMatch = inputString.match(/^([^\(]+)/);
+    const fullName = nameMatch ? nameMatch[1].trim() : inputString;
+
+    // 2. Get all content inside parentheses
+    // The 'g' flag ensures we find ALL matches, not just the first one.
+    const parenthesesMatches = [...inputString.matchAll(/\((.*?)\)/g)];
+
+    // The second item in each match array (index 1) is our captured group.
+    const inParentheses = parenthesesMatches.map((match) => match[1]);
+
+    return {
+      fullName: fullName,
+      inParentheses: inParentheses,
+    };
+  }
+
+  // Pro
 
   // useEffect to update date inputs when the timePeriod changes
   useEffect(() => {
@@ -204,6 +252,141 @@ function PartnerLeague() {
                   Partner Events Ranking
                 </h1>
               </section>
+              <section className="flex w-full flex-col items-center justify-center gap-2">
+                <h1 className="text-3xl font-bold">Championship Podium</h1>
+                <h3 className="text-lg text-gray-500">
+                  Top 3 performers of the season
+                </h3>
+              </section>
+              <section className="mb-8 flex w-full items-end  justify-center space-x-8 drop-shadow-md">
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-4">
+                    <div className="gradient-silver silver-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-gray-300">
+                      <span className="text-2xl font-bold text-white">2</span>
+                    </div>
+                    <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
+                      <i className=" text-sm text-gray-600">
+                        <FaAward />
+                      </i>
+                    </div>
+                  </div>
+                  <div className="silver-glow flex h-32 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-gray-400 to-gray-300 pb-4">
+                    <div className="text-center">
+                      <div className="text-sm font-bold text-gray-800">
+                        {table.data?.[1].partnerName}
+                      </div>
+                      <div className="text-xs text-gray-700">
+                        {table.data?.[1].sumEvent.toFixed(2)} EVT
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-4">
+                    <div className="gradient-gold podium-glow flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400">
+                      <span className="text-3xl font-bold text-white">1</span>
+                    </div>
+                    <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400">
+                      <i className="text-lg text-yellow-600">
+                        <FaCrown />
+                      </i>
+                    </div>
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform">
+                      <div className="flex space-x-1">
+                        <i className="fas fa-star text-xs text-yellow-400"></i>
+                        <i className="fas fa-star text-xs text-yellow-400"></i>
+                        <i className="fas fa-star text-xs text-yellow-400"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="podium-glow flex h-40 w-28 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-yellow-500 to-yellow-400 pb-4">
+                    <div className="text-center">
+                      <div className="font-bold text-white">
+                        {table.data?.[0].partnerName}
+                      </div>
+                      <div className="text-sm text-yellow-100">
+                        {table.data?.[0].sumEvent.toFixed(2)} EVT
+                      </div>
+                      <div className="mt-1 rounded-full bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-800">
+                        CHAMPION
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-4">
+                    <div className="gradient-bronze bronze-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-orange-400">
+                      <span className="text-2xl font-bold text-white">3</span>
+                    </div>
+                    <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange-400">
+                      <i className="fas fa-medal text-sm text-orange-600">
+                        <FaAward />
+                      </i>
+                    </div>
+                  </div>
+                  <div className="bronze-glow flex h-28 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-orange-500 to-orange-400 pb-4">
+                    <div className="text-center">
+                      <div className="text-sm font-bold text-white">
+                        {table.data?.[2].partnerName}
+                      </div>
+                      <div className="text-xs text-orange-100">
+                        {table.data?.[2].sumEvent.toFixed(2)} EVT
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="flex w-full items-center justify-center gap-2">
+                {stats_overviews.map((stats) => {
+                  let number = 0;
+
+                  switch (stats.title) {
+                    case "Total CV":
+                      number =
+                        table.data?.reduce((prev, current) => {
+                          return (prev += current.sumCv);
+                        }, 0) ?? 0;
+                      break;
+                    case "Total EVT":
+                      number =
+                        table.data?.reduce((prev, current) => {
+                          return (prev += current.sumEvent);
+                        }, 0) ?? 0;
+                      break;
+                    case "Total Partners":
+                      number = table.data?.length ?? 0;
+                      break;
+
+                    default:
+                      break;
+                  }
+                  return (
+                    <div
+                      key={stats.title}
+                      className="w-60 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">{stats.title}</p>
+                          <p className="text-2xl font-bold text-gray-900">
+                            {number.toLocaleString()}
+                          </p>
+                        </div>
+                        <div
+                          className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${stats.color}-500/20`}
+                        >
+                          <i className={`text-${stats.color}-500`}>
+                            {stats.icon}
+                          </i>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </section>
             </header>
 
             <section className="mt-8">
@@ -212,7 +395,7 @@ function PartnerLeague() {
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-700">
                     <thead className="">
-                      <tr>
+                      <tr className="bg-white">
                         <th
                           scope="col"
                           className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
@@ -258,99 +441,161 @@ function PartnerLeague() {
                       </tr>
                     </thead>
                     <tbody className=" ">
-                      {table.data?.map((partner, index) => (
-                        <>
-                          <tr
-                            onClick={() =>
-                              setSelectPartner((prev) => {
-                                if (prev?.partnerId === partner.partnerId) {
-                                  return null;
-                                }
-                                return partner;
-                              })
-                            }
-                            key={partner.partnerId}
-                            className="border-b transition-colors duration-200 hover:bg-gray-100"
-                          >
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
-                              {index + 1}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
-                              <div className="flex items-center">
-                                {partner.partnerName}
-                              </div>
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                              {partner.sumCv}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                              {(
-                                (partner.sumCv / partner.sumClick) *
-                                100
-                              ).toFixed(2)}
-                              %
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                              {partner.sumEvent}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                              {(
-                                (partner.sumEvent / partner.sumCv) *
-                                100
-                              ).toFixed(2)}
-                              %
-                            </td>
-                            <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
-                              {country}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 9l-7 7-7-7"
-                                />
-                              </svg>
-                            </td>
-                          </tr>
-                          {selectPartner?.partnerId === partner.partnerId &&
-                            partner.affiliateInfo
-                              .sort((a, b) => b.event - a.event)
-                              .map((a, childIndex) => {
-                                return (
-                                  <tr
-                                    key={a.country}
-                                    className="bg-gray-50 transition-colors duration-200 "
-                                  >
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-500"></td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                      <div className="flex items-center"></div>
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                      {a.cv}
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                      {a.cvr.toFixed(2)}%
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                      {a.event}
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                      {a.evr.toFixed(2)}%
-                                    </td>
-                                    <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-500 hover:cursor-pointer">
-                                      {a.country}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                        </>
-                      ))}
+                      {table.data?.map((partner, index) => {
+                        const position = index + 1;
+                        const cvr = (partner.sumCv / partner.sumClick) * 100;
+                        const evr = (partner.sumEvent / partner.sumCv) * 100;
+                        const name = parseName(partner.partnerName);
+                        return (
+                          <>
+                            <tr
+                              onClick={() =>
+                                setSelectPartner((prev) => {
+                                  if (prev?.partnerId === partner.partnerId) {
+                                    return null;
+                                  }
+                                  return partner;
+                                })
+                              }
+                              key={partner.partnerId}
+                              className="border-b transition-colors duration-200 hover:bg-gray-100"
+                            >
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
+                                {position === 1 ? (
+                                  <div className="flex items-center space-x-3">
+                                    <div className="gradient-gold flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white">
+                                      1
+                                    </div>
+                                    <i className="text-lg text-yellow-600">
+                                      <FaCrown />
+                                    </i>
+                                  </div>
+                                ) : position === 2 ? (
+                                  <div className="flex items-center space-x-3">
+                                    <div className="gradient-silver flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white">
+                                      2
+                                    </div>
+                                    <i className=" text-gray-400">
+                                      <FaAward />
+                                    </i>
+                                  </div>
+                                ) : position === 3 ? (
+                                  <div className="flex items-center space-x-3">
+                                    <div className="gradient-bronze flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white">
+                                      3
+                                    </div>
+                                    <i className=" text-orange-500">
+                                      <FaAward />
+                                    </i>
+                                  </div>
+                                ) : (
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+                                    {position}
+                                  </div>
+                                )}
+                              </td>
+                              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                                <div className="flex items-center space-x-3">
+                                  <div>
+                                    <div className="font-semibold text-gray-900">
+                                      {name.fullName}
+                                    </div>
+                                    <div className="text-sm text-main-color">
+                                      {name.inParentheses
+                                        .map((n) => `(${n})`)
+                                        .join("  ")}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-center">
+                                <span
+                                  className={`rounded-full px-3 py-1 text-sm font-semibold 
+                                    ${partner.sumCv === 0 ? "bg-gray-100 text-gray-900" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    `}
+                                >
+                                  {partner.sumCv}
+                                </span>
+                              </td>
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                                {(Number.isNaN(cvr) ? 0 : cvr).toFixed(2)}. %
+                              </td>
+                              <td className="px-6 py-4 text-center">
+                                <span
+                                  className={`rounded-full px-3 py-1 text-sm font-semibold 
+                                    ${partner.sumCv === 0 ? "bg-gray-100 text-gray-900" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    `}
+                                >
+                                  {partner.sumEvent}
+                                </span>
+                              </td>
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                                {(Number.isNaN(evr) ? 0 : cvr).toFixed(2)}. %
+                              </td>
+                              <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
+                                {country}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                  />
+                                </svg>
+                              </td>
+                            </tr>
+                            {selectPartner?.partnerId === partner.partnerId &&
+                              partner.affiliateInfo
+                                .sort((a, b) => b.event - a.event)
+                                .map((a, childIndex) => {
+                                  return (
+                                    <tr
+                                      key={a.country}
+                                      className="bg-gray-50 transition-colors duration-200 "
+                                    >
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-500"></td>
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                        <div className="flex items-center"></div>
+                                      </td>
+                                      <td className="px-6 py-4 text-center">
+                                        <span
+                                          className={`rounded-full px-3 py-1 text-sm font-semibold 
+                                    ${a.cv === 0 ? "bg-gray-100 text-gray-900" : a.cv > 0 && a.cv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    `}
+                                        >
+                                          {a.cv}
+                                        </span>
+                                      </td>
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                        {a.cvr.toFixed(2)}%
+                                      </td>
+                                      <td className="px-6 py-4 text-center">
+                                        <span
+                                          className={`rounded-full px-3 py-1 text-sm font-semibold 
+                                    ${a.event === 0 ? "bg-gray-100 text-gray-900" : a.event > 0 && a.event < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    `}
+                                        >
+                                          {a.event}
+                                        </span>
+                                      </td>
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                        {a.evr.toFixed(2)}%
+                                      </td>
+                                      <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-500 hover:cursor-pointer">
+                                        {a.country}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                          </>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
