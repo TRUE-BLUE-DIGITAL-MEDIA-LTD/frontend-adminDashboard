@@ -58,5 +58,6 @@ export function useGetPartnerLeagueTable(
   return useQuery({
     queryKey: ["league-table", input],
     queryFn: () => GetPartnerLeagueTableService(input),
+    refetchInterval: 1000 * 5,
   });
 }
