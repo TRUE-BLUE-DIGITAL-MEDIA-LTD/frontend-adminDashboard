@@ -69,3 +69,13 @@ input[type="number"] {
   padding-left: 1rem;
   padding-right: 1rem;
 }
+
+.gradient-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+}
+.gradient-silver {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
+}
+.gradient-bronze {
+  background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%);
+}

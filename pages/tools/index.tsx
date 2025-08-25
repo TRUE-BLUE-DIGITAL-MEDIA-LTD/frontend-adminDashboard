@@ -34,7 +34,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-pva" && <SmsPvas user={user} />}
         {menu === "sms-pool" && <SmsPool user={user} />}
         {menu === "sms-textverified" && <SmsTextVerified user={user} />}
-        {menu === "league-table" && <PartnerLeague />}
+        {menu === "league-table" && <PartnerLeague user={user} />}
       </div>
     </DashboardLayout>
   );
