@@ -1,15 +1,13 @@
-import React from "react";
+import { RiErrorWarningLine } from "react-icons/ri";
+import Swal from "sweetalert2";
 import { ErrorMessages, Partner, User } from "../../models";
 import {
   useCanelSMSPool,
-  useGetServiceSMSPool,
   useGetSMSPool,
   useGetSmsPoolAccounts,
 } from "../../react-query/sms-pool";
-import { RiErrorWarningLine } from "react-icons/ri";
 import ActiceNumber from "./ActiceNumber";
 import SelectService from "./SelectService";
-import Swal from "sweetalert2";
 import SmsPoolAccount from "./SmsPoolAccount";
 
 type Props = {
@@ -107,7 +105,7 @@ function SmsPool({ user }: Props) {
             {activeNumbers.data?.data.map((number, index) => {
               return (
                 <ActiceNumber
-                  key={index}
+                  key={number.id}
                   smsPool={number}
                   sms={number.sms}
                   onBlock={(id) => {}}

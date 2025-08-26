@@ -68,7 +68,7 @@ function SmsTextVerified({ user }: Props) {
               return (
                 <ActiceNumber
                   onOpen={() => setSelectSmsTextVerified(number)}
-                  key={index}
+                  key={number.id}
                   smsTextverified={number}
                   sms={number.sms}
                 />

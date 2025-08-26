@@ -25,12 +25,23 @@ function SelectService({ activeNumbers }: Props) {
   const service = useGetServiceSMSPool();
   const [loading, setLoading] = useState<boolean>(false);
   const buy = useCreateSMSPool();
-  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [selectService, setSelectService] = useState<Service | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>({
+    ID: 1,
+    cc: "1",
+    name: "United States",
+    region: "North America",
+    short_name: "US",
+  });
+  const [selectService, setSelectService] = useState<Service | null>({
+    ID: 926,
+    name: "Tinder",
+    favourite: 0,
+  });
   const [selectPool, setSelectPool] = useState<{ ID: number; name: string }>({
     ID: 0,
     name: "Default",
   });
+
   const stock = useGetStockSMSpool({
     service: selectService?.ID.toString() as string,
     country: selectedCountry?.ID.toString() as string,

@@ -159,7 +159,7 @@ function SmsPvas({ user }: Props) {
             {activeNumbers.data?.sims.map((number, index) => {
               return (
                 <ActiceNumber
-                  key={index}
+                  key={number.id}
                   smsPva={number}
                   sms={number.sms}
                   onBlock={(id) => {
