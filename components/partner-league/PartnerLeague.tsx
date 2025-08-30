@@ -530,7 +530,7 @@ function PartnerLeague({ user }: Props) {
                                 </span>
                               </td>
                               <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                                {(Number.isNaN(evr) ? 0 : cvr).toFixed(2)}. %
+                                {(Number.isNaN(evr) ? 0 : evr).toFixed(2)}. %
                               </td>
                               <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
                                 {country}
