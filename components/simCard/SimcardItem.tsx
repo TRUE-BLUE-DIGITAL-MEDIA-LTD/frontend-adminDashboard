@@ -360,6 +360,7 @@ bg-green-200 text-start font-semibold text-green-800"
                   }
                   return (
                     <li
+                      key={report.id}
                       className={`flex w-full items-center justify-between rounded-lg border border-${color}-700 bg-${color}-200 p-3 text-sm text-${color}-700`}
                     >
                       <section className="flex flex-col">
