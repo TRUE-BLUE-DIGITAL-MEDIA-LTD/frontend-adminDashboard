@@ -2,12 +2,20 @@ import React, { memo, useEffect, useState } from "react";
 import {
   FavoriteOnSimCard,
   MessageOnSimcard,
+  ReportOnSimCard,
   SimCard,
   SimCardOnPartner,
   StatusPort,
   TagOnSimcard,
 } from "../../models";
-import { MdDevices, MdFavorite, MdFavoriteBorder } from "react-icons/md";
+import {
+  MdDevices,
+  MdFavorite,
+  MdFavoriteBorder,
+  MdFlag,
+  MdNote,
+  MdReport,
+} from "react-icons/md";
 import moment from "moment";
 import { Sms } from "@mui/icons-material";
 import { FcPhoneAndroid, FcSimCard } from "react-icons/fc";
@@ -25,6 +33,8 @@ import { IoSave } from "react-icons/io5";
 import Countdown from "react-countdown";
 import Image from "next/image";
 import { blurDataURL } from "../../data/blurDataURL";
+import TextEditor from "../common/TextEditor";
+import { timeAgo } from "../../utils";
 
 type Props = {
   slotInUsed: boolean;
@@ -36,6 +46,7 @@ type Props = {
   sim: SimCard & {
     partner?: SimCardOnPartner;
     tag?: TagOnSimcard[];
+    reports?: ReportOnSimCard[];
     isLoading?: boolean;
   };
   isloading?: boolean;
@@ -47,6 +58,7 @@ type Props = {
   onActiveSimcard: (simCardId: string) => void;
   onDeactiveSimcard: (simCardId: string) => void;
   onDeleteTag: (tagId: string) => void;
+  onReport: (simcard: SimCard) => void;
   onAddTag: () => void;
   page: number;
   index: number;
@@ -61,6 +73,13 @@ type Props = {
   deviceUser: UseQueryResult<ResponseGetDeviceUsersService, Error>;
   portStatus: StatusPort | "-";
 };
+
+const menus = [
+  { title: "Note", icon: <MdNote /> },
+  { title: "Reports", icon: <MdReport /> },
+] as const;
+
+type Menu = (typeof menus)[number]["title"];
 function SimcardItem({
   slotInUsed,
   activeSimcards,
@@ -80,10 +99,10 @@ function SimcardItem({
   country,
   deviceUser,
   portStatus,
+  onReport,
 }: Props) {
-  const [noteLoading, setNoteLoading] = useState<boolean>(true);
-  const randomShade = getRandomSlateShade();
   const [note, setNote] = useState<string>(sim.simCardNote);
+  const [menu, setMenu] = useState<Menu>("Note");
   useEffect(() => {
     setNote(sim.simCardNote);
   }, [sim.simCardNote]);
@@ -99,6 +118,13 @@ function SimcardItem({
         }  p-2   `}
       key={sim.id}
     >
+      <button
+        onClick={() => onReport(sim)}
+        className={`absolute right-8 top-1 m-auto flex h-5 w-5 items-center justify-center 
+    text-xl text-red-700 transition hover:scale-105 active:scale-110`}
+      >
+        <MdFlag />
+      </button>
       <button
         disabled={isloading}
         onClick={() => {
@@ -283,63 +309,75 @@ bg-green-200 text-start font-semibold text-green-800"
           </span>
         )}
 
-        <div className="col-span-2 h-40 w-full">
-          {noteLoading && (
-            <div
-              style={getSlateColorStyle(randomShade)}
-              className="h-full w-full animate-pulse rounded-md "
-            ></div>
-          )}
-          <div className={`${noteLoading ? "h-0" : "h-40"} w-full`}>
-            <Editor
-              onInit={() => {
-                setNoteLoading(false);
-              }}
-              value={note}
-              onEditorChange={(note) => {
-                setNote(note);
-              }}
-              tinymceScriptSrc={"/assets/libs/tinymce/tinymce.min.js"}
-              textareaName="description"
-              init={{
-                paste_block_drop: true,
-                link_context_toolbar: true,
-                height: "100%",
-                width: "100%",
-                menubar: false,
-                image_title: true,
-                automatic_uploads: true,
-                file_picker_types: "image",
-                plugins: [
-                  "contextmenu",
-                  "advlist",
-                  "autolink",
-                  "lists",
-                  "link",
-                  "charmap",
-                  "preview",
-                  "anchor",
-                  "searchreplace",
-                  "visualblocks",
-                  "code",
-                  "fullscreen",
-                  "insertdatetime",
-                  "media",
-                  "table",
-                  "help",
-                  "wordcount",
-                ],
-                contextmenu:
-                  "paste | link  inserttable | cell row column deletetable",
-                toolbar:
-                  "undo redo | formatselect | blocks | " +
-                  "bold italic backcolor | alignleft aligncenter " +
-                  "alignright alignjustify | bullist numlist outdent indent | " +
-                  "removeformat | help | link | ",
-                content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-              }}
-            />
+        <div className="col-span-2 h-52 w-full">
+          <ul className="flex w-full items-center justify-center gap-2">
+            {menus.map((m, index) => {
+              return (
+                <li
+                  onClick={() => setMenu(m.title)}
+                  key={index}
+                  className={`flex cursor-pointer items-center justify-center gap-1 ${m.title === menu ? "text-black" : "text-gray-400"}`}
+                >
+                  {m.icon}
+                  {m.title === "Reports"
+                    ? `${m.title} (${sim?.reports?.length ?? 0})`
+                    : m.title}
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className={`h-48 w-full`}>
+            {menu === "Note" && (
+              <TextEditor
+                value={note}
+                onChange={(note) => {
+                  setNote(note);
+                }}
+                allowMenu={false}
+              />
+            )}
+            {menu === "Reports" && (
+              <ul className="flex h-40 w-full flex-col gap-2 overflow-y-auto p-3">
+                {sim?.reports?.map((report) => {
+                  let color = "orange";
+                  switch (report.priority) {
+                    case "Critical":
+                      color = "red";
+                      break;
+                    case "High":
+                      color = "orange";
+                      break;
+                    case "Medium":
+                      color = "yellow";
+                      break;
+                    case "Low":
+                      color = "blue";
+                      break;
+
+                    default:
+                      break;
+                  }
+                  return (
+                    <li
+                      className={`flex w-full items-center justify-between rounded-lg border border-${color}-700 bg-${color}-200 p-3 text-sm text-${color}-700`}
+                    >
+                      <section className="flex flex-col">
+                        <span className="font-semibold">{report.type}</span>
+                        <span>
+                          Reported: {timeAgo({ pastTime: report.createAt })}
+                        </span>
+                      </section>
+                      <div
+                        className={`rounded-lg bg-${color}-300 px-3 py-1 text-${color}-700`}
+                      >
+                        {report.priority}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         </div>
 

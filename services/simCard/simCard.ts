@@ -7,6 +7,7 @@ import {
   MessageOnSimcard,
   Pagination,
   Partner,
+  ReportOnSimCard,
   SimCard,
   SimCardOnPartner,
   StatusPort,
@@ -48,6 +49,7 @@ export type ResponseGetSimCardByPageService = Pagination<
     simcardOnPartner: SimCardOnPartner & { partner: Partner };
     tag: TagOnSimcard[];
     favorite: FavoriteOnSimCard | null;
+    reports: ReportOnSimCard[];
   }
 >;
 

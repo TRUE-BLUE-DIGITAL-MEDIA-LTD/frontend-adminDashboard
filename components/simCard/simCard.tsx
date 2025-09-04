@@ -21,6 +21,7 @@ import {
   ErrorMessages,
   MessageOnSimcard,
   Partner,
+  ReportOnSimCard,
   ResponsibilityOnPartner,
   SimCard,
   SimCardOnPartner,
@@ -59,6 +60,7 @@ import CreateTagsOnSimcard from "../forms/createTagsOnSimcard";
 import AddSimCardFromExcel from "./AddSimCardFromExcel";
 import ShowMessage from "./showMessage";
 import SimcardItem from "./SimcardItem";
+import ReportBox from "./ReportBox";
 
 const availableSlot = ["available", "unavailable"];
 
@@ -74,6 +76,7 @@ function SimCards({ user }: { user: User }) {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [searchField, setSearchField] = useState<string>("");
   const [debouncedQuery, setDebouncedQuery] = useState<string>(searchField);
+  const [selectReport, setSelectReport] = useState<SimCard | null>(null);
 
   const [page, setPage] = useState<number>(1);
   const [triggerShowMessage, setTriggerShowMessage] = useState<boolean>(false);
@@ -81,6 +84,7 @@ function SimCards({ user }: { user: User }) {
     (SimCard & {
       partner?: SimCardOnPartner;
       tag?: TagOnSimcard[];
+      reports?: ReportOnSimCard[];
       isLoading?: boolean;
     })[]
   >([]);
@@ -729,6 +733,19 @@ function SimCards({ user }: { user: User }) {
         </PopupLayout>
       )}
 
+      {selectReport && (
+        <PopupLayout onClose={() => setSelectReport(null)}>
+          <ReportBox
+            simCards={simCards}
+            sim={selectReport}
+            onClose={() => {
+              document.body.style.overflow = "auto";
+              setSelectReport(null);
+            }}
+          />
+        </PopupLayout>
+      )}
+
       <header className="mt-20 flex w-full flex-col items-center justify-center gap-5">
         <h1 className="flex items-center justify-center gap-1 text-center text-3xl font-bold ">
           Oxy-ETMS <SimCardOutlined />
@@ -1011,6 +1028,7 @@ function SimCards({ user }: { user: User }) {
                     country={country}
                     deviceUser={deviceUser}
                     portStatus={portStatus}
+                    onReport={(sim) => setSelectReport(sim)}
                     onDeleteTag={(tagId) => {
                       handleDeleteTag({ tagOnSimCardId: tagId });
                     }}

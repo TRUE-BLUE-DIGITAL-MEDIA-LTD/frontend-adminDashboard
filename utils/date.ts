@@ -56,7 +56,7 @@ export const timeAgo = ({ pastTime }: { pastTime: string }): string => {
   if (days > 0) return `${days} ${days === 1 ? "day" : "days"}`;
   if (hours > 0) return `${hours} ${hours === 1 ? "hour" : "hours"}`;
   if (minutes > 0) return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
-  return `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
+  return `${seconds} ${seconds === 1 ? "second" : "seconds"} ago`;
 };
 
 export function convertToUTC(date: Date | undefined | null) {

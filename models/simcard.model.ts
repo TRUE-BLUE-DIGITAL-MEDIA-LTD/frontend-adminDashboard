@@ -83,3 +83,16 @@ export type FavoriteOnSimCard = {
   userId: string;
   simCardId: string;
 };
+
+export type ReportOnSimCard = {
+  id: string;
+  createAt: string;
+  updateAt: string;
+  simCardId: string;
+  userId: string;
+  type: string;
+  description: string;
+  priority: Priority;
+};
+
+export type Priority = "Low" | "Medium" | "High" | "Critical";
