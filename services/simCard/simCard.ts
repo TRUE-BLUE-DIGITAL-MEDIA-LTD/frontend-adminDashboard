@@ -12,6 +12,7 @@ import {
   SimCardOnPartner,
   StatusPort,
   TagOnSimcard,
+  User,
 } from "../../models";
 
 export type ResponseGetSimCardByDeviceUserIdService = SimCard[];
@@ -49,7 +50,7 @@ export type ResponseGetSimCardByPageService = Pagination<
     simcardOnPartner: SimCardOnPartner & { partner: Partner };
     tag: TagOnSimcard[];
     favorite: FavoriteOnSimCard | null;
-    reports: ReportOnSimCard[];
+    reports: (ReportOnSimCard & { user: User })[];
   }
 >;
 

@@ -1,13 +1,16 @@
-import React, { memo, useEffect, useState } from "react";
-import {
-  FavoriteOnSimCard,
-  MessageOnSimcard,
-  ReportOnSimCard,
-  SimCard,
-  SimCardOnPartner,
-  StatusPort,
-  TagOnSimcard,
-} from "../../models";
+import { Sms } from "@mui/icons-material";
+import { UseQueryResult } from "@tanstack/react-query";
+import moment from "moment";
+import Image from "next/image";
+import { memo, useEffect, useState } from "react";
+import Countdown from "react-countdown";
+import { BiCheckCircle } from "react-icons/bi";
+import { BsFlag } from "react-icons/bs";
+import { FaDharmachakra } from "react-icons/fa6";
+import { FcPhoneAndroid, FcSimCard } from "react-icons/fc";
+import { GrStatusInfo } from "react-icons/gr";
+import { IoIosPricetags, IoIosRemoveCircle, IoIosTimer } from "react-icons/io";
+import { IoSave } from "react-icons/io5";
 import {
   MdDevices,
   MdFavorite,
@@ -16,26 +19,39 @@ import {
   MdNote,
   MdReport,
 } from "react-icons/md";
-import moment from "moment";
-import { Sms } from "@mui/icons-material";
-import { FcPhoneAndroid, FcSimCard } from "react-icons/fc";
-import { BsFlag } from "react-icons/bs";
-import { UseQueryResult } from "@tanstack/react-query";
-import { ResponseGetDeviceUsersService } from "../../services/simCard/deviceUser";
-import { FaDharmachakra } from "react-icons/fa6";
-import { GrStatusInfo } from "react-icons/gr";
-import SpinLoading from "../loadings/spinLoading";
-import { BiCheckCircle } from "react-icons/bi";
-import { getRandomSlateShade, getSlateColorStyle } from "../../utils/random";
-import { IoIosPricetags, IoIosRemoveCircle, IoIosTimer } from "react-icons/io";
-import { Editor } from "@tinymce/tinymce-react";
-import { IoSave } from "react-icons/io5";
-import Countdown from "react-countdown";
-import Image from "next/image";
 import { blurDataURL } from "../../data/blurDataURL";
-import TextEditor from "../common/TextEditor";
+import {
+  FavoriteOnSimCard,
+  MessageOnSimcard,
+  ReportOnSimCard,
+  SimCard,
+  SimCardOnPartner,
+  StatusPort,
+  TagOnSimcard,
+  User,
+} from "../../models";
+import { ResponseGetDeviceUsersService } from "../../services/simCard/deviceUser";
 import { timeAgo } from "../../utils";
-
+import TextEditor from "../common/TextEditor";
+import SpinLoading from "../loadings/spinLoading";
+const priorityStyles = {
+  Critical: {
+    wrapper: "border-red-700 bg-red-200 text-red-700",
+    badge: "bg-red-300 text-red-700",
+  },
+  High: {
+    wrapper: "border-orange-700 bg-orange-200 text-orange-700",
+    badge: "bg-orange-300 text-orange-700",
+  },
+  Medium: {
+    wrapper: "border-yellow-700 bg-yellow-200 text-yellow-700",
+    badge: "bg-yellow-300 text-yellow-700",
+  },
+  Low: {
+    wrapper: "border-blue-700 bg-blue-200 text-blue-700",
+    badge: "bg-blue-300 text-blue-700",
+  },
+};
 type Props = {
   slotInUsed: boolean;
   activeSimcards:
@@ -46,7 +62,7 @@ type Props = {
   sim: SimCard & {
     partner?: SimCardOnPartner;
     tag?: TagOnSimcard[];
-    reports?: ReportOnSimCard[];
+    reports?: (ReportOnSimCard & { user: User })[];
     isLoading?: boolean;
   };
   isloading?: boolean;
@@ -340,38 +356,31 @@ bg-green-200 text-start font-semibold text-green-800"
             {menu === "Reports" && (
               <ul className="flex h-40 w-full flex-col gap-2 overflow-y-auto p-3">
                 {sim?.reports?.map((report) => {
-                  let color = "orange";
-                  switch (report.priority) {
-                    case "Critical":
-                      color = "red";
-                      break;
-                    case "High":
-                      color = "orange";
-                      break;
-                    case "Medium":
-                      color = "yellow";
-                      break;
-                    case "Low":
-                      color = "blue";
-                      break;
+                  const styles =
+                    priorityStyles[report.priority] || priorityStyles.High;
 
-                    default:
-                      break;
-                  }
                   return (
                     <li
                       key={report.id}
-                      className={`flex w-full items-center justify-between rounded-lg border border-${color}-700 bg-${color}-200 p-3 text-sm text-${color}-700`}
+                      className={`flex w-full items-center justify-between rounded-lg border p-3 text-sm ${styles.wrapper}`}
                     >
-                      <section className="flex flex-col">
-                        <span className="font-semibold">{report.type}</span>
-                        <span>
-                          Reported: {timeAgo({ pastTime: report.createAt })}
-                        </span>
+                      <section className="flex items-center gap-3">
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                          <Image src={report.user.image} fill alt="profile" />
+                        </div>
+                        <section className="flex flex-col ">
+                          <span className="font-semibold underline underline-offset-2">
+                            {report.type}
+                          </span>
+                          <span className="text-xs">
+                            Reported: {timeAgo({ pastTime: report.createAt })}{" "}
+                          </span>
+                          <span className="text-xs">
+                            by {report.user.name} ({report.user.email})
+                          </span>
+                        </section>
                       </section>
-                      <div
-                        className={`rounded-lg bg-${color}-300 px-3 py-1 text-${color}-700`}
-                      >
+                      <div className={`rounded-lg px-3 py-1 ${styles.badge}`}>
                         {report.priority}
                       </div>
                     </li>

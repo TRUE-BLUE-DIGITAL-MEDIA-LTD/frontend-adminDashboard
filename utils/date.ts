@@ -50,12 +50,13 @@ export const timeAgo = ({ pastTime }: { pastTime: string }): string => {
   const months = Math.floor(days / 30);
   const years = Math.floor(days / 365);
 
-  if (years > 0) return `${years} ${years === 1 ? "year" : "years"}`;
-  if (months > 0) return `${months} ${months === 1 ? "month" : "months"}`;
-  if (weeks > 0) return `${weeks} ${weeks === 1 ? "week" : "weeks"}`;
+  if (years > 0) return `${years} ${years === 1 ? "year" : "years"} ago`;
+  if (months > 0) return `${months} ${months === 1 ? "month" : "months"} ago`;
+  if (weeks > 0) return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
   if (days > 0) return `${days} ${days === 1 ? "day" : "days"}`;
-  if (hours > 0) return `${hours} ${hours === 1 ? "hour" : "hours"}`;
-  if (minutes > 0) return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+  if (hours > 0) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  if (minutes > 0)
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
   return `${seconds} ${seconds === 1 ? "second" : "seconds"} ago`;
 };
 

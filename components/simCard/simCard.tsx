@@ -84,7 +84,7 @@ function SimCards({ user }: { user: User }) {
     (SimCard & {
       partner?: SimCardOnPartner;
       tag?: TagOnSimcard[];
-      reports?: ReportOnSimCard[];
+      reports?: (ReportOnSimCard & { user: User })[];
       isLoading?: boolean;
     })[]
   >([]);
