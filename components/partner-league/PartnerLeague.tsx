@@ -79,7 +79,7 @@ function PartnerLeague({ user }: Props) {
   const table = useGetPartnerLeagueTable({
     startDate: fromDate,
     endDate: toDate,
-    country: country,
+    ...(country !== "SELECT ALL" && { country: country }),
   });
 
   function parseName(inputString: string): {
@@ -196,7 +196,15 @@ function PartnerLeague({ user }: Props) {
               onChange={(e) => setCountry(e.target.value)}
               className="h-10 w-60 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
-              {sortedCountries.map((c, index) => (
+              {[
+                {
+                  flag: "SELECT ALL",
+                  country: "SELECT ALL",
+                  code: "SELECT ALL",
+                  countryCode: "SELECT ALL",
+                },
+                ...sortedCountries,
+              ].map((c, index) => (
                 <option key={index} value={c.country}>
                   {c.country}
                 </option>
@@ -243,151 +251,155 @@ function PartnerLeague({ user }: Props) {
 
       {table.isLoading ? (
         <Skeleton height={200} />
-      ) : (
+      ) : table.data && table.data.length > 0 ? (
         <main className="min-h-screen  p-4 font-sans text-gray-800 md:p-8">
           <div className="mx-auto max-w-7xl">
-            <header className="flex w-full flex-col items-start justify-center gap-5">
-              <section className="flex w-full flex-col justify-start">
-                <h1 className="w-full text-start text-3xl font-bold text-gray-800">
-                  Partner Events Ranking
-                </h1>
-              </section>
-              <section className="flex w-full flex-col items-center justify-center gap-2">
-                <h1 className="text-3xl font-bold">Championship Podium</h1>
-                <h3 className="text-lg text-gray-500">
-                  Top 3 performers of the season
-                </h3>
-              </section>
-              <section className="mb-8 flex w-full items-end  justify-center space-x-8 drop-shadow-md">
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-4">
-                    <div className="gradient-silver silver-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-gray-300">
-                      <span className="text-2xl font-bold text-white">2</span>
-                    </div>
-                    <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
-                      <i className=" text-sm text-gray-600">
-                        <FaAward />
-                      </i>
-                    </div>
-                  </div>
-                  <div className="silver-glow flex h-32 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-gray-400 to-gray-300 pb-4">
-                    <div className="text-center">
-                      <div className="text-sm font-bold text-gray-800">
-                        {table.data?.[1].partnerName}
+            {table.data.length > 2 && (
+              <header className="flex w-full flex-col items-start justify-center gap-5">
+                <section className="flex w-full flex-col justify-start">
+                  <h1 className="w-full text-start text-3xl font-bold text-gray-800">
+                    Partner Events Ranking
+                  </h1>
+                </section>
+                <section className="flex w-full flex-col items-center justify-center gap-2">
+                  <h1 className="text-3xl font-bold">Championship Podium</h1>
+                  <h3 className="text-lg text-gray-500">
+                    Top 3 performers of the season
+                  </h3>
+                </section>
+                <section className="mb-8 flex w-full items-end  justify-center space-x-8 drop-shadow-md">
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-4">
+                      <div className="gradient-silver silver-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-gray-300">
+                        <span className="text-2xl font-bold text-white">2</span>
                       </div>
-                      <div className="text-xs text-gray-700">
-                        {table.data?.[1].sumEvent.toFixed(2)} EVT
+                      <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
+                        <i className=" text-sm text-gray-600">
+                          <FaAward />
+                        </i>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-4">
-                    <div className="gradient-gold podium-glow flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400">
-                      <span className="text-3xl font-bold text-white">1</span>
-                    </div>
-                    <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400">
-                      <i className="text-lg text-yellow-600">
-                        <FaCrown />
-                      </i>
-                    </div>
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform">
-                      <div className="flex space-x-1">
-                        <i className="fas fa-star text-xs text-yellow-400"></i>
-                        <i className="fas fa-star text-xs text-yellow-400"></i>
-                        <i className="fas fa-star text-xs text-yellow-400"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="podium-glow flex h-40 w-28 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-yellow-500 to-yellow-400 pb-4">
-                    <div className="text-center">
-                      <div className="font-bold text-white">
-                        {table.data?.[0].partnerName}
-                      </div>
-                      <div className="text-sm text-yellow-100">
-                        {table.data?.[0].sumEvent.toFixed(2)} EVT
-                      </div>
-                      <div className="mt-1 rounded-full bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-800">
-                        CHAMPION
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-4">
-                    <div className="gradient-bronze bronze-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-orange-400">
-                      <span className="text-2xl font-bold text-white">3</span>
-                    </div>
-                    <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange-400">
-                      <i className="fas fa-medal text-sm text-orange-600">
-                        <FaAward />
-                      </i>
-                    </div>
-                  </div>
-                  <div className="bronze-glow flex h-28 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-orange-500 to-orange-400 pb-4">
-                    <div className="text-center">
-                      <div className="text-sm font-bold text-white">
-                        {table.data?.[2].partnerName}
-                      </div>
-                      <div className="text-xs text-orange-100">
-                        {table.data?.[2].sumEvent.toFixed(2)} EVT
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="flex w-full items-center justify-center gap-2">
-                {stats_overviews.map((stats) => {
-                  let number = 0;
-
-                  switch (stats.title) {
-                    case "Total CV":
-                      number =
-                        table.data?.reduce((prev, current) => {
-                          return (prev += current.sumCv);
-                        }, 0) ?? 0;
-                      break;
-                    case "Total EVT":
-                      number =
-                        table.data?.reduce((prev, current) => {
-                          return (prev += current.sumEvent);
-                        }, 0) ?? 0;
-                      break;
-                    case "Total Partners":
-                      number = table.data?.length ?? 0;
-                      break;
-
-                    default:
-                      break;
-                  }
-                  return (
-                    <div
-                      key={stats.title}
-                      className="w-60 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-gray-600">{stats.title}</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {number.toLocaleString()}
-                          </p>
+                    <div className="silver-glow flex h-32 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-gray-400 to-gray-300 pb-4">
+                      <div className="text-center">
+                        <div className="text-sm font-bold text-gray-800">
+                          {table.data?.[1].partnerName}
                         </div>
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${stats.color}-500/20`}
-                        >
-                          <i className={`text-${stats.color}-500`}>
-                            {stats.icon}
-                          </i>
+                        <div className="text-xs text-gray-700">
+                          {table.data?.[1].sumEvent.toFixed(2)} EVT
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </section>
-            </header>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-4">
+                      <div className="gradient-gold podium-glow flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400">
+                        <span className="text-3xl font-bold text-white">1</span>
+                      </div>
+                      <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400">
+                        <i className="text-lg text-yellow-600">
+                          <FaCrown />
+                        </i>
+                      </div>
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 transform">
+                        <div className="flex space-x-1">
+                          <i className="fas fa-star text-xs text-yellow-400"></i>
+                          <i className="fas fa-star text-xs text-yellow-400"></i>
+                          <i className="fas fa-star text-xs text-yellow-400"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="podium-glow flex h-40 w-28 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-yellow-500 to-yellow-400 pb-4">
+                      <div className="text-center">
+                        <div className="font-bold text-white">
+                          {table.data?.[0].partnerName}
+                        </div>
+                        <div className="text-sm text-yellow-100">
+                          {table.data?.[0].sumEvent.toFixed(2)} EVT
+                        </div>
+                        <div className="mt-1 rounded-full bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-800">
+                          CHAMPION
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-4">
+                      <div className="gradient-bronze bronze-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-orange-400">
+                        <span className="text-2xl font-bold text-white">3</span>
+                      </div>
+                      <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange-400">
+                        <i className="fas fa-medal text-sm text-orange-600">
+                          <FaAward />
+                        </i>
+                      </div>
+                    </div>
+                    <div className="bronze-glow flex h-28 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-orange-500 to-orange-400 pb-4">
+                      <div className="text-center">
+                        <div className="text-sm font-bold text-white">
+                          {table.data?.[2].partnerName}
+                        </div>
+                        <div className="text-xs text-orange-100">
+                          {table.data?.[2].sumEvent.toFixed(2)} EVT
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="flex w-full items-center justify-center gap-2">
+                  {stats_overviews.map((stats) => {
+                    let number = 0;
+
+                    switch (stats.title) {
+                      case "Total CV":
+                        number =
+                          table.data?.reduce((prev, current) => {
+                            return (prev += current.sumCv);
+                          }, 0) ?? 0;
+                        break;
+                      case "Total EVT":
+                        number =
+                          table.data?.reduce((prev, current) => {
+                            return (prev += current.sumEvent);
+                          }, 0) ?? 0;
+                        break;
+                      case "Total Partners":
+                        number = table.data?.length ?? 0;
+                        break;
+
+                      default:
+                        break;
+                    }
+                    return (
+                      <div
+                        key={stats.title}
+                        className="w-60 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-600">
+                              {stats.title}
+                            </p>
+                            <p className="text-2xl font-bold text-gray-900">
+                              {number.toLocaleString()}
+                            </p>
+                          </div>
+                          <div
+                            className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${stats.color}-500/20`}
+                          >
+                            <i className={`text-${stats.color}-500`}>
+                              {stats.icon}
+                            </i>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </section>
+              </header>
+            )}
 
             <section className="mt-8">
               {/* Table Section */}
@@ -603,6 +615,8 @@ function PartnerLeague({ user }: Props) {
             </section>
           </div>
         </main>
+      ) : (
+        <div>NO Data</div>
       )}
     </div>
   );

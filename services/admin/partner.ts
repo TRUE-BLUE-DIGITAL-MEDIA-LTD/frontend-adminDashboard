@@ -317,7 +317,7 @@ type ResponseGetPartnerLeagueTableService = {
 export type RequestGetPartnerLeagueTableService = {
   startDate: string;
   endDate: string;
-  country: string;
+  country?: string;
 };
 export async function GetPartnerLeagueTableService(
   input: RequestGetPartnerLeagueTableService,
