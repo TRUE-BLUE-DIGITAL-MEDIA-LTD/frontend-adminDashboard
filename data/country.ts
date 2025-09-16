@@ -241,7 +241,7 @@ export const countries = [
   },
   {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1e8-1f1e6.svg",
-    country: "Canada Virtual",
+    country: "Canada",
     code: "ca",
     countryCode: "+1",
   },
