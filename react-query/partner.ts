@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  GetNewsPartnerLeagueTableService,
   GetPartnerByMangegerService,
   GetPartnerByPageService,
   GetPartnerLeagueTableService,
@@ -59,5 +60,13 @@ export function useGetPartnerLeagueTable(
     queryKey: ["league-table", input],
     queryFn: () => GetPartnerLeagueTableService(input),
     refetchInterval: 1000 * 5,
+  });
+}
+
+export function useGetNewsPartnerLeagueTable() {
+  return useQuery({
+    queryKey: ["league-table-news"],
+    queryFn: () => GetNewsPartnerLeagueTableService(),
+    refetchInterval: 1000 * 60,
   });
 }

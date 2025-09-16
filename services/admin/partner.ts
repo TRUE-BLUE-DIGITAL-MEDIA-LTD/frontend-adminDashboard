@@ -342,3 +342,28 @@ export async function GetPartnerLeagueTableService(
     throw err.response.data;
   }
 }
+type ResponseGetNewsPartnerLeagueTableService = {
+  country: string;
+  evr_list: { region: string; number: number; percent: number }[];
+  cvr_list: { region: string; number: number; percent: number }[];
+  combine_list: { region: string; number: number; percent: number }[];
+}[];
+
+export async function GetNewsPartnerLeagueTableService(): Promise<ResponseGetNewsPartnerLeagueTableService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const user = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/league-table/news`,
+      responseType: "json",
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+    return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}

@@ -6,6 +6,7 @@ import { a } from "react-spring";
 import { FaAward, FaChartBar, FaCrown, FaPeopleGroup } from "react-icons/fa6";
 import { MdEvent } from "react-icons/md";
 import { User } from "../../models";
+import NewsPartnerLeague from "./NewsPartnerLeague";
 
 const timePeriods = [
   "Last 30 Days",
@@ -145,10 +146,10 @@ function PartnerLeague({ user }: Props) {
     setToDate(formatDate(newToDate));
   }, [timePeriod]); // This effect runs whenever timePeriod changes
 
-  console.log(fromDate);
   return (
     <div className="min-h-screen bg-gray-50 p-4 font-sans">
       <header className="flex w-full flex-col items-center justify-center gap-5 p-5">
+        <NewsPartnerLeague />
         <section className="mx-auto flex w-full max-w-7xl flex-col justify-start">
           <h1 className="w-full text-start text-3xl font-bold text-gray-900">
             Partner Events Ranking
