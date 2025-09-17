@@ -257,11 +257,6 @@ function PartnerLeague({ user }: Props) {
           <div className="mx-auto max-w-7xl">
             {table.data.length > 2 && (
               <header className="flex w-full flex-col items-start justify-center gap-5">
-                <section className="flex w-full flex-col justify-start">
-                  <h1 className="w-full text-start text-3xl font-bold text-gray-800">
-                    Partner Events Ranking
-                  </h1>
-                </section>
                 <section className="flex w-full flex-col items-center justify-center gap-2">
                   <h1 className="text-3xl font-bold">Championship Podium</h1>
                   <h3 className="text-lg text-gray-500">

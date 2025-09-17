@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 /// <reference path="../../types/unlayer.d.ts" />
 const minimalCSS = `
 /* Basic Body Styling (can be done inline, but cleaner here) */
@@ -60,7 +51,10 @@ unlayer.registerPropertyEditor({
             };
             mainInputURL.onchange = (e) => {
                 const target = e.target;
-                updateValue(Object.assign(Object.assign({}, value), { mainLink: target.value }));
+                updateValue({
+                    ...value,
+                    mainLink: target.value,
+                });
             };
             for (const step of value.steps) {
                 const inputTitle = node.getElementsByClassName(`form_${step.id}_input_title`)[0];
@@ -75,7 +69,7 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { title: target.value });
+                                return { ...prev, title: target.value };
                             }
                             return prev;
                         }),
@@ -94,7 +88,7 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { type: target.value });
+                                return { ...prev, type: target.value };
                             }
                             return prev;
                         }),
@@ -119,24 +113,30 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: target.value }) });
+                                return {
+                                    ...prev,
+                                    picture: {
+                                        ...prev.picture,
+                                        url: target.value,
+                                    },
+                                };
                             }
                             return prev;
                         }),
                     });
                 };
-                inputImage.onchange = (event) => __awaiter(this, void 0, void 0, function* () {
+                inputImage.onchange = async (event) => {
                     const target = event.target;
                     const file = target.files ? target.files[0] : null;
                     if (file) {
                         try {
                             loadingImage.textContent = "...Loading";
-                            const signURL = yield GetSignURLService({
+                            const signURL = await GetSignURLService({
                                 fileName: file.name,
                                 fileType: file.type,
                                 category: "other-library",
                             });
-                            yield UploadSignURLService({
+                            await UploadSignURLService({
                                 file: file,
                                 signURL: signURL.signURL,
                                 contentType: file.type,
@@ -147,14 +147,19 @@ unlayer.registerPropertyEditor({
                                 mainLink: value.mainLink,
                                 steps: value.steps.map((prev) => {
                                     if (prev.id === step.id) {
-                                        return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { url: signURL.originalURL }) });
+                                        return {
+                                            ...prev,
+                                            picture: {
+                                                ...prev.picture,
+                                                url: signURL.originalURL,
+                                            },
+                                        };
                                     }
                                     return prev;
                                 }),
                             });
                             displayImage.src = signURL.originalURL;
                             displayImage.style.display = "block";
-                            console.log(signURL);
                         }
                         catch (error) {
                             loadingImage.textContent = "";
@@ -165,7 +170,7 @@ unlayer.registerPropertyEditor({
                         displayImage.src = "#";
                         displayImage.style.display = "none";
                     }
-                });
+                };
                 toggleCheckbox.checked = step.picture.width_auto;
                 toggleCheckbox.onchange = (e) => {
                     const target = e.target;
@@ -174,7 +179,13 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { width_auto: target.checked }) });
+                                return {
+                                    ...prev,
+                                    picture: {
+                                        ...prev.picture,
+                                        width_auto: target.checked,
+                                    },
+                                };
                             }
                             return prev;
                         }),
@@ -191,7 +202,13 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { picture: Object.assign(Object.assign({}, prev.picture), { width: target.value }) });
+                                return {
+                                    ...prev,
+                                    picture: {
+                                        ...prev.picture,
+                                        width: target.value,
+                                    },
+                                };
                             }
                             return prev;
                         }),
@@ -206,7 +223,10 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { button_color: target.value });
+                                return {
+                                    ...prev,
+                                    button_color: target.value,
+                                };
                             }
                             return prev;
                         }),
@@ -221,7 +241,10 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { text_color: target.value });
+                                return {
+                                    ...prev,
+                                    text_color: target.value,
+                                };
                             }
                             return prev;
                         }),
@@ -237,7 +260,10 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { spacing: target.value });
+                                return {
+                                    ...prev,
+                                    spacing: target.value,
+                                };
                             }
                             return prev;
                         }),
@@ -253,7 +279,10 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { button_size: target.value });
+                                return {
+                                    ...prev,
+                                    button_size: target.value,
+                                };
                             }
                             return prev;
                         }),
@@ -269,7 +298,10 @@ unlayer.registerPropertyEditor({
                         mainLink: value.mainLink,
                         steps: value.steps.map((prev) => {
                             if (prev.id === step.id) {
-                                return Object.assign(Object.assign({}, prev), { button_rounded: target.value });
+                                return {
+                                    ...prev,
+                                    button_rounded: target.value,
+                                };
                             }
                             return prev;
                         }),
@@ -280,37 +312,45 @@ unlayer.registerPropertyEditor({
                     updateValue({
                         viewOnstep: step.id,
                         mainLink: value.mainLink,
-                        steps: [
-                            ...value.steps,
-                            {
-                                title: "",
-                                type: "",
-                                picture: {
-                                    url: null,
-                                    width_auto: true,
-                                    width: "",
-                                    loading: "",
-                                },
-                                spacing: "5px",
-                                button_rounded: "3px",
-                                button_size: "5px",
-                                button_color: "#dc2626",
-                                text_color: "#fff",
-                                id: value.steps.length + 1,
-                                options: [{ display: "", value: "", id: 1, url: "" }],
+                        steps: value.steps
+                            .toSpliced(step.id, 0, {
+                            title: "",
+                            type: "",
+                            picture: {
+                                url: null,
+                                width_auto: true,
+                                width: "",
+                                loading: "",
                             },
-                        ],
+                            spacing: "5px",
+                            button_rounded: "3px",
+                            button_size: "5px",
+                            button_color: "#dc2626",
+                            text_color: "#fff",
+                            id: value.steps.length + 1,
+                            options: [{ display: "", value: "", id: 1, url: "" }],
+                        })
+                            .map((item, index) => {
+                            return {
+                                ...item,
+                                id: index + 1,
+                            };
+                        }),
                     });
                 };
                 const removeStep = node.getElementsByClassName(`remove_step_${step.id}`)[0];
                 if (removeStep) {
                     removeStep.onclick = function (event) {
-                        const updated = value.steps.filter((prevStep) => prevStep.id !== step.id);
                         updateValue({
                             viewOnstep: step.id,
                             mainLink: value.mainLink,
-                            steps: updated.map((data, index) => {
-                                return Object.assign(Object.assign({}, data), { step: index + 1 });
+                            steps: value.steps
+                                .filter((prevStep) => prevStep.id !== step.id)
+                                .map((data, index) => {
+                                return {
+                                    ...data,
+                                    id: index + 1,
+                                };
                             }),
                         });
                     };
@@ -324,7 +364,9 @@ unlayer.registerPropertyEditor({
                             steps: [
                                 ...value.steps.map((s) => {
                                     if (s.id === step.id) {
-                                        return Object.assign(Object.assign({}, s), { options: [
+                                        return {
+                                            ...s,
+                                            options: [
                                                 ...step.options,
                                                 {
                                                     id: step.options.length + 1,
@@ -332,7 +374,8 @@ unlayer.registerPropertyEditor({
                                                     value: "",
                                                     url: "",
                                                 },
-                                            ] });
+                                            ],
+                                        };
                                     }
                                     return s;
                                 }),
@@ -349,11 +392,49 @@ unlayer.registerPropertyEditor({
                                     if (s.id !== step.id) {
                                         return s;
                                     }
-                                    return Object.assign(Object.assign({}, s), { options: step.options.filter((f) => f.id !== option.id) });
+                                    return {
+                                        ...s,
+                                        options: step.options.filter((f) => f.id !== option.id),
+                                    };
                                 }),
                             });
                         };
                     }
+                    const move_to_step = node.getElementsByClassName(`form_${step.id}_move_to_step_${option.id}`)[0];
+                    move_to_step.min = "1";
+                    move_to_step.max = value.steps.length.toString();
+                    if (option.move_to_step) {
+                        move_to_step.value = option.move_to_step.toString();
+                    }
+                    move_to_step.onblur = (e) => {
+                        form.reportValidity();
+                    };
+                    move_to_step.onchange = (e) => {
+                        const target = e.target;
+                        updateValue({
+                            viewOnstep: step.id,
+                            mainLink: value.mainLink,
+                            steps: [
+                                ...value.steps.map((s) => {
+                                    if (s.id === step.id) {
+                                        return {
+                                            ...s,
+                                            options: step.options.map((old) => {
+                                                if (old.id === option.id) {
+                                                    return {
+                                                        ...old,
+                                                        move_to_step: Number(target.value),
+                                                    };
+                                                }
+                                                return old;
+                                            }),
+                                        };
+                                    }
+                                    return s;
+                                }),
+                            ],
+                        });
+                    };
                     const inputDisplay = node.getElementsByClassName(`form_${step.id}_input_display_${option.id}`)[0];
                     inputDisplay.value = option.display;
                     inputDisplay.required = true;
@@ -368,12 +449,15 @@ unlayer.registerPropertyEditor({
                             steps: [
                                 ...value.steps.map((s) => {
                                     if (s.id === step.id) {
-                                        return Object.assign(Object.assign({}, s), { options: step.options.map((old) => {
+                                        return {
+                                            ...s,
+                                            options: step.options.map((old) => {
                                                 if (old.id === option.id) {
-                                                    return Object.assign(Object.assign({}, old), { display: target.value });
+                                                    return { ...old, display: target.value };
                                                 }
                                                 return old;
-                                            }) });
+                                            }),
+                                        };
                                     }
                                     return s;
                                 }),
@@ -393,12 +477,15 @@ unlayer.registerPropertyEditor({
                             steps: [
                                 ...value.steps.map((s) => {
                                     if (s.id === step.id) {
-                                        return Object.assign(Object.assign({}, s), { options: step.options.map((old) => {
+                                        return {
+                                            ...s,
+                                            options: step.options.map((old) => {
                                                 if (old.id === option.id) {
-                                                    return Object.assign(Object.assign({}, old), { url: target.value });
+                                                    return { ...old, url: target.value };
                                                 }
                                                 return old;
-                                            }) });
+                                            }),
+                                        };
                                     }
                                     return s;
                                 }),
@@ -406,7 +493,7 @@ unlayer.registerPropertyEditor({
                         });
                     };
                     const inputValue = node.getElementsByClassName(`form_${step.id}_input_value_${option.id}`)[0];
-                    inputValue.value = option.value;
+                    inputValue.value = option.value ?? "-";
                     inputValue.required = true;
                     inputValue.onblur = (e) => {
                         form.reportValidity();
@@ -419,12 +506,15 @@ unlayer.registerPropertyEditor({
                             steps: [
                                 ...value.steps.map((s) => {
                                     if (s.id === step.id) {
-                                        return Object.assign(Object.assign({}, s), { options: step.options.map((old) => {
+                                        return {
+                                            ...s,
+                                            options: step.options.map((old) => {
                                                 if (old.id === option.id) {
-                                                    return Object.assign(Object.assign({}, old), { value: target.value });
+                                                    return { ...old, value: target.value };
                                                 }
                                                 return old;
-                                            }) });
+                                            }),
+                                        };
                                     }
                                     return s;
                                 }),
@@ -452,10 +542,9 @@ function multipleForm(value) {
     form.appendChild(inputURL);
     if (value.steps.length > 0) {
         value.steps.forEach((step) => {
-            var _a, _b;
             const createStep = createformStep({
                 number: step.id,
-                options: (_b = (_a = value.steps.find((list) => list.id === step.id)) === null || _a === void 0 ? void 0 : _a.options) !== null && _b !== void 0 ? _b : [],
+                options: value.steps.find((list) => list.id === step.id)?.options ?? [],
             });
             form.appendChild(createStep);
         });
@@ -747,12 +836,14 @@ const createOptionButton = (formId, id) => {
     const inputDisplay = createTextInput("Display Text", `${formId}_input_display_${id}`, "text");
     const inputValue = createTextInput("Value", `${formId}_input_value_${id}`, "text");
     const inputUrl = createTextInput("URL", `${formId}_input_url_${id}`, "url");
+    const move_to_step = createTextInput("Move To Step", `${formId}_move_to_step_${id}`, "number", "0");
     option.appendChild(inputDisplay);
+    option.appendChild(move_to_step);
     option.appendChild(inputValue);
     option.appendChild(inputUrl);
     return option;
 };
-const createTextInput = (labelText, id, type) => {
+const createTextInput = (labelText, id, type, min) => {
     // Create the main container div
     const container = document.createElement("div");
     // Create the label
@@ -764,6 +855,9 @@ const createTextInput = (labelText, id, type) => {
     const input = document.createElement("input");
     input.type = type;
     input.className = id;
+    if (min) {
+        input.min = min;
+    }
     container.appendChild(input);
     // Create the button
     // Apply some basic styling (you can customize this further with CSS classes)
@@ -791,6 +885,7 @@ const createButton = (input) => {
     }
     button.textContent = input.text;
     button.style.minWidth = input.width;
+    button.type = "button";
     button.style.width = "max-content";
     button.style.borderRadius = input.rounded ? `${input.rounded}px` : "0.35rem";
     button.style.backgroundColor = input.backgroundColor;
@@ -814,7 +909,7 @@ function displayForm(data, isViewer) {
     const value = data.form;
     // Create the main div container
     const body = document.createElement("div");
-    if (data === null || data === void 0 ? void 0 : data.text) {
+    if (data?.text) {
         body.style.fontFamily = data.text.value;
     }
     // Create the "Pick your age!" span
@@ -888,7 +983,25 @@ function displayForm(data, isViewer) {
         buttonContaner.style.gap = step.spacing ? `${step.spacing}px` : "5px";
         buttonContaner.className = "button-containers";
         for (const option of step.options) {
-            const button = createButton(Object.assign(Object.assign({ text: option.display, width: "15rem", padding: step.button_size, rounded: step.button_rounded, backgroundColor: step.button_color }, (data.text && data.text.value && { fontFamily: data.text.value })), { textColor: step.text_color, value: Object.assign({ [step.type]: option.value }, (option.url !== "" && { url: option.url })), fontSize: "1.5rem" }));
+            const button = createButton({
+                text: option.display,
+                width: "15rem",
+                padding: step.button_size,
+                rounded: step.button_rounded,
+                backgroundColor: step.button_color,
+                ...(data.text && data.text.value && { fontFamily: data.text.value }),
+                textColor: step.text_color,
+                value: {
+                    [step.type]: option.value,
+                    ...(option.url !== "" && option.url !== "-" && { url: option.url }),
+                    ...(option.move_to_step &&
+                        option.move_to_step > 0 &&
+                        option.move_to_step <= data.form.steps.length && {
+                        move_to_step: option.move_to_step.toString(),
+                    }),
+                },
+                fontSize: "1.5rem",
+            });
             button.className = `form_${step.id}_button_${option.id}`;
             buttonContaner.appendChild(button);
         }
@@ -962,58 +1075,42 @@ unlayer.registerTool({
         },
     },
 });
-function parseCookies() {
-    const cookies = {};
-    if (typeof document === "undefined") {
-        return {};
+async function GetSignURLService(input) {
+    try {
+        const url = new URL(`https://server-dashboard.oxyclick.com/v1/cloud-storage/get-signURL/public`);
+        url.search = new URLSearchParams(input).toString();
+        const response = await fetch(url.toString(), {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(errorData);
+            throw errorData;
+        }
+        const signURLData = await response.json();
+        return signURLData;
     }
-    document.cookie.split(";").forEach((cookie) => {
-        const [key, ...value] = cookie.trim().split("=");
-        cookies[key] = value.join("=");
-    });
-    return cookies;
+    catch (error) {
+        console.error(error);
+        throw error;
+    }
 }
-function GetSignURLService(input) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            console.log(window);
-            const url = new URL(`https://server-dashboard.oxyclick.com/v1/cloud-storage/get-signURL/public`);
-            url.search = new URLSearchParams(input).toString();
-            const response = yield fetch(url.toString(), {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                const errorData = yield response.json();
-                console.error(errorData);
-                throw errorData;
-            }
-            const signURLData = yield response.json();
-            return signURLData;
-        }
-        catch (error) {
-            console.error(error);
-            throw error;
-        }
-    });
-}
-function UploadSignURLService(input) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield fetch(input.signURL, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": `${input.contentType}`,
-                },
-                body: input.file,
-            });
-            return { message: "success" };
-        }
-        catch (error) {
-            console.error(error.response.data);
-            throw "error";
-        }
-    });
+async function UploadSignURLService(input) {
+    try {
+        await fetch(input.signURL, {
+            method: "PUT",
+            headers: {
+                "Content-Type": `${input.contentType}`,
+            },
+            body: input.file,
+        });
+        return { message: "success" };
+    }
+    catch (error) {
+        console.error(error.response.data);
+        throw "error";
+    }
 }

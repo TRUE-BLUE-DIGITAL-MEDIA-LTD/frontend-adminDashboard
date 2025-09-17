@@ -1,7 +1,7 @@
 // tsconfig.tool.json
 {
   "compilerOptions": {
-    "target": "es2015", // Or "es6", etc.
+    "target": "esnext", // Or "es6", etc.
     "module": "esnext", // Or "commonjs", etc.
     "moduleResolution": "node",
     "esModuleInterop": true,

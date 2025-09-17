@@ -23,15 +23,15 @@ for (let i = 1; i <= multipleforms.length; i++) {
       for (let d = 0; d < child.children.length; d++) {
         const button = child.children[d] as HTMLButtonElement;
         const value = JSON.parse(button.getAttribute("value") as string) as {
-          [key: string]: string;
+          move_to_step?: string;
           url: string;
         };
 
         button.onclick = (event) => {
           const currentForm = document.getElementById(`form_step_${i}`);
-          const nextPage = document.getElementById(`form_step_${i + 1}`);
-
-          console.log("value", value);
+          const nextPage = document.getElementById(
+            `form_step_${value.move_to_step ? value.move_to_step : i + 1}`,
+          );
           if (value.url && value.url !== "") {
             window.open(value.url, "_blank");
             return;

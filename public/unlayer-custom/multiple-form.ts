@@ -86,6 +86,7 @@ type formValue = {
       value: string;
       id: number;
       url: string;
+      move_to_step?: number;
     }[];
   }[];
 };
@@ -243,7 +244,6 @@ unlayer.registerPropertyEditor({
               });
               displayImage.src = signURL.originalURL;
               displayImage.style.display = "block";
-              console.log(signURL);
             } catch (error) {
               loadingImage.textContent = "";
               alert("Upload File Error");
@@ -417,9 +417,8 @@ unlayer.registerPropertyEditor({
           updateValue({
             viewOnstep: step.id,
             mainLink: value.mainLink,
-            steps: [
-              ...value.steps,
-              {
+            steps: value.steps
+              .toSpliced(step.id, 0, {
                 title: "",
                 type: "",
                 picture: {
@@ -435,8 +434,13 @@ unlayer.registerPropertyEditor({
                 text_color: "#fff",
                 id: value.steps.length + 1,
                 options: [{ display: "", value: "", id: 1, url: "" }],
-              },
-            ],
+              })
+              .map((item, index) => {
+                return {
+                  ...item,
+                  id: index + 1,
+                };
+              }),
           });
         };
 
@@ -446,18 +450,17 @@ unlayer.registerPropertyEditor({
 
         if (removeStep) {
           removeStep.onclick = function (event: Event) {
-            const updated = value.steps.filter(
-              (prevStep) => prevStep.id !== step.id,
-            );
             updateValue({
               viewOnstep: step.id,
               mainLink: value.mainLink,
-              steps: updated.map((data, index) => {
-                return {
-                  ...data,
-                  step: index + 1,
-                };
-              }),
+              steps: value.steps
+                .filter((prevStep) => prevStep.id !== step.id)
+                .map((data, index) => {
+                  return {
+                    ...data,
+                    id: index + 1,
+                  };
+                }),
             });
           };
         }
@@ -513,6 +516,44 @@ unlayer.registerPropertyEditor({
               });
             };
           }
+          const move_to_step = node.getElementsByClassName(
+            `form_${step.id}_move_to_step_${option.id}`,
+          )[0] as HTMLInputElement;
+          move_to_step.min = "1";
+          move_to_step.max = value.steps.length.toString();
+          if (option.move_to_step) {
+            move_to_step.value = option.move_to_step.toString();
+          }
+          move_to_step.onblur = (e) => {
+            form.reportValidity();
+          };
+
+          move_to_step.onchange = (e) => {
+            const target = e.target as HTMLInputElement;
+            updateValue({
+              viewOnstep: step.id,
+              mainLink: value.mainLink,
+              steps: [
+                ...value.steps.map((s) => {
+                  if (s.id === step.id) {
+                    return {
+                      ...s,
+                      options: step.options.map((old) => {
+                        if (old.id === option.id) {
+                          return {
+                            ...old,
+                            move_to_step: Number(target.value),
+                          };
+                        }
+                        return old;
+                      }),
+                    };
+                  }
+                  return s;
+                }),
+              ],
+            });
+          };
 
           const inputDisplay = node.getElementsByClassName(
             `form_${step.id}_input_display_${option.id}`,
@@ -582,7 +623,7 @@ unlayer.registerPropertyEditor({
           const inputValue = node.getElementsByClassName(
             `form_${step.id}_input_value_${option.id}`,
           )[0] as HTMLInputElement;
-          inputValue.value = option.value;
+          inputValue.value = option.value ?? "-";
           inputValue.required = true;
           inputValue.onblur = (e) => {
             form.reportValidity();
@@ -1031,8 +1072,15 @@ const createOptionButton = (formId: string, id: number) => {
     "text",
   );
   const inputUrl = createTextInput("URL", `${formId}_input_url_${id}`, "url");
+  const move_to_step = createTextInput(
+    "Move To Step",
+    `${formId}_move_to_step_${id}`,
+    "number",
+    "0",
+  );
 
   option.appendChild(inputDisplay);
+  option.appendChild(move_to_step);
   option.appendChild(inputValue);
   option.appendChild(inputUrl);
 
@@ -1043,6 +1091,7 @@ const createTextInput = (
   labelText: string,
   id: string,
   type: HTMLInputTypeAttribute,
+  min?: string,
 ): HTMLDivElement => {
   // Create the main container div
   const container = document.createElement("div");
@@ -1057,6 +1106,9 @@ const createTextInput = (
   const input = document.createElement("input");
   input.type = type;
   input.className = id;
+  if (min) {
+    input.min = min;
+  }
   container.appendChild(input);
 
   // Create the button
@@ -1098,6 +1150,7 @@ const createButton = (input: {
   }
   button.textContent = input.text;
   button.style.minWidth = input.width;
+  button.type = "button";
   button.style.width = "max-content";
   button.style.borderRadius = input.rounded ? `${input.rounded}px` : "0.35rem";
   button.style.backgroundColor = input.backgroundColor;
@@ -1216,7 +1269,12 @@ function displayForm(data: MultipleFormValues, isViewer: boolean) {
         textColor: step.text_color,
         value: {
           [step.type]: option.value,
-          ...(option.url !== "" && { url: option.url }),
+          ...(option.url !== "" && option.url !== "-" && { url: option.url }),
+          ...(option.move_to_step &&
+            option.move_to_step > 0 &&
+            option.move_to_step <= data.form.steps.length && {
+              move_to_step: option.move_to_step.toString(),
+            }),
         },
         fontSize: "1.5rem",
       });
@@ -1343,18 +1401,6 @@ type RequestGetSignURLService = {
   category: CategoryFile;
 };
 
-function parseCookies(): { [key: string]: string } {
-  const cookies: { [key: string]: string } = {};
-  if (typeof document === "undefined") {
-    return {};
-  }
-  document.cookie.split(";").forEach((cookie) => {
-    const [key, ...value] = cookie.trim().split("=");
-    cookies[key] = value.join("=");
-  });
-  return cookies;
-}
-
 async function GetSignURLService(input: RequestGetSignURLService): Promise<{
   signURL: string;
   originalURL: string;
@@ -1362,7 +1408,6 @@ async function GetSignURLService(input: RequestGetSignURLService): Promise<{
   fileName: string;
 }> {
   try {
-    console.log(window);
     const url = new URL(
       `https://server-dashboard.oxyclick.com/v1/cloud-storage/get-signURL/public`,
     );
