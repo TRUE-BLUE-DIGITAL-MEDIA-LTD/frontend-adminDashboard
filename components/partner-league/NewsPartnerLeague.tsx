@@ -70,23 +70,6 @@ function NewsPartnerLeague() {
                     })}
                   </ul>
                 </div>
-                <div className="flex min-h-40 w-full flex-col gap-3 rounded-lg border bg-gray-100 p-3">
-                  <div className="flex items-center justify-start gap-2 font-semibold text-gray-700">
-                    <MdAlignHorizontalLeft />
-                    <span>Top 5 Combined CVR% & EVR%</span>
-                  </div>
-                  <ul className="flex w-full flex-col gap-3">
-                    {data.combine_list.map((list, index_evr) => {
-                      return (
-                        <ListNews
-                          key={index_evr}
-                          list={list}
-                          index={index_evr}
-                        />
-                      );
-                    })}
-                  </ul>
-                </div>
               </section>
             </li>
           );
