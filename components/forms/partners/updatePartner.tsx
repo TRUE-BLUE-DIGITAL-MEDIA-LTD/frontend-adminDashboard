@@ -46,7 +46,6 @@ function UpdatePartner({
     partnerName: selectPartner.name,
     userId: selectPartner.userId,
     dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
-
     smartLink: selectPartner.smartLink,
   });
 

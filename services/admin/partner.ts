@@ -129,6 +129,8 @@ type InputUpdatePartnerService = {
     isAllowManageAssginCategory?: boolean;
     dailyLimitSMSPVA?: number;
     smartLink?: string;
+    isAllowUsingSMS_Pinverify?: boolean;
+    isAllowSmsPinverifyAccount?: boolean;
   };
 };
 export async function UpdatePartnerService(

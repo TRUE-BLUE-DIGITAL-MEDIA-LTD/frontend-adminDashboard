@@ -2,11 +2,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   CancelSMSPinverifyService,
   CreateSMSPinverifyService,
+  GetHistorySMSPinverifyService,
   GetServiceListSMSPinverifyService,
   GetSMSPinverifyAccountsService,
   GetSMSPinverifyService,
   RequestCancelSMSPinverifyService,
   RequestCreateSMSPinverifyService,
+  RequestGetHistorySMSPinverifyService,
   RequestGetServiceListSMSPinverifyService,
   RequestReusedSMSPinverifyService,
   RequestUpdateSMSPinverifyAccountService,
@@ -66,6 +68,15 @@ export function useGetSmsPinverifyAccounts() {
   return useQuery({
     queryKey: [itemKeys.item[0], "accounts"],
     queryFn: () => GetSMSPinverifyAccountsService(),
+  });
+}
+export function useGetHistorySmsPinverify(
+  request: RequestGetHistorySMSPinverifyService,
+) {
+  return useQuery({
+    queryKey: [itemKeys.item[0], "history", request],
+    queryFn: () => GetHistorySMSPinverifyService(request),
+    refetchInterval: 1000 * 5,
   });
 }
 

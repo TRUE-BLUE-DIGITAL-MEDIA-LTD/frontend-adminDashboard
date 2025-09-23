@@ -12,6 +12,8 @@ export type Partner = {
   isAllowManageAssignPhoneNumber: boolean;
   isAllowManageAssignDomain: boolean;
   isAllowManageAssginCategory: boolean;
+  isAllowUsingSMS_Pinverify: boolean;
+  isAllowSmsPinverifyAccount: boolean;
   dailyLimitSMSPVA: number;
   smartLink?: string | undefined;
   name: string;

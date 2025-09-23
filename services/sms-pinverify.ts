@@ -89,6 +89,38 @@ export async function GetServiceListSMSPinverifyService(
     throw err.response.data;
   }
 }
+
+export type ResponseGetHistorySMSPinverifyService = {
+  data: SmsPinverify[];
+  totalPage: number;
+};
+export type RequestGetHistorySMSPinverifyService = {
+  limit: number;
+  page: number;
+};
+
+export async function GetHistorySMSPinverifyService(
+  request: RequestGetHistorySMSPinverifyService,
+): Promise<ResponseGetHistorySMSPinverifyService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const sms_pinverify = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pinverifys/history`,
+      params: request,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return sms_pinverify.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
 export type ResponseGetSMSPinverifyService = {
   data: SmsPinverify[];
   totalUsage: number;

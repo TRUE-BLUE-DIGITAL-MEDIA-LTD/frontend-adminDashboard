@@ -39,6 +39,16 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       allow: selectPartner.isAllowSmsPoolAccount,
       slug: "isAllowSmsPoolAccount",
     },
+    {
+      title: "Allow Using SmsPin",
+      allow: selectPartner.isAllowUsingSMS_Pinverify,
+      slug: "isAllowUsingSMS_Pinverify",
+    },
+    {
+      title: "Allow Manage SMS Pin Account",
+      allow: selectPartner.isAllowSmsPinverifyAccount,
+      slug: "isAllowSmsPinverifyAccount",
+    },
   ]);
 
   const handleUpdatePermission = async (slug: string, isAllow: boolean) => {

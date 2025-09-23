@@ -15,29 +15,11 @@ type Props = {
   onCancel: (smsPvaId: string) => void;
 };
 function ActiceNumber({ smsPinverify, onCancel }: Props) {
-  const resend = useResendSMSPool();
   const [triggerHide, setTriggerHide] = useState(false);
   const country = countries.find(
     (c) => c.sms_pinverify === smsPinverify.country,
   );
-  const handleResend = async () => {
-    try {
-      await resend.mutateAsync({
-        id: smsPinverify.id,
-      });
-    } catch (error) {
-      console.log(error);
-      let result = error as ErrorMessages;
-      Swal.fire({
-        title: result.error ? result.error : "Something went wrong!",
-        text: result?.message?.toString(),
-        footer: result?.statusCode
-          ? "Error code: " + result.statusCode?.toString()
-          : "",
-        icon: "error",
-      });
-    }
-  };
+
   return (
     <div className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
       {triggerHide === false && (

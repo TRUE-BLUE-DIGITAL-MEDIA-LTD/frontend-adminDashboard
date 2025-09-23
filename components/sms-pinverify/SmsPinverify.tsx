@@ -10,6 +10,7 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import SmsPinverifyAccount from "./SmsPinverifyAccount";
 import ActiceNumber from "./ActiveNumber";
 import SelectService from "./SelectService";
+import SmsPinverifyHistory from "./SmsPinverifyHistory";
 type Props = {
   user: User & { partner: Partner | null };
 };
@@ -56,7 +57,7 @@ function SmsPinverify({ user }: Props) {
       <header className="mt-10 flex w-full flex-col items-center justify-center border-b pb-5">
         {(user.role === "manager" ||
           user.role === "admin" ||
-          user.partner?.isAllowSmsPoolAccount === true) && (
+          user.partner?.isAllowSmsPinverifyAccount === true) && (
           <ul className="flex w-full flex-wrap items-center justify-center gap-3">
             {accounts.data?.map((a) => {
               return <SmsPinverifyAccount account={a} key={a.id} user={user} />;
@@ -115,8 +116,9 @@ function SmsPinverify({ user }: Props) {
             })}
           </ul>
         </section>
-        <section className="flex w-full justify-center gap-5">
+        <section className="flex w-full flex-col items-center justify-center gap-5">
           <SelectService activeNumbers={activeNumbers} />
+          <SmsPinverifyHistory activeNumbers={activeNumbers} />
         </section>
       </main>
     </>

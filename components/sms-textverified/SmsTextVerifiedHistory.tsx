@@ -14,7 +14,7 @@ function SmsTextVerifiedHistory() {
   const history = useGetTextverifieds({
     isComplete: "complete",
     page: page,
-    limit: 10,
+    limit: 50,
   });
   return (
     <>
