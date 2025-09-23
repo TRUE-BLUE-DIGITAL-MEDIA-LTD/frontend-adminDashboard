@@ -4,6 +4,7 @@ export const countries = [
     country: "United Kingdom",
     code: "uk",
     countryCode: "+44",
+    sms_pinverify: "United kingdom UK",
   },
   {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1e6-1f1e8.svg",
@@ -1467,6 +1468,7 @@ export const countries = [
     flag: "https://flagicons.lipis.dev/flags/4x3/um.svg",
     country: "United States",
     code: "us",
+    sms_pinverify: "USA",
     countryCode: "+1",
   },
   {

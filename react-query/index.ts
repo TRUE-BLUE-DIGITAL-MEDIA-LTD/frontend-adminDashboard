@@ -6,3 +6,4 @@ export * from "./partner";
 export * from "./domain";
 export * from "./sms-textverified";
 export * from "./report-on-simcard";
+export * from "./sms-pinverify";

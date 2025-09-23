@@ -13,6 +13,7 @@ import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
 import dynamic from "next/dynamic";
+import SmsPinverify from "../../components/sms-pinverify/SmsPinverify";
 
 // Dynamically import your component with SSR turned off
 const PartnerLeague = dynamic(
@@ -35,6 +36,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-pool" && <SmsPool user={user} />}
         {menu === "sms-textverified" && <SmsTextVerified user={user} />}
         {menu === "league-table" && <PartnerLeague user={user} />}
+        {menu === "sms-pinverify" && <SmsPinverify user={user} />}
       </div>
     </DashboardLayout>
   );

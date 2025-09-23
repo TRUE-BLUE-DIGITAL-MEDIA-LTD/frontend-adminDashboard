@@ -27,6 +27,7 @@ export const menusSidebar = [
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Pool", params: "sms-pool" },
       { title: "Oxy Text", params: "sms-textverified" },
+      { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy SMS", params: "sms-etms" },
       { title: "Postcode", params: "postcode" },
       {

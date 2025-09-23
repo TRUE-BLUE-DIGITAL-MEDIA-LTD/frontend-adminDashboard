@@ -20,3 +20,4 @@ export * from "./announcement.model";
 export * from "./sms-pva.model";
 export * from "./sms-pool.model";
 export * from "./sms-textverified.model";
+export * from "./sms-pinverify.model";
