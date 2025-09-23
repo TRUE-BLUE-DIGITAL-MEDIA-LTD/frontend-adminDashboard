@@ -11,6 +11,7 @@ import SmsPinverifyAccount from "./SmsPinverifyAccount";
 import ActiceNumber from "./ActiveNumber";
 import SelectService from "./SelectService";
 import SmsPinverifyHistory from "./SmsPinverifyHistory";
+
 type Props = {
   user: User & { partner: Partner | null };
 };
