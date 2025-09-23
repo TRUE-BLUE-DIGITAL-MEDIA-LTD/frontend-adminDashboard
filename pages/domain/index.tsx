@@ -82,6 +82,8 @@ function Index({ user }: { user: User }) {
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
           account: null,
+          isAllowSmsPinverifyAccount: false,
+          isAllowUsingSMS_Pinverify: false,
         });
         addSeeAll.push({
           createAt: new Date(),
@@ -104,6 +106,8 @@ function Index({ user }: { user: User }) {
             domains.data?.totalNoPartnerDomain,
           ),
           simCardOnPartner: [],
+          isAllowSmsPinverifyAccount: false,
+          isAllowUsingSMS_Pinverify: false,
         });
 
         setSelectPartner(() => addSeeAll[0] as Partner);
