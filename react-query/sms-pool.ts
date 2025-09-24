@@ -7,10 +7,12 @@ import {
 import {
   CencelSMSPoolService,
   GetCountrySMSPoolService,
+  GetHistorySmsPoolService,
   GetServiceSMSPoolService,
   GetSmsPoolService,
   GetStockNumberService,
   RequestCencelSMSPoolService,
+  RequestGetHistorySmsPoolService,
   RequestResendSMSPOOLService,
   RequestReserveSMSPOOLNumberService,
   ResendSMSPOOLService,
@@ -24,6 +26,7 @@ import {
 } from "../services/sms-pool-account";
 
 export const smsPoolKeys = {
+  item: ["sms-pool"],
   getCountry: ["smspool-country"],
   getService: ["smspool-service"],
   getStock: (data: { country: string; service: string; pool: string }) => [
@@ -54,6 +57,13 @@ export function useGetSmsPoolAccounts() {
   return useQuery({
     queryKey: ["sms-pool-account"],
     queryFn: () => GetSmsPoolAccountsService(),
+  });
+}
+
+export function useGetHistorySmsPool(input: RequestGetHistorySmsPoolService) {
+  return useQuery({
+    queryKey: [smsPoolKeys.item[0], input],
+    queryFn: () => GetHistorySmsPoolService(input),
   });
 }
 

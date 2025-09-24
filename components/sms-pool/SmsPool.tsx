@@ -9,6 +9,7 @@ import {
 import ActiceNumber from "./ActiceNumber";
 import SelectService from "./SelectService";
 import SmsPoolAccount from "./SmsPoolAccount";
+import SmsPoolHistory from "./SmsPoolHistory";
 
 type Props = {
   user: User & { partner: Partner | null };
@@ -117,8 +118,9 @@ function SmsPool({ user }: Props) {
             })}
           </ul>
         </section>
-        <section className="flex w-full justify-center gap-5">
+        <section className="flex w-full flex-col items-center justify-center gap-5">
           <SelectService activeNumbers={activeNumbers} />
+          <SmsPoolHistory activeNumbers={activeNumbers} />
         </section>
       </main>
     </>

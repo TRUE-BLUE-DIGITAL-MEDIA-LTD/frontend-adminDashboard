@@ -46,6 +46,38 @@ export async function GetServiceSMSPoolService(): Promise<ResponseGetServiceSMSP
   }
 }
 
+export type ResponseGetHistorySmsPoolService = {
+  data: SMSPool[];
+  totalPage: number;
+};
+export type RequestGetHistorySmsPoolService = {
+  limit: number;
+  page: number;
+};
+
+export async function GetHistorySmsPoolService(
+  input: RequestGetHistorySmsPoolService,
+): Promise<ResponseGetHistorySmsPoolService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const smsPool = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-pools/history`,
+      params: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return smsPool.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetStockNumberService = {
   success: 1 | 0;
   amount: number;
