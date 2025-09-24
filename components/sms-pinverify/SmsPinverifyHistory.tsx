@@ -16,8 +16,6 @@ type Props = {
 };
 function SmsPinverifyHistory({ activeNumbers }: Props) {
   const [page, setPage] = useState(1);
-  const [selectSmsTextVerified, setSelectSmsTextVerified] =
-    useState<SmsPinverify | null>(null);
   const history = useGetHistorySmsPinverify({
     page: page,
     limit: 50,
