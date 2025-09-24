@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   QueryClient,
   useMutation,
   useQuery,
@@ -64,6 +65,7 @@ export function useGetHistorySmsPool(input: RequestGetHistorySmsPoolService) {
   return useQuery({
     queryKey: [smsPoolKeys.item[0], input],
     queryFn: () => GetHistorySmsPoolService(input),
+    placeholderData: keepPreviousData,
   });
 }
 
