@@ -64,7 +64,7 @@ function SmsDaisy({ user }: Props) {
             })}
           </ul>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">Oxy Pin</h1>
+        <h1 className="text-4xl font-semibold text-gray-800">Oxy Day</h1>
         <span className="text-sm text-gray-500">
           SmsDay provides the opportunity to use short-term temp phone numbers
           from different countries at fair and affordable prices for receiving
