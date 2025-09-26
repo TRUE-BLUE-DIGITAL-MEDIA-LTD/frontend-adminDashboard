@@ -131,6 +131,8 @@ type InputUpdatePartnerService = {
     smartLink?: string;
     isAllowUsingSMS_Pinverify?: boolean;
     isAllowSmsPinverifyAccount?: boolean;
+    isAllowUsingSMS_Daisy?: boolean;
+    isAllowSmsDaisyAccount?: boolean;
   };
 };
 export async function UpdatePartnerService(
