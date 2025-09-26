@@ -49,6 +49,16 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       allow: selectPartner.isAllowSmsPinverifyAccount,
       slug: "isAllowSmsPinverifyAccount",
     },
+    {
+      title: "Allow Using SmsDay",
+      allow: selectPartner.isAllowUsingSMS_Daisy,
+      slug: "isAllowUsingSMS_Daisy",
+    },
+    {
+      title: "Allow Manage SMS Day Account",
+      allow: selectPartner.isAllowSmsDaisyAccount,
+      slug: "isAllowSmsDaisyAccount",
+    },
   ]);
 
   const handleUpdatePermission = async (slug: string, isAllow: boolean) => {
