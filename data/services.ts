@@ -156,6 +156,7 @@ export const services = [
   },
   {
     title: "Tinder",
+    sms_daisy: "oi",
     slug: "tinder",
     icon: "https://tinder.com/static/android-chrome-192x192.png",
     code: "opt9",

@@ -14,6 +14,8 @@ export type Partner = {
   isAllowManageAssginCategory: boolean;
   isAllowUsingSMS_Pinverify: boolean;
   isAllowSmsPinverifyAccount: boolean;
+  isAllowUsingSMS_Daisy?: boolean;
+  isAllowSmsDaisyAccount?: boolean;
   dailyLimitSMSPVA: number;
   smartLink?: string | undefined;
   name: string;

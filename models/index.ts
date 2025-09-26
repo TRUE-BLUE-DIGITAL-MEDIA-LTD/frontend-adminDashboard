@@ -21,3 +21,4 @@ export * from "./sms-pva.model";
 export * from "./sms-pool.model";
 export * from "./sms-textverified.model";
 export * from "./sms-pinverify.model";
+export * from "./sms-daisy.model";

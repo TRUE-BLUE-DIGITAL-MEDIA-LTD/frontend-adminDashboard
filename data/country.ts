@@ -1469,6 +1469,7 @@ export const countries = [
     country: "United States",
     code: "us",
     sms_pinverify: "USA",
+    sms_daisy: "187",
     countryCode: "+1",
   },
   {
