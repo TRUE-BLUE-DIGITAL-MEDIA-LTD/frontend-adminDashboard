@@ -5,17 +5,15 @@ import {
   DropdownChangeEvent,
   DropdownProps,
 } from "primereact/dropdown";
+// 1. Import MultiSelect and its change event type
+import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { countries } from "../../data/country";
 import { ErrorMessages } from "../../models";
-import {
-  useCreateSmsDaisy,
-  useCreateSmsPinverify,
-  useGetSmsPinverifyServiceList,
-} from "../../react-query";
+import { useCreateSmsDaisy } from "../../react-query";
 import { ResponseGetSmsDaisyService } from "../../services/sms-daisy";
-import { Service, Services, services } from "../../data/services";
+import { Service, services } from "../../data/services";
 
 type Props = {
   activeNumbers: UseQueryResult<ResponseGetSmsDaisyService, Error>;
@@ -27,6 +25,16 @@ type Country = {
   code: string;
   countryCode: string;
 };
+
+// Define a type for a single provider for better type-safety
+
+const providers = [
+  { title: "Verizon", query: "vz" },
+  { title: "AT & T", query: "att" },
+  { title: "T-mobile", query: "tmo" },
+] as const;
+
+type Provider = (typeof providers)[number];
 
 function SelectService({ activeNumbers }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,6 +50,9 @@ function SelectService({ activeNumbers }: Props) {
   });
 
   const [selectService, setSelectService] = useState<Service | null>(null);
+
+  // 2. Add state to hold the selected providers. It's an array.
+  const [selectedProviders, setSelectedProviders] = useState<Provider[]>([]);
 
   const panelFooterTemplate = () => {
     return (
@@ -98,8 +109,12 @@ function SelectService({ activeNumbers }: Props) {
   const handleBuySms = async () => {
     try {
       setLoading(true);
+
+      const providerValues = selectedProviders.map((p) => p.query);
+
       await buy.mutateAsync({
         service: selectService?.sms_daisy as string,
+        ...(selectedProviders.length > 0 && { carriers: providerValues }),
       });
       await activeNumbers.refetch();
       Swal.fire({
@@ -147,11 +162,25 @@ function SelectService({ activeNumbers }: Props) {
         itemTemplate={serviceOptionTemplate}
       />
 
+      {/* 3. Add the MultiSelect component UI */}
+      <MultiSelect
+        value={selectedProviders}
+        onChange={(e: MultiSelectChangeEvent) => {
+          console.log(e.value);
+          setSelectedProviders(e.value);
+        }}
+        options={providers as any}
+        optionLabel="title"
+        placeholder="Select Providers"
+        maxSelectedLabels={3} // Optional: limits the number of displayed items
+        className="w-96 border"
+      />
+
       <button
         onClick={handleBuySms}
         disabled={!!!selectService || !!!selectedCountry || loading}
         className="border-md bg- h-10 w-96 rounded-md bg-gradient-to-r
-       from-neutral-300 to-stone-400 text-white transition hover:from-neutral-400 hover:to-stone-600 active:scale-105"
+        from-neutral-300 to-stone-400 text-white transition hover:from-neutral-400 hover:to-stone-600 active:scale-105"
       >
         {loading ? "Loading.." : "BUY"}
       </button>

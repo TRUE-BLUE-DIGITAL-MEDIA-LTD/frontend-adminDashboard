@@ -12,6 +12,7 @@ import {
 } from "../../react-query";
 import { ResponseGetSmsDaisyService } from "../../services/sms-daisy";
 import { ResponseGetSMSPinverifyService } from "../../services/sms-pinverify";
+import { services } from "../../data/services";
 
 type Props = {
   activeNumbers: UseQueryResult<ResponseGetSmsDaisyService, Error>;
@@ -87,7 +88,8 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
       });
     }
   };
-  const country = countries.find((c) => c.sms_pinverify === sms.country);
+  const country = countries.find((c) => c.sms_daisy === sms.country);
+  const service = services.find((c) => c.sms_daisy === sms.serviceCode);
   return (
     <tr key={sms.id} className="h-16 border-b">
       <td>
@@ -132,7 +134,7 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
       </td>
       <td>
         <div className="flex items-center justify-center gap-2 px-2">
-          {sms.serviceCode}
+          {service?.title ?? "Not Found"}
         </div>
       </td>
       <td>
