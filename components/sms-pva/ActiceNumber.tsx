@@ -84,7 +84,8 @@ function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
             {
               services.find((service) => service.code === smsPva.serviceCode)
                 ?.title as string
-            }
+            }{" "}
+            : ({smsPva.price}$)
           </span>
         </div>
       )}

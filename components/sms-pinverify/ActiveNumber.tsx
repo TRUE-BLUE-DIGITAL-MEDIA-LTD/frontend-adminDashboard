@@ -67,7 +67,9 @@ function ActiceNumber({ smsPinverify, onCancel }: Props) {
       )}
       {triggerHide === false && (
         <div className="mt-2 flex w-full justify-start gap-2">
-          <span>{smsPinverify.serviceCode}</span>
+          <span>
+            {smsPinverify.serviceCode} : ({smsPinverify.price}$)
+          </span>
         </div>
       )}
       {triggerHide === false && (

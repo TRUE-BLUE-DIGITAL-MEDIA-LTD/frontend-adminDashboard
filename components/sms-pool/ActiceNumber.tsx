@@ -95,7 +95,9 @@ function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
       )}
       {triggerHide === false && (
         <div className="mt-2 flex w-full justify-start gap-2">
-          <span>{smsPool.serviceCode}</span>
+          <span>
+            {smsPool.serviceCode} : ({smsPool.price}$)
+          </span>
         </div>
       )}
       {triggerHide === false && (

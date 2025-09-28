@@ -71,10 +71,23 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
   const resend = useResendSmsDaisy();
   const handleResend = async (id: string) => {
     try {
+      Swal.fire({
+        title: "Loading",
+        text: "Please wait.",
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
       await resend.mutateAsync({
         smsDaisyId: id,
       });
       await activeNumbers.refetch();
+      Swal.fire({
+        title: "Success",
+        text: "Reused successfully",
+        icon: "success",
+      });
     } catch (error) {
       console.log(error);
       let result = error as ErrorMessages;
