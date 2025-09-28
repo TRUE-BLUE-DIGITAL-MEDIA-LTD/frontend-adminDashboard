@@ -148,13 +148,22 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
       </td>
       <td>
         <div className="flex items-center justify-center">
-          <button
-            disabled={resend.isPending}
-            onClick={() => handleResend(sms.id)}
-            className="h-10 w-40 rounded-lg border bg-gray-950 text-white hover:scale-105 active:scale-110"
-          >
-            {resend.isPending ? "Loading.." : "Reused"}
-          </button>
+          {sms.isGetSms === true ? (
+            <button
+              disabled={resend.isPending}
+              onClick={() => handleResend(sms.id)}
+              className="h-10 w-40 rounded-lg border bg-gray-950 text-white hover:scale-105 active:scale-110"
+            >
+              {resend.isPending ? "Loading.." : "Reused"}
+            </button>
+          ) : (
+            <button
+              disabled={true}
+              className="h-10 w-40 rounded-lg border bg-gray-400 text-white hover:scale-105 active:scale-110"
+            >
+              No Action
+            </button>
+          )}
         </div>
       </td>
     </tr>
