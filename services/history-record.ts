@@ -26,8 +26,8 @@ export async function GetHistoryRecordService(
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const history = await axios({
-      method: "GET",
-      params: { ...input },
+      method: "POST",
+      data: { ...input },
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/history-records`,
       headers: {
         Authorization: "Bearer " + access_token,

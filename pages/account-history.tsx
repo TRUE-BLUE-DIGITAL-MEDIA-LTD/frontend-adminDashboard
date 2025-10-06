@@ -32,14 +32,13 @@ import {
   MdSimCard,
 } from "react-icons/md";
 import SpinLoading from "../components/loadings/spinLoading";
+import SummaryUsageSimcard from "../components/simCard/SummaryUsageSimcard";
 import DashboardLayout from "../layouts/dashboardLayout";
 import { HistoryRecord, Partner, User } from "../models";
+import { useGetHistories } from "../react-query/account-history";
 import { GetAllAccountByPageService } from "../services/admin/account";
 import { GetUser } from "../services/admin/user";
-import { GetHistoryRecordService } from "../services/history-record";
 import { getRandomSlateShade, getSlateColorStyle } from "../utils/random";
-import { useGetHistories } from "../react-query/account-history";
-import SummaryUsageSimcard from "../components/simCard/SummaryUsageSimcard";
 
 const actionsWithIcons = [
   { title: "user", icon: <FaUser /> },
@@ -48,6 +47,9 @@ const actionsWithIcons = [
   { title: "responsibility-on-partner", icon: <MdDomain /> },
   { title: "simcard", icon: <MdSimCard /> },
   { title: "smspva", icon: <FaSms /> },
+  { title: "sms-text", icon: <FaSms /> },
+  { title: "sms-pin", icon: <FaSms /> },
+  { title: "sms-day", icon: <FaSms /> },
   { title: "landing-page", icon: <FaPager /> },
   { title: "domain", icon: <GrDomain /> },
   { title: "category", icon: <BiCategoryAlt /> },
