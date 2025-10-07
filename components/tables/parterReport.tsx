@@ -24,8 +24,8 @@ import { GetBonusRateByUserIdService } from "../../services/bonus";
 import { bonusRateDefault } from "../../data/bonusRate";
 
 const menuTables = [
-  { title: "Network Affliate ID", sort: "up", admin: false },
-  { title: "Affilate Name", sort: "up", admin: false },
+  { title: "Network Affiliate ID", sort: "up", admin: false },
+  { title: "Affiliate Name", sort: "up", admin: false },
   { title: "Gross Clicks", sort: "up", admin: false },
   { title: "Unique Clicks", sort: "up", admin: false },
   { title: "Duplicate Clicks", sort: "up", admin: false },
@@ -86,7 +86,7 @@ function ParterReport({ user }: { user: User }) {
     title: MenuTitle;
     sort: "up" | "down";
   }>({
-    title: "Network Affliate ID",
+    title: "Network Affiliate ID",
     sort: "up",
   });
 
@@ -391,10 +391,10 @@ function ParterReport({ user }: { user: User }) {
                         });
                       }}
                       className={`text-xs ${
-                        menu.title === "Network Affliate ID" &&
+                        menu.title === "Network Affiliate ID" &&
                         "left-0 bg-white md:sticky "
                       }  ${
-                        menu.title === "Affilate Name" &&
+                        menu.title === "Affiliate Name" &&
                         "sticky left-0 bg-white   "
                       }  cursor-pointer p-2 transition
                        duration-100 hover:scale-105 active:scale-110 `}
@@ -443,12 +443,12 @@ function ParterReport({ user }: { user: User }) {
               : paterPerfomaces.data
                   ?.sort((a, b) => {
                     if (querySort.sort === "up") {
-                      if (querySort.title === "Network Affliate ID") {
+                      if (querySort.title === "Network Affiliate ID") {
                         return (
                           Number(a[1].summary.columns[0].id) -
                           Number(b[1].summary.columns[0].id)
                         );
-                      } else if (querySort.title === "Affilate Name") {
+                      } else if (querySort.title === "Affiliate Name") {
                         return a[1].summary.columns[0].label.localeCompare(
                           b[1].summary.columns[0].label,
                         );
@@ -533,11 +533,11 @@ function ParterReport({ user }: { user: User }) {
                         );
                       }
                     } else if (querySort.sort === "down") {
-                      if (querySort.title === "Network Affliate ID") {
+                      if (querySort.title === "Network Affiliate ID") {
                         return b[1].summary.columns[0].id.localeCompare(
                           a[1].summary.columns[0].id,
                         );
-                      } else if (querySort.title === "Affilate Name") {
+                      } else if (querySort.title === "Affiliate Name") {
                         return b[1].summary.columns[0].label.localeCompare(
                           a[1].summary.columns[0].label,
                         );
