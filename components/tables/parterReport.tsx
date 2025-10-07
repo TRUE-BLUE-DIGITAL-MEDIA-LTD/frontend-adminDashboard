@@ -23,24 +23,28 @@ import { CiCalendarDate } from "react-icons/ci";
 import { GetBonusRateByUserIdService } from "../../services/bonus";
 import { bonusRateDefault } from "../../data/bonusRate";
 
-const menuTables: { title: string; sort: "up" | "down"; admin?: boolean }[] = [
-  { title: "Network Affliate ID", sort: "up" },
-  { title: "Affilate Name", sort: "up" },
-  { title: "Gross Clicks", sort: "up" },
-  { title: "Unique Clicks", sort: "up" },
-  { title: "Duplicate Clicks", sort: "up" },
-  { title: "Invalid Clicks", sort: "up" },
+const menuTables = [
+  { title: "Network Affliate ID", sort: "up", admin: false },
+  { title: "Affilate Name", sort: "up", admin: false },
+  { title: "Gross Clicks", sort: "up", admin: false },
+  { title: "Unique Clicks", sort: "up", admin: false },
+  { title: "Duplicate Clicks", sort: "up", admin: false },
+  { title: "Invalid Clicks", sort: "up", admin: false },
   { title: "Total CV", sort: "up", admin: true },
-  { title: "CV", sort: "up" },
-  { title: "CVR", sort: "up" },
-  { title: "CPC", sort: "up" },
+  { title: "CV", sort: "up", admin: false },
+  { title: "CVR", sort: "up", admin: false },
+  { title: "EVT", sort: "up", admin: false },
+  { title: "EVR", sort: "up", admin: false },
+  { title: "CPC", sort: "up", admin: false },
   { title: "RPC", sort: "up", admin: true },
   { title: "RPA", sort: "up", admin: true },
   { title: "Revenue", sort: "up", admin: true },
-  { title: "Payout", sort: "up" },
+  { title: "Payout", sort: "up", admin: false },
   { title: "Profit", sort: "up", admin: true },
   { title: "Margin", sort: "up", admin: true },
-];
+] as const;
+
+type MenuTitle = (typeof menuTables)[number]["title"];
 const columns = [
   { name: "Partner", code: "affiliate" },
   { name: "Offer", code: "offer" },
@@ -79,7 +83,7 @@ function ParterReport({ user }: { user: User }) {
     return [moment(yesterday).toDate(), moment(yesterday).toDate()];
   });
   const [querySort, setQuerySort] = useState<{
-    title: string;
+    title: MenuTitle;
     sort: "up" | "down";
   }>({
     title: "Network Affliate ID",
@@ -453,11 +457,6 @@ function ParterReport({ user }: { user: User }) {
                           a[1].summary.reporting.gross_click -
                           b[1].summary.reporting.gross_click
                         );
-                      } else if (querySort.title === "Total Clicks") {
-                        return (
-                          a[1].summary.reporting.total_click -
-                          b[1].summary.reporting.total_click
-                        );
                       } else if (querySort.title === "Unique Clicks") {
                         return (
                           a[1].summary.reporting.unique_click -
@@ -486,11 +485,6 @@ function ParterReport({ user }: { user: User }) {
                         return (
                           a[1].summary.reporting.cpc -
                           b[1].summary.reporting.cpc
-                        );
-                      } else if (querySort.title === "CPA") {
-                        return (
-                          a[1].summary.reporting.cpa -
-                          b[1].summary.reporting.cpa
                         );
                       } else if (querySort.title === "Payout") {
                         return (
@@ -527,10 +521,15 @@ function ParterReport({ user }: { user: User }) {
                           a[1].summary.reporting.total_cv -
                           b[1].summary.reporting.total_cv
                         );
-                      } else if (querySort.title === "Media Buying Cost") {
+                      } else if (querySort.title === "EVR") {
                         return (
-                          a[1].summary.reporting.media_buying_cost -
-                          b[1].summary.reporting.media_buying_cost
+                          a[1].summary.reporting.evr -
+                          b[1].summary.reporting.evr
+                        );
+                      } else if (querySort.title === "EVT") {
+                        return (
+                          a[1].summary.reporting.event -
+                          b[1].summary.reporting.event
                         );
                       }
                     } else if (querySort.sort === "down") {
@@ -546,11 +545,6 @@ function ParterReport({ user }: { user: User }) {
                         return (
                           b[1].summary.reporting.gross_click -
                           a[1].summary.reporting.gross_click
-                        );
-                      } else if (querySort.title === "Total Clicks") {
-                        return (
-                          b[1].summary.reporting.total_click -
-                          a[1].summary.reporting.total_click
                         );
                       } else if (querySort.title === "Unique Clicks") {
                         return (
@@ -580,11 +574,6 @@ function ParterReport({ user }: { user: User }) {
                         return (
                           b[1].summary.reporting.cpc -
                           a[1].summary.reporting.cpc
-                        );
-                      } else if (querySort.title === "CPA") {
-                        return (
-                          b[1].summary.reporting.cpa -
-                          a[1].summary.reporting.cpa
                         );
                       } else if (querySort.title === "Payout") {
                         return (
@@ -621,10 +610,15 @@ function ParterReport({ user }: { user: User }) {
                           b[1].summary.reporting.total_cv -
                           a[1].summary.reporting.total_cv
                         );
-                      } else if (querySort.title === "Media Buying Cost") {
+                      } else if (querySort.title === "EVR") {
                         return (
-                          b[1].summary.reporting.media_buying_cost -
-                          a[1].summary.reporting.media_buying_cost
+                          b[1].summary.reporting.evr -
+                          a[1].summary.reporting.evr
+                        );
+                      } else if (querySort.title === "EVT") {
+                        return (
+                          b[1].summary.reporting.event -
+                          a[1].summary.reporting.event
                         );
                       }
                     }

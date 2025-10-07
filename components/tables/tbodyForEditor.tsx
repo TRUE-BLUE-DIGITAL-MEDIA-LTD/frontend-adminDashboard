@@ -109,6 +109,9 @@ function TbodyForEditor({
       <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
 
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
+      <td className="px-2">{item.reporting.event}</td>
+      <td className="px-2">{item.reporting.evr?.toFixed(2)}%</td>
+
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
 
       <td className="px-2 ">${item.reporting.payout.toLocaleString()}</td>

@@ -68,14 +68,14 @@ export async function GetSummaryParterReportService(
     }
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const summary = await axios.get(
+    const summary = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/get-summary/by-date`,
       {
-        params: {
-          startDate: moment(input.startDate).format("YYYY-MM-DD"),
-          endDate: moment(input.endDate).format("YYYY-MM-DD"),
-          columns: input.columns,
-        },
+        startDate: moment(input.startDate).format("YYYY-MM-DD"),
+        endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        columns: input.columns,
+      },
+      {
         headers: {
           Authorization: "Bearer " + access_token,
         },

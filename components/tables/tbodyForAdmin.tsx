@@ -105,8 +105,9 @@ function TbodyForAdmin({
       <td className="px-2">{item.reporting.invalid_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.total_cv.toLocaleString()}</td>
       <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
-
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
+      <td className="px-2">{item.reporting.event}</td>
+      <td className="px-2">{item.reporting.evr?.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpa.toLocaleString()}</td>
