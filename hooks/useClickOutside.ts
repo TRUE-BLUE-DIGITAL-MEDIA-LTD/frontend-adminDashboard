@@ -4,7 +4,12 @@ function useClickOutside(ref: RefObject<HTMLElement>, callback: () => void) {
   useEffect(() => {
     // Handler to detect click outside the referenced element
     const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement;
+      const hasException = target.attributes.getNamedItem(
+        "invaild-click-outside",
+      );
+
+      if (ref.current && !ref.current.contains(target) && !hasException) {
         callback(); // Call the callback if clicked outside
       }
     };

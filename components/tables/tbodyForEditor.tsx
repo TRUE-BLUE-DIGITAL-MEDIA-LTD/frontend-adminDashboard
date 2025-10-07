@@ -101,7 +101,6 @@ function TbodyForEditor({
       </td>
 
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
-      <td className="px-2">{item.reporting.total_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.unique_click.toLocaleString()}</td>
       <td className="px-2">
         {item.reporting.duplicate_click.toLocaleString()}
@@ -111,7 +110,6 @@ function TbodyForEditor({
 
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.cpa.toLocaleString()}</td>
 
       <td className="px-2 ">${item.reporting.payout.toLocaleString()}</td>
       {partnerPerformanceDayByDay.isLoading ? (

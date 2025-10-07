@@ -27,7 +27,6 @@ const menuTables: { title: string; sort: "up" | "down"; admin?: boolean }[] = [
   { title: "Network Affliate ID", sort: "up" },
   { title: "Affilate Name", sort: "up" },
   { title: "Gross Clicks", sort: "up" },
-  { title: "Total Clicks", sort: "up" },
   { title: "Unique Clicks", sort: "up" },
   { title: "Duplicate Clicks", sort: "up" },
   { title: "Invalid Clicks", sort: "up" },
@@ -35,7 +34,6 @@ const menuTables: { title: string; sort: "up" | "down"; admin?: boolean }[] = [
   { title: "CV", sort: "up" },
   { title: "CVR", sort: "up" },
   { title: "CPC", sort: "up" },
-  { title: "CPA", sort: "up" },
   { title: "RPC", sort: "up", admin: true },
   { title: "RPA", sort: "up", admin: true },
   { title: "Revenue", sort: "up", admin: true },
@@ -124,8 +122,37 @@ function ParterReport({ user }: { user: User }) {
             return { key: key, active: false };
           });
         });
+        type PartnerPerformanceEntry = [
+          string,
+          { summary: TableEntry; entries: TableEntry[] },
+        ];
 
-        return Object.entries(group);
+        const listData = Object.entries(group);
+        // Recalculate CVR for each entry
+        const recalculatedListData = listData.map(
+          ([key, value]): PartnerPerformanceEntry => {
+            const recalculatedEntries = value.entries.map((entry) => {
+              const { cv, total_click } = entry.reporting;
+              // Avoid division by zero
+              const newCvr = total_click > 0 ? cv / total_click : 0;
+
+              return {
+                ...entry,
+                reporting: {
+                  ...entry.reporting,
+                  cvr: newCvr * 100,
+                },
+              };
+            });
+
+            return [
+              key,
+              { summary: value.summary, entries: recalculatedEntries },
+            ];
+          },
+        );
+
+        return recalculatedListData;
       }),
   });
 
@@ -159,7 +186,6 @@ function ParterReport({ user }: { user: User }) {
               payout: item.reporting.payout,
               bonusRate: bonusRate.data ?? bonusRateDefault,
             });
-            console.log(bonus);
 
             return {
               id: item.columns[0].id,
@@ -179,15 +205,12 @@ function ParterReport({ user }: { user: User }) {
             },
             {} as { [key: string]: number },
           );
-          console.log(totalBonusInEachId);
 
           allBonus = Object.entries(totalBonusInEachId).map(([id, payout]) => {
-            console.log(payout);
             const bonus = CalculateBonus({
               payout: payout,
               bonusRate: bonusRate.data ?? bonusRateDefault,
             });
-            console.log(bonus);
 
             return {
               id: id,
@@ -195,7 +218,6 @@ function ParterReport({ user }: { user: User }) {
             };
           });
         }
-        console.log(allBonus);
 
         const groupBy = allBonus.reduce(
           (acc, item) => {

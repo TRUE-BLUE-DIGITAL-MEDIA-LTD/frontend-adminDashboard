@@ -98,7 +98,6 @@ function TbodyForAdmin({
             : item.columns[0].label}
       </td>
       <td className="px-2">{item.reporting.gross_click.toLocaleString()}</td>
-      <td className="px-2">{item.reporting.total_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.unique_click.toLocaleString()}</td>
       <td className="px-2">
         {item.reporting.duplicate_click.toLocaleString()}
@@ -109,7 +108,6 @@ function TbodyForAdmin({
 
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.cpa.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpc.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.rpa.toLocaleString()}</td>
       <td className="px-2 ">${item.reporting.revenue.toLocaleString()}</td>
