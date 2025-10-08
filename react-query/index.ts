@@ -8,3 +8,4 @@ export * from "./sms-textverified";
 export * from "./report-on-simcard";
 export * from "./sms-pinverify";
 export * from "./sms-daisy";
+export * from "./oxypoint";

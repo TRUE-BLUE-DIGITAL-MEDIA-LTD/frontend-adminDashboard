@@ -18,6 +18,7 @@ export interface User {
   TOTPexpireAt: string | null;
   TOTPurl?: string | null;
   bonusCalculatePeriod: BonusCalculatePeriod;
+  oxyclick_points: number;
 }
 export type BonusCalculatePeriod = "daily" | "monthly";
 export type Role = "partner" | "manager" | "admin" | "user";

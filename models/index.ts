@@ -22,3 +22,4 @@ export * from "./sms-pool.model";
 export * from "./sms-textverified.model";
 export * from "./sms-pinverify.model";
 export * from "./sms-daisy.model";
+export * from "./transaction-oxypoint.model";

@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { User } from "../../models";
-import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { destroyCookie, parseCookies } from "nookies";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { destroyCookie, parseCookies } from "nookies";
+import React, { useState } from "react";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import { IoMenu } from "react-icons/io5";
-import { IoMdMenu } from "react-icons/io";
-import ImpersonateNavBar from "./impersonateNavBar";
+import { User } from "../../models";
 import { GetImpersonateUser } from "../../services/admin/user";
+import ImpersonateNavBar from "./impersonateNavBar";
+import { MdMoney, MdPlusOne } from "react-icons/md";
+import { FaCoins, FaWallet } from "react-icons/fa6";
+import { BsPlusCircleFill } from "react-icons/bs";
 
 function DashboardNavbar({
   user,
@@ -70,7 +72,24 @@ function DashboardNavbar({
       {impersonateUser.data && (
         <ImpersonateNavBar impersonateUser={impersonateUser} />
       )}
-      <ul className="relative flex h-14  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
+
+      <ul className="relative flex h-16 w-max  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
+        <Link
+          href={"/account-billing"}
+          className="group mr-52  flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
+        >
+          <div className="rounded-full bg-blue-100 p-2">
+            <FaWallet className="text-lg text-blue-600" />
+          </div>
+          <div className="relative flex flex-col">
+            <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
+              {(user.oxyclick_points / 100).toFixed(2)} $
+            </span>
+            <span className="text-[10px]  font-normal">Available Balance</span>
+          </div>
+          <BsPlusCircleFill className="text-xl" />
+        </Link>
+
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
           onMouseLeave={() => setTriggerAccountMenu(() => false)}
