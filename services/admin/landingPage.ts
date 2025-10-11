@@ -122,12 +122,10 @@ export async function GetAllLandingPageService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const landingPage = await axios.get(
+    const landingPage = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/get-all`,
+      input,
       {
-        params: {
-          ...input,
-        },
         headers: {
           Authorization: "Bearer " + access_token,
         },
