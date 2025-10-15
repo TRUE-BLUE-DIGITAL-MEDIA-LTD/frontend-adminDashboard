@@ -20,6 +20,7 @@ import {
   RequestReusedTextVerifiedService,
   ReusedTextVerifiedService,
 } from "../services/sms-textverified";
+import { userKeys } from "./user";
 
 export function useGetTextverifiedService(
   request: RequestGetListServiceOnTextVerifiedService,
@@ -46,6 +47,9 @@ export function useCreateTextverified() {
     onSettled(data, error, variables, context) {
       queryClient.refetchQueries({
         queryKey: keyTextverifieds.get({ isComplete: "non-complete" }),
+      });
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
       });
     },
   });
@@ -123,6 +127,9 @@ export function useReactiveTextVerified() {
       queryClient.refetchQueries({
         queryKey: keyTextverifieds.get({ isComplete: "non-complete" }),
       });
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
     },
   });
 }
@@ -136,6 +143,9 @@ export function useReusedTextVerified() {
     onSuccess(data, variables, context) {
       queryClient.refetchQueries({
         queryKey: keyTextverifieds.get({ isComplete: "non-complete" }),
+      });
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
       });
     },
   });

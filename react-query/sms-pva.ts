@@ -16,6 +16,7 @@ import {
   RequestGetSMSPvaService,
   ResponseGetSMSPVAsService,
 } from "../services/sms-pva";
+import { userKeys } from "./user";
 
 export function useGetSmsPva(request: RequestGetSMSPvaService) {
   return useQuery({
@@ -54,10 +55,16 @@ export function useGetServicePrice(request: RequestGetServicePricePVAService) {
 }
 
 export function useCreateSmsPva() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["create-sms-pva"],
     mutationFn: (request: RequestCreateSMSPVAService) =>
       CreateSMSPVAService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 

@@ -12,17 +12,17 @@ import ImpersonateNavBar from "./impersonateNavBar";
 import { MdMoney, MdPlusOne } from "react-icons/md";
 import { FaCoins, FaWallet } from "react-icons/fa6";
 import { BsPlusCircleFill } from "react-icons/bs";
+import { useGetUser } from "../../react-query";
 
 function DashboardNavbar({
-  user,
   setTriggerSidebar,
 }: {
-  user: User;
   setTriggerSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [triggerAccountMenu, setTriggerAccountMenu] = useState(false);
+  const user = useGetUser();
   const impersonateUser = useQuery({
     queryKey: ["user-impersonate"],
     queryFn: () => {
@@ -32,6 +32,8 @@ function DashboardNavbar({
       return GetImpersonateUser({ impersonate_access_token });
     },
   });
+  const points = user.data?.oxyclick_points ?? 0;
+  const holdingPoints = user.data?.pending_points ?? 0;
   const signOut = () => {
     destroyCookie(null, "access_token", { path: "/" });
     queryClient.removeQueries();
@@ -83,7 +85,15 @@ function DashboardNavbar({
           </div>
           <div className="relative flex flex-col">
             <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
-              {(user.oxyclick_points / 100).toFixed(2)} $
+              {holdingPoints !== 0 && (
+                <>
+                  <span className="text-sm text-gray-500 group-hover:text-white">
+                    {(holdingPoints / 100).toFixed(2)}
+                  </span>{" "}
+                  <span className="text-sm">/</span>{" "}
+                </>
+              )}
+              {(points / 100).toFixed(2)} $
             </span>
             <span className="text-[10px]  font-normal">Available Balance</span>
           </div>
@@ -101,14 +111,14 @@ function DashboardNavbar({
             <div className="flex w-max items-center justify-center gap-2">
               <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-300">
                 <Image
-                  src={user.image}
+                  src={user.data?.image ?? ""}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw"
                   alt="user image picture"
                 />
               </div>
-              <span className="text-white">{user?.name}</span>
+              <span className="text-white">{user?.data?.name}</span>
               <div className="text-white">
                 {triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}
               </div>

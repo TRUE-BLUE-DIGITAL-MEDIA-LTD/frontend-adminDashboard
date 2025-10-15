@@ -10,7 +10,7 @@ type Props = {
   partners: UseQueryResult<
     Pagination<
       Partner & {
-        user: User;
+        manager: User;
       }
     >,
     Error

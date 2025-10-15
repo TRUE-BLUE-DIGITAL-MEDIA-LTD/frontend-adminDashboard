@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CancelSMSPinverifyService,
   CreateSMSPinverifyService,
@@ -15,6 +15,7 @@ import {
   ReusedSMSPinverifyService,
   UpdateSMSPinverifyAccountService,
 } from "../services/sms-pinverify";
+import { userKeys } from "./user";
 
 const itemKeys = {
   item: ["sms-pinverify"],
@@ -25,10 +26,16 @@ const itemKeys = {
 } as const;
 
 export function useCreateSmsPinverify() {
+  const queryClinet = useQueryClient();
   return useMutation({
     mutationKey: itemKeys.item,
     mutationFn: (requst: RequestCreateSMSPinverifyService) =>
       CreateSMSPinverifyService(requst),
+    onSuccess(data, variables, context) {
+      queryClinet.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 
@@ -41,10 +48,17 @@ export function useGetSmsPinverify(request: { userId: string }) {
 }
 
 export function useReuseSmsPinverify() {
+  const queryClinet = useQueryClient();
+
   return useMutation({
     mutationKey: itemKeys.item,
     mutationFn: (request: RequestReusedSMSPinverifyService) =>
       ReusedSMSPinverifyService(request),
+    onSuccess(data, variables, context) {
+      queryClinet.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 

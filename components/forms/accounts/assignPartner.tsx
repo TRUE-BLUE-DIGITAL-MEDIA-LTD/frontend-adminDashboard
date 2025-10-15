@@ -184,7 +184,7 @@ function AssignPartner({
                             {partner.name}
                           </td>
                           <td className="truncate border-4 border-transparent font-semibold text-black">
-                            {partner.user.email}
+                            {partner.manager?.email}
                           </td>
                           <td className="truncate border-4 border-transparent  font-semibold text-black">
                             <div className="flex items-center justify-center">

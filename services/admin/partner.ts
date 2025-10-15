@@ -47,7 +47,7 @@ export async function GetPartnerByPageService(
 ): Promise<
   Pagination<
     Partner & {
-      user: User;
+      manager: User;
       responsibilityOnPartner: ResponsibilityOnPartner[];
     }
   >
@@ -127,7 +127,7 @@ type InputUpdatePartnerService = {
     isAllowManageAssignPhoneNumber?: boolean;
     isAllowManageAssignDomain?: boolean;
     isAllowManageAssginCategory?: boolean;
-    dailyLimitSMSPVA?: number;
+    refill_oxyclick_points?: number;
     smartLink?: string;
     isAllowUsingSMS_Pinverify?: boolean;
     isAllowSmsPinverifyAccount?: boolean;

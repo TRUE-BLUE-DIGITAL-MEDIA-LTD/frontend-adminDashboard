@@ -16,7 +16,7 @@ export type Partner = {
   isAllowSmsPinverifyAccount: boolean;
   isAllowUsingSMS_Daisy?: boolean;
   isAllowSmsDaisyAccount?: boolean;
-  dailyLimitSMSPVA: number;
+  refill_oxyclick_points: number;
   smartLink?: string | undefined;
   name: string;
 };

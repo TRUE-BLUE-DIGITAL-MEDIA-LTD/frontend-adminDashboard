@@ -1,7 +1,7 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import moment from "moment";
 import Image from "next/image";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import Swal from "sweetalert2";
 import { countries } from "../../data/country";
 import { ErrorMessages, SmsDaisy, SmsPinverify } from "../../models";
@@ -13,6 +13,7 @@ import {
 import { ResponseGetSmsDaisyService } from "../../services/sms-daisy";
 import { ResponseGetSMSPinverifyService } from "../../services/sms-pinverify";
 import { services } from "../../data/services";
+import { Box, Button, Pagination, TextField } from "@mui/material";
 
 type Props = {
   activeNumbers: UseQueryResult<ResponseGetSmsDaisyService, Error>;
@@ -21,9 +22,21 @@ function SmsDaisyHistory({ activeNumbers }: Props) {
   const [page, setPage] = useState(1);
   const history = useGetHistorySmsDaisy({
     page: page,
-    limit: 50,
+    limit: 20,
   });
+  const [jumpToPageInput, setJumpToPageInput] = useState("");
+  const totalPage = history.data?.totalPage ?? 1;
+  // ✅ 2. Create the handler function for form submission
+  const handleJumpToPage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents the browser from reloading the page
+    const targetPage = parseInt(jumpToPageInput, 10);
 
+    // Validate the input
+    if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPage) {
+      setPage(targetPage); // Set the new page
+      setJumpToPageInput(""); // Clear the input field
+    }
+  };
   return (
     <>
       <header className="flex flex-col items-center">
@@ -56,6 +69,36 @@ function SmsDaisyHistory({ activeNumbers }: Props) {
             })}
           </tbody>
         </table>
+        <div className="mt-5 flex w-full justify-center">
+          <Box className="mt-5 flex w-full flex-col items-center justify-center gap-4 md:flex-row">
+            <Pagination
+              onChange={(e, newPage) => setPage(newPage)}
+              page={page}
+              count={totalPage}
+              color="primary"
+              showFirstButton
+              showLastButton
+            />
+            <Box
+              component="form"
+              onSubmit={handleJumpToPage}
+              className="flex items-center gap-2"
+            >
+              <TextField
+                label="Page"
+                type="number"
+                size="small"
+                variant="outlined"
+                value={jumpToPageInput}
+                onChange={(e) => setJumpToPageInput(e.target.value)}
+                sx={{ width: "100px" }}
+              />
+              <Button type="submit" variant="contained">
+                Go
+              </Button>
+            </Box>
+          </Box>
+        </div>
       </div>
     </>
   );

@@ -194,7 +194,9 @@ function PartnerTable({ accounts, user }: PartnerProps) {
               <th className="px-5">Assign Domain</th>
               <th className="px-5">Assign Category</th>
               <th className="px-5">Permission</th>
-              {user.role === "admin" && <th className="px-5">Options</th>}
+              {(user.role === "admin" || user.role === "manager") && (
+                <th className="px-5">Options</th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -235,7 +237,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                         {partner.name}
                       </td>
                       <td className="truncate border-4 border-transparent font-semibold text-black">
-                        {partner.user.email}
+                        {partner.manager?.email}
                       </td>
 
                       <td className="truncate border-4 border-transparent font-semibold text-black">

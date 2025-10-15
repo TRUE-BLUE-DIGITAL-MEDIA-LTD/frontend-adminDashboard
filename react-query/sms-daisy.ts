@@ -1,4 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   CancelSmsDaisyService,
   CreateSmsDaisyService,
@@ -13,24 +18,37 @@ import {
   ResendSmsDaisyService,
   UpdateSmsDaisyAccountsService,
 } from "../services/sms-daisy";
+import { userKeys } from "./user";
 
 const keys = {
   item: ["sms-daisy"],
 } as const;
 
 export function useCreateSmsDaisy() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: [keys.item[0], "create"],
     mutationFn: (request: RequestCreateSmsDaisyService) =>
       CreateSmsDaisyService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 
 export function useResendSmsDaisy() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: [keys.item[0], "resend"],
     mutationFn: (request: RequestResendSmsDaisyService) =>
       ResendSmsDaisyService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 
@@ -48,6 +66,7 @@ export function useGetHistorySmsDaisy(
   return useQuery({
     queryKey: [keys.item[0], "history", request],
     queryFn: () => GetHistorySmsDaisyService(request),
+    placeholderData: keepPreviousData,
     refetchInterval: 1000 * 5,
   });
 }

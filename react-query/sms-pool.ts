@@ -1,6 +1,5 @@
 import {
   keepPreviousData,
-  QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -25,6 +24,7 @@ import {
   ResponseGetSmsPoolAccountsService,
   SwitchSmsPoolAccountsService,
 } from "../services/sms-pool-account";
+import { userKeys } from "./user";
 
 export const smsPoolKeys = {
   item: ["sms-pool"],
@@ -100,18 +100,32 @@ export function useGetStockSMSpool(data: {
 }
 
 export function useGetSMSPool(data: { userId: string }) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: smsPoolKeys.get(data),
-    queryFn: () => GetSmsPoolService(),
+    queryFn: () =>
+      GetSmsPoolService().then((res) => {
+        queryClient.refetchQueries({
+          queryKey: userKeys.get,
+        });
+        return res;
+      }),
     refetchInterval: 1000 * 5,
   });
 }
 
 export function useCreateSMSPool() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: smsPoolKeys.create,
     mutationFn: (request: RequestReserveSMSPOOLNumberService) =>
       ReserveSMSPOOLNumberService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+    },
   });
 }
 
@@ -134,6 +148,9 @@ export function useResendSMSPool() {
         queryKey: smsPoolKeys.get({
           userId: data.userId,
         }),
+      });
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
       });
     },
   });

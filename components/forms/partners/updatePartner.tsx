@@ -21,7 +21,7 @@ type UpdatePartnerProps = {
   partners: UseQueryResult<
     Pagination<
       Partner & {
-        user: User;
+        manager: User;
       }
     >,
     Error
@@ -38,14 +38,13 @@ function UpdatePartner({
     partnerId?: string;
     partnerName?: string;
     userId?: string;
-    dailyLimitSMSPVA?: number;
-
+    refill_oxyclick_points: number;
     smartLink?: string;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
     userId: selectPartner.userId,
-    dailyLimitSMSPVA: selectPartner.dailyLimitSMSPVA,
+    refill_oxyclick_points: selectPartner.refill_oxyclick_points / 100,
     smartLink: selectPartner.smartLink,
   });
 
@@ -87,7 +86,8 @@ function UpdatePartner({
           affiliateId: updatePartnerData?.partnerId,
           name: updatePartnerData?.partnerName,
 
-          dailyLimitSMSPVA: updatePartnerData.dailyLimitSMSPVA,
+          refill_oxyclick_points:
+            updatePartnerData.refill_oxyclick_points * 100,
 
           smartLink: updatePartnerData.smartLink,
         },
@@ -178,7 +178,7 @@ function UpdatePartner({
         </div>
 
         <TextField className="flex flex-col gap-1" isRequired>
-          <Label>Daily Limit On Using PVA</Label>
+          <Label>Daily Refill Credit</Label>
           <InputNumber
             currency="USD"
             locale="en-US"
@@ -186,12 +186,12 @@ function UpdatePartner({
             className=" h-14 rounded-sm border border-gray-400 bg-white outline-none transition
          duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
-            value={updatePartnerData?.dailyLimitSMSPVA ?? 0}
+            value={updatePartnerData?.refill_oxyclick_points ?? 0}
             onChange={(e) => {
               setUpdatePartnerData((prev) => {
                 return {
                   ...prev,
-                  dailyLimitSMSPVA: Number(e.value),
+                  refill_oxyclick_points: Number(e.value),
                 };
               });
             }}
