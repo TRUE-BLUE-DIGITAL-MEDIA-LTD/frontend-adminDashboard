@@ -36,12 +36,8 @@ export async function GetServicePricePVAService(
 export type RequestGetByPagePVAService = {
   limit: number;
   page: number;
-  userId?: string;
-  startDate?: string;
-  endDate?: string;
-  timezone: string;
 };
-export type ResponseGetByPagePVAService = Pagination<SmsPva & { user: User }>;
+export type ResponseGetByPagePVAService = { data: SmsPva[]; totalPage: number };
 export async function GetByPagePVAService(
   input: RequestGetByPagePVAService,
 ): Promise<ResponseGetByPagePVAService> {

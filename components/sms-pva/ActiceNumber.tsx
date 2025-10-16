@@ -28,6 +28,7 @@ function ActiceNumber({ smsPva, sms, onBlock, onCancel }: Props) {
                 src={`/image/flags/1x1/${smsPva.country}.svg`}
                 alt="country flag"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-contain"
               />
             </div>

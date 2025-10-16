@@ -155,7 +155,7 @@ function SmsPvas({ user }: Props) {
                 </span>
               </div>
             ))}
-          <ul className=" grid w-full grid-cols-3 gap-5">
+          <ul className=" grid w-full grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
             {activeNumbers.data?.sims.map((number, index) => {
               return (
                 <ActiceNumber

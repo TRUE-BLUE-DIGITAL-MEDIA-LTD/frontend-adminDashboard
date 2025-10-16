@@ -19,9 +19,16 @@ import {
 import { userKeys } from "./user";
 
 export function useGetSmsPva(request: RequestGetSMSPvaService) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ["sms-pva"],
-    queryFn: () => GetSMSPVAsService(request),
+    queryFn: () =>
+      GetSMSPVAsService(request).then((res) => {
+        queryClient.refetchQueries({
+          queryKey: userKeys.get,
+        });
+        return res;
+      }),
     refetchInterval: 5000,
   });
 }

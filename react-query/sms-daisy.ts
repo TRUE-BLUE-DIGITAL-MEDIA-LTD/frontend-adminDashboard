@@ -53,9 +53,16 @@ export function useResendSmsDaisy() {
 }
 
 export function useGetSmsDaisy() {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: [keys.item[0], "current"],
-    queryFn: () => GetSmsDaisyService(),
+    queryFn: () =>
+      GetSmsDaisyService().then((res) => {
+        queryClient.refetchQueries({
+          queryKey: userKeys.get,
+        });
+        return res;
+      }),
     refetchInterval: 1000 * 5,
   });
 }

@@ -81,9 +81,16 @@ export function useGetPriceOnVerifiedService(
 }
 
 export function useGetTextverifieds(request: RequestGetTextVerifiedsService) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: keyTextverifieds.get(request),
-    queryFn: () => GetTextVerifiedsService(request),
+    queryFn: () =>
+      GetTextVerifiedsService(request).then((res) => {
+        queryClient.refetchQueries({
+          queryKey: userKeys.get,
+        });
+        return res;
+      }),
     refetchInterval: 1000 * 5,
   });
 }

@@ -1,18 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { destroyCookie, parseCookies } from "nookies";
 import React, { useState } from "react";
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
+import { BsPlusCircleFill } from "react-icons/bs";
+import { FaWallet } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
-import { User } from "../../models";
+import { useGetUser } from "../../react-query";
 import { GetImpersonateUser } from "../../services/admin/user";
 import ImpersonateNavBar from "./impersonateNavBar";
-import { MdMoney, MdPlusOne } from "react-icons/md";
-import { FaCoins, FaWallet } from "react-icons/fa6";
-import { BsPlusCircleFill } from "react-icons/bs";
-import { useGetUser } from "../../react-query";
+import Image from "next/image";
 
 function DashboardNavbar({
   setTriggerSidebar,

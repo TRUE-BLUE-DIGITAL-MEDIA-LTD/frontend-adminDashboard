@@ -5,7 +5,7 @@ import SpinLoading from "../components/loadings/spinLoading";
 import DashboardNavbar from "../components/navbars/dashboardNavbar";
 import SidebarDashboard from "../components/sidebars/sidebarDashboard";
 import useClickOutside from "../hooks/useClickOutside";
-import { TawkInterface, User } from "../models";
+import { User } from "../models";
 import { useGetLatestAnnouncement } from "../react-query";
 
 export default function DashboardLayout({
@@ -33,7 +33,7 @@ export default function DashboardLayout({
       {user && <TawkToChat user={user} />}
 
       {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
-      <DashboardNavbar setTriggerSidebar={setTriggerSidebar} user={user} />
+      <DashboardNavbar setTriggerSidebar={setTriggerSidebar} />
       {triggerSidebar && <SidebarDashboard user={user} ref={divRef} />}
       {children}
     </>

@@ -78,12 +78,12 @@ function Index({ user }: { user: User }) {
           isAllowManageSmsOxy: true,
           isAllowSmsPoolAccount: true,
           isAllowUsingSMS_TEXTVERIFIED: true,
-          dailyLimitSMSPVA: 20,
           responsibilityOnPartner: new Array(domains.data?.totalDomain),
           simCardOnPartner: [],
           account: null,
           isAllowSmsPinverifyAccount: false,
           isAllowUsingSMS_Pinverify: false,
+          refill_oxyclick_points: 0,
         });
         addSeeAll.push({
           createAt: new Date(),
@@ -98,7 +98,7 @@ function Index({ user }: { user: User }) {
           userId: "none",
           isAllowUsingSMSPOOL: true,
           name: "No Partner",
-          dailyLimitSMSPVA: 20,
+          refill_oxyclick_points: 20,
           id: "no-partner",
           isAllowUsingSMSPVA: true,
           account: null,

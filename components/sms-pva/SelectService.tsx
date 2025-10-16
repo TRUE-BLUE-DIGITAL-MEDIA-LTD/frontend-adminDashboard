@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { services } from "../../data/services";
@@ -76,4 +76,4 @@ function SelectService({
   );
 }
 
-export default SelectService;
+export default memo(SelectService);

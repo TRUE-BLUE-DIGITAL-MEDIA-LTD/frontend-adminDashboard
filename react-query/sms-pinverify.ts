@@ -26,13 +26,13 @@ const itemKeys = {
 } as const;
 
 export function useCreateSmsPinverify() {
-  const queryClinet = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: itemKeys.item,
     mutationFn: (requst: RequestCreateSMSPinverifyService) =>
       CreateSMSPinverifyService(requst),
     onSuccess(data, variables, context) {
-      queryClinet.refetchQueries({
+      queryClient.refetchQueries({
         queryKey: userKeys.get,
       });
     },
@@ -48,14 +48,14 @@ export function useGetSmsPinverify(request: { userId: string }) {
 }
 
 export function useReuseSmsPinverify() {
-  const queryClinet = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: itemKeys.item,
     mutationFn: (request: RequestReusedSMSPinverifyService) =>
       ReusedSMSPinverifyService(request),
     onSuccess(data, variables, context) {
-      queryClinet.refetchQueries({
+      queryClient.refetchQueries({
         queryKey: userKeys.get,
       });
     },
@@ -87,9 +87,17 @@ export function useGetSmsPinverifyAccounts() {
 export function useGetHistorySmsPinverify(
   request: RequestGetHistorySMSPinverifyService,
 ) {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: [itemKeys.item[0], "history", request],
-    queryFn: () => GetHistorySMSPinverifyService(request),
+    queryFn: () =>
+      GetHistorySMSPinverifyService(request).then((res) => {
+        queryClient.refetchQueries({
+          queryKey: userKeys.get,
+        });
+        return res;
+      }),
     refetchInterval: 1000 * 5,
   });
 }

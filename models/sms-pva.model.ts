@@ -9,4 +9,6 @@ export type SmsPva = {
   serviceCode: string;
   country: string;
   userId: string;
+  isComplete: boolean;
+  isGetSms: boolean;
 };

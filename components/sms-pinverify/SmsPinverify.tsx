@@ -79,15 +79,6 @@ function SmsPinverify({ user }: Props) {
             </div>
           </h1>
         )}
-        {user.role === "partner" && (
-          <h1 className="mt-5 flex items-center justify-center gap-2 text-3xl">
-            Usage:{" "}
-            <div className="rounded-sm bg-gradient-to-r from-gray-600 to-gray-800 px-2 text-white">
-              {activeNumbers.data?.totalUsage.toLocaleString()}$ /{" "}
-              {activeNumbers.data?.limit.toLocaleString()}$
-            </div>
-          </h1>
-        )}
       </header>
       <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
         <section className="flex w-10/12  flex-col items-start  justify-start gap-5 ">
@@ -103,7 +94,7 @@ function SmsPinverify({ user }: Props) {
                 </span>
               </div>
             ))}
-          <ul className=" grid w-full grid-cols-3 gap-5">
+          <ul className=" grid w-full grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
             {activeNumbers.data?.data.map((number, index) => {
               return (
                 <ActiceNumber

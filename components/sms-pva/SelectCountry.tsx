@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { FaRegCircle, FaRegCircleDot } from "react-icons/fa6";
 import { IoSearchCircleSharp } from "react-icons/io5";
@@ -10,17 +10,20 @@ type SelectCountryProps = {
   onSelectCountry: (value: string) => void;
 };
 function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
+  const originalCountries = useMemo(() => {
+    return countries.filter((c) => c.sms_pva);
+  }, []);
   const [query, setQuery] = React.useState<string>("");
   const [countriesData, setCountriesData] =
-    React.useState<Countries>(countries);
+    React.useState<Countries>(originalCountries);
   const countryRef = React.useRef<HTMLLIElement>(null);
   const handleFilterCountry = (query: string) => {
     setQuery(query);
     if (query === "") {
-      setCountriesData(countries);
+      setCountriesData(originalCountries);
       return;
     }
-    const filteredCountries = countries.filter(
+    const filteredCountries = originalCountries.filter(
       (country) =>
         country.country.toLowerCase().includes(query.toLowerCase()) ||
         country.countryCode.toString().includes(query) ||
@@ -69,6 +72,7 @@ function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
                 src={`/image/flags/1x1/${country.code}.svg`}
                 fill
                 alt="flag"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-contain"
               />
             </div>

@@ -23,7 +23,7 @@ function ServiceCard({
   totalAvailable,
   onSelectService,
 }: Props) {
-  const price = useGetServicePrice({ country, service: service.code });
+  // const price = useGetServicePrice({ country, service: service.code });
   return (
     <li
       className={` flex  cursor-pointer items-center justify-between p-2  
@@ -35,6 +35,7 @@ function ServiceCard({
             src={service.icon ?? "/favicon.ico"}
             fill
             alt="flag"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain"
           />
         </div>
@@ -57,7 +58,7 @@ function ServiceCard({
                   
                  font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105`}
         >
-          {price.isLoading ? "loading" : `${price.data?.price} $`}
+          BUY
         </button>
       </div>
     </li>
