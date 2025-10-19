@@ -24,7 +24,12 @@ interface Column {
   label: string;
 }
 
-export type column_type = "affiliate" | "offer" | "country" | "sub1";
+export type column_type =
+  | "affiliate"
+  | "offer"
+  | "country"
+  | "sub1"
+  | "campaign";
 
 export interface Reporting {
   imp: number;

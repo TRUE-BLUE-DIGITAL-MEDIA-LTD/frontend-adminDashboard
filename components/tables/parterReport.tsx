@@ -51,6 +51,7 @@ const columns = [
   { name: "Country", code: "country" },
   { name: "Sub1", code: "sub1" },
   { name: "Hour", code: "hour" },
+  { name: "Smart Link", code: "campaign" },
 ];
 
 function ParterReport({ user }: { user: User }) {
