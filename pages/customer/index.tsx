@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { User } from "../../models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Pagination, Skeleton } from "@mui/material";
+import { Box, Button, Pagination, Skeleton, TextField } from "@mui/material";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import { loadingNumber } from "../../data/loadingNumber";
 import { MdDelete } from "react-icons/md";
@@ -20,7 +20,6 @@ import Link from "next/link";
 function Index({ user }: { user: User }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [orderBy, setOrderBy] = useState<"createAt" | "email">("createAt");
   const [isAsc, setIsAsc] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const customers = useQuery({
@@ -29,9 +28,20 @@ function Index({ user }: { user: User }) {
     placeholderData: keepPreviousData,
   });
 
-  useEffect(() => {
-    customers.refetch();
-  }, [orderBy, isAsc]);
+  const [jumpToPageInput, setJumpToPageInput] = useState("");
+  const totalPage = customers.data?.meta.lastPage ?? 1;
+  // ✅ 2. Create the handler function for form submission
+  const handleJumpToPage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents the browser from reloading the page
+    const targetPage = parseInt(jumpToPageInput, 10);
+
+    // Validate the input
+    if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPage) {
+      setPage(targetPage); // Set the new page
+      setJumpToPageInput(""); // Clear the input field
+    }
+  };
+
   const handleDeleteCustomerEmail = async ({
     customerId,
   }: {
@@ -84,44 +94,14 @@ function Index({ user }: { user: User }) {
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
           <div
             className=" h-96 w-80 justify-center overflow-auto  
-           md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem] "
+            md:w-11/12 "
           >
             <table className="w-max min-w-full table-auto  ">
-              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-                <tr className="sticky top-0 z-40 bg-white  ">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700 ">
+                <tr className="sticky top-0 z-20 bg-white  ">
                   <th className="group flex h-14 items-center  gap-2">
                     <span>Email</span>
-                    <div
-                      className={`flex items-center ${
-                        orderBy !== "email"
-                          ? "opacity-0 group-hover:opacity-100"
-                          : "opacity-100"
-                      }`}
-                    >
-                      {isAsc ? (
-                        <button
-                          onClick={() => {
-                            setOrderBy(() => "email");
-                            setIsAsc(() => false);
-                          }}
-                          className="flex items-center justify-center transition duration-100 hover:scale-105 "
-                        >
-                          <BsFillCaretDownFill />
-                        </button>
-                      ) : (
-                        !isAsc && (
-                          <button
-                            onClick={() => {
-                              setOrderBy(() => "email");
-                              setIsAsc(() => true);
-                            }}
-                            className="flex items-center justify-center transition duration-100 hover:scale-105 "
-                          >
-                            <BsFillCaretUpFill />
-                          </button>
-                        )
-                      )}
-                    </div>
+                    <div className={`flex items-center `}></div>
                   </th>
                   <th>Name</th>
                   <th>Phone Number</th>
@@ -132,37 +112,7 @@ function Index({ user }: { user: User }) {
                   <th>Landing Page</th>
                   <th className="group flex gap-2">
                     <span>Create At</span>
-                    <div
-                      className={`flex items-center ${
-                        orderBy !== "createAt"
-                          ? "opacity-0 group-hover:opacity-100"
-                          : "opacity-100"
-                      }`}
-                    >
-                      {isAsc ? (
-                        <button
-                          onClick={() => {
-                            setOrderBy(() => "createAt");
-                            setIsAsc(() => false);
-                          }}
-                          className="flex items-center justify-center transition duration-100 hover:scale-105 "
-                        >
-                          <BsFillCaretDownFill />
-                        </button>
-                      ) : (
-                        !isAsc && (
-                          <button
-                            onClick={() => {
-                              setOrderBy(() => "createAt");
-                              setIsAsc(() => true);
-                            }}
-                            className="flex items-center justify-center transition duration-100 hover:scale-105 "
-                          >
-                            <BsFillCaretUpFill />
-                          </button>
-                        )
-                      )}
-                    </div>
+                    <div className={`flex items-center `}></div>
                   </th>
                   <th>Options</th>
                 </tr>
@@ -308,11 +258,36 @@ function Index({ user }: { user: User }) {
               </tbody>
             </table>
           </div>
-          <Pagination
-            onChange={(e, page) => setPage(page)}
-            count={customers?.data?.meta?.total}
-            color="primary"
-          />
+          <div className="mt-5 flex w-full justify-center">
+            <Box className="mt-5 flex w-full flex-col items-center justify-center gap-4 md:flex-row">
+              <Pagination
+                onChange={(e, newPage) => setPage(newPage)}
+                page={page}
+                count={totalPage}
+                color="primary"
+                showFirstButton
+                showLastButton
+              />
+              <Box
+                component="form"
+                onSubmit={handleJumpToPage}
+                className="flex items-center gap-2"
+              >
+                <TextField
+                  label="Page"
+                  type="number"
+                  size="small"
+                  variant="outlined"
+                  value={jumpToPageInput}
+                  onChange={(e) => setJumpToPageInput(e.target.value)}
+                  sx={{ width: "100px" }}
+                />
+                <Button type="submit" variant="contained">
+                  Go
+                </Button>
+              </Box>
+            </Box>
+          </div>
         </main>
       </div>
     </DashboardLayout>
