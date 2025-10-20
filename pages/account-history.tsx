@@ -50,6 +50,7 @@ const actionsWithIcons = [
   { title: "sms-text", icon: <FaSms /> },
   { title: "sms-pin", icon: <FaSms /> },
   { title: "sms-day", icon: <FaSms /> },
+  { title: "smspool", icon: <FaSms /> },
   { title: "landing-page", icon: <FaPager /> },
   { title: "domain", icon: <GrDomain /> },
   { title: "category", icon: <BiCategoryAlt /> },
