@@ -10,7 +10,7 @@ import {
 
 export const menusSidebar = [
   { title: "Landing Pages", url: "/", icon: MdWeb },
-  { title: "Domain Library", url: "/domain", icon: MdOutlineDomain },
+  { title: "Domains Library", url: "/domain", icon: MdOutlineDomain },
   { title: "Submissions", url: "/customer", icon: FcCustomerSupport },
   {
     title: "Control Center",
@@ -22,15 +22,14 @@ export const menusSidebar = [
     url: "/tools",
     icon: BsTools,
     childs: [
-      { title: "Partners Performance", params: "partners-performance" },
-      { title: "Partners Events Ranking", params: "league-table" },
+      { title: "Performance", params: "partners-performance" },
+      { title: "Sales", params: "league-table" },
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Pool", params: "sms-pool" },
       { title: "Oxy Text", params: "sms-textverified" },
       { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy Day", params: "sms-daisy" },
       { title: "Oxy SMS", params: "sms-etms" },
-      { title: "Postcode", params: "postcode" },
       {
         title: "Website Builder",
         url: "https://sitestudio.oxyclick.com",
