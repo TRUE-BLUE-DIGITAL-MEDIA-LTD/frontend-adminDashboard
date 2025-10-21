@@ -1,20 +1,19 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import PayslipGenerator from "../../components/payslip/payslipGenerator";
-import Postcode from "../../components/postcode/postcode";
 import SimCard from "../../components/simCard/simCard";
+import SmsDaisy from "../../components/sms-daisy/SmsDaisy";
+import SmsPinverify from "../../components/sms-pinverify/SmsPinverify";
 import SmsPool from "../../components/sms-pool/SmsPool";
 import SmsPvas from "../../components/sms-pva/SmsPvas";
+import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
 import ParterReport from "../../components/tables/parterReport";
 import { OxyClickTools } from "../../data/menus";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
-import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
-import dynamic from "next/dynamic";
-import SmsPinverify from "../../components/sms-pinverify/SmsPinverify";
-import SmsDaisy from "../../components/sms-daisy/SmsDaisy";
 
 // Dynamically import your component with SSR turned off
 const PartnerLeague = dynamic(
@@ -30,7 +29,6 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
     <DashboardLayout user={user}>
       <div className="w-full">
         {menu === "partners-performance" && <ParterReport user={user} />}
-        {menu === "postcode" && <Postcode />}
         {menu === "payslip" && <PayslipGenerator />}
         {menu === "sms-etms" && <SimCard user={user} />}
         {menu === "sms-pva" && <SmsPvas user={user} />}
