@@ -1,10 +1,7 @@
+import { MenuItem, TextField as TextFieldMUI } from "@mui/material";
 import { UseQueryResult } from "@tanstack/react-query";
+import { InputNumber } from "primereact/inputnumber";
 import React, { useState } from "react";
-import { ResponseGetAllAccountByPageService } from "../../../services/admin/account";
-import { ErrorMessages, Pagination, Partner, User } from "../../../models";
-import Swal from "sweetalert2";
-import { TextField as TextFieldMUI } from "@mui/material";
-import { UpdatePartnerService } from "../../../services/admin/partner";
 import {
   Button,
   FieldError,
@@ -13,10 +10,11 @@ import {
   Label,
   TextField,
 } from "react-aria-components";
-import { MenuItem } from "@mui/material";
-import { InputNumber } from "primereact/inputnumber";
-import { FaWallet } from "react-icons/fa6";
+import Swal from "sweetalert2";
+import { ErrorMessages, Pagination, Partner, User } from "../../../models";
 import { useTopupWithOutOxypoint } from "../../../react-query";
+import { ResponseGetAllAccountByPageService } from "../../../services/admin/account";
+import { UpdatePartnerService } from "../../../services/admin/partner";
 type UpdatePartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
   setTriggerUpdatePartner: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,13 +37,13 @@ function UpdatePartner({
   const [updatePartnerData, setUpdatePartnerData] = useState<{
     partnerId?: string;
     partnerName?: string;
-    userId?: string;
+    managerId?: string;
     refill_oxyclick_points: number;
     smartLink?: string;
   }>({
     partnerId: selectPartner.affiliateId,
     partnerName: selectPartner.name,
-    userId: selectPartner.userId,
+    managerId: selectPartner.managerId,
     refill_oxyclick_points: selectPartner.refill_oxyclick_points / 100,
     smartLink: selectPartner.smartLink,
   });
@@ -74,7 +72,7 @@ function UpdatePartner({
         },
       });
       if (
-        !updatePartnerData?.userId ||
+        !updatePartnerData?.managerId ||
         !updatePartnerData?.partnerId ||
         !updatePartnerData?.partnerName
       ) {
@@ -93,7 +91,7 @@ function UpdatePartner({
           partnerId: selectPartner.id,
         },
         body: {
-          userId: updatePartnerData?.userId,
+          managerId: updatePartnerData?.managerId,
           affiliateId: updatePartnerData?.partnerId,
           name: updatePartnerData?.partnerName,
 
@@ -165,7 +163,7 @@ function UpdatePartner({
             required
             select
             className="h-14 w-full"
-            value={updatePartnerData?.userId ?? ""}
+            value={updatePartnerData?.managerId ?? ""}
           >
             {accounts.data?.accounts.map((account) => {
               return (
@@ -174,7 +172,7 @@ function UpdatePartner({
                     setUpdatePartnerData((prev) => {
                       return {
                         ...prev,
-                        userId: e.currentTarget.dataset.value as string,
+                        managerId: e.currentTarget.dataset.value as string,
                       };
                     });
                   }}
@@ -211,7 +209,7 @@ function UpdatePartner({
           />
           <FieldError className="text-xs text-red-600" />
         </TextField>
-        <TextField className="flex flex-col gap-1" isRequired>
+        <TextField className="flex flex-col gap-1">
           <Label>Smart Link</Label>
           <Input
             className="h-14 w-full rounded-sm border border-gray-400 bg-white p-2 outline-none transition

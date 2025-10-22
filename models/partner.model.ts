@@ -4,6 +4,7 @@ export type Partner = {
   updateAt: Date;
   affiliateId: string;
   userId: string;
+  managerId: string;
   isAllowUsingSMSPVA: boolean;
   isAllowUsingSMSPOOL: boolean;
   isAllowUsingSMS_TEXTVERIFIED: boolean;
