@@ -116,7 +116,7 @@ type InputUpdatePartnerService = {
     partnerId: string;
   };
   body: {
-    userId?: string;
+    managerId?: string;
     affiliateId?: string;
     name?: string;
     isAllowUsingSMSPVA?: boolean;
