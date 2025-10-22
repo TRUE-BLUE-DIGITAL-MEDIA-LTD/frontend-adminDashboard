@@ -1,6 +1,6 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
-import { Transaction } from "../models";
+import { Transaction, User } from "../models";
 
 export type ResponseTopupOxyPointService = string;
 export type RequestTopupOxyPointService = {
@@ -15,6 +15,34 @@ export async function TopupOxyPointService(
     const sms_pinverify = await axios({
       method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/oxyclick-points/top-up`,
+      data: request,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return sms_pinverify.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseTopupWithOutCreditOxyPointService = User;
+export type RequestTopupWithOutCreditOxyPointService = {
+  amount: number;
+  partnerId: string;
+};
+export async function TopupWithOutCreditOxyPointService(
+  request: RequestTopupWithOutCreditOxyPointService,
+): Promise<ResponseTopupWithOutCreditOxyPointService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const sms_pinverify = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/oxyclick-points/top-up-without-credit`,
       data: request,
       headers: {
         Authorization: "Bearer " + access_token,

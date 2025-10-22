@@ -4,7 +4,9 @@ import {
   RefundOxyPointService,
   RequestGetTransactionOxyPointsService,
   RequestTopupOxyPointService,
+  RequestTopupWithOutCreditOxyPointService,
   TopupOxyPointService,
+  TopupWithOutCreditOxyPointService,
 } from "../services/oxypoint";
 
 export function useGetTransacntionOxypoint(
@@ -20,6 +22,14 @@ export function useTopupOxypoint() {
     mutationKey: ["oxypoint-topup"],
     mutationFn: (request: RequestTopupOxyPointService) =>
       TopupOxyPointService(request),
+  });
+}
+
+export function useTopupWithOutOxypoint() {
+  return useMutation({
+    mutationKey: ["oxypoint-topup", "without-credit"],
+    mutationFn: (request: RequestTopupWithOutCreditOxyPointService) =>
+      TopupWithOutCreditOxyPointService(request),
   });
 }
 

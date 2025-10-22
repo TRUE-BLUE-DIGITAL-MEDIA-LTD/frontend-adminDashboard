@@ -15,6 +15,8 @@ import {
 } from "react-aria-components";
 import { MenuItem } from "@mui/material";
 import { InputNumber } from "primereact/inputnumber";
+import { FaWallet } from "react-icons/fa6";
+import { useTopupWithOutOxypoint } from "../../../react-query";
 type UpdatePartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
   setTriggerUpdatePartner: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,7 +49,8 @@ function UpdatePartner({
     refill_oxyclick_points: selectPartner.refill_oxyclick_points / 100,
     smartLink: selectPartner.smartLink,
   });
-
+  const createTopup = useTopupWithOutOxypoint();
+  const [topup, setTopup] = useState<number | undefined>();
   const handleChangeupdatePartnerData = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -77,6 +80,14 @@ function UpdatePartner({
       ) {
         throw new Error("Please fill all the fields");
       }
+
+      if (topup && topup > 0) {
+        await createTopup.mutateAsync({
+          amount: topup * 100,
+          partnerId: selectPartner.id,
+        });
+      }
+
       await UpdatePartnerService({
         query: {
           partnerId: selectPartner.id,
@@ -108,6 +119,8 @@ function UpdatePartner({
         footer: "Error Code :" + result.statusCode?.toString(),
         icon: "error",
       });
+    } finally {
+      setTopup(0);
     }
   };
   return (
@@ -209,6 +222,23 @@ function UpdatePartner({
             onChange={handleChangeupdatePartnerData}
             maxLength={255}
           />
+          <FieldError className="text-xs text-red-600" />
+        </TextField>
+        <TextField className="relative flex flex-col gap-1">
+          <Label>Topup</Label>
+          <InputNumber
+            currency="USD"
+            locale="en-US"
+            mode="currency"
+            className=" h-14 rounded-sm border border-gray-400 bg-white  outline-none transition
+         duration-75 hover:border-black focus:drop-shadow-md"
+            type="text"
+            value={topup}
+            onChange={(e) => {
+              setTopup(() => e.value ?? 0);
+            }}
+          />
+
           <FieldError className="text-xs text-red-600" />
         </TextField>
         <Button
