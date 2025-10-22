@@ -70,6 +70,7 @@ function Index({ user }: { user: User }) {
           userId: "all",
           name: "See All",
           id: "all",
+          managerId: "",
           isAllowUsingSMSPOOL: true,
           isAllowUsingSMSPVA: true,
           isAllowManageAssginCategory: true,
@@ -87,6 +88,7 @@ function Index({ user }: { user: User }) {
         });
         addSeeAll.push({
           createAt: new Date(),
+          managerId: "",
           isAllowUsingSMS_TEXTVERIFIED: true,
           isAllowManageAssginCategory: true,
           isAllowManageAssignDomain: true,
