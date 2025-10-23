@@ -57,6 +57,58 @@ export async function TopupWithOutCreditOxyPointService(
   }
 }
 
+export type ResponseGetSummaryTransactionService = {
+  user: Omit<
+    User,
+    | "isDeleted"
+    | "resetToken"
+    | "resetTokenExpiresAt"
+    | "IsResetPassword"
+    | "TOTPsecret"
+    | "TOTPenable"
+    | "TOTPhashRecovery"
+    | "TOTPexpireAt"
+    | "TOTPurl"
+    | "bonusCalculatePeriod"
+    | "oxyclick_points"
+    | "pending_points"
+    | "hash"
+  >;
+  sims: {
+    type: string;
+    usage: number;
+    number: number;
+  }[];
+}[];
+export type RequestGetSummaryTransactionService = {
+  partnerId?: string;
+  managerId?: string;
+  startDate: string;
+  endDate: string;
+};
+export async function GetSummaryTransactionService(
+  request: RequestGetSummaryTransactionService,
+): Promise<ResponseGetSummaryTransactionService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const sms_pinverify = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/oxyclick-points/transactions/summary`,
+      params: request,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return sms_pinverify.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetTransactionOxyPointsService = {
   data: Transaction[];
   totalPage: number;

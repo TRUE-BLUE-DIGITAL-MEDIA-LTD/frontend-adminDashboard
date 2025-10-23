@@ -11,6 +11,7 @@ import RecentTransaction from "../components/billing/RecentTransaction";
 import { useRefundOxypoint, useTopupOxypoint } from "../react-query";
 import Swal from "sweetalert2";
 import { RiRefundFill } from "react-icons/ri";
+import SummaryTransaction from "../components/billing/SummaryTransaction";
 
 type Props = {
   user: User;
@@ -212,6 +213,7 @@ function Index({ user }: Props) {
             </button>
           </div>
           <RecentTransaction />
+          <SummaryTransaction user={user} />
         </div>
       </div>
     </DashboardLayout>

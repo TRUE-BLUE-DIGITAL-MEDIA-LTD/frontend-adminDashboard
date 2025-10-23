@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  GetSummaryTransactionService,
   GetTransactionOxyPointsService,
   RefundOxyPointService,
+  RequestGetSummaryTransactionService,
   RequestGetTransactionOxyPointsService,
   RequestTopupOxyPointService,
   RequestTopupWithOutCreditOxyPointService,
@@ -15,6 +17,16 @@ export function useGetTransacntionOxypoint(
   return useQuery({
     queryKey: ["transacntions", request],
     queryFn: () => GetTransactionOxyPointsService(request),
+  });
+}
+
+export function useGetSummaryTransacntionOxypoint(
+  request: RequestGetSummaryTransactionService,
+) {
+  return useQuery({
+    queryKey: ["transacntions-summary", request],
+    queryFn: () => GetSummaryTransactionService(request),
+    enabled: !!request.endDate && !!request.startDate,
   });
 }
 export function useTopupOxypoint() {
