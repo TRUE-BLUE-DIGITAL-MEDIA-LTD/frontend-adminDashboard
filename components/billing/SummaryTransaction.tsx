@@ -53,7 +53,7 @@ function SummaryTransaction({ user }: Props) {
       ? { partnerId: selectUser.partnerId }
       : user.role === "admin" && !selectUser && { partnerId: user.partnerId }),
     ...(user.role === "manager" && { managerId: user.id }),
-    ...(user.role === "partner" && { partnerId: user.id }),
+    ...(user.role === "partner" && { partnerId: user.partnerId }),
   });
 
   useEffect(() => {
