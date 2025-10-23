@@ -284,11 +284,11 @@ function SummaryTransaction({ user }: Props) {
           />
         </label>
       </header>
-      <main className="mt-5 overflow-x-auto  bg-white text-gray-800 ">
+      <main className="relative mt-5 h-96  overflow-x-auto bg-white text-gray-800 ">
         <table className="w-full min-w-[1200px] text-left text-sm">
           {/* --- Table Header --- */}
-          <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
-            <tr>
+          <thead className="sticky  top-0 z-10 border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
+            <tr className="">
               <th scope="col" className="px-6 py-3">
                 Partner Name
               </th>
@@ -335,11 +335,11 @@ function SummaryTransaction({ user }: Props) {
                   return (
                     <tr
                       key={user.id}
-                      className="border-b border-gray-200 align-top hover:bg-gray-50"
+                      className="group border-b border-gray-200 align-top hover:bg-gray-50"
                     >
                       {/* 1. User Info */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
+                      <td className="sticky left-0 bg-white px-6 py-4 group-hover:bg-gray-50">
+                        <div className="flex w-40 items-center gap-3">
                           <img
                             src={user.image || "/default-avatar.png"}
                             alt={user.name || "avatar"}
