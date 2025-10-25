@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   GetNewsPartnerLeagueTableService,
   GetPartnerByMangegerService,
@@ -7,6 +7,10 @@ import {
   InputGetPartnerByPageService,
   RequestGetPartnerLeagueTableService,
 } from "../services/admin/partner";
+import {
+  GetConversionParterReportService,
+  ReqeustGetConversionParterReportService,
+} from "../services/everflow/partner";
 
 const keyPartners = {
   gets: ["partners"],
@@ -68,5 +72,16 @@ export function useGetNewsPartnerLeagueTable() {
     queryKey: ["league-table-news"],
     queryFn: () => GetNewsPartnerLeagueTableService(),
     refetchInterval: 1000 * 60,
+  });
+}
+
+export function useGetConversionPartnerReport(
+  input: ReqeustGetConversionParterReportService,
+) {
+  return useQuery({
+    queryKey: ["conversions", input],
+    queryFn: () => GetConversionParterReportService(input),
+    refetchInterval: 1000 * 10,
+    placeholderData: keepPreviousData,
   });
 }

@@ -106,7 +106,9 @@ function TbodyForEditor({
         {item.reporting.duplicate_click.toLocaleString()}
       </td>
       <td className="px-2">{item.reporting.invalid_click.toLocaleString()}</td>
-      <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
+      <td className="px-2 text-blue-400">
+        {item.reporting.cv.toLocaleString()}
+      </td>
 
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">{item.reporting.event}</td>

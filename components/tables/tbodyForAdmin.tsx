@@ -1,9 +1,10 @@
 import { UseQueryResult } from "@tanstack/react-query";
 import React from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { TableEntry } from "../../services/everflow/partner";
+import { Column, TableEntry } from "../../services/everflow/partner";
 
 type TbodyForEditorProps = {
+  onTriggerConversion: (column: Column[]) => void;
   odd: number;
   item: TableEntry;
   setActivePartnerDropdowns?: React.Dispatch<
@@ -44,6 +45,7 @@ function TbodyForAdmin({
   activePartnerDropdowns,
   setActivePartnerDropdowns,
   partnerPerformanceDayByDay,
+  onTriggerConversion,
 }: TbodyForEditorProps) {
   const bonos = partnerPerformanceDayByDay.data?.partner.find(
     (list) => list.id === item.columns[0].id,
@@ -104,7 +106,12 @@ function TbodyForAdmin({
       </td>
       <td className="px-2">{item.reporting.invalid_click.toLocaleString()}</td>
       <td className="px-2">{item.reporting.total_cv.toLocaleString()}</td>
-      <td className="px-2">{item.reporting.cv.toLocaleString()}</td>
+      <td
+        onClick={() => onTriggerConversion(item.columns)}
+        className="cursor-pointer px-2 text-blue-600 hover:underline"
+      >
+        {item.reporting.cv.toLocaleString()}
+      </td>
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">{item.reporting.event}</td>
       <td className="px-2">{item.reporting.evr?.toFixed(2)}%</td>
