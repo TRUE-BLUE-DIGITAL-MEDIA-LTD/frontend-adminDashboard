@@ -676,6 +676,9 @@ function ParterReport({ user }: { user: User }) {
                           {(user.role === "manager" ||
                             user.role === "partner") && (
                             <TbodyForEditor
+                              onTriggerConversion={(columns) =>
+                                setTargetConversionColumns(columns)
+                              }
                               user={user}
                               activePartnerDropdowns={
                                 activePartnerDropdowns ?? []
@@ -706,6 +709,9 @@ function ParterReport({ user }: { user: User }) {
                                 return (
                                   <TbodyForEditor
                                     user={user}
+                                    onTriggerConversion={(columns) =>
+                                      setTargetConversionColumns(columns)
+                                    }
                                     partnerPerformanceDayByDay={
                                       partnerPerformanceDayByDay
                                     }

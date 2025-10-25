@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { TableEntry } from "../../services/everflow/partner";
+import { Column, TableEntry } from "../../services/everflow/partner";
 import { UseQueryResult } from "@tanstack/react-query";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { User } from "../../models";
 
 type TbodyForEditorProps = {
   user: User;
+  onTriggerConversion: (column: Column[]) => void;
+
   odd: number;
   item: TableEntry;
   partnerPerformanceDayByDay: UseQueryResult<
@@ -47,6 +49,7 @@ function TbodyForEditor({
   activePartnerDropdowns,
   setActivePartnerDropdowns,
   partnerPerformanceDayByDay,
+  onTriggerConversion,
 }: TbodyForEditorProps) {
   const bonos = partnerPerformanceDayByDay.data?.partner.find(
     (list) => list.id === item.columns[0].id,
@@ -106,7 +109,10 @@ function TbodyForEditor({
         {item.reporting.duplicate_click.toLocaleString()}
       </td>
       <td className="px-2">{item.reporting.invalid_click.toLocaleString()}</td>
-      <td className="px-2 text-blue-400">
+      <td
+        onClick={() => onTriggerConversion(item.columns)}
+        className="cursor-pointer px-2 text-blue-600 hover:underline"
+      >
         {item.reporting.cv.toLocaleString()}
       </td>
 
