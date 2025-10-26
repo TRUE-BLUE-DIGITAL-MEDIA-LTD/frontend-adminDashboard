@@ -162,6 +162,12 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
+                Click Date
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
                 Affiliate
               </th>
               <th
@@ -180,13 +186,25 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Payout
+                Conversion IP
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Revenue
+                Session IP
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Conversion ID
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Payout
               </th>
               <th
                 scope="col"
@@ -198,14 +216,9 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Region
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
                 City
               </th>
+
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
@@ -228,7 +241,13 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                User Agent
+                Carrier
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Sub1
               </th>
             </tr>
           </thead>
@@ -237,6 +256,9 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
               <tr key={conv.conversion_id}>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {formatTimestamp(conv.conversion_unix_timestamp)}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {formatTimestamp(conv.click_unix_timestamp)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                   {conv.relationship.affiliate.name}
@@ -248,16 +270,19 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                   {renderStatus(conv.status)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {conv.conversion_user_ip}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {conv.session_user_ip}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {conv.conversion_id}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {formatCurrency(conv.payout, conv.currency_id)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {formatCurrency(conv.revenue, conv.currency_id)}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {conv.country}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {conv.region}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {conv.city}
@@ -272,7 +297,10 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                   {conv.browser}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {conv.http_user_agent}
+                  {conv.carrier}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {conv.sub1}
                 </td>
               </tr>
             ))}
