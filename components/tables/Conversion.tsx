@@ -146,6 +146,25 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
     );
   };
 
+  const calculateAndFormatDelta = (
+    conversionTimestamp: number,
+    clickTimestamp: number,
+  ) => {
+    // 1. Get the difference in seconds
+    const deltaInSeconds = conversionTimestamp - clickTimestamp;
+
+    // Handle edge cases, like a missing click timestamp or an error
+    if (isNaN(deltaInSeconds) || deltaInSeconds < 0) {
+      return "N/A";
+    }
+
+    // 2. Calculate minutes and remaining seconds
+    const minutes = Math.floor(deltaInSeconds / 60);
+    const seconds = deltaInSeconds % 60;
+
+    // 3. Return the formatted string
+    return `${minutes} m, ${seconds} s`;
+  };
   return (
     <div className="flex flex-col">
       <div className="flex h-96 w-full flex-col overflow-auto">
@@ -163,6 +182,12 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
                 Click Date
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Delta
               </th>
               <th
                 scope="col"
@@ -259,6 +284,12 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {formatTimestamp(conv.click_unix_timestamp)}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                  {calculateAndFormatDelta(
+                    conv.conversion_unix_timestamp,
+                    conv.click_unix_timestamp,
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                   {conv.relationship.affiliate.name}

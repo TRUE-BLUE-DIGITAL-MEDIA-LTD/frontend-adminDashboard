@@ -105,6 +105,7 @@ function ParterReport({ user }: { user: User }) {
   });
 
   const paterPerfomaces = useQuery({
+    refetchInterval: 1000 * 60,
     queryKey: [
       "partnerPerfomaces",
       {
@@ -676,9 +677,9 @@ function ParterReport({ user }: { user: User }) {
                           {(user.role === "manager" ||
                             user.role === "partner") && (
                             <TbodyForEditor
-                              onTriggerConversion={(columns) =>
-                                setTargetConversionColumns(columns)
-                              }
+                              onTriggerConversion={(columns) => {
+                                setTargetConversionColumns(columns);
+                              }}
                               user={user}
                               activePartnerDropdowns={
                                 activePartnerDropdowns ?? []
