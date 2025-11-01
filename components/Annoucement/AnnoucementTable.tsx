@@ -12,6 +12,7 @@ import { timeLeft } from "../../utils";
 import Ping from "../common/Ping";
 import Swal from "sweetalert2";
 import { ErrorMessages } from "../../models";
+import { MdSettings } from "react-icons/md";
 
 function AnnoucementTable() {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -66,10 +67,13 @@ function AnnoucementTable() {
           />
         </PopupLayout>
       )}
-      <div className="h-max w-11/12 rounded-md border p-5">
-        <header className="flex items-center justify-between">
+      <div className="h-max w-full max-w-7xl rounded-lg bg-white p-5 shadow-lg">
+        <header className="flex flex-col items-center justify-between gap-3 md:flex-row">
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-semibold">Manage Annoucement</h1>
+            <h1 className="flex items-center gap-2 text-xl font-bold text-gray-800">
+              <MdSettings />
+              Manage Annoucement
+            </h1>
             <span className="text-sm text-gray-400">
               You can create, update and delete annoucement here
             </span>
@@ -77,41 +81,33 @@ function AnnoucementTable() {
 
           <button
             onClick={() => setTriggerCreate(true)}
-            className="main-button rounded-md text-black "
+            className="flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-2 text-white shadow-md
+           transition duration-150 ease-in-out hover:bg-blue-600 active:scale-95"
           >
             Create Annoucement
           </button>
         </header>
 
-        <main className="mt-2  h-max max-h-80 w-full overflow-auto">
-          <table className="w-max min-w-full border-collapse border">
-            <thead>
-              <tr className="border">
-                <th className="border text-left">
-                  <div className="w-40 p-2">Title</div>
-                </th>
-                <th className="border text-left">
-                  <div className="w-40 p-2">Description</div>
-                </th>
-                <th className="border text-left">
-                  <div className="w-40 p-2">Begin At</div>
-                </th>
-                <th className="border text-left">
-                  <div className="w-40 p-2">Expire At</div>
-                </th>
-                <th className="border text-left">
-                  <div className="w-40 p-2">Status</div>
-                </th>
-                <th className="border text-left">
-                  <div className="w-40 p-2">Action</div>
-                </th>
+        <main className="mt-5 w-full overflow-auto">
+          <table className="w-full min-w-max table-auto text-center">
+            <thead className="bg-gray-100">
+              <tr className="text-sm font-bold text-gray-700">
+                <th className="p-4">Title</th>
+                <th className="p-4">Description</th>
+                <th className="p-4">Begin At</th>
+                <th className="p-4">Expire At</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm">
               {annoucements.data?.data.map((annoucement) => (
-                <tr key={annoucement.id}>
-                  <td className="relative border">
-                    <div className=" max-w-40 break-words p-2">
+                <tr
+                  key={annoucement.id}
+                  className="border-b border-gray-200 hover:bg-gray-50"
+                >
+                  <td className="relative p-4">
+                    <div className="max-w-40 break-words">
                       {annoucement.title}
                       {currentAnnoucement.data?.id === annoucement.id && (
                         <span className="absolute right-1 top-1 flex items-center justify-center gap-2 text-xs text-sky-500">
@@ -121,13 +117,13 @@ function AnnoucementTable() {
                       )}
                     </div>
                   </td>
-                  <td className="border">
-                    <div className="max-w-60 break-words p-2">
+                  <td className="p-4">
+                    <div className="max-w-60 break-words">
                       {annoucement.description}
                     </div>
                   </td>
-                  <td className="border">
-                    <div className="flex flex-col p-2">
+                  <td className="p-4">
+                    <div className="flex flex-col">
                       <span className="font-semibold">
                         {new Date(annoucement.beginAt).toLocaleDateString(
                           undefined,
@@ -149,8 +145,8 @@ function AnnoucementTable() {
                       </span>
                     </div>
                   </td>
-                  <td className="border">
-                    <div className="max-w-40 break-words p-2">
+                  <td className="p-4">
+                    <div className="max-w-40 break-words">
                       {timeLeft({
                         targetTime: new Date(
                           annoucement.expireAt,
@@ -158,17 +154,17 @@ function AnnoucementTable() {
                       })}
                     </div>
                   </td>
-                  <td className="border">
-                    <div className="max-w-40 break-words p-2">
+                  <td className="p-4">
+                    <div className="max-w-40 break-words">
                       {annoucement.status}
                     </div>
                   </td>
-                  <td className="border">
-                    <div className="p-2">
+                  <td className="p-4">
+                    <div className="flex justify-center">
                       <button
                         disabled={loading}
                         onClick={() => handleDelete(annoucement.id)}
-                        className="text-red-500"
+                        className="flex items-center gap-2 rounded-2xl bg-red-500 px-4 py-2 text-white shadow-md transition duration-150 hover:bg-red-600"
                       >
                         {loading ? "Deleting" : "Delete"}
                       </button>
@@ -179,9 +175,8 @@ function AnnoucementTable() {
             </tbody>
           </table>
         </main>
-        <div className="flex w-full justify-center">
+        <div className="mt-5 flex w-full justify-center">
           <Pagination
-            className="mt-5"
             page={page}
             onChange={(e, page) => {
               setPage(page);

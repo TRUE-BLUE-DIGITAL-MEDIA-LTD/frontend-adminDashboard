@@ -73,15 +73,15 @@ function DashboardNavbar({
         <ImpersonateNavBar impersonateUser={impersonateUser} />
       )}
 
-      <ul className="relative flex h-16 w-max  items-center justify-end  text-sm font-semibold lg:gap-5 xl:gap-10">
+      <ul className="relative flex h-16 w-full items-center justify-end gap-2 pr-2 text-sm font-semibold md:gap-5 lg:gap-10">
         <Link
           href={"/account-billing"}
-          className="group mr-52  flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
+          className="group flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
         >
           <div className="rounded-full bg-blue-100 p-2">
             <FaWallet className="text-lg text-blue-600" />
           </div>
-          <div className="relative flex flex-col">
+          <div className="relative hidden flex-col md:flex">
             <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
               {holdingPoints !== 0 && (
                 <>
@@ -95,14 +95,14 @@ function DashboardNavbar({
             </span>
             <span className="text-[10px]  font-normal">Available Balance</span>
           </div>
-          <BsPlusCircleFill className="text-xl" />
+          <BsPlusCircleFill className="hidden text-xl md:block" />
         </Link>
 
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
           onMouseLeave={() => setTriggerAccountMenu(() => false)}
           className={`
-          absolute right-2 top-0  flex cursor-pointer select-none  flex-col
+          relative flex cursor-pointer select-none flex-col
       items-center justify-center gap-2 rounded-lg bg-gray-800 p-2 transition duration-100 `}
         >
           {user && (
@@ -116,7 +116,9 @@ function DashboardNavbar({
                   alt="user image picture"
                 />
               </div>
-              <span className="text-white">{user?.data?.name}</span>
+              <span className="hidden text-white md:block">
+                {user?.data?.name}
+              </span>
               <div className="text-white">
                 {triggerAccountMenu ? <BiCaretUp /> : <BiCaretDown />}
               </div>
@@ -124,20 +126,23 @@ function DashboardNavbar({
           )}
 
           {triggerAccountMenu && (
-            <ul className="   flex w-40 flex-col items-start justify-center gap-2 text-white ">
+            <ul className="absolute right-0 top-14 z-50 flex w-40 flex-col items-start justify-center gap-2 rounded-b-lg bg-gray-800 p-2 text-white ">
               <Link
                 href={"/account-history"}
-                className="w-full hover:font-bold"
+                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
               >
                 account history
               </Link>
               <Link
                 href={"/account-setting"}
-                className="w-full hover:font-bold"
+                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
               >
                 account settings
               </Link>
-              <li onClick={signOut} className="w-full hover:font-bold">
+              <li
+                onClick={signOut}
+                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
+              >
                 Sign Out
               </li>
             </ul>

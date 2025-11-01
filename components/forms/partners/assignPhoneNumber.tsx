@@ -277,64 +277,66 @@ function AssignPhoneNumber({
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  
-    items-center justify-center gap-5 font-Poppins "
+      className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen flex-col items-center 
+    justify-center gap-5 bg-black/60 p-5 font-Poppins md:flex-row"
     >
-      <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
-        <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          List of {selectPartner.name}&apos;s phone number
-        </label>
-        <div className=" flex max-h-full min-h-72 w-full flex-col justify-start overflow-auto   ">
+      <div className="flex h-full w-full max-w-md flex-col items-center justify-between gap-2 rounded-xl bg-white p-7 md:h-[40rem] md:w-96">
+        <h2 className="w-full rounded-lg bg-gray-100 py-3 text-center font-bold text-black">
+          {selectPartner.name}`&apos;s Phone Numbers
+        </h2>
+        <ul className="flex h-40 w-full flex-col justify-start overflow-auto md:h-full">
           {simCardOnPartners.isLoading ? (
             <div className="h-full w-full animate-pulse bg-gray-200"></div>
           ) : (
-            simCardOnPartners.data?.map((simCardOnPartner) => {
-              return (
-                <div
-                  key={simCardOnPartner.id}
-                  className="flex h-12 w-full items-center justify-between  py-3 hover:bg-gray-200"
-                >
-                  <div className="h-10 w-full truncate border-4 border-transparent font-semibold text-black">
-                    {simCardOnPartner.simCard.phoneNumber.replace(
-                      /(\d{4})(\d{3})(\d{4})/,
-                      "($1) $2-$3",
-                    )}
-                  </div>
-                  <div className="h-max w-max bg-green-300 px-2 py-1 text-green-700">
-                    OWN
-                  </div>
-                </div>
-              );
-            })
+            simCardOnPartners.data?.map((simCardOnPartner) => (
+              <li
+                key={simCardOnPartner.id}
+                className="flex w-full items-center justify-between rounded-lg p-3 hover:bg-gray-100"
+              >
+                <span className="font-semibold text-gray-800">
+                  {simCardOnPartner.simCard.phoneNumber.replace(
+                    /(\d{4})(\d{3})(\d{4})/,
+                    "($1) $2-$3",
+                  )}
+                </span>
+                <span className="rounded-full bg-green-200 px-3 py-1 text-xs font-bold text-green-800">
+                  OWN
+                </span>
+              </li>
+            ))
           )}
-        </div>
-        <footer className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          Total Phone Number : {simCardOnPartners.data?.length}
+        </ul>
+        <footer className="w-full rounded-lg bg-gray-100 py-3 text-center font-bold text-black">
+          Total: {simCardOnPartners.data?.length}
         </footer>
-      </ul>
+      </div>
       <Form
-        className="relative flex h-full w-max flex-col items-center justify-start
-       gap-2 overflow-auto rounded-xl bg-white p-7"
+        className="relative flex h-full w-full max-w-4xl flex-col items-center justify-start
+       gap-5 overflow-auto rounded-xl bg-white p-7 md:h-[40rem]"
       >
         {phoneNumber.isFetching && (
-          <div className=" absolute right-2 top-2">Loading....</div>
+          <div className="absolute right-4 top-4 text-sm text-gray-500">
+            Loading...
+          </div>
         )}
 
         <section
           className="flex h-full w-full flex-col items-center justify-start 
-        gap-5 overflow-auto rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5"
+        gap-5"
         >
-          <header className="flex w-full flex-col items-center justify-center gap-2 ">
-            <h1 className="flex w-full justify-center font-bold md:text-xl">
-              Assign Phone {selectPartner.name}
-            </h1>
-            <button
-              type="button"
-              onClick={() => setSelectBulkAssign((prev) => !prev)}
-              className="h-10 w-60 rounded-md border bg-gray-100 hover:bg-green-300"
-            >
-              {selectBulkAssign ? "Close" : "Bulk Assign"}
-            </button>
+          <header className="flex w-full flex-col items-center justify-center gap-4">
+            <div className="flex w-full flex-col items-center justify-between gap-3 md:flex-row">
+              <h1 className="text-2xl font-bold text-gray-800">
+                Assign Phone to {selectPartner.name}
+              </h1>
+              <button
+                type="button"
+                onClick={() => setSelectBulkAssign((prev) => !prev)}
+                className="w-full rounded-2xl bg-gray-200 py-2 font-semibold text-gray-800 shadow-md transition hover:bg-gray-300 md:w-auto md:px-4"
+              >
+                {selectBulkAssign ? "Close" : "Bulk Assign"}
+              </button>
+            </div>
             {selectBulkAssign ? (
               <BulkAssign
                 partnerId={selectPartner.id}
@@ -342,109 +344,83 @@ function AssignPhoneNumber({
                 simCardOnPartners={simCardOnPartners}
               />
             ) : (
-              <>
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <SearchField
                   value={searchField}
-                  onChange={(e) => {
-                    setSearchField(() => e);
-                  }}
-                  className="relative flex w-80 flex-col"
+                  onChange={(e) => setSearchField(e)}
+                  className="relative flex w-full flex-col"
                 >
                   <Input
                     placeholder="Search Phone Number Or Note"
-                    className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+                    className="h-12 w-full appearance-none rounded-lg bg-gray-100 p-3 pl-10 outline-none ring-2 ring-transparent focus:ring-blue-500"
                   />
-                  <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+                  <IoSearchCircleSharp className="absolute left-2 top-1/2 -translate-y-1/2 text-3xl text-gray-400" />
                 </SearchField>
-                <section className="flex w-full justify-center gap-2">
-                  <div className="flex flex-col">
-                    <label className="text-sm font-normal">
-                      Select Availability
-                    </label>
-                    <Dropdown
-                      value={selectAvailableSlot}
-                      onChange={(e) => {
-                        setPage(1);
-                        setSelectAvailableSlot(() => e.value);
-                      }}
-                      options={availableSlot}
-                      placeholder="Select Available Slot"
-                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="text-sm font-normal">
-                      Select Device User
-                    </label>
-                    <Dropdown
-                      value={selectDeviceUser}
-                      onChange={(e) => {
-                        setPage(1);
-                        setSelectDeviceUser(() => e.value);
-                      }}
-                      showClear
-                      options={deviceUser.data}
-                      loading={deviceUser.isLoading}
-                      optionLabel="portNumber"
-                      placeholder="Select Available Slot"
-                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="text-sm font-normal">
-                      Select No Partner
-                    </label>
-                    <Dropdown
-                      value={getNoPartner}
-                      onChange={(e) => {
-                        setPage(1);
-                        setGetNoPartner(() => e.value);
-                      }}
-                      showClear
-                      options={["no-partner", "partner", "default"]}
-                      placeholder="Filter Partner"
-                      className="h-10 w-40  rounded-lg outline-0 ring-2 ring-icon-color "
-                    />
-                  </div>
-                </section>
-                <div className="flex flex-col">
-                  <label className="text-sm font-normal">Select Partner</label>
-                  <Dropdown
-                    value={selectPartnerSearch}
-                    onChange={(e) => {
-                      setPage(1);
-                      setSelectPartnerSearch(() => e.value);
-                    }}
-                    itemTemplate={(partner: Partner) => {
-                      return (
-                        <div className="n flex w-full items-center gap-2">
-                          <IoMdPerson />
-                          <span>{partner.name}</span>
-                        </div>
-                      );
-                    }}
-                    optionLabel="name"
-                    showClear
-                    loading={partners.isLoading}
-                    options={partners.data?.data}
-                    placeholder="Select Partner"
-                    className="h-10 w-96  rounded-lg outline-0 ring-2 ring-icon-color "
-                  />
-                </div>
-              </>
+                <Dropdown
+                  value={selectAvailableSlot}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSelectAvailableSlot(e.value);
+                  }}
+                  options={availableSlot}
+                  placeholder="Select Availability"
+                  className="h-12 w-full rounded-lg border-2 border-black"
+                />
+                <Dropdown
+                  value={selectDeviceUser}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSelectDeviceUser(e.value);
+                  }}
+                  showClear
+                  options={deviceUser.data}
+                  loading={deviceUser.isLoading}
+                  optionLabel="portNumber"
+                  placeholder="Select Device User"
+                  className="h-12 w-full rounded-lg border-2 border-black"
+                />
+                <Dropdown
+                  value={getNoPartner}
+                  onChange={(e) => {
+                    setPage(1);
+                    setGetNoPartner(e.value);
+                  }}
+                  showClear
+                  options={["no-partner", "partner", "default"]}
+                  placeholder="Filter Partner"
+                  className="h-12 w-full rounded-lg border-2 border-black"
+                />
+                <Dropdown
+                  value={selectPartnerSearch}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSelectPartnerSearch(e.value);
+                  }}
+                  itemTemplate={(partner: Partner) => (
+                    <div className="flex items-center gap-2">
+                      <IoMdPerson />
+                      <span>{partner.name}</span>
+                    </div>
+                  )}
+                  optionLabel="name"
+                  showClear
+                  loading={partners.isLoading}
+                  options={partners.data?.data}
+                  placeholder="Select Partner"
+                  className="h-12 w-full rounded-lg border-2 border-black lg:col-span-2"
+                />
+              </div>
             )}
           </header>
-          <div className=" w-max min-w-[30rem] max-w-3xl grow justify-center overflow-auto  ">
-            <table className=" w-full table-auto ">
-              <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
-                <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-                  <th>Phone Number</th>
-                  <th>Country</th>
-                  <th>Device User</th>
-                  <th>Own By</th>
-                  <th>Assing Phone number</th>
+          <div className=" w-full overflow-auto md:grow">
+            <table className="w-full table-auto text-center">
+              <thead className="sticky top-0 z-20 bg-gray-100">
+                <tr className="text-sm font-bold text-gray-700">
+                  <th className="p-4">Phone Number</th>
+                  <th className="p-4">Country</th>
+                  <th className="p-4">Device User</th>
+                  <th className="p-4">Own By</th>
+                  <th className="p-4">Assign</th>
                 </tr>
               </thead>
               <tbody>
@@ -478,29 +454,29 @@ function AssignPhoneNumber({
                       );
                       return (
                         <tr
-                          className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                          className="border-b border-gray-200 hover:bg-gray-50"
                           key={sim.id}
                         >
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                          <td className="p-4 font-semibold text-gray-800">
                             {country?.countryCode}{" "}
                             {sim.phoneNumber.replace(
                               /(\d{4})(\d{3})(\d{4})/,
                               "($1) $2-$3",
                             )}
                           </td>
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                          <td className="p-4 text-gray-600">
                             {country?.country}
                           </td>
-                          <td className="h-10 truncate border-4 border-transparent text-center font-semibold text-black">
+                          <td className="p-4 text-gray-600">
                             {device?.portNumber ?? "No Device User"}
                           </td>
-                          <td className="h-10 truncate border-4 border-transparent text-center font-semibold text-black">
+                          <td className="p-4 text-gray-600">
                             {sim.simcardOnPartner?.partner.name || "No Partner"}
                           </td>
-                          <td className="truncate border-4 border-transparent  font-semibold text-black">
+                          <td className="p-4">
                             <div className="flex items-center justify-center">
                               {sim.isLoading ? (
-                                <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
+                                <div className="h-6 w-6 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
                               ) : sim.simcardOnPartner &&
                                 sim.simcardOnPartner.partnerId !==
                                   selectPartner.id ? (
@@ -514,14 +490,14 @@ function AssignPhoneNumber({
                                     })
                                   }
                                   type="button"
-                                  className="group  h-10 w-full bg-red-300 px-2 py-1
-                                   text-xs text-red-700 transition hover:bg-red-400"
+                                  className="group rounded-2xl bg-red-200 px-4 py-2 text-xs font-bold text-red-800
+                                   transition hover:bg-red-300"
                                 >
                                   <span className="block group-hover:hidden">
-                                    already assigned
+                                    Assigned
                                   </span>
                                   <span className="hidden group-hover:block">
-                                    unassign
+                                    Unassign
                                   </span>
                                 </button>
                               ) : (
@@ -544,7 +520,7 @@ function AssignPhoneNumber({
                                   }}
                                   checked={sim.isChecking}
                                   type="checkbox"
-                                  className="h-5 w-5"
+                                  className="h-6 w-6 rounded-md"
                                 />
                               )}
                             </div>
@@ -555,12 +531,14 @@ function AssignPhoneNumber({
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={page}
-            onChange={(e, page) => setPage(page)}
-            count={totalPages}
-            color="primary"
-          />
+          <div className="mt-5 flex justify-center">
+            <Pagination
+              page={page}
+              onChange={(e, page) => setPage(page)}
+              count={totalPages}
+              color="primary"
+            />
+          </div>
         </section>
       </Form>
 

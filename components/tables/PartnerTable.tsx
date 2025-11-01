@@ -97,7 +97,7 @@ function PartnerTable({ accounts, user }: PartnerProps) {
     }
   };
   return (
-    <section className="flex h-max w-11/12 flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:p-5">
+    <section className="flex h-max w-full max-w-7xl flex-col items-center justify-start gap-5 rounded-lg bg-white p-5 shadow-lg">
       {triggerCreatePartner && (
         <CreatePartner
           partners={partners}
@@ -150,8 +150,9 @@ function PartnerTable({ accounts, user }: PartnerProps) {
         />
       )}
 
-      <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
-        <h1 className="rext-xl text-lg font-bold 2xl:text-3xl">
+      <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
+        <h1 className="rext-xl flex items-center gap-3 text-lg font-bold text-gray-800 2xl:text-3xl">
+          <FaUserPlus />
           Everflow Partner Management
         </h1>
         <SearchField
@@ -174,42 +175,62 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                 document.body.style.overflow = "hidden";
                 setTriggerCreateParter(() => true);
               }}
-              className="flex items-center justify-center gap-1 rounded-xl bg-green-400 p-3 ring-black
-   transition duration-150 ease-in hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm  "
+              className="flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-2 text-white shadow-md
+   transition duration-150 ease-in-out hover:bg-blue-600 active:scale-95"
             >
               <FaUserPlus />
-              <span className="text-xs 2xl:text-base">create partner</span>
+              <span className="text-xs 2xl:text-base">Create Partner</span>
             </button>
           </div>
         )}
       </header>
-      <div className=" h-96 w-full justify-center overflow-auto   ">
-        <table className=" w-max min-w-full table-auto ">
-          <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
-            <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-              <th className="px-5">Affiliate ID</th>
-              <th className="px-5">Name</th>
-              <th className="px-5">Partner Manager</th>
-              <th className="px-5">Assign Phone Number</th>
-              <th className="px-5">Assign Domain</th>
-              <th className="px-5">Assign Category</th>
-              <th className="px-5">Permission</th>
+      <div className="h-96 w-full justify-center overflow-auto">
+        <table className=" w-max min-w-full table-auto text-center">
+          <thead className="sticky top-0 z-20 bg-gray-100">
+            <tr className="text-sm font-bold text-gray-700">
+              <th className="p-4">Affiliate ID</th>
+              <th className="p-4">Name</th>
+              <th className="p-4">Partner Manager</th>
+              <th className="p-4">Assign Phone Number</th>
+              <th className="p-4">Assign Domain</th>
+              <th className="p-4">Assign Category</th>
+              <th className="p-4">Permission</th>
               {(user.role === "admin" || user.role === "manager") && (
-                <th className="px-5">Options</th>
+                <th className="p-4">Options</th>
               )}
             </tr>
           </thead>
           <tbody>
             {partners.isLoading
               ? [...Array(5)].map((_, index) => (
-                  <tr key={index}>
-                    <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                    <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                    <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                    <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-50 "></td>
-                    <td className="h-12 w-96 animate-pulse border-4 border-transparent bg-gray-300 "></td>
-                    <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
-                    <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-200 "></td>
+                  <tr key={index} className="animate-pulse">
+                    <td className="p-4">
+                      <div className="mx-auto h-4 w-20 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-4 w-40 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-4 w-40 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto h-8 w-40 rounded bg-gray-300"></div>
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto flex justify-center gap-2">
+                        <div className="h-6 w-6 rounded bg-gray-300"></div>
+                        <div className="h-6 w-6 rounded bg-gray-300"></div>
+                      </div>
+                    </td>
                   </tr>
                 ))
               : partners?.data?.data.map((partner) => {
@@ -227,20 +248,20 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                   );
                   return (
                     <tr
-                      className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
+                      className="border-b border-gray-200 py-5 hover:bg-gray-50"
                       key={partner.id}
                     >
-                      <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         {partner.affiliateId}
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         {partner.name}
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         {partner.manager?.email}
                       </td>
 
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         <div className="flex items-center justify-center">
                           <button
                             onClick={() => {
@@ -248,15 +269,15 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                               setTriggerAssignNumber(() => true);
                               document.body.style.overflow = "hidden";
                             }}
-                            className="rounded-md bg-green-400 px-5 py-1 text-black
-                           transition duration-150 hover:bg-green-500"
+                            className="rounded-2xl bg-green-500 px-5 py-2 text-white shadow-md
+                           transition duration-150 hover:bg-green-600"
                           >
                             phone number
                           </button>
                         </div>
                       </td>
 
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         <div className="flex items-center justify-center">
                           <button
                             onClick={() => {
@@ -264,14 +285,14 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                               setTriggerAssignDomain(() => true);
                               document.body.style.overflow = "hidden";
                             }}
-                            className="rounded-md bg-green-400 px-5 py-1 text-black
-                           transition duration-150 hover:bg-green-500"
+                            className="rounded-2xl bg-green-500 px-5 py-2 text-white shadow-md
+                           transition duration-150 hover:bg-green-600"
                           >
                             domain
                           </button>
                         </div>
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         <div className="flex items-center justify-center">
                           <button
                             onClick={() => {
@@ -279,14 +300,14 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                               setTriggerAssignCategory(() => true);
                               document.body.style.overflow = "hidden";
                             }}
-                            className="rounded-md bg-green-400 px-5 py-1 text-black
-                           transition duration-150 hover:bg-green-500"
+                            className="rounded-2xl bg-green-500 px-5 py-2 text-white shadow-md
+                           transition duration-150 hover:bg-green-600"
                           >
                             category
                           </button>
                         </div>
                       </td>
-                      <td className="truncate border-4 border-transparent font-semibold text-black">
+                      <td className="p-4 font-semibold text-black">
                         <div className="flex w-full items-center justify-center">
                           <button
                             onClick={() => {
@@ -294,14 +315,14 @@ function PartnerTable({ accounts, user }: PartnerProps) {
                               document.body.style.overflow = "hidden";
                               setTriggerUpdatePermission(() => true);
                             }}
-                            className="flex items-center justify-center gap-1 rounded-lg bg-gray-800 px-5 py-1 text-white hover:bg-gray-900 active:ring-2"
+                            className="flex items-center justify-center gap-1 rounded-2xl bg-gray-800 px-5 py-2 text-white shadow-md hover:bg-gray-900 active:ring-2"
                           >
                             <MdSettings /> Permission Setting
                           </button>
                         </div>
                       </td>
 
-                      <td className=" border-4 border-transparent">
+                      <td className="p-4">
                         <div className="flex w-full items-center justify-center gap-3">
                           <button
                             onClick={() => {
@@ -335,11 +356,13 @@ function PartnerTable({ accounts, user }: PartnerProps) {
           </tbody>
         </table>
       </div>
-      <Pagination
-        onChange={(e, page) => setPage(page)}
-        count={partners?.data?.meta.total || 1}
-        color="primary"
-      />
+      <div className="mt-5 flex justify-center">
+        <Pagination
+          onChange={(e, page) => setPage(page)}
+          count={partners?.data?.meta.total || 1}
+          color="primary"
+        />
+      </div>
     </section>
   );
 }

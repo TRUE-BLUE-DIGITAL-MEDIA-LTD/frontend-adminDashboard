@@ -24,10 +24,11 @@ import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { Pagination } from "@mui/material";
 import { useRouter } from "next/router";
-import PartnerTable from "../../components/tables/partner";
+import PartnerTable from "../../components/tables/PartnerTable";
 import AssignPartner from "../../components/forms/accounts/assignPartner";
 import UpdateBonusRate from "../../components/forms/accounts/updateBonusRate";
 import AnnoucementTable from "../../components/Annoucement/AnnoucementTable";
+import { FiPlusCircle, FiLogIn, FiEdit, FiTrash2 } from "react-icons/fi";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -169,53 +170,75 @@ function Index({ user }: { user: User }) {
         />
       )}
 
-      <main className="mb-20 mt-40 flex w-full flex-col items-center justify-start gap-10 font-Poppins">
+      <main className=" flex min-h-screen w-full flex-col items-center bg-gray-100 p-5 font-Poppins">
         {user.role === "admin" && (
-          <section className="flex h-max w-11/12 flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:p-5">
-            <header className="flex w-full flex-col items-center justify-between gap-2 md:flex-row">
-              <h1 className="rext-xl font-bold md:text-3xl">
+          <section className="w-full max-w-7xl rounded-lg bg-white p-5 shadow-lg">
+            <header className="mb-5 flex flex-col items-center justify-between gap-4 md:flex-row">
+              <h1 className="flex items-center gap-3 text-2xl font-bold text-gray-800 md:text-3xl">
+                <FaPeopleGroup />
                 Account Management
               </h1>
-              <div className="flex items-center justify-center gap-2">
-                <button
-                  onClick={() => {
-                    document.body.style.overflow = "hidden";
-                    setTriggerCreateAccount(() => true);
-                  }}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-green-400 p-3 ring-black
-           transition duration-150 ease-in hover:bg-green-500 active:scale-105 active:ring-2 active:drop-shadow-sm  "
-                >
-                  <FaUserPlus />
-                  create user
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  document.body.style.overflow = "hidden";
+                  setTriggerCreateAccount(() => true);
+                }}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-2 text-white shadow-md
+           transition duration-150 ease-in-out hover:bg-blue-600 active:scale-95"
+              >
+                <FiPlusCircle />
+                Create User
+              </button>
             </header>
-            <div className=" h-96  w-full  overflow-auto ">
-              <table className="w-max table-auto ">
-                <thead className="sticky top-0 z-20 bg-gray-200">
-                  <tr className=" h-14  border-slate-400 font-normal  text-slate-600">
-                    <th className="px-5">Photo</th>
-                    <th className="px-5">Email</th>
-                    <th className="px-5">Role</th>
-                    <th className="px-5">Created At</th>
-                    <th className="px-5">Partner</th>
-                    <th className="px-5">Bonus Setting</th>
-                    <th className="px-5">Login As</th>
-                    <th className="px-5">Reset Password</th>
-                    <th className="px-5">Options</th>
+            <div className="h-96 overflow-x-auto">
+              <table className=" w-max min-w-full table-auto text-center">
+                <thead className="bg-gray-100">
+                  <tr className="text-sm font-bold text-gray-700">
+                    <th className="p-4">Photo</th>
+                    <th className="p-4">Email</th>
+                    <th className="p-4">Role</th>
+                    <th className="p-4">Created At</th>
+                    <th className="p-4">Partner</th>
+                    <th className="p-4">Bonus Setting</th>
+                    <th className="p-4">Login As</th>
+                    <th className="p-4">Reset Password</th>
+                    <th className="p-4">Options</th>
                   </tr>
                 </thead>
                 <tbody>
                   {accounts.isLoading
                     ? [...Array(5)].map((_, index) => (
-                        <tr key={index}>
-                          <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                          <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                          <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                          <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-50 "></td>
-                          <td className="h-12 w-96 animate-pulse border-4 border-transparent bg-gray-300 "></td>
-                          <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
-                          <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-200 "></td>
+                        <tr key={index} className="animate-pulse">
+                          <td className="p-4">
+                            <div className="mx-auto h-10 w-10 rounded-full bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-4 w-40 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-4 w-20 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-4 w-32 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-8 w-24 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto h-8 w-24 rounded bg-gray-300"></div>
+                          </td>
+                          <td className="p-4">
+                            <div className="mx-auto flex justify-center gap-2">
+                              <div className="h-6 w-6 rounded bg-gray-300"></div>
+                              <div className="h-6 w-6 rounded bg-gray-300"></div>
+                            </div>
+                          </td>
                         </tr>
                       ))
                     : accounts?.data?.accounts?.map((account) => {
@@ -230,27 +253,30 @@ function Index({ user }: { user: User }) {
                             hour12: true,
                           });
                         return (
-                          <tr key={account.id}>
-                            <td className="">
-                              <div className="relative h-10  w-full overflow-hidden border-4 border-transparent ">
+                          <tr
+                            key={account.id}
+                            className="border-b border-gray-200 hover:bg-gray-50"
+                          >
+                            <td className="p-4">
+                              <div className="relative mx-auto h-10 w-10 overflow-hidden rounded-full">
                                 <Image
                                   src={account.image}
                                   fill
                                   alt="user account profile"
-                                  className="object-contain"
+                                  className="object-cover"
                                 />
                               </div>
                             </td>
-                            <td className="  truncate border-4 border-transparent font-semibold text-black">
+                            <td className="p-4 font-semibold text-gray-700">
                               {account.email}
                             </td>
-                            <td className=" border-4 border-transparent">
+                            <td className="p-4 text-gray-600">
                               {account.role}
                             </td>
-                            <td className=" border-4 border-transparent ">
+                            <td className="p-4 text-gray-600">
                               {formattedDatecreateAt}
                             </td>
-                            <td className=" border-4 border-transparent">
+                            <td className="p-4">
                               {account.partner ? (
                                 <button
                                   onClick={() => {
@@ -258,8 +284,8 @@ function Index({ user }: { user: User }) {
                                     setSelectAccount(() => account);
                                     document.body.style.overflow = "hidden";
                                   }}
-                                  className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
-                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-green-500 px-4 py-2 text-white shadow-md
+                   transition duration-150 ease-in-out hover:bg-green-600"
                                 >
                                   <FaUser />
                                   {account.partner?.name}
@@ -271,67 +297,67 @@ function Index({ user }: { user: User }) {
                                     setSelectAccount(() => account);
                                     document.body.style.overflow = "hidden";
                                   }}
-                                  className=" flex w-full items-center justify-center gap-2 rounded-xl bg-gray-600 p-2 text-white
-                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-gray-700 active:ring-2 active:drop-shadow-sm"
+                                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-600 px-4 py-2 text-white shadow-md
+                   transition duration-150 ease-in-out hover:bg-gray-700"
                                 >
                                   <FaUser />
                                   No Partner Connected
                                 </button>
                               )}
                             </td>
-                            <td className=" border-4 border-transparent">
+                            <td className="p-4">
                               <button
                                 onClick={() => {
                                   setTriggerUpdateBonusRate(() => true);
                                   setSelectAccount(() => account);
                                   document.body.style.overflow = "hidden";
                                 }}
-                                className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
-                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-teal-500 px-4 py-2 text-white shadow-md
+                   transition duration-150 ease-in-out hover:bg-teal-600"
                               >
                                 <FaMoneyBillTrendUp />
                                 Bonus Setting
                               </button>
                             </td>
-                            <td className=" border-4 border-transparent">
+                            <td className="p-4">
                               <button
                                 onClick={() =>
                                   handleSignInAsAnotherUser({
                                     email: account.email,
                                   })
                                 }
-                                className=" flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-white
-                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-green-700 active:ring-2 active:drop-shadow-sm"
+                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-4 py-2 text-white shadow-md
+                   transition duration-150 ease-in-out hover:bg-indigo-600"
                               >
-                                <FaUser />
-                                sign in
+                                <FiLogIn />
+                                Sign In
                               </button>
                             </td>
-                            <td className=" border-4 border-transparent">
+                            <td className="p-4">
                               <button
                                 onClick={() => {
                                   setSelectAccount(() => account);
                                   setTriggerResetPassword(() => true);
                                   document.body.style.overflow = "hidden";
                                 }}
-                                className=" w-full rounded-xl bg-red-600 p-2 text-white
-                   ring-black transition duration-150 ease-linear hover:scale-105 hover:bg-red-700 active:ring-2 active:drop-shadow-sm"
+                                className="w-full rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md
+                   transition duration-150 ease-in-out hover:bg-orange-600"
                               >
                                 RESET
                               </button>
                             </td>
 
-                            <td className=" border-4 border-transparent">
-                              <div className="flex w-full gap-3">
+                            <td className="p-4">
+                              <div className="flex justify-center gap-3">
                                 <button
                                   onClick={() => {
                                     setSelectAccount(() => account);
                                     setTriggerEditAccount(() => true);
                                     document.body.style.overflow = "hidden";
                                   }}
-                                  className="text-3xl  text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                                  className="text-2xl text-blue-600 transition duration-100 hover:text-blue-800"
                                 >
-                                  <BiSolidMessageSquareEdit />
+                                  <FiEdit />
                                 </button>
 
                                 <button
@@ -341,9 +367,9 @@ function Index({ user }: { user: User }) {
                                       email: account.email,
                                     })
                                   }
-                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                                  className="text-2xl text-red-600 transition duration-100 hover:text-red-800"
                                 >
-                                  <MdDelete />
+                                  <FiTrash2 />
                                 </button>
                               </div>
                             </td>
@@ -353,16 +379,21 @@ function Index({ user }: { user: User }) {
                 </tbody>
               </table>
             </div>
-            <Pagination
-              onChange={(e, page) => setPage(page)}
-              count={accounts?.data?.totalPages}
-              color="primary"
-            />
+            <div className="mt-5 flex justify-center">
+              <Pagination
+                onChange={(e, page) => setPage(page)}
+                count={accounts?.data?.totalPages}
+                color="primary"
+              />
+            </div>
           </section>
         )}
-        <PartnerTable accounts={accounts} user={user} />
-
-        <AnnoucementTable />
+        <div className="mt-10 w-full max-w-7xl">
+          <PartnerTable accounts={accounts} user={user} />
+        </div>
+        <div className="mt-10 w-full max-w-7xl">
+          <AnnoucementTable />
+        </div>
       </main>
     </DashboardLayout>
   );

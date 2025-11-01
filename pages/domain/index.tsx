@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
+import { MdSettings } from "react-icons/md";
 import ListDomain from "../../components/domain/listDomain";
 import DomainCreate from "../../components/forms/domains/domainCreate";
 import DomainUpdate from "../../components/forms/domains/domainUpdate";
@@ -203,11 +204,11 @@ function Index({ user }: { user: User }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className=" h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12 ">
-            <table className="w-max min-w-full border-collapse ">
-              <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-                <tr className="sticky top-0 z-40 bg-white ">
-                  <td className=" px-5">Domain Name</td>
+          <div className="h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12">
+            <table className="w-max min-w-full border-collapse">
+              <thead className="h-14 border-b-2 border-black font-bold text-blue-700 drop-shadow-md">
+                <tr className="sticky top-0 z-40 bg-white">
+                  <td className="px-5">Domain Name</td>
                   <td className="">Updated At</td>
                   <td>Site Status</td>
                   <td>Verify On Google</td>
@@ -216,7 +217,10 @@ function Index({ user }: { user: User }) {
                   <td>Nameserver</td>
                   <td>Partners</td>
                   <td>Landing Pages</td>
-                  <td>Options</td>
+                  <td className="flex items-center gap-2">
+                    <MdSettings />
+                    Options
+                  </td>
                 </tr>
               </thead>
               <tbody className="">

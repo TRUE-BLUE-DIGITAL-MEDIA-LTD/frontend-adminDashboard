@@ -18,6 +18,19 @@ import VerifyDomain from "./verifyDomain";
 import { MdDelete, MdViewTimeline } from "react-icons/md";
 import Link from "next/link";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
+import {
+  MdContentCopy,
+  MdDns,
+  MdDomainVerification,
+  MdEdit,
+  MdLanguage,
+  MdNightsStay,
+  MdPeople,
+  MdPublic,
+  MdSettings,
+  MdShare,
+} from "react-icons/md";
+import { SiGooglemaps } from "react-icons/si";
 import Swal from "sweetalert2";
 import { useUpdateSitemap, useVerifyDomain } from "../../react-query";
 
@@ -121,48 +134,56 @@ function ListDomain({
   };
 
   return (
-    <tr className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200">
+    <tr className="h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200">
       <td className="px-2">
         {domains.isFetching ? (
           <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
         ) : (
-          list?.name
+          <div className="flex items-center gap-2">
+            <MdLanguage />
+            {list?.name}
+          </div>
         )}
       </td>
-      <td className=" px-2">
+      <td className="px-2">
         {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
       </td>
-
       <td className="px-2">
         {list.siteBuild?.deploy_state === "ready" ? (
-          <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+            <MdPublic />
             READY
           </div>
         ) : list.siteBuild?.deploy_state === "building" ? (
-          <div className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase  text-yellow-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase text-yellow-800">
+            <MdSettings />
             Building
           </div>
         ) : list.siteBuild?.deploy_state === "error" ? (
-          <div className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase  text-red-800">
+          <div className="flex w-max items-center gap-2 rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800">
+            <MdPublic />
             Error
           </div>
         ) : list.siteBuild?.deploy_state === "enqueued" ? (
-          <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
+            <MdNightsStay />
             Enqueued
           </div>
         ) : list.siteBuild?.deploy_state === "new" ? (
-          <div className=" w-max animate-pulse rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase  text-orange-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
+            <MdNightsStay />
             In Queue
           </div>
         ) : (
-          <div className=" w-max rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase  text-gray-800">
+          <div className="flex w-max items-center gap-2 rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase text-gray-800">
+            <MdPublic />
             Unknow Status
           </div>
         )}
       </td>
       <td className="px-2">
         {list.google_domain_id ? (
-          <div className=" flex w-full items-center justify-center rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+          <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
             <FaCheckCircle />
             Verify
           </div>
@@ -179,16 +200,17 @@ function ListDomain({
                 Swal.fire("error!", error.message?.toString(), "error");
               }
             }}
-            className="w-full rounded-lg bg-gray-300 px-1 text-center
-                             font-extrabold uppercase text-gray-800  active:scale-105"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase text-gray-800 active:scale-105"
           >
+            <MdDomainVerification />
             {verifyGoogle.isPending ? "Verifying..." : "Not Verify"}
           </button>
         )}
       </td>
       <td className="px-2">
         {list.sitemap_status === "COMPLETED" ? (
-          <div className=" w-max rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase  text-green-800">
+          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+            <SiGooglemaps />
             COMPLETED
           </div>
         ) : list.sitemap_status === "PEDDING" ? (
@@ -204,13 +226,15 @@ function ListDomain({
                 Swal.fire("error!", error.message?.toString(), "error");
               }
             }}
-            className=" w-max animate-pulse rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase text-yellow-800  active:scale-105"
+            className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase text-yellow-800 active:scale-105"
           >
+            <SiGooglemaps />
             {summitSitemap.isPending ? "PEDDING" : "PRESS TO SUMMIT"}
           </button>
         ) : (
           list.sitemap_status === "NOT_FOUND" && (
-            <button className=" w-max rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800  active:scale-105">
+            <button className="flex w-max items-center gap-2 rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800 active:scale-105">
+              <SiGooglemaps />
               NOT FOUND
             </button>
           )
@@ -227,32 +251,33 @@ function ListDomain({
               domain: list.name,
             })
           }
-          className=" flex w-max items-center justify-center rounded-lg
-                            bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 
-                              hover:scale-105"
+          className="flex w-max items-center justify-center gap-2 rounded-lg bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 hover:scale-105"
         >
-          {" "}
-          <MdViewTimeline />
+          <MdDns />
           View
         </button>
       </td>
-      <td className="px-2 ">
+      <td className="px-2">
         <div className="flex max-w-40 flex-wrap">
           {list.partner ? (
-            <div className="rounded-md  px-2 py-1 text-xs text-gray-500">
-              <div className="w-40 truncate">NAME: {list.partner.name}</div>
-              <div className="w-40 truncate">
-                PARTNER ID: {list.partner.affiliateId}
+            <div className="flex items-center gap-2 rounded-md px-2 py-1 text-xs text-gray-500">
+              <MdPeople />
+              <div>
+                <div className="w-40 truncate">NAME: {list.partner.name}</div>
+                <div className="w-40 truncate">
+                  PARTNER ID: {list.partner.affiliateId}
+                </div>
               </div>
             </div>
           ) : (
-            <div className="rounded-md bg-red-200 px-2 py-1 text-red-500">
+            <div className="flex items-center gap-2 rounded-md bg-red-200 px-2 py-1 text-red-500">
+              <MdPeople />
               <span>No Partner</span>
             </div>
           )}
         </div>
       </td>
-      <td className="px-2 ">
+      <td className="px-2">
         <div className="flex flex-col gap-2">
           {list.landingPages.length > 0 ? (
             list.landingPages.map((landingPage, index) => {
@@ -261,23 +286,24 @@ function ListDomain({
                   target="_blank"
                   href={`/landingpage/${landingPage.id}`}
                   key={landingPage.id}
-                  className="flex max-w-36 items-start  truncate rounded-md
-                                     px-2 py-1 text-start text-xs text-gray-500 underline"
+                  className="flex max-w-36 items-start truncate rounded-md px-2 py-1 text-start text-xs text-gray-500 underline"
                 >
-                  <div className="w-40 truncate">
+                  <div className="flex w-40 items-center gap-2 truncate">
+                    <MdContentCopy />
                     Title: {landingPage.title}
                   </div>
                 </Link>
               );
             })
           ) : (
-            <div className="rounded-md bg-red-200 px-2 py-1 text-red-500">
+            <div className="flex items-center gap-2 rounded-md bg-red-200 px-2 py-1 text-red-500">
+              <MdContentCopy />
               <span>No Landing Page</span>
             </div>
           )}
         </div>
       </td>
-      <td className="flex h-14 w-20 gap-2">
+      <td className="flex h-14 w-20 items-center gap-2">
         <button
           onClick={() => {
             setTriggerUpdateDomain(() => true);
@@ -286,9 +312,8 @@ function ListDomain({
           }}
           className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
         >
-          <BiSolidMessageSquareEdit />
+          <MdEdit />
         </button>
-
         {user.role === "admin" && (
           <button
             onClick={() =>
