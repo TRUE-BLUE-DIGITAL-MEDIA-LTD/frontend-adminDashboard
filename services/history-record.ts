@@ -7,20 +7,19 @@ export type ResponseGetHistoryRecordService = Pagination<
 > & {
   total_active_simcards: number;
 };
-type InputGetHistoryRecordService = {
+export type RequestGetHistoryRecordService = {
   page: number;
   limit: number;
   filter: {
-    action?: string;
+    actions?: string[];
     data?: string;
-    userId?: string;
+    userIds?: string[];
     startDate?: string;
     endDate?: string;
-    check_usage: "normal" | "oxy_sms";
   };
 };
 export async function GetHistoryRecordService(
-  input: InputGetHistoryRecordService,
+  input: RequestGetHistoryRecordService,
 ): Promise<ResponseGetHistoryRecordService> {
   try {
     const cookies = parseCookies();

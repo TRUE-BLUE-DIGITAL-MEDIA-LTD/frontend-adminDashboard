@@ -1,4 +1,4 @@
-import { Pagination } from "@mui/material";
+import { Box, Button, Pagination, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -7,12 +7,14 @@ import Image from "next/image";
 import { parseCookies } from "nookies";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 import { Nullable } from "primereact/ts-helpers";
-import { ReactNode, useEffect, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { BiCategoryAlt, BiImages } from "react-icons/bi";
 import { BsDeviceSsdFill } from "react-icons/bs";
 import { FaSms, FaUserFriends } from "react-icons/fa";
+
 import {
   FaListCheck,
   FaMoneyBillTrendUp,
@@ -31,8 +33,6 @@ import {
   MdOutlineMoneyOff,
   MdSimCard,
 } from "react-icons/md";
-import SpinLoading from "../components/loadings/spinLoading";
-import SummaryUsageSimcard from "../components/simCard/SummaryUsageSimcard";
 import DashboardLayout from "../layouts/dashboardLayout";
 import { HistoryRecord, Partner, User } from "../models";
 import { useGetHistories } from "../react-query/account-history";
@@ -65,11 +65,22 @@ const actionsWithIcons = [
   { title: "image-library", icon: <BiImages /> },
 ] as const;
 
+const timePeriods = [
+  "Last 30 Days",
+  "Today",
+  "Yesterday",
+  "This Month",
+  "Last Month",
+  "Custom Range",
+] as const;
 type ActionListKey = (typeof actionsWithIcons)[number]["title"];
+type TimePeriod = (typeof timePeriods)[number];
 
 type ActionMethodKey = "create" | "update" | "delete" | "get";
 function Index({ user }: { user: User }) {
   const [page, setPage] = useState<number>(1);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>("Today");
+
   const [dateStart, setDateStart] = useState<{
     actual?: Nullable<Date | null>;
     delay?: Nullable<Date | null>;
@@ -78,23 +89,18 @@ function Index({ user }: { user: User }) {
     actual?: Nullable<Date | null>;
     delay?: Nullable<Date | null>;
   }>();
-
-  const [selectUser, setSelectUser] = useState<User>();
+  const [jumpToPageInput, setJumpToPageInput] = useState("");
+  const [selectUsers, setSelectUsers] = useState<User[]>([]);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [historyRecords, setHistoryRecords] = useState<
     (HistoryRecord & { user: User })[]
   >([]);
   const [filter, setFilter] = useState<{
-    action?: { title: ActionListKey; icon: IconType };
+    actions?: { title: ActionListKey; icon: IconType }[];
     data?: string;
     startDate?: string;
     endDate?: string;
-    sms_oxy?: boolean;
-  }>({
-    action: undefined,
-    data: "",
-    sms_oxy: false,
-  });
+  }>();
   const account = useQuery({
     queryKey: ["account", { page: 1, limit: 100 }],
     queryFn: () => GetAllAccountByPageService({ page: 1, limit: 100 }),
@@ -105,40 +111,19 @@ function Index({ user }: { user: User }) {
     page,
     limit: 100,
     filter: {
-      action: filter.action?.title,
-      data: filter.data,
-      startDate: dateStart?.actual,
-      endDate: dateEnd?.actual,
-      userId: selectUser?.id,
-      sms_oxy: filter.sms_oxy ?? false,
+      ...(filter?.actions &&
+        filter.actions.length > 0 && {
+          actions: filter?.actions?.map((action) => action.title),
+        }),
+      data: filter?.data,
+      startDate: dateStart?.actual?.toISOString(),
+      endDate: dateEnd?.actual?.toISOString(),
+      ...(selectUsers &&
+        selectUsers.length > 0 && {
+          userIds: selectUsers.map((u) => u.id),
+        }),
     },
   });
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      setDateStart((prev) => {
-        return {
-          ...prev,
-          actual: prev?.delay,
-        };
-      });
-    }, 2000);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [dateStart]);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      setDateEnd((prev) => {
-        return {
-          ...prev,
-          actual: prev?.delay,
-        };
-      });
-    }, 2000);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [dateEnd]);
 
   useEffect(() => {
     if (history.data) {
@@ -146,6 +131,65 @@ function Index({ user }: { user: User }) {
       setHistoryRecords(() => history.data?.data);
     }
   }, [history.data]);
+
+  const hanldeDateChanging = (newTimePeriod: TimePeriod) => {
+    const now = new Date();
+    let startDate: Nullable<Date> = new Date();
+    let endDate: Nullable<Date> = new Date();
+
+    switch (newTimePeriod) {
+      case "Today":
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "Yesterday":
+        startDate.setDate(now.getDate() - 1);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setDate(now.getDate() - 1);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "Last 30 Days":
+        startDate.setDate(now.getDate() - 30);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "This Month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "Last Month":
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(now.getFullYear(), now.getMonth(), 0); // Day 0 of current month
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "Custom Range":
+      default:
+        // Let user pick, don't change dates
+        return;
+    }
+    // Set both 'actual' and 'delay' to update query and UI
+    setDateStart({ actual: startDate, delay: startDate });
+    setDateEnd({ actual: endDate, delay: endDate });
+  };
+
+  useEffect(() => {
+    hanldeDateChanging("Today");
+    setSelectUsers(() => [user]);
+  }, []);
+
+  // ✅ 2. Create the handler function for form submission
+  const handleJumpToPage = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents the browser from reloading the page
+    const targetPage = parseInt(jumpToPageInput, 10);
+
+    // Validate the input
+    if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPage) {
+      setPage(targetPage); // Set the new page
+      setJumpToPageInput(""); // Clear the input field
+    }
+  };
 
   return (
     <>
@@ -159,117 +203,110 @@ function Index({ user }: { user: User }) {
             <h1 className="text-2xl font-semibold">Account History</h1>
           </div>
           <header className="py flex w-full flex-wrap justify-start gap-3 border-t border-gray-200 p-2">
-            {(user.role === "admin" || user.role === "manager") &&
-              filter.sms_oxy === false && (
-                <div className={`flex flex-col`}>
-                  <label className="text-xs ">Select User</label>
-                  <Dropdown
-                    value={selectUser}
-                    onChange={(e) => {
-                      setPage(1);
-                      setSelectUser(() => e.value);
-                    }}
-                    options={account?.data?.accounts}
-                    placeholder="Select User"
-                    valueTemplate={(
-                      option: User & {
-                        partner: Partner | null;
-                      },
-                    ) => {
-                      if (!option) return <>No user select</>;
-                      return (
+            {(user.role === "admin" || user.role === "manager") && (
+              <div className={`flex flex-col`}>
+                <label className="text-xs ">Select Users</label>
+                <MultiSelect
+                  value={selectUsers}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSelectUsers(() => e.value);
+                  }}
+                  options={account?.data?.accounts}
+                  placeholder="Select User"
+                  optionLabel="name"
+                  loading={account.isLoading}
+                  itemTemplate={(
+                    option: User & {
+                      partner: Partner | null;
+                    },
+                  ) => (
+                    <section className="flex items-center gap-2">
+                      <div className="relative h-10 w-10 rounded-lg ">
+                        <Image
+                          src={option.image}
+                          layout="fill"
+                          alt="user image"
+                          objectFit="cover"
+                          className="rounded-lg"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
                         <span className="font-semibold leading-none">
                           {option.name}
                         </span>
-                      );
-                    }}
-                    showClear
-                    loading={account.isLoading}
-                    itemTemplate={(
-                      option: User & {
-                        partner: Partner | null;
-                      },
-                    ) => (
-                      <section className="flex items-center gap-2">
-                        <div className="relative h-10 w-10 rounded-lg ">
-                          <Image
-                            src={option.image}
-                            layout="fill"
-                            alt="user image"
-                            objectFit="cover"
-                            className="rounded-lg"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="font-semibold leading-none">
-                            {option.name}
-                          </span>
-                          <span className="text-xs">{option.email}</span>
-                        </div>
-                      </section>
-                    )}
-                    className={`h-10 w-72 rounded  border border-gray-400 text-gray-800 `}
-                  />
-                </div>
-              )}
-
-            {filter.sms_oxy === false && (
-              <div className="flex flex-col">
-                <label className="text-xs ">Select Action</label>
-                <Dropdown
-                  value={filter.action}
-                  onChange={(e) => {
-                    setPage(1);
-                    setFilter((prev) => {
-                      return { ...prev, action: e.value };
-                    });
-                  }}
-                  optionLabel="title"
-                  options={actionsWithIcons as any}
-                  placeholder="Select Action"
-                  valueTemplate={(option: {
-                    title: string;
-                    icon: ReactNode;
-                  }) => (
-                    <div className="flex items-center gap-2">
-                      {option?.icon}
-                      <span>{option?.title}</span>
-                    </div>
+                        <span className="text-xs">{option.email}</span>
+                      </div>
+                    </section>
                   )}
-                  showClear
-                  itemTemplate={(option: {
-                    title: string;
-                    icon: ReactNode;
-                  }) => (
-                    <div className="flex items-center gap-2">
-                      {option.icon}
-                      <span>{option.title}</span>
-                    </div>
-                  )}
-                  className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+                  className={`h-10 w-72 rounded  border border-gray-400 text-gray-800 `}
                 />
               </div>
             )}
-            {filter.sms_oxy === false && (
-              <label className="flex flex-col">
-                <span className="text-xs">Seach Description</span>
-                <div className="relative  flex flex-col">
-                  <input
-                    value={filter.data}
-                    onChange={(e) => {
-                      setPage(1);
-                      setFilter((prev) => {
-                        return { ...prev, data: e.target.value };
-                      });
-                    }}
-                    type="text"
-                    placeholder="Search Description"
-                    className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-gray-800 outline-none  focus:ring-2 active:ring-2"
-                  />
-                  <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-                </div>
+
+            <div className="flex flex-col">
+              <label className="text-xs ">Select Action</label>
+              <MultiSelect
+                value={filter?.actions}
+                onChange={(e) => {
+                  setPage(1);
+                  setFilter((prev) => {
+                    return { ...prev, actions: e.value };
+                  });
+                }}
+                optionLabel="title"
+                options={actionsWithIcons as any}
+                placeholder="Select Action"
+                showClear
+                itemTemplate={(option: { title: string; icon: ReactNode }) => (
+                  <div className="flex items-center gap-2">
+                    {option.icon}
+                    <span>{option.title}</span>
+                  </div>
+                )}
+                className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+              />
+            </div>
+
+            <label className="flex flex-col">
+              <span className="text-xs">Seach Description</span>
+              <div className="relative  flex flex-col">
+                <input
+                  value={filter?.data}
+                  onChange={(e) => {
+                    setPage(1);
+                    setFilter((prev) => {
+                      return { ...prev, data: e.target.value };
+                    });
+                  }}
+                  type="text"
+                  placeholder="Search Description"
+                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-gray-800 outline-none  focus:ring-2 active:ring-2"
+                />
+                <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+              </div>
+            </label>
+            <div className="flex flex-col">
+              <label htmlFor="time-period" className=" text-xs ">
+                Time Period
               </label>
-            )}
+              <select
+                id="time-period"
+                value={timePeriod}
+                onChange={(e) => {
+                  const newTimePeriod = e.target.value as TimePeriod;
+                  setTimePeriod(newTimePeriod);
+                  hanldeDateChanging(newTimePeriod);
+                }}
+                className="h-10 w-32 rounded  border border-gray-400 text-gray-800 "
+              >
+                {timePeriods.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+            </div>
             <label className="flex flex-col">
               <span className="text-xs">Pick Time Start</span>
               <Calendar
@@ -277,12 +314,23 @@ function Index({ user }: { user: User }) {
                 value={dateStart?.delay}
                 showTime
                 hourFormat="24"
-                onChange={(e) =>
+                onChange={(e) => {
                   setDateStart((prev) => ({
                     ...prev,
                     delay: e.value,
-                  }))
-                }
+                  }));
+
+                  const delayDebounceFn = setTimeout(async () => {
+                    setDateStart((prev) => {
+                      return {
+                        ...prev,
+                        actual: prev?.delay,
+                      };
+                    });
+                  }, 2000);
+
+                  return () => clearTimeout(delayDebounceFn);
+                }}
                 readOnlyInput
                 hideOnRangeSelection
                 showButtonBar
@@ -301,6 +349,16 @@ function Index({ user }: { user: User }) {
                     ...prev,
                     delay: e.value,
                   }));
+                  const delayDebounceFn = setTimeout(async () => {
+                    setDateEnd((prev) => {
+                      return {
+                        ...prev,
+                        actual: prev?.delay,
+                      };
+                    });
+                  }, 2000);
+
+                  return clearTimeout(delayDebounceFn);
                 }}
                 readOnlyInput
                 hideOnRangeSelection
@@ -308,221 +366,181 @@ function Index({ user }: { user: User }) {
                 showIcon
               />
             </label>
-            <label className="flex  w-72 items-center justify-center  gap-2 rounded-md border border-gray-400  px-2">
-              <span className="text-xs">Check Oxy SMS usage</span>
-              {account.isLoading ? (
-                <SpinLoading />
-              ) : (
-                <input
-                  checked={filter.sms_oxy}
-                  onChange={(e) => {
-                    setFilter((prev) => {
-                      if (e.target.checked === true) {
-                        setSelectUser(() => account.data?.accounts[0]);
-                        const startDate = new Date();
-                        const endDate = new Date();
-                        startDate.setHours(0, 0, 0, 0);
-                        endDate.setHours(23, 59, 59, 999);
-                        setDateStart((prev) => ({
-                          actual: startDate,
-                          delay: startDate,
-                        }));
-                        setDateEnd((prev) => ({
-                          actual: endDate,
-                          delay: endDate,
-                        }));
-                        return {
-                          ...prev,
-                          data: "Active simcard: ",
-                          action: {
-                            title: "simcard",
-                            icon: (<MdSimCard />) as unknown as IconType,
-                          },
-                          sms_oxy: e.target.checked,
-                        };
-                      } else {
-                        return {
-                          ...prev,
-                          sms_oxy: e.target.checked,
-                        };
-                      }
-                    });
-                  }}
-                  className="h-10 w-5"
-                  type="checkbox"
-                />
-              )}
-            </label>
           </header>
-          {filter.sms_oxy === true ? (
-            <SummaryUsageSimcard
-              user={user}
-              filter={{
-                page,
-                limit: 100,
-                filter: {
-                  action: filter.action?.title,
-                  data: filter.data,
-                  startDate: dateStart?.actual,
-                  endDate: dateEnd?.actual,
-                  userId: undefined,
-                  sms_oxy: filter.sms_oxy ?? false,
-                },
-              }}
-            />
-          ) : (
-            <>
-              <div
-                className="  min-h-60 w-full justify-center overflow-auto
+
+          <>
+            <div
+              className="  min-h-60 w-full justify-center overflow-auto
            rounded-lg border border-gray-200  "
-              >
-                <table className="w-max min-w-full border-collapse ">
-                  <thead className="">
-                    <tr className="sticky top-0 z-20 h-10 bg-gray-300 font-semibold">
-                      <td className="pl-5">Account</td>
-                      <td>Create At</td>
-                      <td>Action</td>
-                      <td>Description</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {history.isLoading
-                      ? [...Array(10)].map((list, index) => {
-                          const randomShade = getRandomSlateShade();
-                          return (
-                            <tr
-                              key={index}
-                              className="h-14 border-b border-gray-200 hover:bg-gray-100"
-                            >
-                              <td
-                                className="animate-pulse"
-                                style={getSlateColorStyle(randomShade)}
-                              ></td>
-                              <td
-                                className="animate-pulse"
-                                style={getSlateColorStyle(randomShade)}
-                              ></td>
-                              <td
-                                className="animate-pulse"
-                                style={getSlateColorStyle(randomShade)}
-                              ></td>
-                              <td
-                                className="animate-pulse"
-                                style={getSlateColorStyle(randomShade)}
-                              ></td>
-                            </tr>
-                          );
-                        })
-                      : historyRecords.map((record, index) => {
-                          const action: ActionListKey = record.action.split(
-                            ".",
-                          )[0] as ActionListKey;
+            >
+              <table className="w-max min-w-full border-collapse ">
+                <thead className="">
+                  <tr className="sticky top-0 z-20 h-10 bg-gray-300 font-semibold">
+                    <td className="pl-5">Account</td>
+                    <td>Create At</td>
+                    <td>Action</td>
+                    <td>Description</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.isLoading
+                    ? [...Array(10)].map((list, index) => {
+                        const randomShade = getRandomSlateShade();
+                        return (
+                          <tr
+                            key={index}
+                            className="h-14 border-b border-gray-200 hover:bg-gray-100"
+                          >
+                            <td
+                              className="animate-pulse"
+                              style={getSlateColorStyle(randomShade)}
+                            ></td>
+                            <td
+                              className="animate-pulse"
+                              style={getSlateColorStyle(randomShade)}
+                            ></td>
+                            <td
+                              className="animate-pulse"
+                              style={getSlateColorStyle(randomShade)}
+                            ></td>
+                            <td
+                              className="animate-pulse"
+                              style={getSlateColorStyle(randomShade)}
+                            ></td>
+                          </tr>
+                        );
+                      })
+                    : historyRecords.map((record, index) => {
+                        const action: ActionListKey = record.action.split(
+                          ".",
+                        )[0] as ActionListKey;
 
-                          const method: ActionMethodKey = record.action.split(
-                            ".",
-                          )[1] as ActionMethodKey;
+                        const method: ActionMethodKey = record.action.split(
+                          ".",
+                        )[1] as ActionMethodKey;
 
-                          let icon: ReactNode = <FaUser />;
-                          if (action === "user") {
-                            icon = <FaUser />;
-                          } else if (action === "partner") {
-                            icon = <FaUserFriends />;
-                          } else if (action === "bonus-rate") {
-                            icon = <FaMoneyBillTrendUp />;
-                          } else if (action === "responsibility-on-partner") {
-                            icon = <MdDomain />;
-                          } else if (action === "category") {
-                            icon = <BiCategoryAlt />;
-                          } else if (action === "category-on-partner") {
-                            icon = <FaListCheck />;
-                          } else if (action === "deduction-on-payslip") {
-                            icon = <MdOutlineMoneyOff />;
-                          } else if (action === "device-user") {
-                            icon = <BsDeviceSsdFill />;
-                          } else if (action === "domain") {
-                            icon = <GrDomain />;
-                          } else if (action === "email") {
-                            icon = <MdEmail />;
-                          } else if (action === "image-library") {
-                            icon = <BiImages />;
-                          } else if (action === "landing-page") {
-                            icon = <FaPager />;
-                          } else if (action === "message-on-simcard") {
-                            icon = <FcSms />;
-                          } else if (action === "payslip") {
-                            icon = <GiPayMoney />;
-                          } else if (action === "simcard") {
-                            icon = <MdSimCard />;
-                          } else if (action === "simcard-on-partner") {
-                            icon = <MdOutlineConnectWithoutContact />;
-                          } else if (action === "tag-on-simcard") {
-                            icon = <FaTags />;
-                          }
-                          return (
-                            <tr
-                              key={index}
-                              className="h-14 border-b border-gray-200 hover:bg-gray-100"
-                            >
-                              <td className="pl-5">
-                                <section className="flex items-center gap-2">
-                                  <span>{index + 1}</span>
-                                  <div className="relative h-10 w-10 rounded-lg ">
-                                    <Image
-                                      src={record.user.image}
-                                      layout="fill"
-                                      alt="user image"
-                                      objectFit="cover"
-                                      className="rounded-lg"
-                                    />
-                                  </div>
-                                  <div className="flex flex-col gap-1">
-                                    <span className="font-semibold leading-none">
-                                      {record.user.name}
-                                    </span>
-                                    <span className="text-xs text-gray-500">
-                                      {record.user.email}
-                                    </span>
-                                  </div>
-                                </section>
-                              </td>
-                              <td>
+                        let icon: ReactNode = <FaUser />;
+                        if (action === "user") {
+                          icon = <FaUser />;
+                        } else if (action === "partner") {
+                          icon = <FaUserFriends />;
+                        } else if (action === "bonus-rate") {
+                          icon = <FaMoneyBillTrendUp />;
+                        } else if (action === "responsibility-on-partner") {
+                          icon = <MdDomain />;
+                        } else if (action === "category") {
+                          icon = <BiCategoryAlt />;
+                        } else if (action === "category-on-partner") {
+                          icon = <FaListCheck />;
+                        } else if (action === "deduction-on-payslip") {
+                          icon = <MdOutlineMoneyOff />;
+                        } else if (action === "device-user") {
+                          icon = <BsDeviceSsdFill />;
+                        } else if (action === "domain") {
+                          icon = <GrDomain />;
+                        } else if (action === "email") {
+                          icon = <MdEmail />;
+                        } else if (action === "image-library") {
+                          icon = <BiImages />;
+                        } else if (action === "landing-page") {
+                          icon = <FaPager />;
+                        } else if (action === "message-on-simcard") {
+                          icon = <FcSms />;
+                        } else if (action === "payslip") {
+                          icon = <GiPayMoney />;
+                        } else if (action === "simcard") {
+                          icon = <MdSimCard />;
+                        } else if (action === "simcard-on-partner") {
+                          icon = <MdOutlineConnectWithoutContact />;
+                        } else if (action === "tag-on-simcard") {
+                          icon = <FaTags />;
+                        }
+                        return (
+                          <tr
+                            key={index}
+                            className="h-14 border-b border-gray-200 hover:bg-gray-100"
+                          >
+                            <td className="pl-5">
+                              <section className="flex items-center gap-2">
+                                <span>{index + 1}</span>
+                                <div className="relative h-10 w-10 rounded-lg ">
+                                  <Image
+                                    src={record.user.image}
+                                    layout="fill"
+                                    alt="user image"
+                                    objectFit="cover"
+                                    className="rounded-lg"
+                                  />
+                                </div>
                                 <div className="flex flex-col gap-1">
                                   <span className="font-semibold leading-none">
-                                    {moment(record.createAt).format(
-                                      "DD MMMM YYYY",
-                                    )}
+                                    {record.user.name}
                                   </span>
                                   <span className="text-xs text-gray-500">
-                                    At {moment(record.createAt).format("HH:mm")}
+                                    {record.user.email}
                                   </span>
                                 </div>
-                              </td>
-                              <td>
-                                <section
-                                  className={`flex items-center gap-2
+                              </section>
+                            </td>
+                            <td>
+                              <div className="flex flex-col gap-1">
+                                <span className="font-semibold leading-none">
+                                  {moment(record.createAt).format(
+                                    "DD MMMM YYYY",
+                                  )}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  At {moment(record.createAt).format("HH:mm")}
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <section
+                                className={`flex items-center gap-2
                             ${method === "create" ? "text-green-800" : method === "get" ? "text-blue-800" : method === "update" ? "text-yellow-600" : "text-red-800"} 
                             `}
-                                >
-                                  {icon} <span>{record.action}</span>
-                                </section>
-                              </td>
-                              <td className="max-w-40 text-wrap break-words p-2 text-sm">
-                                {record.data}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                  </tbody>
-                </table>
-              </div>
+                              >
+                                {icon} <span>{record.action}</span>
+                              </section>
+                            </td>
+                            <td className="max-w-40 text-wrap break-words p-2 text-sm">
+                              {record.data}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                </tbody>
+              </table>
+            </div>
+            <Box className="mt-5 flex w-full flex-col items-center justify-center gap-4 md:flex-row">
               <Pagination
-                onChange={(e, page) => setPage(page)}
+                onChange={(e, newPage) => setPage(newPage)}
                 page={page}
                 count={totalPage}
                 color="primary"
+                showFirstButton
+                showLastButton
               />
-            </>
-          )}
+              <Box
+                component="form"
+                onSubmit={handleJumpToPage}
+                className="flex items-center gap-2"
+              >
+                <TextField
+                  label="Page"
+                  type="number"
+                  size="small"
+                  variant="outlined"
+                  value={jumpToPageInput}
+                  onChange={(e) => setJumpToPageInput(e.target.value)}
+                  sx={{ width: "100px" }}
+                />
+                <Button type="submit" variant="contained">
+                  Go
+                </Button>
+              </Box>
+            </Box>
+          </>
         </main>
       </DashboardLayout>
     </>
