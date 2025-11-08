@@ -87,8 +87,8 @@ function ParterReport({ user }: { user: User }) {
   >(null);
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
-    const yesterday = moment().subtract(1, "day").format("YYYY-MM-DD");
-    return [moment(yesterday).toDate(), moment(yesterday).toDate()];
+    const today = moment().format("YYYY-MM-DD");
+    return [moment(today).toDate(), moment(today).toDate()];
   });
   const [querySort, setQuerySort] = useState<{
     title: MenuTitle;
