@@ -105,7 +105,6 @@ function ParterReport({ user }: { user: User }) {
   });
 
   const paterPerfomaces = useQuery({
-    refetchInterval: 1000 * 60,
     queryKey: [
       "partnerPerfomaces",
       {

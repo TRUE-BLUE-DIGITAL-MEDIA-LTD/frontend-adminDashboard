@@ -7,7 +7,6 @@ import { User } from "../../models";
 type TbodyForEditorProps = {
   user: User;
   onTriggerConversion: (column: Column[]) => void;
-
   odd: number;
   item: TableEntry;
   partnerPerformanceDayByDay: UseQueryResult<
@@ -53,6 +52,9 @@ function TbodyForEditor({
 }: TbodyForEditorProps) {
   const bonos = partnerPerformanceDayByDay.data?.partner.find(
     (list) => list.id === item.columns[0].id,
+  );
+  const hideAdvertiser = !!item.columns.find(
+    (c) => c.column_type === "advertiser" && c.id === "110",
   );
   return (
     <tr

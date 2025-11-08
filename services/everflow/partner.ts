@@ -29,7 +29,8 @@ export type column_type =
   | "offer"
   | "country"
   | "sub1"
-  | "campaign";
+  | "campaign"
+  | "advertiser";
 
 export interface Reporting {
   imp: number;

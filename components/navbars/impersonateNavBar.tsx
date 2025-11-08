@@ -40,8 +40,7 @@ function ImpersonateNavBar({ impersonateUser }: ImpresonateNavBarProps) {
     }
   };
   return (
-    <div className="flex items-center justify-center gap-2 text-white">
-      <p className="text-lg font-normal">{impersonateUser.data?.email}</p>
+    <div className="flex w-max items-center justify-center gap-2 text-white">
       {impersonateUser.data && (
         <button
           onClick={() =>
@@ -49,7 +48,7 @@ function ImpersonateNavBar({ impersonateUser }: ImpresonateNavBarProps) {
               email: impersonateUser.data?.email as string,
             })
           }
-          className=" rounded-md bg-gray-400 px-3 py-1 font-semibold  
+          className=" w-max rounded-md bg-gray-400 px-3 py-1 font-semibold  
          text-white transition hover:bg-gray-900 active:scale-105"
         >
           Stop Impersonate

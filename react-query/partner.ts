@@ -63,7 +63,6 @@ export function useGetPartnerLeagueTable(
   return useQuery({
     queryKey: ["league-table", input],
     queryFn: () => GetPartnerLeagueTableService(input),
-    refetchInterval: 1000 * 5,
   });
 }
 
@@ -81,7 +80,6 @@ export function useGetConversionPartnerReport(
   return useQuery({
     queryKey: ["conversions", input],
     queryFn: () => GetConversionParterReportService(input),
-    refetchInterval: 1000 * 10,
     placeholderData: keepPreviousData,
   });
 }

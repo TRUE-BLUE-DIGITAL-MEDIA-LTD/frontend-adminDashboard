@@ -73,7 +73,7 @@ function DashboardNavbar({
         <ImpersonateNavBar impersonateUser={impersonateUser} />
       )}
 
-      <ul className="relative flex h-16 w-full items-center justify-end gap-2 pr-2 text-sm font-semibold md:gap-5 lg:gap-10">
+      <ul className="relative flex h-16 w-max items-center justify-end gap-2 pr-2 text-sm font-semibold md:gap-5 lg:gap-10">
         <Link
           href={"/account-billing"}
           className="group flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
