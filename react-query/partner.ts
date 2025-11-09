@@ -9,7 +9,10 @@ import {
 } from "../services/admin/partner";
 import {
   GetConversionParterReportService,
+  GetParterPerformanceByDate,
+  GetPartnerSummaryStatsService,
   ReqeustGetConversionParterReportService,
+  RequestGetParterPerformancesByDate,
 } from "../services/everflow/partner";
 
 const keyPartners = {
@@ -81,5 +84,22 @@ export function useGetConversionPartnerReport(
     queryKey: ["conversions", input],
     queryFn: () => GetConversionParterReportService(input),
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useGetPartnerReportByDate(
+  input: RequestGetParterPerformancesByDate,
+) {
+  return useQuery({
+    queryKey: ["partner-reports", input],
+    queryFn: () => GetParterPerformanceByDate(input),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useGetPartnerSummaryStats() {
+  return useQuery({
+    queryKey: ["partner-summary-stats"],
+    queryFn: () => GetPartnerSummaryStatsService(),
   });
 }

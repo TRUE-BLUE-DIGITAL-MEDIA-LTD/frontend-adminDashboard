@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment";
 import { parseCookies } from "nookies";
 
-type RequestGetParterPerfomacesByDate = {
+export type RequestGetParterPerformancesByDate = {
   startDate: Date;
   endDate: Date;
   columns: ({ column: column_type } | undefined)[]; // columns can be undefined or an array of objects with a column property of column_type or undefined
@@ -66,7 +66,7 @@ export interface Reporting {
 }
 
 export async function GetSummaryParterReportService(
-  input: RequestGetParterPerfomacesByDate,
+  input: RequestGetParterPerformancesByDate,
 ): Promise<Reporting> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
@@ -95,8 +95,8 @@ export async function GetSummaryParterReportService(
   }
 }
 
-export async function GetParterPerfomacesByDate(
-  input: RequestGetParterPerfomacesByDate,
+export async function GetParterPerformanceByDate(
+  input: RequestGetParterPerformancesByDate,
 ): Promise<{
   [key: string]: {
     summary: TableEntry;
@@ -130,7 +130,7 @@ export async function GetParterPerfomacesByDate(
 }
 
 export async function GetParterPerfomacesByDayByDayService(
-  input: RequestGetParterPerfomacesByDate,
+  input: RequestGetParterPerformancesByDate,
 ): Promise<ResponseGetParterPerfomacesByDate[]> {
   try {
     if (isNaN(input.startDate.getTime()) || isNaN(input.endDate.getTime())) {
@@ -340,6 +340,33 @@ export async function GetConversionParterReportService(
       method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/conversions`,
       data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return summary.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export interface ResponseGetPartnerSummaryStatsService {
+  today: Reporting;
+  yesterday: Reporting;
+  thisMonth: Reporting;
+  last30Days: Reporting;
+  lastMonth: Reporting;
+}
+
+export async function GetPartnerSummaryStatsService(): Promise<ResponseGetPartnerSummaryStatsService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const summary = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/summary-stats`,
       headers: {
         Authorization: "Bearer " + access_token,
       },

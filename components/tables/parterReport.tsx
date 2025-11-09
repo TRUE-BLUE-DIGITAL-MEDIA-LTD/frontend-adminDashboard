@@ -6,8 +6,8 @@ import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import {
   Column,
-  GetParterPerfomacesByDate,
   GetParterPerfomacesByDayByDayService,
+  GetParterPerformanceByDate,
   GetSummaryParterReportService,
   TableEntry,
   column_type,
@@ -25,6 +25,7 @@ import { GetBonusRateByUserIdService } from "../../services/bonus";
 import { bonusRateDefault } from "../../data/bonusRate";
 import PopupLayout from "../../layouts/PopupLayout";
 import Conversion from "./Conversion";
+import PartnerSummaryStats from "./PartnerSummaryStats";
 
 const menuTables = [
   { title: "Network Affiliate ID", sort: "up", admin: false },
@@ -116,7 +117,7 @@ function ParterReport({ user }: { user: User }) {
       },
     ],
     queryFn: () =>
-      GetParterPerfomacesByDate({
+      GetParterPerformanceByDate({
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
         columns: [
@@ -264,6 +265,7 @@ function ParterReport({ user }: { user: User }) {
 
   return (
     <>
+      {user.role !== "admin" && <PartnerSummaryStats user={user} />}
       {targetConversionColumns && dates && dates.length === 2 && (
         <PopupLayout onClose={() => setTargetConversionColumns(null)}>
           <Conversion
@@ -273,7 +275,7 @@ function ParterReport({ user }: { user: User }) {
           />
         </PopupLayout>
       )}
-      <div className="flex w-full flex-col items-center gap-5 py-10 pt-20">
+      <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
         {user.role === "manager" && (
           <BonusCaluator
             bonusRate={bonusRate.data ?? bonusRateDefault}
