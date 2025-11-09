@@ -85,15 +85,15 @@ function PartnerSummaryStats({ user }: Props) {
         />
 
         <StatCard
-          title="Revenue"
-          mainStatValue={formatCurrency(stats.thisMonth.revenue)}
+          title="Payout"
+          mainStatValue={formatCurrency(stats.thisMonth.payout)}
           percentChange={getPercentChange(
-            stats.thisMonth.revenue,
-            stats.lastMonth.revenue,
+            stats.thisMonth.payout,
+            stats.lastMonth.payout,
           )}
-          todayValue={formatCurrency(stats.today.revenue)}
-          yesterdayValue={formatCurrency(stats.yesterday.revenue)}
-          lastMonthValue={formatCurrency(stats.lastMonth.revenue)}
+          todayValue={formatCurrency(stats.today.payout)}
+          yesterdayValue={formatCurrency(stats.yesterday.payout)}
+          lastMonthValue={formatCurrency(stats.lastMonth.payout)}
         />
 
         <StatCard
