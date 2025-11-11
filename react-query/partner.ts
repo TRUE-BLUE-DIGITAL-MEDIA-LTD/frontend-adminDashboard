@@ -101,5 +101,6 @@ export function useGetPartnerSummaryStats() {
   return useQuery({
     queryKey: ["partner-summary-stats"],
     queryFn: () => GetPartnerSummaryStatsService(),
+    refetchInterval: 1000 * 30,
   });
 }
