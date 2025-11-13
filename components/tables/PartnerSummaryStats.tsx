@@ -98,14 +98,14 @@ function PartnerSummaryStats({ user }: Props) {
 
         <StatCard
           title="Conversions"
-          mainStatValue={formatLargeNumber(stats.thisMonth.total_cv, 0)}
+          mainStatValue={formatLargeNumber(stats.thisMonth.cv, 0)}
           percentChange={getPercentChange(
-            stats.thisMonth.total_cv,
-            stats.lastMonth.total_cv,
+            stats.thisMonth.cv,
+            stats.lastMonth.cv,
           )}
-          todayValue={stats.today.total_cv.toString()}
-          yesterdayValue={stats.yesterday.total_cv.toString()}
-          lastMonthValue={formatLargeNumber(stats.lastMonth.total_cv)}
+          todayValue={stats.today.cv.toString()}
+          yesterdayValue={stats.yesterday.cv.toString()}
+          lastMonthValue={formatLargeNumber(stats.lastMonth.cv)}
         />
 
         <StatCard
