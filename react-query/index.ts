@@ -10,3 +10,4 @@ export * from "./sms-pinverify";
 export * from "./sms-daisy";
 export * from "./oxypoint";
 export * from "./user";
+export * from "./sms-report";

@@ -3,22 +3,67 @@ import { useState } from "react";
 import Countdown from "react-countdown";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { countries } from "../../data/country";
-import { SmsDaisy, SmsDaisyMessage } from "../../models";
+import { ErrorMessages, SmsDaisy, SmsDaisyMessage } from "../../models";
 import { services } from "../../data/services";
+import Swal from "sweetalert2";
+import { useCreateSmsReport } from "../../react-query";
+import { MdReport } from "react-icons/md";
 
 type Props = {
   smsDaisy: SmsDaisy & { messages: SmsDaisyMessage[] };
   onCancel: (smsPvaId: string) => void;
 };
 function ActiceNumber({ smsDaisy, onCancel }: Props) {
+  const report = useCreateSmsReport();
   const [triggerHide, setTriggerHide] = useState(false);
   const country = countries.find((c) => c.sms_daisy === smsDaisy.country);
   const service = services.find((s) => s.sms_daisy === smsDaisy.serviceCode);
+
+  const handleReportSms = async () => {
+    try {
+      const text = await Swal.fire({
+        input: "text",
+        title: "Reporting SMS",
+        inputLabel: "Please describe the issue",
+        inputPlaceholder: "Type your issue here...",
+        showCancelButton: true,
+        inputValidator: (value) => {
+          if (!value) {
+            return "You need to write something!";
+          }
+        },
+      });
+
+      if (text.isConfirmed) {
+        await report.mutateAsync({
+          sms_id: smsDaisy.id,
+          type: "SMSDAISY",
+          issue: text.value || "No issue specified",
+        });
+        Swal.fire({
+          title: "Success",
+          text: "SMS has been reported successfully.",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error ? result.error : "Something went wrong!",
+        text: result.message.toString(),
+        footer: result.statusCode
+          ? "Error code: " + result.statusCode?.toString()
+          : "",
+        icon: "error",
+      });
+    }
+  };
   return (
     <div className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
       {triggerHide === false && (
-        <div className="flex justify-between border-b border-gray-400 pb-2">
-          <div className="flex items-center justify-start gap-2">
+        <div className="flex flex-col  gap-2 ">
+          <div className="flex  items-center justify-start gap-2 border-b border-gray-400 pb-2">
             <div className="relative h-5 w-7 overflow-hidden ">
               <Image
                 src={country?.flag ?? ""}
@@ -31,7 +76,7 @@ function ActiceNumber({ smsDaisy, onCancel }: Props) {
               {country?.countryCode} {smsDaisy.phoneNumber}
             </h3>
           </div>
-          <div className="flex items-center justify-start gap-2">
+          <div className="flex w-full items-center justify-end gap-2">
             <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
               <Countdown
                 date={new Date(smsDaisy.expireAt)}
@@ -54,6 +99,12 @@ function ActiceNumber({ smsDaisy, onCancel }: Props) {
                 className="flex h-8 w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"
               >
                 refund
+              </button>
+              <button
+                onClick={handleReportSms}
+                className="flex h-8 w-max items-center justify-center rounded-sm bg-orange-300 p-1 px-3 text-orange-700"
+              >
+                <MdReport /> report
               </button>
             </div>
           </div>
