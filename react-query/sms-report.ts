@@ -11,7 +11,7 @@ import {
   UpdateSmsReportDto,
 } from "../models/sms-report.model";
 
-export const useSmsReports = (dto: FindAllSmsReportDto) => {
+export const useGetSmsReports = (dto: FindAllSmsReportDto) => {
   return useQuery({
     queryKey: ["sms-reports", dto],
     queryFn: () => findAllSmsReport(dto),

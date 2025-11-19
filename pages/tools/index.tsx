@@ -14,6 +14,7 @@ import { OxyClickTools } from "../../data/menus";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
+import SmsReport from "../../components/sms-report/SmsReport";
 
 // Dynamically import your component with SSR turned off
 const PartnerLeague = dynamic(
@@ -37,6 +38,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "league-table" && <PartnerLeague user={user} />}
         {menu === "sms-pinverify" && <SmsPinverify user={user} />}
         {menu === "sms-daisy" && <SmsDaisy user={user} />}
+        {menu === "sms-report" && <SmsReport />}
       </div>
     </DashboardLayout>
   );

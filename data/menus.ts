@@ -24,6 +24,7 @@ export const menusSidebar = [
     childs: [
       { title: "Performance", params: "partners-performance" },
       { title: "Sales", params: "league-table" },
+      { title: "SMS Report", params: "sms-report" },
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Pool", params: "sms-pool" },
       { title: "Oxy Text", params: "sms-textverified" },

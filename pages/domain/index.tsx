@@ -24,7 +24,7 @@ import { useGetDomainsByPage } from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { GetUser } from "../../services/admin/user";
 
-function Index({ user }: { user: User }) {
+function Index({ user }: { user: User & { partner: Partner } }) {
   const [searchField, setSearchField] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [selectPartner, setSelectPartner] = useState<Partner>();

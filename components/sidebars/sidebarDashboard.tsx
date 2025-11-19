@@ -49,7 +49,6 @@ const SidebarDashboard = forwardRef<HTMLUListElement, { user: User }>(
             <SidbarList
               key={index}
               list={list as MenuSidebar}
-              user={user}
               isSelect={currentMenuIndex === index}
             />
           );
