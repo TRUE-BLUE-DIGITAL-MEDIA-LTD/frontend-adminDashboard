@@ -196,7 +196,7 @@ function SmsReport() {
               lines.push("--- Reports ---");
               reports.slice(0, 5).forEach((r) => {
                 lines.push(
-                  `${r.type} - ${moment(r.createAt).format("HH:MM")} ${r.issue ? "(" + r.issue + ")" : ""}`,
+                  `${r.type} - ${moment(r.createAt).format("HH:mm:ss")} ${r.issue ? "(" + r.issue + ")" : ""}`,
                 );
               });
               if (reports.length > 5) {
