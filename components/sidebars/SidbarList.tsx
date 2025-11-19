@@ -41,7 +41,7 @@ function SidbarList({ isSelect, list }: Props) {
         >
           {list.childs
             .filter((menu) => {
-              if (user.role !== "admin" && menu.title === "SMS Report") {
+              if (user.role === "partner" && menu.title === "SMS Report") {
                 return false;
               }
               if (
