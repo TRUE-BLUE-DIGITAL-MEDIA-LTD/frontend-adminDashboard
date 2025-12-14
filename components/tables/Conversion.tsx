@@ -175,6 +175,12 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
+                Number
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
                 Date
               </th>
               <th
@@ -277,8 +283,11 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {conversions.map((conv) => (
+            {conversions?.map((conv, index) => (
               <tr key={conv.conversion_id}>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {(paging.page - 1) * paging.page_size + index + 1}
+                </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {formatTimestamp(conv.conversion_unix_timestamp)}
                 </td>
@@ -339,7 +348,7 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
         </table>
       </div>
       <PaginationControls
-        currentPage={paging.page}
+        currentPage={paging.page ?? 1}
         totalCount={paging.total_count}
         pageSize={paging.page_size}
         onPageChange={onPageChange}

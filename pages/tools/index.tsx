@@ -15,6 +15,7 @@ import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsReport from "../../components/sms-report/SmsReport";
+import CloudPhone from "@/components/cloud-phone/CloudPhone";
 
 // Dynamically import your component with SSR turned off
 const PartnerLeague = dynamic(
@@ -39,6 +40,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-pinverify" && <SmsPinverify user={user} />}
         {menu === "sms-daisy" && <SmsDaisy user={user} />}
         {menu === "sms-report" && <SmsReport />}
+        {menu === "cloud-phone" && <CloudPhone />}
       </div>
     </DashboardLayout>
   );

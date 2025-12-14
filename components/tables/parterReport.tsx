@@ -145,9 +145,9 @@ function ParterReport({ user }: { user: User }) {
         const recalculatedListData = listData.map(
           ([key, value]): PartnerPerformanceEntry => {
             const recalculatedEntries = value.entries.map((entry) => {
-              const { cv, total_click } = entry.reporting;
+              const { cv, unique_click } = entry.reporting;
               // Avoid division by zero
-              const newCvr = total_click > 0 ? cv / total_click : 0;
+              const newCvr = unique_click > 0 ? cv / unique_click : 0;
 
               return {
                 ...entry,
