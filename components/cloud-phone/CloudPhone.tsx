@@ -10,13 +10,15 @@ import CreateCloudPhoneModal from "./CreateCloudPhoneModal";
 import UpdateCloudPhoneModal from "./UpdateCloudPhoneModal";
 import { CloudPhoneWithDetails } from "../../models/cloud-phone.model";
 import Swal from "sweetalert2";
+import { ErrorMessages } from "@/models";
 
 function CloudPhone() {
   const { data: cloudPhones, isLoading, error } = useGetCloudPhones();
   const { mutateAsync: startPhone, isPending: isStarting } =
     useStartCloudPhone();
   const { mutate: stopPhone, isPending: isStopping } = useStopCloudPhone();
-  const { mutate: deletePhone, isPending: isDeleting } = useDeleteCloudPhone();
+  const { mutateAsync: deletePhone, isPending: isDeleting } =
+    useDeleteCloudPhone();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -64,6 +66,7 @@ function CloudPhone() {
     } finally {
       // Clean up the temporary blob URL
       URL.revokeObjectURL(loadingUrl);
+      setOperatingId(null);
     }
   };
   const handleStop = (id: string) => {
@@ -82,19 +85,30 @@ function CloudPhone() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setOperatingId(id);
-        deletePhone(id, {
-          onSuccess: () => {
-            Swal.fire(
-              "Deleted!",
-              "Your cloud phone has been deleted.",
-              "success",
-            );
-          },
-          onSettled: () => setOperatingId(null),
-        });
+        try {
+          setOperatingId(id);
+          await deletePhone(id);
+          Swal.fire(
+            "Deleted!",
+            "Your cloud phone has been deleted.",
+            "success",
+          );
+        } catch (error) {
+          console.log(error);
+          let result = error as ErrorMessages;
+          Swal.fire({
+            title: result.error ? result.error : "Something went wrong!",
+            text: result.message.toString(),
+            footer: result.statusCode
+              ? "Error code: " + result.statusCode?.toString()
+              : "",
+            icon: "error",
+          });
+        } finally {
+          setOperatingId(null);
+        }
       }
     });
   };
