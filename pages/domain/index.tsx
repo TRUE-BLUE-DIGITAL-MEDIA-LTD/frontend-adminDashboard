@@ -86,6 +86,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           isAllowSmsPinverifyAccount: false,
           isAllowUsingSMS_Pinverify: false,
           refill_oxyclick_points: 0,
+          isAllowManageSmsBowerAccount: true,
+          isAllowUsingSmsBower: true,
         });
         addSeeAll.push({
           createAt: new Date(),
@@ -96,6 +98,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           isAllowManageAssignPhoneNumber: true,
           isAllowManageSmsOxy: true,
           isAllowSmsPoolAccount: true,
+          isAllowManageSmsBowerAccount: true,
+          isAllowUsingSmsBower: true,
           updateAt: new Date(),
           affiliateId: "none",
           userId: "none",
