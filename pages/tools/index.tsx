@@ -16,6 +16,7 @@ import { Partner, User } from "../../models";
 import { GetUser } from "../../services/admin/user";
 import SmsReport from "../../components/sms-report/SmsReport";
 import CloudPhone from "@/components/cloud-phone/CloudPhone";
+import SmsBowers from "../../components/sms-bower/SmsBowers";
 
 // Dynamically import your component with SSR turned off
 const PartnerLeague = dynamic(
@@ -41,6 +42,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-daisy" && <SmsDaisy user={user} />}
         {menu === "sms-report" && <SmsReport />}
         {menu === "cloud-phone" && <CloudPhone />}
+        {menu === "sms-bower" && <SmsBowers user={user} />}
       </div>
     </DashboardLayout>
   );

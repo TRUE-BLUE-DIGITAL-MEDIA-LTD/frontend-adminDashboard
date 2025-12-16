@@ -15,6 +15,7 @@ export const services = [
     slug: "3223",
     icon: "https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg",
     code: "opt2",
+    sms_bower: "fb",
   },
   {
     title: "Mailru",
@@ -31,6 +32,7 @@ export const services = [
     slug: "google",
     icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/800px-Google_2015_logo.svg.png",
     code: "opt1",
+    sms_bower: "go",
   },
   {
     title: "Yandex",
@@ -160,6 +162,7 @@ export const services = [
     slug: "tinder",
     icon: "https://tinder.com/static/android-chrome-192x192.png",
     code: "opt9",
+    sms_bower: "oi",
   },
   {
     title: "Flickr",

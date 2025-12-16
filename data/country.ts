@@ -6,6 +6,7 @@ export const countries = [
     countryCode: "+44",
     sms_pinverify: "United kingdom UK",
     sms_pva: "uk",
+    sms_bower: "16",
   },
   {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1e6-1f1e8.svg",
@@ -1473,6 +1474,7 @@ export const countries = [
     sms_daisy: "187",
     countryCode: "+1",
     sms_pva: "us",
+    sms_bower: "187",
   },
   {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1fa-1f1fe.svg",

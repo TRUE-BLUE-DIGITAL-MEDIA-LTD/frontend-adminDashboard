@@ -31,6 +31,7 @@ export const menusSidebar = [
       { title: "Oxy Text", params: "sms-textverified" },
       { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy Day", params: "sms-daisy" },
+      { title: "Oxy Bow", params: "sms-bower" },
       { title: "Oxy SMS", params: "sms-etms" },
       {
         title: "Website Builder",

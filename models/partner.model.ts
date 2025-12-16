@@ -18,6 +18,8 @@ export type Partner = {
   isAllowUsingSMS_Daisy?: boolean;
   isAllowSmsDaisyAccount?: boolean;
   refill_oxyclick_points: number;
+  isAllowUsingSmsBower: boolean;
+  isAllowManageSmsBowerAccount: boolean;
   smartLink?: string | undefined;
   name: string;
 };
