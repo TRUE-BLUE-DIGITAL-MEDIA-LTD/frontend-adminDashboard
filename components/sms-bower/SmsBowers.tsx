@@ -65,9 +65,9 @@ function SmsBowers({ user }: Props) {
             })}
           </ul>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">Sms Bower</h1>
+        <h1 className="text-4xl font-semibold text-gray-800">Oxy Bower</h1>
         <span className="text-sm text-gray-500">
-          SmsBower provides the opportunity to use short-term temp phone numbers
+          OxyBow provides the opportunity to use short-term temp phone numbers
           from different countries at fair and affordable prices for receiving
           SMS messages.
         </span>
