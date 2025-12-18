@@ -5,6 +5,7 @@ import {
   useCancelSmsBower,
   useGetActiveSmsBowerNumbers,
   useGetSmsBowerAccounts,
+  useGetSmsBowerBalance,
 } from "../../react-query/sms-bower";
 import SelectService from "./SelectService";
 import SmsBowerAccount from "./SmsBowerAccount";
@@ -18,6 +19,7 @@ function SmsBowers({ user }: Props) {
   const activeNumbers = useGetActiveSmsBowerNumbers();
   const cancelSMS = useCancelSmsBower();
   const accounts = useGetSmsBowerAccounts();
+  const balance = useGetSmsBowerBalance();
 
   const handleCancelSMS = async (id: string) => {
     try {
@@ -64,6 +66,13 @@ function SmsBowers({ user }: Props) {
               return <SmsBowerAccount key={a.id} account={a} user={user} />;
             })}
           </ul>
+        )}
+        {(user.role === "manager" || user.role === "admin") && (
+          <div className="mt-2 flex w-full justify-center">
+            <span className="rounded-md bg-gray-100 px-3 py-1 font-semibold text-gray-800 ring-1 ring-gray-300">
+              Balance: {balance.data}
+            </span>
+          </div>
         )}
         <h1 className="text-4xl font-semibold text-gray-800">Oxy Bow</h1>
         <span className="text-sm text-gray-500">

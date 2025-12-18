@@ -31,6 +31,53 @@ export async function GetActiveSmsBowerNumbersService(): Promise<ResponseGetActi
   }
 }
 
+export type ResponseGetSmsBowerBalanceService = string;
+export async function GetSmsBowerBalanceService(): Promise<ResponseGetSmsBowerBalanceService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/1v/sms-bowers/balance`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseRequestAnotherCodeSmsBowerService = SmsBower;
+export type RequestRequestAnotherCodeSmsBowerService = {
+  id: string;
+};
+export async function RequestAnotherCodeSmsBowerService(
+  request: RequestRequestAnotherCodeSmsBowerService,
+): Promise<ResponseRequestAnotherCodeSmsBowerService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/1v/sms-bowers/request-another-code/${request.id}`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseGetSmsBowerAccountsService = SmsBowerAccount[];
 export async function GetSmsBowerAccountsService(): Promise<ResponseGetSmsBowerAccountsService> {
   try {

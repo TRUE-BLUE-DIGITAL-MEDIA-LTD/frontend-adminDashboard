@@ -7,7 +7,10 @@ import Swal from "sweetalert2";
 import { countries } from "../../data/country";
 import { services } from "../../data/services";
 import { ErrorMessages, SmsBower, SmsBowerMessage } from "../../models";
-import { useReportSmsBower } from "../../react-query/sms-bower";
+import {
+  useReportSmsBower,
+  useRequestAnotherCodeSmsBower,
+} from "../../react-query/sms-bower";
 
 type Props = {
   smsBower: SmsBower & { messages: SmsBowerMessage[] };
@@ -16,9 +19,34 @@ type Props = {
 
 function SmsBowerCard({ smsBower, onCancel }: Props) {
   const report = useReportSmsBower();
+  const requestAnotherCode = useRequestAnotherCodeSmsBower();
   const [triggerHide, setTriggerHide] = useState(false);
   const country = countries.find((c) => c.sms_bower === smsBower.country);
   const service = services.find((s) => s.sms_bower === smsBower.serviceCode);
+
+  const handleRequestAnotherCode = async () => {
+    try {
+      await requestAnotherCode.mutateAsync({
+        id: smsBower.id,
+      });
+      Swal.fire({
+        title: "Success",
+        text: "Request another code successfully.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error ? result.error : "Something went wrong!",
+        text: result.message.toString(),
+        footer: result.statusCode
+          ? "Error code: " + result.statusCode?.toString()
+          : "",
+        icon: "error",
+      });
+    }
+  };
 
   const handleReportSms = async () => {
     try {
@@ -91,6 +119,15 @@ function SmsBowerCard({ smsBower, onCancel }: Props) {
             </h3>
 
             <div className="flex items-center justify-center gap-1">
+              {smsBower.messages.length > 0 && (
+                <button
+                  disabled={requestAnotherCode.isPending}
+                  onClick={handleRequestAnotherCode}
+                  className="flex h-8 items-center justify-center rounded-sm bg-blue-300 p-1 px-3 text-blue-700 disabled:bg-blue-200"
+                >
+                  {requestAnotherCode.isPending ? "Loading..." : "Next SMS"}
+                </button>
+              )}
               <button
                 onClick={handleReportSms}
                 className="flex h-8 w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"

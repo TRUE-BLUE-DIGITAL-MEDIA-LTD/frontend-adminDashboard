@@ -4,6 +4,7 @@ import {
   CancelSmsBowerService,
   CreateSmsBowerService,
   GetActiveSmsBowerNumbersService,
+  GetSmsBowerBalanceService,
   GetSmsBowerAccountsService,
   GetSmsBowerPricesService,
   ReportSmsBowerService,
@@ -12,6 +13,8 @@ import {
   RequestCreateSmsBowerService,
   RequestGetSmsBowerPricesService,
   RequestReportSmsBowerService,
+  RequestRequestAnotherCodeSmsBowerService,
+  RequestAnotherCodeSmsBowerService,
 } from "../services/sms-bower";
 import { userKeys } from "./user";
 
@@ -25,6 +28,13 @@ export function useGetActiveSmsBowerNumbers() {
     queryKey: [keys.item[0], "active"],
     queryFn: () => GetActiveSmsBowerNumbersService(),
     refetchInterval: 1000 * 5,
+  });
+}
+
+export function useGetSmsBowerBalance() {
+  return useQuery({
+    queryKey: [keys.item[0], "balance"],
+    queryFn: () => GetSmsBowerBalanceService(),
   });
 }
 
@@ -76,6 +86,23 @@ export function useReportSmsBower() {
     mutationKey: [keys.item[0], "report"],
     mutationFn: (request: RequestReportSmsBowerService) =>
       ReportSmsBowerService(request),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+      queryClient.refetchQueries({
+        queryKey: [keys.item[0], "active"],
+      });
+    },
+  });
+}
+
+export function useRequestAnotherCodeSmsBower() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: [keys.item[0], "request-another-code"],
+    mutationFn: (request: RequestRequestAnotherCodeSmsBowerService) =>
+      RequestAnotherCodeSmsBowerService(request),
     onSuccess(data, variables, context) {
       queryClient.refetchQueries({
         queryKey: userKeys.get,
