@@ -1,15 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreateCloudPhoneDto,
+  CreateProxyDto,
+  DeleteProxyDto,
   GetProxiesDto,
+  UpdateProxyDto,
 } from "../models/cloud-phone.model";
 import {
   CreateCloudPhoneService,
+  CreateProxyService,
   DeleteCloudPhoneService,
+  DeleteProxyService,
   GetCloudPhonesService,
   GetProxiesService,
   StartCloudPhoneService,
   StopCloudPhoneService,
+  UpdateProxyService,
 } from "../services/cloud-phone";
 import { userKeys } from "./user";
 
@@ -85,5 +91,44 @@ export function useGetProxies(dto: GetProxiesDto) {
   return useQuery({
     queryKey: itemKeys.proxies(dto),
     queryFn: () => GetProxiesService(dto),
+  });
+}
+
+export function useCreateProxy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: itemKeys.item,
+    mutationFn: (data: CreateProxyDto) => CreateProxyService(data),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: ["cloud-phones", "proxies"],
+      });
+    },
+  });
+}
+
+export function useUpdateProxy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: itemKeys.item,
+    mutationFn: (data: UpdateProxyDto) => UpdateProxyService(data),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: ["cloud-phones", "proxies"],
+      });
+    },
+  });
+}
+
+export function useDeleteProxy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: itemKeys.item,
+    mutationFn: (data: DeleteProxyDto) => DeleteProxyService(data),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: ["cloud-phones", "proxies"],
+      });
+    },
   });
 }

@@ -1,11 +1,15 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
 import {
+  CheckProxyResponseData,
   CloudPhone,
   CloudPhoneWithDetails,
   CreateCloudPhoneDto,
+  CreateProxyDto,
+  DeleteProxyDto,
   GetProxiesDto,
   ProxyItem,
+  UpdateProxyDto,
 } from "../models/cloud-phone.model";
 import { Pagination } from "../models/pagination.model";
 
@@ -118,7 +122,7 @@ export async function DeleteCloudPhoneService(id: string): Promise<void> {
 
 export async function GetProxiesService(
   dto: GetProxiesDto,
-): Promise<Pagination<ProxyItem>> {
+): Promise<Pagination<ProxyItem & { data: CheckProxyResponseData }>> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
@@ -126,6 +130,72 @@ export async function GetProxiesService(
       method: "GET",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/proxies`,
       params: dto,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function CreateProxyService(
+  data: CreateProxyDto,
+): Promise<ProxyItem> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/proxies`,
+      data,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function UpdateProxyService(
+  data: UpdateProxyDto,
+): Promise<ProxyItem> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "PUT",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/proxies`,
+      data,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function DeleteProxyService(dto: DeleteProxyDto): Promise<void> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "DELETE",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/proxies/${dto.id}`,
       headers: {
         Authorization: "Bearer " + access_token,
       },

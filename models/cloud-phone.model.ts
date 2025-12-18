@@ -12,6 +12,17 @@ export interface CreateCloudPhoneDto {
   profileName: string;
   proxyNumber: number;
 }
+export interface CheckProxyResponseData {
+  detectStatus: boolean;
+  message: string;
+  outboundIP: string;
+  countryCode: string;
+  countryName: string;
+  subdivision: string;
+  city: string;
+  timezone: string;
+  isp: string;
+}
 
 export interface CloudPhone {
   id: string;
@@ -95,4 +106,20 @@ export interface ProxyItem {
 export interface GetProxiesDto {
   page: number;
   limit: number;
+}
+
+export interface CreateProxyDto {
+  scheme: string;
+  server: string;
+  port: number;
+  username?: string;
+  password?: string;
+}
+
+export interface UpdateProxyDto extends CreateProxyDto {
+  id: string;
+}
+
+export interface DeleteProxyDto {
+  id: string;
 }
