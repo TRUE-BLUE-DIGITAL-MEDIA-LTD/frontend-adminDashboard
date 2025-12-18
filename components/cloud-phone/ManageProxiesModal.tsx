@@ -15,7 +15,7 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
   onClose,
 }) => {
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 100;
   const { data: proxiesData, isLoading } = useGetProxies({ page, limit });
   const { mutate: deleteProxy, isPending: isDeleting } = useDeleteProxy();
 
@@ -98,6 +98,9 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
                     Details
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                    IP
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Location
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
@@ -120,6 +123,9 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
                           User: {proxy.username}
                         </div>
                       )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <div>{proxy.data.outboundIP}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                       {proxy.data ? (

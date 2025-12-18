@@ -120,13 +120,16 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                 optionLabel="server"
                 placeholder="Select a proxy"
                 filter
+                filterBy="server,data.outboundIP,serialNo"
+                filterMatchMode="contains"
                 className="w-full"
                 itemTemplate={(
                   option: ProxyItem & { data: CheckProxyResponseData },
                 ) => (
                   <div className="flex flex-col ">
                     <span className="font-bold">
-                      {option.server}:{option.port} ({option.serialNo})
+                      {option.data.outboundIP}:{option.server} (
+                      {option.serialNo})
                     </span>
                     {option.data && (
                       <div className="text-xs  text-gray-500">
