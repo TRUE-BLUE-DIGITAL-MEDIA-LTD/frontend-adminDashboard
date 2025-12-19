@@ -10,7 +10,20 @@ export type MobileType =
 export interface CreateCloudPhoneDto {
   mobileType: MobileType;
   profileName: string;
-  proxyNumber: number;
+  proxyNumber?: number;
+  region?: string;
+  proxyInformation?: string;
+  refreshUrl?: string;
+  dynamicProxy?: string;
+  dynamicProxyLocation?: string;
+  mobileLanguage?: string;
+  profileGroup?: string;
+  profileTags?: string[];
+  profileNote?: string;
+  surfaceBrandName?: string;
+  surfaceModelName?: string;
+  netType?: number;
+  phoneNumber?: string;
 }
 export interface CheckProxyResponseData {
   detectStatus: boolean;
