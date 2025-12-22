@@ -1,6 +1,12 @@
 import React from "react";
 import { CloudPhoneWithDetails } from "../../models/cloud-phone.model";
-import { FaPlay, FaStop, FaTrash, FaEdit } from "react-icons/fa";
+import {
+  FaPlay,
+  FaStop,
+  FaTrash,
+  FaEdit,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 
 interface CloudPhoneCardProps {
   data: CloudPhoneWithDetails;
@@ -8,6 +14,7 @@ interface CloudPhoneCardProps {
   onStop: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (data: CloudPhoneWithDetails) => void;
+  onGps: (data: CloudPhoneWithDetails) => void;
   isStarting?: boolean;
   isStopping?: boolean;
   isDeleting?: boolean;
@@ -19,6 +26,7 @@ const CloudPhoneCard: React.FC<CloudPhoneCardProps> = ({
   onStop,
   onDelete,
   onUpdate,
+  onGps,
   isStarting,
   isStopping,
   isDeleting,
@@ -134,6 +142,20 @@ const CloudPhoneCard: React.FC<CloudPhoneCardProps> = ({
             <FaPlay className={isStarting ? "animate-pulse" : ""} />
           </button>
         )}
+        <button
+          onClick={() => onGps(data)}
+          className="rounded-full p-2 text-blue-500 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+          title="GPS"
+        >
+          <FaMapMarkerAlt />
+        </button>
+        <button
+          onClick={() => onUpdate(data)}
+          className="rounded-full p-2 text-yellow-500 transition-colors hover:bg-yellow-50 dark:text-yellow-400 dark:hover:bg-yellow-900/30"
+          title="Edit"
+        >
+          <FaEdit />
+        </button>
         <button
           onClick={() => onDelete(data.id)}
           disabled={isDeleting}

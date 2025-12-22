@@ -136,3 +136,40 @@ export interface UpdateProxyDto extends CreateProxyDto {
 export interface DeleteProxyDto {
   id: string;
 }
+
+export interface GpsData {
+  id: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface GetGpsDto {
+  ids: string[];
+}
+
+export interface SetGpsDto {
+  list: GpsData[];
+}
+
+export interface ProxyConfigDto {
+  typeId: number;
+  useProxyCfg?: boolean;
+  protocol?: number;
+  server?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  country?: string;
+  region?: string;
+  city?: string;
+}
+
+export interface UpdateCloudPhoneDto {
+  id: string;
+  name?: string;
+  remark?: string;
+  groupID?: string;
+  tagIDs?: string[];
+  proxyConfig?: ProxyConfigDto;
+  proxyId?: string;
+}

@@ -7,8 +7,11 @@ import {
   CreateCloudPhoneDto,
   CreateProxyDto,
   DeleteProxyDto,
+  GetGpsDto,
   GetProxiesDto,
   ProxyItem,
+  SetGpsDto,
+  UpdateCloudPhoneDto,
   UpdateProxyDto,
 } from "../models/cloud-phone.model";
 import { Pagination } from "../models/pagination.model";
@@ -23,6 +26,71 @@ export async function CreateCloudPhoneService(
       method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones`,
       data,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function UpdateCloudPhoneService(
+  data: UpdateCloudPhoneDto,
+): Promise<any> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "PUT",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones`,
+      data,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function GetGpsService(dto: GetGpsDto): Promise<any> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/gps/get`,
+      data: dto,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function SetGpsService(dto: SetGpsDto): Promise<any> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/gps/set`,
+      data: dto,
       headers: {
         Authorization: "Bearer " + access_token,
       },

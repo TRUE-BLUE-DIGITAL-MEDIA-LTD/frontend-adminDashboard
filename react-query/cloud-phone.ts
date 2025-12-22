@@ -3,7 +3,10 @@ import {
   CreateCloudPhoneDto,
   CreateProxyDto,
   DeleteProxyDto,
+  GetGpsDto,
   GetProxiesDto,
+  SetGpsDto,
+  UpdateCloudPhoneDto,
   UpdateProxyDto,
 } from "../models/cloud-phone.model";
 import {
@@ -12,9 +15,12 @@ import {
   DeleteCloudPhoneService,
   DeleteProxyService,
   GetCloudPhonesService,
+  GetGpsService,
   GetProxiesService,
+  SetGpsService,
   StartCloudPhoneService,
   StopCloudPhoneService,
+  UpdateCloudPhoneService,
   UpdateProxyService,
 } from "../services/cloud-phone";
 import { userKeys } from "./user";
@@ -104,6 +110,36 @@ export function useCreateProxy() {
         queryKey: ["cloud-phones", "proxies"],
       });
     },
+  });
+}
+
+export function useUpdateCloudPhone() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: itemKeys.item,
+    mutationFn: (data: UpdateCloudPhoneDto) => UpdateCloudPhoneService(data),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: userKeys.get,
+      });
+      queryClient.refetchQueries({
+        queryKey: itemKeys.item,
+      });
+    },
+  });
+}
+
+export function useGetGps() {
+  return useMutation({
+    mutationKey: [...itemKeys.item, "gps"],
+    mutationFn: (dto: GetGpsDto) => GetGpsService(dto),
+  });
+}
+
+export function useSetGps() {
+  return useMutation({
+    mutationKey: [...itemKeys.item, "gps"],
+    mutationFn: (dto: SetGpsDto) => SetGpsService(dto),
   });
 }
 
