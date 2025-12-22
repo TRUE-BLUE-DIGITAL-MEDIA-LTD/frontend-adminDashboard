@@ -8,6 +8,7 @@ import {
   CreateProxyDto,
   DeleteProxyDto,
   GetGpsDto,
+  GetGpsResponse,
   GetProxiesDto,
   ProxyItem,
   SetGpsDto,
@@ -62,14 +63,14 @@ export async function UpdateCloudPhoneService(
   }
 }
 
-export async function GetGpsService(dto: GetGpsDto): Promise<any> {
+export async function GetGpsService(dto: GetGpsDto): Promise<GetGpsResponse> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const response = await axios({
-      method: "POST",
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/gps/get`,
-      data: dto,
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/cloud-phones/gps`,
+      params: dto,
       headers: {
         Authorization: "Bearer " + access_token,
       },

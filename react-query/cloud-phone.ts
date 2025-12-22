@@ -129,17 +129,24 @@ export function useUpdateCloudPhone() {
   });
 }
 
-export function useGetGps() {
-  return useMutation({
-    mutationKey: [...itemKeys.item, "gps"],
-    mutationFn: (dto: GetGpsDto) => GetGpsService(dto),
+export function useGetGps(dto: GetGpsDto) {
+  return useQuery({
+    queryKey: [...itemKeys.item, "gps", dto],
+    queryFn: () => GetGpsService(dto),
+    enabled: dto.id !== "",
   });
 }
 
 export function useSetGps() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: [...itemKeys.item, "gps"],
     mutationFn: (dto: SetGpsDto) => SetGpsService(dto),
+    onSuccess(data, variables, context) {
+      queryClient.refetchQueries({
+        queryKey: [...itemKeys.item, "gps"],
+      });
+    },
   });
 }
 

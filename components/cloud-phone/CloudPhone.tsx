@@ -8,7 +8,7 @@ import {
 import CloudPhoneCard from "./CloudPhoneCard";
 import CreateCloudPhoneModal from "./CreateCloudPhoneModal";
 import UpdateCloudPhoneModal from "./UpdateCloudPhoneModal";
-import GpsModal from "./GpsModal";
+import ChangeProxyModal from "./ChangeProxyModal";
 import { CloudPhoneWithDetails } from "../../models/cloud-phone.model";
 import Swal from "sweetalert2";
 import { ErrorMessages } from "@/models";
@@ -23,10 +23,10 @@ function CloudPhone() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isGpsModalOpen, setIsGpsModalOpen] = useState(false);
+  const [isChangeProxyModalOpen, setIsChangeProxyModalOpen] = useState(false);
   const [selectedPhone, setSelectedPhone] =
     useState<CloudPhoneWithDetails | null>(null);
-  const [selectedPhoneForGps, setSelectedPhoneForGps] =
+  const [selectedPhoneForProxy, setSelectedPhoneForProxy] =
     useState<CloudPhoneWithDetails | null>(null);
 
   // Track which ID is being operated on
@@ -122,9 +122,9 @@ function CloudPhone() {
     setIsUpdateModalOpen(true);
   };
 
-  const handleGps = (phone: CloudPhoneWithDetails) => {
-    setSelectedPhoneForGps(phone);
-    setIsGpsModalOpen(true);
+  const handleChangeProxy = (phone: CloudPhoneWithDetails) => {
+    setSelectedPhoneForProxy(phone);
+    setIsChangeProxyModalOpen(true);
   };
 
   return (
@@ -155,7 +155,7 @@ function CloudPhone() {
             onStop={handleStop}
             onDelete={handleDelete}
             onUpdate={handleUpdate}
-            onGps={handleGps}
+            onGps={handleChangeProxy}
             isStarting={isStarting && operatingId === phone.id}
             isStopping={isStopping && operatingId === phone.id}
             isDeleting={isDeleting && operatingId === phone.id}
@@ -182,13 +182,13 @@ function CloudPhone() {
         data={selectedPhone}
       />
 
-      <GpsModal
-        isOpen={isGpsModalOpen}
+      <ChangeProxyModal
+        isOpen={isChangeProxyModalOpen}
         onClose={() => {
-          setIsGpsModalOpen(false);
-          setSelectedPhoneForGps(null);
+          setIsChangeProxyModalOpen(false);
+          setSelectedPhoneForProxy(null);
         }}
-        data={selectedPhoneForGps}
+        data={selectedPhoneForProxy}
       />
     </div>
   );

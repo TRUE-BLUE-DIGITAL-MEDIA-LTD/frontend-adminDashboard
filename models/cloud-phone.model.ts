@@ -144,7 +144,7 @@ export interface GpsData {
 }
 
 export interface GetGpsDto {
-  ids: string[];
+  id: string;
 }
 
 export interface SetGpsDto {
@@ -172,4 +172,28 @@ export interface UpdateCloudPhoneDto {
   tagIDs?: string[];
   proxyConfig?: ProxyConfigDto;
   proxyId?: string;
+}
+
+export interface GpsData {
+  id: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface GetGpsResponseData {
+  totalAmount: number;
+  successAmount: number;
+  failAmount: number;
+  list: GpsData[];
+}
+
+export interface GetGpsResponse {
+  traceId: string;
+  code: number;
+  msg: string;
+  data: GetGpsResponseData;
+}
+
+export interface SetGpsRequest {
+  list: GpsData[];
 }
