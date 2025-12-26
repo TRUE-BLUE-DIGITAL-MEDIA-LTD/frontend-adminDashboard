@@ -7,6 +7,8 @@ import {
   FaEdit,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import Image from "next/image";
+import { countries } from "../../data/country";
 
 interface CloudPhoneCardProps {
   data: CloudPhoneWithDetails;
@@ -34,7 +36,7 @@ const CloudPhoneCard: React.FC<CloudPhoneCardProps> = ({
   const details = data.geelark?.[0];
   const equipment = details?.equipmentInfo;
   const proxy = details?.proxy;
-
+  const countryInfo = countries.find((a) => a.country === data.countryName);
   return (
     <div className="flex h-full flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div>
@@ -86,8 +88,13 @@ const CloudPhoneCard: React.FC<CloudPhoneCardProps> = ({
                 <p>
                   Phone: {data.phoneNumber || equipment?.phoneNumber || "N/A"}
                 </p>
-                <p>
+                <p className="flex gap-2">
                   Country: {data.countryName || equipment?.countryName || "N/A"}
+                  {countryInfo && (
+                    <div className="relative h-5 w-5">
+                      <Image src={countryInfo.flag} fill alt="country flag" />
+                    </div>
+                  )}
                 </p>
                 <p>Timezone: {data.timeZone || equipment?.timeZone || "N/A"}</p>
               </div>

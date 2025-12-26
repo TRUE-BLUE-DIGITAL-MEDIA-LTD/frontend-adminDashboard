@@ -1,11 +1,10 @@
-import React, { useState } from "react";
 import { Dropdown, DropdownProps } from "primereact/dropdown";
+import React, { useState } from "react";
 import { FaAndroid, FaApple } from "react-icons/fa";
 import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdRefresh,
-  MdWarning,
 } from "react-icons/md";
 import {
   CheckProxyResponseData,
@@ -17,7 +16,7 @@ import {
   useGetProxies,
 } from "../../react-query/cloud-phone";
 import ManageProxiesModal from "./ManageProxiesModal";
-import { countries } from "../../data/country";
+import { REGIONS } from "../../data/cloud-phone.region";
 
 interface CreateCloudPhoneModalProps {
   isOpen: boolean;
@@ -211,7 +210,11 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
           proxyMode === "saved" && proxyNumber !== ""
             ? Number(proxyNumber)
             : undefined,
-        region: locationMode === "custom" ? region || undefined : undefined,
+        mobileRegion:
+          locationMode === "custom"
+            ? `${REGIONS.find((a) => a.code === region)?.name}-${region}` ||
+              undefined
+            : undefined,
         proxyInformation:
           proxyMode === "custom" ? proxyInformation || undefined : undefined,
         refreshUrl:
@@ -219,7 +222,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
         dynamicProxy:
           proxyMode === "custom" ? dynamicProxy || undefined : undefined,
         dynamicProxyLocation:
-          locationMode === "custom"
+          proxyMode === "custom"
             ? dynamicProxyLocation || undefined
             : undefined,
         mobileLanguage:
@@ -250,6 +253,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
   };
 
   if (!isOpen) return null;
+  console.log("mobileRegion:", region);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm">
@@ -411,12 +415,6 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                     >
                       <option value="IP2Location">IP2Location</option>
                     </select>
-                    <button
-                      type="button"
-                      className="whitespace-nowrap rounded-full border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
-                    >
-                      Check proxy
-                    </button>
                   </div>
                 </div>
               </div>
@@ -686,14 +684,14 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                   />
                   {locationMode === "custom" && (
                     <select
-                      value={dynamicProxyLocation}
-                      onChange={(e) => setDynamicProxyLocation(e.target.value)}
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
                       className="block w-full max-w-md rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">Select Region</option>
-                      {countries.map((r) => (
-                        <option key={r.code} value={r.code}>
-                          {r.country}
+                      {REGIONS.map((r, index) => (
+                        <option key={index} value={r.code}>
+                          {r.name}
                         </option>
                       ))}
                     </select>

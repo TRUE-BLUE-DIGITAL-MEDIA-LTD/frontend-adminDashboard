@@ -11,9 +11,11 @@ export interface CreateCloudPhoneDto {
   mobileType: MobileType;
   profileName: string;
   proxyNumber?: number;
-  region?: string;
   proxyInformation?: string;
   refreshUrl?: string;
+  mobileRegion?: string;
+  mobileProvince?: string;
+  mobileCity?: string;
   dynamicProxy?: string;
   dynamicProxyLocation?: string;
   mobileLanguage?: string;
