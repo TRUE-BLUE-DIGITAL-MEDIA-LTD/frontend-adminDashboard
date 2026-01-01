@@ -37,7 +37,7 @@ function SidbarList({ isSelect, list }: Props) {
       </Link>
       {list.childs && (
         <ul
-          className={`ml-5 flex flex-col gap-2 overflow-auto bg-gray-600 transition duration-100  lg:max-h-52 2xl:max-h-60 ${trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
+          className={`ml-5 flex max-h-72 flex-col gap-2 overflow-auto bg-gray-600 transition duration-100  lg:max-h-52 2xl:max-h-60 ${trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
         >
           {list.childs
             .filter((menu) => {
