@@ -81,7 +81,7 @@ export type ResponseGetSummaryTransactionService = {
   }[];
 }[];
 export type RequestGetSummaryTransactionService = {
-  partnerId?: string;
+  partnerIds?: string[];
   managerId?: string;
   startDate: string;
   endDate: string;
@@ -92,17 +92,17 @@ export async function GetSummaryTransactionService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const sms_pinverify = await axios({
-      method: "GET",
+    const response = await axios({
+      method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/oxyclick-points/transactions/summary`,
-      params: request,
+      data: request,
       headers: {
         Authorization: "Bearer " + access_token,
       },
       responseType: "json",
     });
 
-    return sms_pinverify.data;
+    return response.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;

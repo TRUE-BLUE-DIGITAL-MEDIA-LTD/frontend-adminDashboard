@@ -5,7 +5,7 @@ import { Nullable } from "primereact/ts-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { GetAllAccountByPageService } from "../../services/admin/account";
 import Image from "next/image";
-import { Dropdown } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
 
 type Props = {
@@ -28,7 +28,7 @@ const timePeriods = [
 type TimePeriod = (typeof timePeriods)[number];
 
 function SummaryTransaction({ user }: Props) {
-  const [selectUser, setSelectUser] = useState<User>();
+  const [selectUser, setSelectUser] = useState<User[]>([]);
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("Today");
 
   const [dateStart, setDateStart] = useState<{
@@ -50,10 +50,11 @@ function SummaryTransaction({ user }: Props) {
     endDate: dateEnd?.actual?.toISOString() as string,
     startDate: dateStart?.actual?.toISOString() as string,
     ...(user.role === "admin" && selectUser
-      ? { partnerId: selectUser.partnerId }
-      : user.role === "admin" && !selectUser && { partnerId: user.partnerId }),
+      ? { partnerIds: selectUser.map((user) => user.partnerId) }
+      : user.role === "admin" &&
+        !selectUser && { partnerIds: [user.partnerId] }),
     ...(user.role === "manager" && { managerId: user.id }),
-    ...(user.role === "partner" && { partnerId: user.partnerId }),
+    ...(user.role === "partner" && { partnerIds: [user.partnerId] }),
   });
 
   useEffect(() => {
@@ -174,26 +175,15 @@ function SummaryTransaction({ user }: Props) {
         {user.role === "admin" && (
           <div className={`flex flex-col`}>
             <label className="text-xs ">Select User</label>
-            <Dropdown
+            <MultiSelect
               value={selectUser}
               onChange={(e) => {
                 setSelectUser(() => e.value);
               }}
               options={account?.data?.accounts}
               placeholder="Select User"
-              valueTemplate={(
-                option: User & {
-                  partner: Partner | null;
-                },
-              ) => {
-                if (!option) return <>No user select</>;
-                return (
-                  <span className="font-semibold leading-none">
-                    {option.name}
-                  </span>
-                );
-              }}
               showClear
+              optionLabel="name"
               loading={account.isLoading}
               itemTemplate={(
                 option: User & {
