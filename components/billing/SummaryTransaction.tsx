@@ -7,6 +7,8 @@ import { GetAllAccountByPageService } from "../../services/admin/account";
 import Image from "next/image";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
+import * as XLSX from "xlsx-js-style";
 
 type Props = {
   user: User;
@@ -152,6 +154,142 @@ function SummaryTransaction({ user }: Props) {
 
     return { totalNumber, totalUsage, avgRate };
   };
+
+  const handleDownloadExcel = () => {
+    if (!data.data) return;
+
+    // Flatten data and prepare merges
+    const excelData: any[] = [];
+    const merges: {
+      s: { r: number; c: number };
+      e: { r: number; c: number };
+    }[] = [];
+    let currentRow = 1; // Start at row 1 (0 is header)
+
+    data.data.forEach((transaction) => {
+      const { user, sims } = transaction;
+      const { totalNumber, totalUsage, avgRate } = getUserTotals(sims);
+
+      // If no sims, just add one row
+      if (sims.length === 0) {
+        excelData.push({
+          "Partner Name": user.name,
+          "Partner Email": user.email,
+          "SMS System": "No transactions",
+          "# Messages": 0,
+          "$ Cost": 0,
+          "$ Rate (Avg)": 0,
+          "Total Number": 0,
+          "Total Usage": 0,
+          "Total Avg Rate": 0,
+        });
+        currentRow++;
+        return;
+      }
+
+      // Add merge ranges for Partner Name (col 0) and Email (col 1) and Totals (cols 6,7,8)
+      // They span from currentRow to currentRow + sims.length - 1
+      if (sims.length > 1) {
+        merges.push(
+          {
+            s: { r: currentRow, c: 0 },
+            e: { r: currentRow + sims.length - 1, c: 0 },
+          }, // Partner Name
+          {
+            s: { r: currentRow, c: 1 },
+            e: { r: currentRow + sims.length - 1, c: 1 },
+          }, // Partner Email
+          {
+            s: { r: currentRow, c: 6 },
+            e: { r: currentRow + sims.length - 1, c: 6 },
+          }, // Total Number
+          {
+            s: { r: currentRow, c: 7 },
+            e: { r: currentRow + sims.length - 1, c: 7 },
+          }, // Total Usage
+          {
+            s: { r: currentRow, c: 8 },
+            e: { r: currentRow + sims.length - 1, c: 8 },
+          }, // Total Avg Rate
+        );
+      }
+
+      sims.forEach((sim) => {
+        excelData.push({
+          "Partner Name": user.name,
+          "Partner Email": user.email,
+          "SMS System": sim.type,
+          "# Messages": sim.number,
+          "$ Cost": sim.usage,
+          "$ Rate (Avg)": getSimRate(sim),
+          "Total Number": totalNumber,
+          "Total Usage": totalUsage,
+          "Total Avg Rate": avgRate,
+        });
+      });
+      currentRow += sims.length;
+    });
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Apply merges
+    worksheet["!merges"] = merges;
+
+    // Apply column widths
+    const colWidths = [
+      { wch: 25 }, // Partner Name
+      { wch: 30 }, // Partner Email
+      { wch: 15 }, // SMS System
+      { wch: 12 }, // # Messages
+      { wch: 12 }, // $ Cost
+      { wch: 15 }, // $ Rate (Avg)
+      { wch: 15 }, // Total Number
+      { wch: 15 }, // Total Usage
+      { wch: 15 }, // Total Avg Rate
+    ];
+    worksheet["!cols"] = colWidths;
+
+    // Style Headers (Bold) and Alignments
+    if (worksheet["!ref"]) {
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const address = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!worksheet[address]) continue;
+
+          if (R === 0) {
+            // Header Styling
+            worksheet[address].s = {
+              font: {
+                bold: true,
+              },
+              alignment: {
+                horizontal: "center",
+                vertical: "center",
+              },
+            };
+          } else {
+            // Body Styling
+            worksheet[address].s = {
+              alignment: {
+                vertical: "center",
+                horizontal: C >= 3 ? "right" : "left", // Right align numbers
+              },
+            };
+          }
+        }
+      }
+    }
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Summary Transactions");
+
+    // Generate Excel file
+    XLSX.writeFile(workbook, "SummaryTransactions.xlsx");
+  };
+
   const grandTotalMessages =
     data.data?.reduce(
       (acc, item) => acc + getUserTotals(item.sims).totalNumber,
@@ -171,7 +309,7 @@ function SummaryTransaction({ user }: Props) {
           Summary Transactions
         </h2>
       </div>
-      <header className="flex gap-3">
+      <header className="flex flex-wrap gap-3">
         {user.role === "admin" && (
           <div className={`flex flex-col`}>
             <label className="text-xs ">Select User</label>
@@ -273,6 +411,14 @@ function SummaryTransaction({ user }: Props) {
             disabled={timePeriod !== "Custom Range"}
           />
         </label>
+        <div className="flex flex-col justify-end">
+          <Button
+            label="Download Excel"
+            className="h-10 border-green-600 bg-green-600 px-2 text-white hover:bg-green-700"
+            onClick={handleDownloadExcel}
+            disabled={!data.data || data.data.length === 0}
+          />
+        </div>
       </header>
       <main className="relative mt-5 h-96  overflow-x-auto bg-white text-gray-800 ">
         <table className="w-full min-w-[1200px] text-left text-sm">
