@@ -1,34 +1,27 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies, setCookie } from "nookies";
-import React, { useState } from "react";
-import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
-import { Partner, User } from "../../models";
+import { Pagination } from "@mui/material";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { parseCookies, setCookie } from "nookies";
+import { useState } from "react";
+import { FaMoneyBillTrendUp, FaPeopleGroup, FaUser } from "react-icons/fa6";
+import { FiEdit, FiLogIn, FiPlusCircle, FiTrash2 } from "react-icons/fi";
+import Swal from "sweetalert2";
+import AnnoucementTable from "../../components/Annoucement/AnnoucementTable";
+import AssignPartner from "../../components/forms/accounts/assignPartner";
+import CreateAccount from "../../components/forms/accounts/createAccount";
+import EditAccount from "../../components/forms/accounts/editAccount";
+import ResetPassword from "../../components/forms/accounts/reset-password";
+import UpdateBonusRate from "../../components/forms/accounts/updateBonusRate";
+import DashboardLayout from "../../layouts/dashboardLayout";
+import { Partner, User } from "../../models";
 import {
   DeleteAccountService,
   GetAllAccountByPageService,
 } from "../../services/admin/account";
-import Swal from "sweetalert2";
-import DashboardLayout from "../../layouts/dashboardLayout";
-import CreateAccount from "../../components/forms/accounts/createAccount";
-import EditAccount from "../../components/forms/accounts/editAccount";
-import ResetPassword from "../../components/forms/accounts/reset-password";
-import {
-  FaMoneyBillTrendUp,
-  FaPeopleGroup,
-  FaUser,
-  FaUserPlus,
-} from "react-icons/fa6";
-import Image from "next/image";
-import { BiSolidMessageSquareEdit } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
-import { Pagination } from "@mui/material";
-import { useRouter } from "next/router";
-import PartnerTable from "../../components/tables/PartnerTable";
-import AssignPartner from "../../components/forms/accounts/assignPartner";
-import UpdateBonusRate from "../../components/forms/accounts/updateBonusRate";
-import AnnoucementTable from "../../components/Annoucement/AnnoucementTable";
-import { FiPlusCircle, FiLogIn, FiEdit, FiTrash2 } from "react-icons/fi";
+import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
+import PartnerTable from "../../components/forms/partners/PartnerTable";
 
 function Index({ user }: { user: User }) {
   const router = useRouter();

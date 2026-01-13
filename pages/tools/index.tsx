@@ -9,7 +9,7 @@ import SmsPinverify from "../../components/sms-pinverify/SmsPinverify";
 import SmsPool from "../../components/sms-pool/SmsPool";
 import SmsPvas from "../../components/sms-pva/SmsPvas";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
-import ParterReport from "../../components/tables/parterReport";
+import ParterReport from "../../components/everflow-reports/ParterReport";
 import { OxyClickTools } from "../../data/menus";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";

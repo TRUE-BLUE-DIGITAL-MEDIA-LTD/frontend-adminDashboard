@@ -378,3 +378,126 @@ export async function GetPartnerSummaryStatsService(): Promise<ResponseGetPartne
     throw err.response.data;
   }
 }
+
+export type UpdateBulkExchangeRateDto = {
+  startDate: string;
+  endDate: string;
+  country: string;
+  target_currency: number;
+};
+
+export async function UpdateBulkExchangeRateService(
+  data: UpdateBulkExchangeRateDto,
+): Promise<ConversionRawData[]> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/update-bulk-exchange-rate`,
+      data: data,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export interface ConversionRawData {
+  update_timestamp: number;
+  conversion_id: string;
+  transaction_id: string;
+  /** Format: YYYY-MM-DD HH:MM:SS */
+  date: string;
+  /** Format: YYYY-MM-DD HH:MM:SS */
+  click_date: string;
+  /** Float represented as string (e.g. "0.04") */
+  delta_hours: string;
+  network_id: string;
+  network_affiliate_id: string;
+  network_offer_id: string;
+  network_offer_group_id: string;
+  network_campaign_id: string;
+  affiliate_manager_id: string;
+  network_advertiser_id: string;
+  account_manager_id: string;
+  network_offer_creative_id: string;
+  category_id: string;
+  previous_network_offer_id: string;
+  network_offer_payout_revenue_id: string;
+  exchange_rate?: string;
+  source_id: string;
+  sub1: string;
+  sub2: string;
+  sub3: string;
+  sub4: string;
+  sub5: string;
+  adv1: string;
+  adv2: string;
+  adv3: string;
+  adv4: string;
+  adv5: string;
+  session_user_ip: string;
+  conversion_user_ip: string;
+  http_user_agent: string;
+  project_id: string;
+  payout_type: string;
+  revenue_type: string;
+  country: string;
+  region: string;
+  city: string;
+  dma: string;
+  carrier: string;
+  platform: string;
+  os_version: string;
+  device_type: string;
+  brand: string;
+  browser: string;
+  language: string;
+  /** "0" or "1" representing boolean */
+  is_cookie_based: "0" | "1";
+  previous_transaction_id: string;
+  conversion_status: "approved" | "pending" | "rejected" | string;
+  /** "0" or "1" representing boolean */
+  is_event_protected: "0" | "1";
+  event_name: string;
+  /** Decimal string (e.g. ".50") */
+  payout: string;
+  /** Decimal string (e.g. "1.00") */
+  revenue: string;
+  notes: string;
+  /** "0" or "1" representing boolean */
+  is_fired_pixel: "0" | "1";
+  /** "0" or "1" representing boolean */
+  is_scrub: "0" | "1";
+  /** "0" or "1" representing boolean */
+  is_view_through: "0" | "1";
+  coupon_code: string;
+  order_id: string;
+  error_code: string;
+  sale_amount: string;
+  isp: string;
+  referer: string;
+  app_id: string;
+  idfa: string;
+  idfa_md5: string;
+  idfa_sha1: string;
+  google_ad_id: string;
+  google_ad_id_md5: string;
+  google_ad_id_sha1: string;
+  android_id: string;
+  android_id_md5: string;
+  android_id_sha1: string;
+  currency_id: string;
+  email: string;
+  usm_data: string;
+  /** UNIX timestamp (Actual number) */
+  conversion_timestamp: number;
+  network_offer_url_id: string;
+  query_parameters: Record<string, string>;
+}

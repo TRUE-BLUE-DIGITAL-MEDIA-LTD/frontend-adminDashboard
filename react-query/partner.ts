@@ -13,7 +13,9 @@ import {
   GetPartnerSummaryStatsService,
   ReqeustGetConversionParterReportService,
   RequestGetParterPerformancesByDate,
+  UpdateBulkExchangeRateService,
 } from "../services/everflow/partner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const keyPartners = {
   gets: ["partners"],
@@ -94,6 +96,7 @@ export function useGetPartnerReportByDate(
     queryKey: ["partner-reports", input],
     queryFn: () => GetParterPerformanceByDate(input),
     placeholderData: keepPreviousData,
+    refetchInterval: 1000 * 5,
   });
 }
 
@@ -102,5 +105,17 @@ export function useGetPartnerSummaryStats() {
     queryKey: ["partner-summary-stats"],
     queryFn: () => GetPartnerSummaryStatsService(),
     refetchInterval: 1000 * 30,
+  });
+}
+
+export function useUpdateBulkExchangeRate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: UpdateBulkExchangeRateService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["partner-reports"],
+      });
+    },
   });
 }

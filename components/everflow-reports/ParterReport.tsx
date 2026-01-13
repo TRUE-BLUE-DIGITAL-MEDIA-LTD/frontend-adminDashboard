@@ -26,6 +26,7 @@ import { bonusRateDefault } from "../../data/bonusRate";
 import PopupLayout from "../../layouts/PopupLayout";
 import Conversion from "./Conversion";
 import PartnerSummaryStats from "./PartnerSummaryStats";
+import BulkUpdateExchangeRate from "./BulkUpdateExchangeRate";
 
 const menuTables = [
   { title: "Network Affiliate ID", sort: "up", admin: false },
@@ -86,6 +87,7 @@ function ParterReport({ user }: { user: User }) {
   const [targetConversionColumns, setTargetConversionColumns] = useState<
     Column[] | null
   >(null);
+  const [showBulkUpdate, setShowBulkUpdate] = useState(false);
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const today = moment().format("YYYY-MM-DD");
@@ -167,6 +169,7 @@ function ParterReport({ user }: { user: User }) {
 
         return recalculatedListData;
       }),
+    refetchInterval: 1000 * 10,
   });
 
   useEffect(() => {
@@ -275,6 +278,11 @@ function ParterReport({ user }: { user: User }) {
           />
         </PopupLayout>
       )}
+      {showBulkUpdate && (
+        <PopupLayout onClose={() => setShowBulkUpdate(false)}>
+          <BulkUpdateExchangeRate onClose={() => setShowBulkUpdate(false)} />
+        </PopupLayout>
+      )}
       <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
         {user.role === "manager" && (
           <BonusCaluator
@@ -376,6 +384,19 @@ function ParterReport({ user }: { user: User }) {
               selectionMode="range"
             />
           </div>
+          {user.role === "admin" && (
+            <div className="flex w-full flex-col items-start justify-center gap-1 text-base font-semibold">
+              <label className="flex items-center justify-center gap-1 text-base text-black">
+                Action
+              </label>
+              <button
+                onClick={() => setShowBulkUpdate(true)}
+                className="h-10 w-full rounded bg-blue-600 px-4 font-bold text-white hover:bg-blue-700 xl:w-max"
+              >
+                Bulk Update Rate
+              </button>
+            </div>
+          )}
         </div>
         {user.role === "admin" && (
           <SummaryReport user={user} summary={summary} />
@@ -459,6 +480,7 @@ function ParterReport({ user }: { user: User }) {
                         <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-400"></td>
                         <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-100"></td>
                         <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-300"></td>
+                        <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
                       </tr>
                     );
                   })

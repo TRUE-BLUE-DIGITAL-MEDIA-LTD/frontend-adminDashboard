@@ -4,23 +4,23 @@ import { FaUserPlus } from "react-icons/fa6";
 import {
   DeletePartnerService,
   GetPartnerByPageService,
-} from "../../services/admin/partner";
+} from "../../../services/admin/partner";
 import { Pagination } from "@mui/material";
 import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import { MdDelete, MdSettings } from "react-icons/md";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
-import CreatePartner from "../forms/partners/createPartner";
-import { ResponseGetAllAccountByPageService } from "../../services/admin/account";
-import UpdatePartner from "../forms/partners/updatePartner";
-import { ErrorMessages, Partner, User } from "../../models";
+import CreatePartner from "./createPartner";
+import { ResponseGetAllAccountByPageService } from "../../../services/admin/account";
+import UpdatePartner from "./updatePartner";
+import { ErrorMessages, Partner, User } from "../../../models";
 import Swal from "sweetalert2";
-import AssignDomain from "../forms/partners/assignDomain";
-import AssignPhoneNumber from "../forms/partners/assignPhoneNumber";
-import AssignCategory from "../forms/partners/assignCategory";
-import { useGetPartners } from "../../react-query";
-import UpdatePermissionPartner from "../forms/partners/updatePermissionPartner";
-import PopupLayout from "../../layouts/PopupLayout";
+import AssignDomain from "./assignDomain";
+import AssignPhoneNumber from "./assignPhoneNumber";
+import AssignCategory from "./assignCategory";
+import { useGetPartners } from "../../../react-query";
+import UpdatePermissionPartner from "./updatePermissionPartner";
+import PopupLayout from "../../../layouts/PopupLayout";
 
 type PartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
