@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Column, TableEntry } from "../../services/everflow/partner";
 import { UseQueryResult } from "@tanstack/react-query";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -53,9 +53,7 @@ function TbodyForEditor({
   const bonos = partnerPerformanceDayByDay.data?.partner.find(
     (list) => list.id === item.columns[0].id,
   );
-  const hideAdvertiser = !!item.columns.find(
-    (c) => c.column_type === "advertiser" && c.id === "110",
-  );
+
   return (
     <tr
       className={`h-10 w-full text-sm ${activePartnerDropdowns && "font-bold"}  transition hover:bg-icon-color ${
@@ -140,4 +138,4 @@ function TbodyForEditor({
   );
 }
 
-export default TbodyForEditor;
+export default memo(TbodyForEditor);

@@ -50,6 +50,52 @@ const menuTables = [
 ] as const;
 
 type MenuTitle = (typeof menuTables)[number]["title"];
+
+const sortFields: Record<MenuTitle, (item: TableEntry) => number | string> = {
+  "Network Affiliate ID": (item) => Number(item.columns[0].id),
+  "Affiliate Name": (item) => item.columns[0].label,
+  "Gross Clicks": (item) => item.reporting.gross_click,
+  "Unique Clicks": (item) => item.reporting.unique_click,
+  "Duplicate Clicks": (item) => item.reporting.duplicate_click,
+  "Invalid Clicks": (item) => item.reporting.invalid_click,
+  "Total CV": (item) => item.reporting.total_cv,
+  CV: (item) => item.reporting.cv,
+  CVR: (item) => item.reporting.cvr,
+  EVT: (item) => item.reporting.event,
+  EVR: (item) => item.reporting.evr,
+  CPC: (item) => item.reporting.cpc,
+  RPC: (item) => item.reporting.rpc,
+  RPA: (item) => item.reporting.rpa,
+  Revenue: (item) => item.reporting.revenue,
+  Payout: (item) => item.reporting.payout,
+  Profit: (item) => item.reporting.profit,
+  Margin: (item) => item.reporting.margin,
+};
+
+const compareTableEntries = (
+  a: TableEntry,
+  b: TableEntry,
+  field: MenuTitle,
+  direction: "up" | "down",
+) => {
+  const getter = sortFields[field];
+  if (!getter) return 0;
+
+  const valA = getter(a);
+  const valB = getter(b);
+
+  if (typeof valA === "string" && typeof valB === "string") {
+    return direction === "up"
+      ? valA.localeCompare(valB)
+      : valB.localeCompare(valA);
+  }
+
+  // Handle number comparison
+  return direction === "up"
+    ? (valA as number) - (valB as number)
+    : (valB as number) - (valA as number);
+};
+
 const columns = [
   { name: "Partner", code: "affiliate" },
   { name: "Offer", code: "offer" },
@@ -132,11 +178,6 @@ function ParterReport({ user }: { user: User }) {
         ].filter(Boolean),
       }).then((data) => {
         const group = data;
-        setActivePartnerDropdowns(() => {
-          return Object.keys(group).map((key) => {
-            return { key: key, active: false };
-          });
-        });
         type PartnerPerformanceEntry = [
           string,
           { summary: TableEntry; entries: TableEntry[] },
@@ -180,7 +221,7 @@ function ParterReport({ user }: { user: User }) {
         });
       });
     }
-  }, [paterPerfomaces.data]);
+  }, [paterPerfomaces.isSuccess]);
 
   const partnerPerformanceDayByDay = useQuery({
     queryKey: ["partnerBonuse", dates],
@@ -266,6 +307,7 @@ function ParterReport({ user }: { user: User }) {
       }),
   });
 
+  console.log(activePartnerDropdowns);
   return (
     <>
       {user.role !== "admin" && <PartnerSummaryStats user={user} />}
@@ -406,7 +448,7 @@ function ParterReport({ user }: { user: User }) {
             {paterPerfomaces.error?.message}
           </h2>
         )}
-        <div className=" h-96 w-11/12 justify-center  overflow-auto ">
+        <div className=" h-screen w-full justify-center  overflow-auto ">
           <table className="w-max min-w-full border-collapse ">
             <thead className="sticky top-0 z-30 ">
               <tr className=" h-16   bg-white drop-shadow-sm">
@@ -485,193 +527,14 @@ function ParterReport({ user }: { user: User }) {
                     );
                   })
                 : paterPerfomaces.data
-                    ?.sort((a, b) => {
-                      if (querySort.sort === "up") {
-                        if (querySort.title === "Network Affiliate ID") {
-                          return (
-                            Number(a[1].summary.columns[0].id) -
-                            Number(b[1].summary.columns[0].id)
-                          );
-                        } else if (querySort.title === "Affiliate Name") {
-                          return a[1].summary.columns[0].label.localeCompare(
-                            b[1].summary.columns[0].label,
-                          );
-                        } else if (querySort.title === "Gross Clicks") {
-                          return (
-                            a[1].summary.reporting.gross_click -
-                            b[1].summary.reporting.gross_click
-                          );
-                        } else if (querySort.title === "Unique Clicks") {
-                          return (
-                            a[1].summary.reporting.unique_click -
-                            b[1].summary.reporting.unique_click
-                          );
-                        } else if (querySort.title === "Duplicate Clicks") {
-                          return (
-                            a[1].summary.reporting.duplicate_click -
-                            b[1].summary.reporting.duplicate_click
-                          );
-                        } else if (querySort.title === "Invalid Clicks") {
-                          return (
-                            a[1].summary.reporting.invalid_click -
-                            b[1].summary.reporting.invalid_click
-                          );
-                        } else if (querySort.title === "CV") {
-                          return (
-                            a[1].summary.reporting.cv -
-                            b[1].summary.reporting.cv
-                          );
-                        } else if (querySort.title === "CVR") {
-                          return (
-                            a[1].summary.reporting.cvr -
-                            b[1].summary.reporting.cvr
-                          );
-                        } else if (querySort.title === "CPC") {
-                          return (
-                            a[1].summary.reporting.cpc -
-                            b[1].summary.reporting.cpc
-                          );
-                        } else if (querySort.title === "Payout") {
-                          return (
-                            a[1].summary.reporting.payout -
-                            b[1].summary.reporting.payout
-                          );
-                        } else if (querySort.title === "RPC") {
-                          return (
-                            a[1].summary.reporting.rpc -
-                            b[1].summary.reporting.rpc
-                          );
-                        } else if (querySort.title === "RPA") {
-                          return (
-                            a[1].summary.reporting.rpa -
-                            b[1].summary.reporting.rpa
-                          );
-                        } else if (querySort.title === "Revenue") {
-                          return (
-                            a[1].summary.reporting.revenue -
-                            b[1].summary.reporting.revenue
-                          );
-                        } else if (querySort.title === "Profit") {
-                          return (
-                            a[1].summary.reporting.profit -
-                            b[1].summary.reporting.profit
-                          );
-                        } else if (querySort.title === "Margin") {
-                          return (
-                            a[1].summary.reporting.margin -
-                            b[1].summary.reporting.margin
-                          );
-                        } else if (querySort.title === "Total CV") {
-                          return (
-                            a[1].summary.reporting.total_cv -
-                            b[1].summary.reporting.total_cv
-                          );
-                        } else if (querySort.title === "EVR") {
-                          return (
-                            a[1].summary.reporting.evr -
-                            b[1].summary.reporting.evr
-                          );
-                        } else if (querySort.title === "EVT") {
-                          return (
-                            a[1].summary.reporting.event -
-                            b[1].summary.reporting.event
-                          );
-                        }
-                      } else if (querySort.sort === "down") {
-                        if (querySort.title === "Network Affiliate ID") {
-                          return b[1].summary.columns[0].id.localeCompare(
-                            a[1].summary.columns[0].id,
-                          );
-                        } else if (querySort.title === "Affiliate Name") {
-                          return b[1].summary.columns[0].label.localeCompare(
-                            a[1].summary.columns[0].label,
-                          );
-                        } else if (querySort.title === "Gross Clicks") {
-                          return (
-                            b[1].summary.reporting.gross_click -
-                            a[1].summary.reporting.gross_click
-                          );
-                        } else if (querySort.title === "Unique Clicks") {
-                          return (
-                            b[1].summary.reporting.unique_click -
-                            a[1].summary.reporting.unique_click
-                          );
-                        } else if (querySort.title === "Duplicate Clicks") {
-                          return (
-                            b[1].summary.reporting.duplicate_click -
-                            a[1].summary.reporting.duplicate_click
-                          );
-                        } else if (querySort.title === "Invalid Clicks") {
-                          return (
-                            b[1].summary.reporting.invalid_click -
-                            a[1].summary.reporting.invalid_click
-                          );
-                        } else if (querySort.title === "CV") {
-                          return (
-                            b[1].summary.reporting.cv -
-                            a[1].summary.reporting.cv
-                          );
-                        } else if (querySort.title === "CVR") {
-                          return (
-                            b[1].summary.reporting.cvr -
-                            a[1].summary.reporting.cvr
-                          );
-                        } else if (querySort.title === "CPC") {
-                          return (
-                            b[1].summary.reporting.cpc -
-                            a[1].summary.reporting.cpc
-                          );
-                        } else if (querySort.title === "Payout") {
-                          return (
-                            b[1].summary.reporting.payout -
-                            a[1].summary.reporting.payout
-                          );
-                        } else if (querySort.title === "RPC") {
-                          return (
-                            b[1].summary.reporting.rpc -
-                            a[1].summary.reporting.rpc
-                          );
-                        } else if (querySort.title === "RPA") {
-                          return (
-                            b[1].summary.reporting.rpa -
-                            a[1].summary.reporting.rpa
-                          );
-                        } else if (querySort.title === "Revenue") {
-                          return (
-                            b[1].summary.reporting.revenue -
-                            a[1].summary.reporting.revenue
-                          );
-                        } else if (querySort.title === "Profit") {
-                          return (
-                            b[1].summary.reporting.profit -
-                            a[1].summary.reporting.profit
-                          );
-                        } else if (querySort.title === "Margin") {
-                          return (
-                            b[1].summary.reporting.margin -
-                            a[1].summary.reporting.margin
-                          );
-                        } else if (querySort.title === "Total CV") {
-                          return (
-                            b[1].summary.reporting.total_cv -
-                            a[1].summary.reporting.total_cv
-                          );
-                        } else if (querySort.title === "EVR") {
-                          return (
-                            b[1].summary.reporting.evr -
-                            a[1].summary.reporting.evr
-                          );
-                        } else if (querySort.title === "EVT") {
-                          return (
-                            b[1].summary.reporting.event -
-                            a[1].summary.reporting.event
-                          );
-                        }
-                      }
-                      return a[1].summary.columns[0].id.localeCompare(
-                        b[1].summary.columns[0].id,
-                      );
-                    })
+                    ?.sort((a, b) =>
+                      compareTableEntries(
+                        a[1].summary,
+                        b[1].summary,
+                        querySort.title,
+                        querySort.sort,
+                      ),
+                    )
                     .map((partner, index) => {
                       const odd = index % 2;
 
@@ -724,42 +587,51 @@ function ParterReport({ user }: { user: User }) {
                             (value) =>
                               value.key === partner[1].summary.columns[0].id,
                           )?.active === true &&
-                            partner[1].entries.map((item, index) => {
-                              const oddChild = index % 2;
-                              if (
-                                user.role === "manager" ||
-                                user.role === "partner"
-                              ) {
-                                return (
-                                  <TbodyForEditor
-                                    user={user}
-                                    onTriggerConversion={(columns) =>
-                                      setTargetConversionColumns(columns)
-                                    }
-                                    partnerPerformanceDayByDay={
-                                      partnerPerformanceDayByDay
-                                    }
-                                    key={index}
-                                    odd={oddChild}
-                                    item={item}
-                                  />
-                                );
-                              } else if (user.role === "admin") {
-                                return (
-                                  <TbodyForAdmin
-                                    onTriggerConversion={(columns) =>
-                                      setTargetConversionColumns(columns)
-                                    }
-                                    partnerPerformanceDayByDay={
-                                      partnerPerformanceDayByDay
-                                    }
-                                    key={index}
-                                    odd={oddChild}
-                                    item={item}
-                                  />
-                                );
-                              }
-                            })}
+                            partner[1].entries
+                              .sort((a, b) =>
+                                compareTableEntries(
+                                  a,
+                                  b,
+                                  querySort.title,
+                                  querySort.sort,
+                                ),
+                              )
+                              .map((item, child_index) => {
+                                const oddChild = (child_index + 1) % 2;
+                                if (
+                                  user.role === "manager" ||
+                                  user.role === "partner"
+                                ) {
+                                  return (
+                                    <TbodyForEditor
+                                      user={user}
+                                      onTriggerConversion={(columns) =>
+                                        setTargetConversionColumns(columns)
+                                      }
+                                      partnerPerformanceDayByDay={
+                                        partnerPerformanceDayByDay
+                                      }
+                                      key={child_index}
+                                      odd={oddChild}
+                                      item={item}
+                                    />
+                                  );
+                                } else if (user.role === "admin") {
+                                  return (
+                                    <TbodyForAdmin
+                                      onTriggerConversion={(columns) =>
+                                        setTargetConversionColumns(columns)
+                                      }
+                                      partnerPerformanceDayByDay={
+                                        partnerPerformanceDayByDay
+                                      }
+                                      key={child_index}
+                                      odd={oddChild}
+                                      item={item}
+                                    />
+                                  );
+                                }
+                              })}
                         </>
                       );
                     })}
