@@ -210,7 +210,7 @@ function ParterReport({ user }: { user: User }) {
 
         return recalculatedListData;
       }),
-    refetchInterval: 1000 * 10,
+    refetchInterval: 1000 * 60 * 2,
   });
 
   useEffect(() => {
