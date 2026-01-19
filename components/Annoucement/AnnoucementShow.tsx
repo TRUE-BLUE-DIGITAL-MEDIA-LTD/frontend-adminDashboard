@@ -28,7 +28,7 @@ function AnnoucementShow({ announcement }: Props) {
   }
   return (
     <div
-      className={`flex h-14 w-full items-center justify-start gap-2 
+      className={`fixed bottom-0 z-50 flex h-14 w-full items-center justify-start gap-2 
         ${announcement.status === "info" ? "bg-blue-50" : announcement.status === "success" ? "bg-green-50" : announcement.status === "warning" ? "bg-yellow-50" : "bg-red-50"}
         `}
     >

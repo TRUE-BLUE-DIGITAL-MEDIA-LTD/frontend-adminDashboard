@@ -32,10 +32,11 @@ export default function DashboardLayout({
       )}
       {user && <TawkToChat user={user} />}
 
-      {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
       <DashboardNavbar setTriggerSidebar={setTriggerSidebar} />
       {triggerSidebar && <SidebarDashboard user={user} ref={divRef} />}
       {children}
+      {annoucement.data && <div className="h-14"></div>}
+      {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
     </>
   );
 }
