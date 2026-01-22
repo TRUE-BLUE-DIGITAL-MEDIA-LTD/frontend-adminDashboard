@@ -581,7 +581,7 @@ function PartnerLeague({ user }: Props) {
                                         </span>
                                       </td>
                                       <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                        {a.cvr.toFixed(2)}%
+                                        {a.cvr && a.cvr.toFixed(2)}%
                                       </td>
                                       <td className="px-6 py-4 text-center">
                                         <span
