@@ -4,12 +4,18 @@ import { Dropdown } from "primereact/dropdown";
 import { Nullable } from "primereact/ts-helpers";
 import moment from "moment";
 import { countries, Countries } from "../../data/country";
-import { useUpdateBulkExchangeRate } from "../../react-query/partner";
+import {
+  useGetCampaigns,
+  useUpdateBulkExchangeRate,
+} from "../../react-query/partner";
 import { CiCalendarDate } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ConversionRawData } from "../../services/everflow/partner";
+import {
+  ConversionRawData,
+  ResponseCampaign,
+} from "../../services/everflow/partner";
 
 type Props = {
   onClose: () => void;
@@ -22,10 +28,22 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     const today = moment().format("YYYY-MM-DD");
     return [moment(today).toDate(), moment(today).toDate()];
   });
+  const smartLinks = useGetCampaigns({ campaign_name: "TH SMART 25 - 34" });
 
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [selectedSmartLink, setSelectedSmartLink] =
+    useState<ResponseCampaign | null>(null);
   const [rate, setRate] = useState<string>("");
   const [results, setResults] = useState<ConversionRawData[] | null>(null);
+  const [currencyTarget, setCurrencyTarget] = useState<string>("");
+  const [currentcyConverted, setCurrencyConverted] = useState<string>("");
+
+  const currencies = [
+    { label: "THB", value: "THB" },
+    { label: "USD", value: "USD" },
+    { label: "EUR", value: "EUR" },
+    { label: "GBP", value: "GBP" },
+  ];
 
   const { mutateAsync } = useUpdateBulkExchangeRate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +64,26 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
       return;
     }
 
+    if (!currencyTarget) {
+      alert("Please select a target currency");
+      return;
+    }
+
+    if (!currentcyConverted) {
+      alert("Please select a converted currency");
+      return;
+    }
+
+    if (currencyTarget === currentcyConverted) {
+      alert("Target currency and converted currency cannot be the same");
+      return;
+    }
+
+    if (!selectedSmartLink) {
+      alert("Please select a smart link");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const data = await mutateAsync({
@@ -53,6 +91,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
         endDate: moment(dates[1]).format("YYYY-MM-DD"),
         country: selectedCountry.country,
         target_currency: Number(rate),
+        currency_id: currencyTarget,
+        currency_converted_id: currentcyConverted,
+        campaign_id: selectedSmartLink?.network_campaign_id,
       });
       setResults(data);
     } catch (error) {
@@ -182,6 +223,44 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           filter
           valueTemplate={selectedCountryTemplate}
           itemTemplate={countryOptionTemplate}
+          className="w-full"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="font-semibold">Select Smart Link</label>
+        <Dropdown
+          value={selectedSmartLink}
+          onChange={(e) => setSelectedSmartLink(e.value)}
+          options={smartLinks.data}
+          optionLabel="campaign_name"
+          placeholder="Select a Smart Link"
+          filter
+          className="w-full"
+          loading={smartLinks.isLoading}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="font-semibold">Target Currency</label>
+        <Dropdown
+          value={currencyTarget}
+          onChange={(e) => setCurrencyTarget(e.value)}
+          options={currencies}
+          optionLabel="label"
+          placeholder="Select Target Currency"
+          className="w-full"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="font-semibold">Convert To</label>
+        <Dropdown
+          value={currentcyConverted}
+          onChange={(e) => setCurrencyConverted(e.value)}
+          options={currencies.filter((c) => c.value !== currencyTarget)}
+          optionLabel="label"
+          placeholder="Select Convert To Currency"
           className="w-full"
         />
       </div>

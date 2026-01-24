@@ -319,10 +319,7 @@ export interface Paging {
 /**
  * Represents the top-level API response structure.
  */
-export interface ResponseGetConversionParterReportService {
-  conversions: Conversion[];
-  paging: Paging;
-}
+export type ResponseGetConversionParterReportService = ConversionRawData[];
 
 export type ReqeustGetConversionParterReportService = {
   startDate: string;
@@ -340,6 +337,32 @@ export async function GetConversionParterReportService(
       method: "POST",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/conversions`,
       data: input,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    });
+
+    return summary.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseGetCampaignsService = ResponseCampaign[];
+export type ReqeustGetCampaignsService = {
+  campaign_name: string;
+};
+export async function GetCampaignsService(
+  input: ReqeustGetCampaignsService,
+): Promise<ResponseGetCampaignsService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const summary = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/campaigns`,
+      params: input,
       headers: {
         Authorization: "Bearer " + access_token,
       },
@@ -384,6 +407,9 @@ export type UpdateBulkExchangeRateDto = {
   endDate: string;
   country: string;
   target_currency: number;
+  currency_id: string;
+  currency_converted_id: string;
+  campaign_id: number;
 };
 
 export async function UpdateBulkExchangeRateService(
@@ -408,6 +434,25 @@ export async function UpdateBulkExchangeRateService(
   }
 }
 
+export type ResponseCampaign = {
+  network_campaign_id: number;
+  network_id: number;
+  campaign_name: string;
+  campaign_status: string;
+  network_tracking_domain_id: number;
+  is_use_secure_link: boolean;
+  redirect_routing_type: string;
+  catch_all_network_offer_id: number;
+  is_open_to_affiliates: boolean;
+  run_frequency: string;
+  metric: string;
+  optimization_goal: number;
+  data_lookback_window: string;
+  data_collection_threshold: number;
+  time_created: number;
+  time_saved: number;
+};
+
 export interface ConversionRawData {
   update_timestamp: number;
   conversion_id: string;
@@ -423,6 +468,7 @@ export interface ConversionRawData {
   network_offer_id: string;
   network_offer_group_id: string;
   network_campaign_id: string;
+  click_timestamp: number;
   affiliate_manager_id: string;
   network_advertiser_id: string;
   account_manager_id: string;
@@ -431,6 +477,7 @@ export interface ConversionRawData {
   previous_network_offer_id: string;
   network_offer_payout_revenue_id: string;
   exchange_rate?: string;
+  currency_converted_id?: string;
   source_id: string;
   sub1: string;
   sub2: string;

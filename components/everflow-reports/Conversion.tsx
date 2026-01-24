@@ -129,8 +129,6 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
   data,
   onPageChange,
 }) => {
-  const { conversions, paging } = data;
-
   // Helper to render the status with a colored pill
   const renderStatus = (status: string) => {
     const isApproved = status.toLowerCase() === "approved";
@@ -283,31 +281,31 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {conversions?.map((conv, index) => (
+            {data?.map((conv, index) => (
               <tr key={conv.conversion_id}>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {(paging.page - 1) * paging.page_size + index + 1}
+                  {index + 1}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {formatTimestamp(conv.conversion_unix_timestamp)}
+                  {formatTimestamp(conv.conversion_timestamp)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {formatTimestamp(conv.click_unix_timestamp)}
+                  {conv.click_date}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                   {calculateAndFormatDelta(
-                    conv.conversion_unix_timestamp,
-                    conv.click_unix_timestamp,
+                    conv.conversion_timestamp,
+                    conv.click_timestamp,
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                  {conv.relationship.affiliate.name}
+                  {conv.network_affiliate_id}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {conv.relationship.offer.name}
+                  {conv.network_offer_id}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {renderStatus(conv.status)}
+                  {renderStatus(conv.conversion_status)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {conv.conversion_user_ip}
@@ -319,7 +317,12 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                   {conv.conversion_id}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {formatCurrency(conv.payout, conv.currency_id)}
+                  {conv.exchange_rate && conv.currency_converted_id
+                    ? formatCurrency(
+                        Number(conv.payout) * Number(conv.exchange_rate || 1),
+                        conv.currency_converted_id,
+                      )
+                    : formatCurrency(Number(conv.payout), conv.currency_id)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {conv.country}
@@ -347,12 +350,6 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
           </tbody>
         </table>
       </div>
-      <PaginationControls
-        currentPage={paging.page ?? 1}
-        totalCount={paging.total_count}
-        pageSize={paging.page_size}
-        onPageChange={onPageChange}
-      />
     </div>
   );
 };
@@ -381,7 +378,7 @@ function Conversion({ startDate, endDate, columns }: Props) {
     setCurrentPage(page);
   };
 
-  if (data.isLoading && !data.data?.conversions.length) {
+  if (data.isLoading && !data.data?.length) {
     return (
       <div className="h-96 w-10/12 rounded-md bg-white p-5 text-center">
         Loading...

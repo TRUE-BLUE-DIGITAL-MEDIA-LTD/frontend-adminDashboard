@@ -8,9 +8,11 @@ import {
   RequestGetPartnerLeagueTableService,
 } from "../services/admin/partner";
 import {
+  GetCampaignsService,
   GetConversionParterReportService,
   GetParterPerformanceByDate,
   GetPartnerSummaryStatsService,
+  ReqeustGetCampaignsService,
   ReqeustGetConversionParterReportService,
   RequestGetParterPerformancesByDate,
   UpdateBulkExchangeRateService,
@@ -117,5 +119,13 @@ export function useUpdateBulkExchangeRate() {
         queryKey: ["partner-reports"],
       });
     },
+  });
+}
+
+export function useGetCampaigns(dto: ReqeustGetCampaignsService) {
+  return useQuery({
+    queryKey: ["campaigns", dto],
+    queryFn: () => GetCampaignsService(dto),
+    placeholderData: keepPreviousData,
   });
 }
