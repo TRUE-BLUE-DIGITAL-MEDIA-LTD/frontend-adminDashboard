@@ -88,6 +88,7 @@ export function useGetConversionPartnerReport(
     queryKey: ["conversions", input],
     queryFn: () => GetConversionParterReportService(input),
     placeholderData: keepPreviousData,
+    refetchInterval: 1000 * 10,
   });
 }
 
