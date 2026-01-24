@@ -270,6 +270,10 @@ function Conversion({ startDate, endDate, columns }: Props) {
     }),
   });
 
+  useEffect(() => {
+    data.refetch();
+  }, []);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -284,7 +288,13 @@ function Conversion({ startDate, endDate, columns }: Props) {
 
   return (
     <div className=" w-10/12 rounded-md bg-white p-5">
-      <h1 className="mb-4 text-2xl font-bold">Conversion Report</h1>
+      <h1 className="mb-4 text-2xl font-bold">
+        Conversion Report{" "}
+        {data.isRefetching && (
+          <span className="text-sm font-semibold"> Loading...</span>
+        )}
+      </h1>
+
       <div className={data.isLoading ? "opacity-50" : ""}>
         {data.data && (
           <ConversionsTable data={data.data} onPageChange={handlePageChange} />
