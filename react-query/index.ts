@@ -11,3 +11,4 @@ export * from "./sms-daisy";
 export * from "./oxypoint";
 export * from "./user";
 export * from "./sms-report";
+export * from "./adjust-lead-rate";

@@ -27,6 +27,7 @@ import PopupLayout from "../../layouts/PopupLayout";
 import Conversion from "./Conversion";
 import PartnerSummaryStats from "./PartnerSummaryStats";
 import BulkUpdateExchangeRate from "./BulkUpdateExchangeRate";
+import AdjustLeadRatesTable from "./AdjustLeadRatesTable";
 
 const menuTables = [
   { title: "Network Affiliate ID", sort: "up", admin: false },
@@ -134,6 +135,7 @@ function ParterReport({ user }: { user: User }) {
     Column[] | null
   >(null);
   const [showBulkUpdate, setShowBulkUpdate] = useState(false);
+  const [showAdjustRates, setShowAdjustRates] = useState(false);
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const today = moment().format("YYYY-MM-DD");
@@ -325,6 +327,11 @@ function ParterReport({ user }: { user: User }) {
           <BulkUpdateExchangeRate onClose={() => setShowBulkUpdate(false)} />
         </PopupLayout>
       )}
+      {showAdjustRates && (
+        <PopupLayout onClose={() => setShowAdjustRates(false)}>
+          <AdjustLeadRatesTable />
+        </PopupLayout>
+      )}
       <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
         {user.role === "manager" && (
           <BonusCaluator
@@ -418,7 +425,6 @@ function ParterReport({ user }: { user: User }) {
               Pick Up Date <CiCalendarDate />
             </label>
             <Calendar
-              className="h-10 w-full xl:w-96"
               value={dates}
               onChange={(e) => {
                 setDates(e.value);
@@ -433,9 +439,15 @@ function ParterReport({ user }: { user: User }) {
               </label>
               <button
                 onClick={() => setShowBulkUpdate(true)}
-                className="h-10 w-full rounded bg-blue-600 px-4 font-bold text-white hover:bg-blue-700 xl:w-max"
+                className="h-10 w-full rounded bg-blue-600 px-4 font-bold text-white hover:bg-blue-700 xl:w-60"
               >
-                Bulk Update Rate
+                Create Rate
+              </button>
+              <button
+                onClick={() => setShowAdjustRates(true)}
+                className="h-10 w-full rounded bg-green-600 px-4 font-bold text-white hover:bg-green-700 xl:w-60"
+              >
+                Manage Rates
               </button>
             </div>
           )}

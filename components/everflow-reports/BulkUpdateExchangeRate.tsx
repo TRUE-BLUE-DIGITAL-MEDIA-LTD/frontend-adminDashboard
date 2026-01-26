@@ -12,10 +12,22 @@ import { CiCalendarDate } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { RadioButton } from "primereact/radiobutton";
+import {
+  FaMoneyBillWave,
+  FaExchangeAlt,
+  FaGlobe,
+  FaLink,
+  FaCalendarAlt,
+  FaCheckCircle,
+} from "react-icons/fa";
 import {
   ConversionRawData,
   ResponseCampaign,
 } from "../../services/everflow/partner";
+import { useCreateAdjustLeadRate } from "../../react-query";
+import Swal from "sweetalert2";
+import { ErrorMessages } from "../../models";
 
 type Props = {
   onClose: () => void;
@@ -28,8 +40,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     const today = moment().format("YYYY-MM-DD");
     return [moment(today).toDate(), moment(today).toDate()];
   });
-  const smartLinks = useGetCampaigns({ campaign_name: "TH SMART 25 - 34" });
 
+  const smartLinks = useGetCampaigns({ campaign_name: "TH" });
+  const createAdjustLeadRateMutation = useCreateAdjustLeadRate();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [selectedSmartLink, setSelectedSmartLink] =
     useState<ResponseCampaign | null>(null);
@@ -37,6 +50,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const [results, setResults] = useState<ConversionRawData[] | null>(null);
   const [currencyTarget, setCurrencyTarget] = useState<string>("");
   const [currentcyConverted, setCurrencyConverted] = useState<string>("");
+  const [updateType, setUpdateType] = useState<"once" | "live">("once");
 
   const currencies = [
     { label: "THB", value: "THB" },
@@ -49,9 +63,11 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!dates || dates.length !== 2 || !dates[0] || !dates[1]) {
-      alert("Please select a date range");
-      return;
+    if (updateType === "once") {
+      if (!dates || dates.length !== 2 || !dates[0] || !dates[1]) {
+        alert("Please select a date range");
+        return;
+      }
     }
 
     if (!selectedCountry) {
@@ -86,19 +102,41 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
 
     setIsSubmitting(true);
     try {
-      const data = await mutateAsync({
-        startDate: moment(dates[0]).format("YYYY-MM-DD"),
-        endDate: moment(dates[1]).format("YYYY-MM-DD"),
-        country: selectedCountry.country,
-        target_currency: Number(rate),
-        currency_id: currencyTarget,
-        currency_converted_id: currentcyConverted,
-        campaign_id: selectedSmartLink?.network_campaign_id,
+      if (updateType === "live") {
+        await createAdjustLeadRateMutation.mutateAsync({
+          country: selectedCountry.country,
+          rate: Number(rate),
+          targetCurrency: currencyTarget,
+          convertedCurrency: currentcyConverted,
+          campaignId: String(selectedSmartLink.network_campaign_id),
+        });
+      } else {
+        if (!dates || !dates[0] || !dates[1]) return;
+        const data = await mutateAsync({
+          startDate: moment(dates[0]).format("YYYY-MM-DD"),
+          endDate: moment(dates[1]).format("YYYY-MM-DD"),
+          country: selectedCountry.country,
+          target_currency: Number(rate),
+          currency_id: currencyTarget,
+          currency_converted_id: currentcyConverted,
+          campaign_id: selectedSmartLink?.network_campaign_id,
+        });
+        setResults(data);
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Exchange rate updated successfully",
       });
-      setResults(data);
     } catch (error) {
-      console.error("Error updating rates:", error);
-      alert("Failed to update rate. Please try again.");
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error,
+        text: result.message.toString(),
+        footer: "Error Code :" + result.statusCode?.toString(),
+        icon: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -136,7 +174,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
 
   if (results) {
     return (
-      <div className="relative flex w-11/12 max-w-5xl flex-col gap-5 rounded-lg bg-white p-5 shadow-lg">
+      <div className="relative flex w-11/12 max-w-5xl flex-col gap-6 rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700"
@@ -144,7 +182,10 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <IoMdClose />
         </button>
 
-        <h2 className="text-xl font-bold">Update Results</h2>
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
+          <FaCheckCircle className="text-green-500" />
+          Update Results
+        </h2>
 
         <DataTable value={results} paginator rows={5} className="w-full">
           <Column field="conversion_id" header="Conversion ID" sortable />
@@ -189,7 +230,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   }
 
   return (
-    <div className="relative flex w-11/12 max-w-lg flex-col gap-5 rounded-lg bg-white p-5 shadow-lg md:w-3/4">
+    <div className="relative flex h-max w-11/12 flex-col gap-6 rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg md:w-7/12">
       <button
         onClick={onClose}
         className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700"
@@ -197,86 +238,133 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
         <IoMdClose />
       </button>
 
-      <h2 className="text-xl font-bold">Update Exchange Rate</h2>
+      <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
+        <FaMoneyBillWave className="text-green-500" />
+        Update Exchange Rate
+      </h2>
 
-      <div className="flex flex-col gap-2">
-        <label className="flex items-center gap-2 font-semibold">
-          Select Date Range <CiCalendarDate />
+      <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-gray-50 p-4">
+        <label className="flex items-center gap-2 font-semibold text-gray-700">
+          <FaExchangeAlt className="text-blue-500" /> Update Type
         </label>
-        <Calendar
-          value={dates}
-          onChange={(e) => setDates(e.value)}
-          selectionMode="range"
-          className="w-full"
-          showIcon
-        />
+        <div className="flex gap-4">
+          <div className="flex items-center">
+            <RadioButton
+              inputId="updateOnce"
+              name="updateType"
+              value="once"
+              onChange={(e) => setUpdateType(e.value)}
+              checked={updateType === "once"}
+            />
+            <label htmlFor="updateOnce" className="ml-2 cursor-pointer">
+              Update once time
+            </label>
+          </div>
+          <div className="flex items-center">
+            <RadioButton
+              inputId="updateLive"
+              name="updateType"
+              value="live"
+              onChange={(e) => setUpdateType(e.value)}
+              checked={updateType === "live"}
+            />
+            <label htmlFor="updateLive" className="ml-2 cursor-pointer">
+              Update live
+            </label>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold">Select Country</label>
-        <Dropdown
-          value={selectedCountry}
-          onChange={(e) => setSelectedCountry(e.value)}
-          options={countries}
-          optionLabel="country"
-          placeholder="Select a Country"
-          filter
-          valueTemplate={selectedCountryTemplate}
-          itemTemplate={countryOptionTemplate}
-          className="w-full"
-        />
-      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {updateType === "once" && (
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 font-semibold text-gray-700">
+              <FaCalendarAlt className="text-orange-500" /> Select Date Range
+            </label>
+            <Calendar
+              value={dates}
+              onChange={(e) => setDates(e.value)}
+              selectionMode="range"
+              className="border"
+            />
+          </div>
+        )}
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaGlobe className="text-blue-500" /> Select Country
+          </label>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold">Select Smart Link</label>
-        <Dropdown
-          value={selectedSmartLink}
-          onChange={(e) => setSelectedSmartLink(e.value)}
-          options={smartLinks.data}
-          optionLabel="campaign_name"
-          placeholder="Select a Smart Link"
-          filter
-          className="w-full"
-          loading={smartLinks.isLoading}
-        />
-      </div>
+          <Dropdown
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.value)}
+            options={countries}
+            optionLabel="country"
+            placeholder="Select a Country"
+            filter
+            valueTemplate={selectedCountryTemplate}
+            itemTemplate={countryOptionTemplate}
+            className="w-full border"
+          />
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold">Target Currency</label>
-        <Dropdown
-          value={currencyTarget}
-          onChange={(e) => setCurrencyTarget(e.value)}
-          options={currencies}
-          optionLabel="label"
-          placeholder="Select Target Currency"
-          className="w-full"
-        />
-      </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaLink className="text-purple-500" /> Select Smart Link
+          </label>
+          <Dropdown
+            value={selectedSmartLink}
+            onChange={(e) => setSelectedSmartLink(e.value)}
+            options={smartLinks.data}
+            optionLabel="campaign_name"
+            placeholder="Select a Smart Link"
+            filter
+            className="w-full border"
+            loading={smartLinks.isLoading}
+          />
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold">Convert To</label>
-        <Dropdown
-          value={currentcyConverted}
-          onChange={(e) => setCurrencyConverted(e.value)}
-          options={currencies.filter((c) => c.value !== currencyTarget)}
-          optionLabel="label"
-          placeholder="Select Convert To Currency"
-          className="w-full"
-        />
-      </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaMoneyBillWave className="text-green-500" /> Target Currency
+          </label>
+          <Dropdown
+            value={currencyTarget}
+            onChange={(e) => setCurrencyTarget(e.value)}
+            options={currencies}
+            optionLabel="label"
+            placeholder="Select Target Currency"
+            className="w-full border"
+          />
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold">Exchange Rate</label>
-        <input
-          type="number"
-          step="0.0001"
-          placeholder="Enter rate"
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-          value={rate}
-          onChange={(e) => setRate(e.target.value)}
-        />
-      </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaExchangeAlt className="text-indigo-500" /> Convert To
+          </label>
+          <Dropdown
+            value={currentcyConverted}
+            onChange={(e) => setCurrencyConverted(e.value)}
+            options={currencies.filter((c) => c.value !== currencyTarget)}
+            optionLabel="label"
+            placeholder="Select Convert To Currency"
+            className="w-full border"
+          />
+        </div>
 
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaMoneyBillWave className="text-yellow-500" /> Exchange Rate
+          </label>
+          <input
+            type="number"
+            step="0.0001"
+            placeholder="Enter rate"
+            className="h-12 w-60 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="flex justify-end gap-3 pt-2">
         <button
           onClick={onClose}
