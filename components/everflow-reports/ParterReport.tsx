@@ -11,7 +11,9 @@ import {
   GetSummaryParterReportService,
   TableEntry,
   column_type,
+  Reporting,
 } from "../../services/everflow/partner";
+import { groupBy } from "../../utils/groupBy";
 import { LuArrowDownUp } from "react-icons/lu";
 import { User } from "../../models";
 import SummaryReport from "./summaryReport";
@@ -53,8 +55,8 @@ const menuTables = [
 type MenuTitle = (typeof menuTables)[number]["title"];
 
 const sortFields: Record<MenuTitle, (item: TableEntry) => number | string> = {
-  "Network Affiliate ID": (item) => Number(item.columns[0].id),
-  "Affiliate Name": (item) => item.columns[0].label,
+  "Network Affiliate ID": (item) => Number(item.columns[0]?.id),
+  "Affiliate Name": (item) => item.columns[0]?.label,
   "Gross Clicks": (item) => item.reporting.gross_click,
   "Unique Clicks": (item) => item.reporting.unique_click,
   "Duplicate Clicks": (item) => item.reporting.duplicate_click,
@@ -106,15 +108,57 @@ const columns = [
   { name: "Smart Link", code: "campaign" },
 ];
 
+const aggregateReporting = (reports: Reporting[]): Reporting => {
+  const base = { ...reports[0] };
+  const keys = Object.keys(base) as (keyof Reporting)[];
+  keys.forEach((key) => {
+    if (typeof base[key] === "number") {
+      (base as any)[key] = 0;
+    }
+  });
+
+  reports.forEach((r) => {
+    keys.forEach((key) => {
+      if (typeof r[key] === "number") {
+        (base as any)[key] += r[key];
+      }
+    });
+  });
+
+  if (base.imp > 0) base.ctr = (base.gross_click / base.imp) * 100;
+  if (base.unique_click > 0) base.cvr = (base.cv / base.unique_click) * 100;
+  if (base.unique_click > 0) base.evr = (base.event / base.unique_click) * 100;
+  if (base.revenue > 0) base.margin = (base.profit / base.revenue) * 100;
+  if (base.unique_click > 0) base.cpc = base.payout / base.unique_click;
+  if (base.unique_click > 0) base.rpc = base.revenue / base.unique_click;
+  if (base.cv > 0) base.rpa = base.revenue / base.cv;
+  if (base.total_click > 0) base.epc = base.revenue / base.total_click;
+  if (base.imp > 0) base.rpm = (base.revenue / base.imp) * 1000;
+  if (base.media_buying_cost > 0)
+    base.roas = (base.revenue / base.media_buying_cost) * 100;
+
+  return base;
+};
+
+export type ActiceColumnKey = { key: string; child?: string; active: boolean };
 function ParterReport({ user }: { user: User }) {
-  const [activePartnerDropdowns, setActivePartnerDropdowns] =
-    useState<{ key: string; active: boolean }[]>();
+  const [activeColumnDropdown, setActiveColumnDropdown] =
+    useState<ActiceColumnKey[]>();
+
   const [selectColumns, setSelectColumns] = useState<{
-    parent: {
-      name: string;
-      code: column_type;
-    };
+    parent:
+      | {
+          name: string;
+          code: column_type;
+        }
+      | undefined;
     child:
+      | {
+          name: string;
+          code: column_type;
+        }
+      | undefined;
+    grandchild:
       | {
           name: string;
           code: column_type;
@@ -129,6 +173,7 @@ function ParterReport({ user }: { user: User }) {
       name: "Offer",
       code: "offer",
     },
+    grandchild: undefined,
   });
 
   const [targetConversionColumns, setTargetConversionColumns] = useState<
@@ -163,6 +208,7 @@ function ParterReport({ user }: { user: User }) {
         columns: {
           parent: selectColumns.parent?.code,
           child: selectColumns.child?.code,
+          grandchild: selectColumns.grandchild?.code,
         },
       },
     ],
@@ -177,49 +223,39 @@ function ParterReport({ user }: { user: User }) {
           selectColumns?.child?.code
             ? { column: selectColumns?.child?.code }
             : undefined,
+          selectColumns?.grandchild?.code
+            ? { column: selectColumns?.grandchild?.code }
+            : undefined,
         ].filter(Boolean),
       }).then((data) => {
-        const group = data;
-        type PartnerPerformanceEntry = [
-          string,
-          { summary: TableEntry; entries: TableEntry[] },
-        ];
-
-        const listData = Object.entries(group);
-        // Recalculate CVR for each entry
-        const recalculatedListData = listData.map(
-          ([key, value]): PartnerPerformanceEntry => {
-            const recalculatedEntries = value.entries.map((entry) => {
-              const { cv, unique_click } = entry.reporting;
-              // Avoid division by zero
-              const newCvr = unique_click > 0 ? cv / unique_click : 0;
-
-              return {
-                ...entry,
-                reporting: {
-                  ...entry.reporting,
-                  cvr: newCvr * 100,
-                },
-              };
-            });
-
-            return [
-              key,
-              { summary: value.summary, entries: recalculatedEntries },
-            ];
-          },
-        );
-
-        return recalculatedListData;
+        const listData = Object.entries(data);
+        return listData;
       }),
     refetchInterval: 1000 * 10,
   });
 
   useEffect(() => {
     if (paterPerfomaces.data) {
-      setActivePartnerDropdowns(() => {
-        return paterPerfomaces?.data?.map((list, key) => {
-          return { key: list[0], active: false };
+      setActiveColumnDropdown(() => {
+        return paterPerfomaces?.data?.flatMap((list) => {
+          const keys: ActiceColumnKey[] = [{ key: list[0], active: false }];
+          const seenChildren = new Set<string>();
+
+          for (const child of list[1].entries) {
+            if (child.columns.length >= 3) {
+              const childId = child.columns[1].id;
+              if (!seenChildren.has(childId)) {
+                keys.push({
+                  key: list[0],
+                  child: childId,
+                  active: false,
+                });
+                seenChildren.add(childId);
+              }
+            }
+          }
+
+          return keys;
         });
       });
     }
@@ -309,7 +345,159 @@ function ParterReport({ user }: { user: User }) {
       }),
   });
 
-  console.log(activePartnerDropdowns);
+  const renderChildrenRows = (entries: TableEntry[], parentId: string) => {
+    const hasGrandchildren = entries.some((e) => e.columns.length >= 3);
+
+    if (hasGrandchildren) {
+      const groups = groupBy({
+        list: entries,
+        keyGetter: (item: TableEntry) => item.columns[1].id,
+      });
+
+      const groupedEntries = Array.from(groups.entries()).map(
+        ([childId, groupEntries]) => {
+          const gEntries = groupEntries as TableEntry[];
+          const summaryReporting = aggregateReporting(
+            gEntries.map((e) => e.reporting),
+          );
+          const summaryEntry: TableEntry = {
+            ...gEntries[0],
+            reporting: summaryReporting,
+          };
+          return {
+            summary: summaryEntry,
+            entries: gEntries,
+          };
+        },
+      );
+
+      groupedEntries.sort((a, b) =>
+        compareTableEntries(
+          a.summary,
+          b.summary,
+          querySort.title,
+          querySort.sort,
+        ),
+      );
+
+      return groupedEntries.map((group, groupIndex) => {
+        const odd = (groupIndex + 1) % 2;
+        const childId = group.summary.columns[1].id;
+        const isExpanded = activeColumnDropdown?.find(
+          (k) => k.key === parentId && k.child === childId,
+        )?.active;
+
+        if (user.role === "admin") {
+          return (
+            <React.Fragment key={childId}>
+              <TbodyForAdmin
+                activeColumnDropdown={activeColumnDropdown ?? []}
+                setActiveColumnDropdown={setActiveColumnDropdown}
+                partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                onTriggerConversion={(cols) => setTargetConversionColumns(cols)}
+                key={childId}
+                odd={odd}
+                item={group.summary}
+                isGroupedChild={true}
+                parentId={parentId}
+              />
+              {isExpanded &&
+                group.entries
+                  .sort((a, b) =>
+                    compareTableEntries(a, b, querySort.title, querySort.sort),
+                  )
+                  .map((entry, entryIndex) => (
+                    <TbodyForAdmin
+                      key={`${childId}-${entryIndex}`}
+                      activeColumnDropdown={activeColumnDropdown ?? []}
+                      setActiveColumnDropdown={setActiveColumnDropdown}
+                      partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                      onTriggerConversion={(cols) =>
+                        setTargetConversionColumns(cols)
+                      }
+                      odd={odd}
+                      item={entry}
+                      isGrandchild={true}
+                    />
+                  ))}
+            </React.Fragment>
+          );
+        } else {
+          return (
+            <React.Fragment key={childId}>
+              <TbodyForEditor
+                user={user}
+                activeColumnDropdown={activeColumnDropdown ?? []}
+                setActiveColumnDropdown={setActiveColumnDropdown}
+                partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                onTriggerConversion={(cols) => setTargetConversionColumns(cols)}
+                key={childId}
+                odd={odd}
+                item={group.summary}
+                isGroupedChild={true}
+                parentId={parentId}
+              />
+              {isExpanded &&
+                group.entries
+                  .sort((a, b) =>
+                    compareTableEntries(a, b, querySort.title, querySort.sort),
+                  )
+                  .map((entry, entryIndex) => (
+                    <TbodyForEditor
+                      user={user}
+                      key={`${childId}-${entryIndex}`}
+                      activeColumnDropdown={activeColumnDropdown ?? []}
+                      setActiveColumnDropdown={setActiveColumnDropdown}
+                      partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                      onTriggerConversion={(cols) =>
+                        setTargetConversionColumns(cols)
+                      }
+                      odd={odd}
+                      item={entry}
+                      isGrandchild={true}
+                    />
+                  ))}
+            </React.Fragment>
+          );
+        }
+      });
+    } else {
+      return entries
+        .sort((a, b) =>
+          compareTableEntries(a, b, querySort.title, querySort.sort),
+        )
+        .map((item, child_index) => {
+          const oddChild = (child_index + 1) % 2;
+          if (user.role === "manager" || user.role === "partner") {
+            return (
+              <TbodyForEditor
+                user={user}
+                onTriggerConversion={(columns) =>
+                  setTargetConversionColumns(columns)
+                }
+                partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                key={child_index}
+                odd={oddChild}
+                item={item}
+              />
+            );
+          } else if (user.role === "admin") {
+            return (
+              <TbodyForAdmin
+                onTriggerConversion={(columns) =>
+                  setTargetConversionColumns(columns)
+                }
+                partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                key={child_index}
+                odd={oddChild}
+                item={item}
+              />
+            );
+          }
+        });
+    }
+  };
+
   return (
     <>
       {user.role !== "admin" && <PartnerSummaryStats user={user} />}
@@ -353,21 +541,14 @@ function ParterReport({ user }: { user: User }) {
               value={selectColumns.parent}
               onChange={(e) =>
                 setSelectColumns((prev) => {
-                  if (e.value === undefined) {
-                    return {
-                      parent: undefined,
-                      child: prev.child,
-                    };
-                  }
-                  if (prev.child?.code === e.value.code) {
-                    return {
-                      ...prev,
-                    };
+                  if (!e.value) {
+                    return { ...prev, parent: undefined };
                   }
                   if (e.value.code === "hour") {
                     return {
                       parent: e.value,
                       child: undefined,
+                      grandchild: undefined,
                     };
                   }
                   return {
@@ -376,7 +557,11 @@ function ParterReport({ user }: { user: User }) {
                   };
                 })
               }
-              options={columns}
+              options={columns.filter(
+                (c) =>
+                  c.code !== selectColumns.child?.code &&
+                  c.code !== selectColumns.grandchild?.code,
+              )}
               optionLabel="name"
               placeholder="Select a Parent"
               className="w-full "
@@ -394,16 +579,8 @@ function ParterReport({ user }: { user: User }) {
               showClear
               onChange={(e) =>
                 setSelectColumns((prev) => {
-                  if (e.value === undefined) {
-                    return {
-                      parent: prev.parent,
-                      child: undefined,
-                    };
-                  }
-                  if (prev.parent.code === e.value.code) {
-                    return {
-                      ...prev,
-                    };
+                  if (!e.value) {
+                    return { ...prev, child: undefined };
                   }
                   return {
                     ...prev,
@@ -411,9 +588,46 @@ function ParterReport({ user }: { user: User }) {
                   };
                 })
               }
-              options={columns.filter((f) => f.code !== "hour")}
+              options={columns.filter(
+                (f) =>
+                  f.code !== "hour" &&
+                  f.code !== selectColumns.parent?.code &&
+                  f.code !== selectColumns.grandchild?.code,
+              )}
               optionLabel="name"
               placeholder="Select a Child"
+              className="w-full"
+            />
+          </div>
+          <div
+            className=" flex w-full flex-col items-start  justify-center  gap-1 
+         text-base font-semibold "
+          >
+            <label className="flex  items-center justify-center gap-1 text-base text-black">
+              Grandchild
+            </label>
+            <Dropdown
+              value={selectColumns.grandchild}
+              showClear
+              onChange={(e) =>
+                setSelectColumns((prev) => {
+                  if (!e.value) {
+                    return { ...prev, grandchild: undefined };
+                  }
+                  return {
+                    ...prev,
+                    grandchild: e.value,
+                  };
+                })
+              }
+              options={columns.filter(
+                (f) =>
+                  f.code !== "hour" &&
+                  f.code !== selectColumns.parent?.code &&
+                  f.code !== selectColumns.child?.code,
+              )}
+              optionLabel="name"
+              placeholder="Select a Grandchild"
               className="w-full"
             />
           </div>
@@ -517,137 +731,84 @@ function ParterReport({ user }: { user: User }) {
                 )}
               </tr>
             </thead>
-            <tbody>
-              {paterPerfomaces.isLoading
-                ? [...new Array(10)].map((item, index) => {
-                    return (
-                      <tr key={index} className="gap-5 border-y-8 border-white">
-                        <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
-                        <td className="h-8 w-40  animate-pulse rounded-lg bg-gray-100"></td>
-                        <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-200"></td>
-                        <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-50"></td>
-                        <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-200"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-50"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                        <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-400"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-100"></td>
-                        <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-300"></td>
-                        <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
-                      </tr>
-                    );
-                  })
-                : paterPerfomaces.data
-                    ?.sort((a, b) =>
-                      compareTableEntries(
-                        a[1].summary,
-                        b[1].summary,
-                        querySort.title,
-                        querySort.sort,
-                      ),
-                    )
-                    .map((partner, index) => {
-                      const odd = index % 2;
+            {paterPerfomaces.isLoading && (
+              <tbody>
+                {[...new Array(10)].map((item, index) => {
+                  return (
+                    <tr key={index} className="gap-5 border-y-8 border-white">
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
+                      <td className="h-8 w-40  animate-pulse rounded-lg bg-gray-100"></td>
+                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-50"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-50"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
+                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-400"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-100"></td>
+                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-300"></td>
+                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            )}
 
-                      return (
-                        <>
-                          {user.role === "admin" && (
-                            <TbodyForAdmin
-                              activePartnerDropdowns={
-                                activePartnerDropdowns ?? []
-                              }
-                              partner={partner}
-                              setActivePartnerDropdowns={
-                                setActivePartnerDropdowns
-                              }
-                              partnerPerformanceDayByDay={
-                                partnerPerformanceDayByDay
-                              }
-                              onTriggerConversion={(column) =>
-                                setTargetConversionColumns(column)
-                              }
-                              key={index}
-                              odd={odd}
-                              item={partner[1].summary as TableEntry}
-                            />
-                          )}
-                          {(user.role === "manager" ||
-                            user.role === "partner") && (
-                            <TbodyForEditor
-                              onTriggerConversion={(columns) => {
-                                setTargetConversionColumns(columns);
-                              }}
-                              user={user}
-                              activePartnerDropdowns={
-                                activePartnerDropdowns ?? []
-                              }
-                              partner={partner}
-                              setActivePartnerDropdowns={
-                                setActivePartnerDropdowns
-                              }
-                              partnerPerformanceDayByDay={
-                                partnerPerformanceDayByDay
-                              }
-                              key={index}
-                              odd={odd}
-                              item={partner[1].summary as TableEntry}
-                            />
-                          )}
+            {paterPerfomaces.data
+              ?.sort((a, b) =>
+                compareTableEntries(
+                  a[1].summary,
+                  b[1].summary,
+                  querySort.title,
+                  querySort.sort,
+                ),
+              )
+              .map((column, index) => {
+                const odd = index % 2;
 
-                          {activePartnerDropdowns?.find(
-                            (value) =>
-                              value.key === partner[1].summary.columns[0].id,
-                          )?.active === true &&
-                            partner[1].entries
-                              .sort((a, b) =>
-                                compareTableEntries(
-                                  a,
-                                  b,
-                                  querySort.title,
-                                  querySort.sort,
-                                ),
-                              )
-                              .map((item, child_index) => {
-                                const oddChild = (child_index + 1) % 2;
-                                if (
-                                  user.role === "manager" ||
-                                  user.role === "partner"
-                                ) {
-                                  return (
-                                    <TbodyForEditor
-                                      user={user}
-                                      onTriggerConversion={(columns) =>
-                                        setTargetConversionColumns(columns)
-                                      }
-                                      partnerPerformanceDayByDay={
-                                        partnerPerformanceDayByDay
-                                      }
-                                      key={child_index}
-                                      odd={oddChild}
-                                      item={item}
-                                    />
-                                  );
-                                } else if (user.role === "admin") {
-                                  return (
-                                    <TbodyForAdmin
-                                      onTriggerConversion={(columns) =>
-                                        setTargetConversionColumns(columns)
-                                      }
-                                      partnerPerformanceDayByDay={
-                                        partnerPerformanceDayByDay
-                                      }
-                                      key={child_index}
-                                      odd={oddChild}
-                                      item={item}
-                                    />
-                                  );
-                                }
-                              })}
-                        </>
-                      );
-                    })}
-            </tbody>
+                return (
+                  <tbody key={index}>
+                    {user.role === "admin" && (
+                      <TbodyForAdmin
+                        activeColumnDropdown={activeColumnDropdown ?? []}
+                        partner={column}
+                        setActiveColumnDropdown={setActiveColumnDropdown}
+                        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                        onTriggerConversion={(column) =>
+                          setTargetConversionColumns(column)
+                        }
+                        key={index}
+                        odd={odd}
+                        item={column[1].summary as TableEntry}
+                      />
+                    )}
+                    {(user.role === "manager" || user.role === "partner") && (
+                      <TbodyForEditor
+                        onTriggerConversion={(columns) => {
+                          setTargetConversionColumns(columns);
+                        }}
+                        user={user}
+                        activeColumnDropdown={activeColumnDropdown ?? []}
+                        partner={column}
+                        setActiveColumnDropdown={setActiveColumnDropdown}
+                        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
+                        key={index}
+                        odd={odd}
+                        item={column[1].summary as TableEntry}
+                      />
+                    )}
+
+                    {activeColumnDropdown?.find(
+                      (value) => value.key === column[1].summary.columns[0]?.id,
+                    )?.active === true &&
+                      renderChildrenRows(
+                        column[1].entries,
+                        column[1].summary.columns[0]?.id,
+                      )}
+                  </tbody>
+                );
+              })}
           </table>
         </div>
       </div>
