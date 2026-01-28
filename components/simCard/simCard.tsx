@@ -51,6 +51,7 @@ import {
   GetSimCardByPageService,
   SyncSimCardService,
   UpdateSimCardService,
+  GenerateImeiExcelService,
 } from "../../services/simCard/simCard";
 import { GetSimOnPartnersByPartnerIdService } from "../../services/simCard/simOnPartner";
 import { DeleteTagOnSimcardService } from "../../services/simCard/tag";
@@ -701,6 +702,36 @@ function SimCards({ user }: { user: User }) {
     }
   };
 
+  const handleGenerateIMEI = async () => {
+    try {
+      Swal.fire({
+        title: "Generating IMEI",
+        text: "Please wait...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      await GenerateImeiExcelService();
+
+      Swal.fire({
+        title: "Success",
+        text: "File downloaded successfully",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      let result = error as ErrorMessages;
+      Swal.fire({
+        title: "Error",
+        text: "Failed to generate IMEI Excel",
+        icon: "error",
+      });
+    }
+  };
+
   return (
     <div className="= min-h-screen pt-20 font-Poppins">
       <Toast ref={toast} />
@@ -767,6 +798,13 @@ function SimCards({ user }: { user: User }) {
             transition duration-100 hover:bg-green-400"
                 >
                   <FaFileExcel /> Add Number
+                </button>
+                <button
+                  onClick={handleGenerateIMEI}
+                  className="rounded-md bg-green-300 px-5 py-2 text-green-600 drop-shadow-lg 
+            transition duration-100 hover:bg-green-400"
+                >
+                  Generate IMEI
                 </button>
                 <button
                   onClick={handleSycnSimcard}

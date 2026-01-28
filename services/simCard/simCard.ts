@@ -379,6 +379,32 @@ export async function CreateSimCardService(
   }
 }
 
+export async function GenerateImeiExcelService(): Promise<void> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sim-card/download/generate-imei`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "imei_output.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err: any) {
+    console.log(err);
+    throw err;
+  }
+}
+
 export async function SyncSimCardService(): Promise<
   {
     deviceId: string;
