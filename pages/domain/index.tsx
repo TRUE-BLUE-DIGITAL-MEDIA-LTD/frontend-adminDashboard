@@ -86,11 +86,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           isAllowSmsPinverifyAccount: false,
           isAllowUsingSMS_Pinverify: false,
           refill_oxyclick_points: 0,
+          currency_id: "",
           isAllowManageSmsBowerAccount: true,
           isAllowUsingSmsBower: true,
         });
         addSeeAll.push({
           createAt: new Date(),
+          currency_id: "",
           managerId: "",
           isAllowUsingSMS_TEXTVERIFIED: true,
           isAllowManageAssginCategory: true,
