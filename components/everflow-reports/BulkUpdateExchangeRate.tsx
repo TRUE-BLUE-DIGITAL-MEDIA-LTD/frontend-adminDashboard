@@ -30,6 +30,7 @@ import { useCreateAdjustLeadRate } from "../../react-query";
 import Swal from "sweetalert2";
 import { ErrorMessages, Partner } from "../../models";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { MultiSelect } from "primereact/multiselect";
 
 type Props = {
   onClose: () => void;
@@ -49,7 +50,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const smartLinks = useGetCampaigns({ campaign_name: "TH" });
   const createAdjustLeadRateMutation = useCreateAdjustLeadRate();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [selectPartner, setSelectPartner] = useState<Partner | null>(null);
+  const [selectPartner, setSelectPartner] = useState<Partner[]>([]);
   const [selectedSmartLink, setSelectedSmartLink] =
     useState<ResponseCampaign | null>(null);
   const [rate, setRate] = useState<string>("");
@@ -57,7 +58,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const [currencyTarget, setCurrencyTarget] = useState<string>("");
   const [currentcyConverted, setCurrencyConverted] = useState<string>("");
   const [updateType, setUpdateType] = useState<"once" | "live">("once");
-
+  console.log(selectPartner);
   const currencies = [
     { label: "THB", value: "THB" },
     { label: "USD", value: "USD" },
@@ -96,11 +97,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
       return;
     }
 
-    if (currencyTarget === currentcyConverted) {
-      alert("Target currency and converted currency cannot be the same");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       if (updateType === "live") {
@@ -124,8 +120,8 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           target_currency: Number(rate),
           currency_id: currencyTarget,
           currency_converted_id: currentcyConverted,
-          ...(selectPartner && {
-            everflow_partner_id: selectPartner.affiliateId,
+          ...(selectPartner.length > 0 && {
+            everflow_partner_ids: selectPartner.map((a) => a.affiliateId),
           }),
           ...(selectedSmartLink && {
             campaign_id: selectedSmartLink.network_campaign_id.toString(),
@@ -332,7 +328,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             value={selectedSmartLink}
             onChange={(e) => {
               setSelectedSmartLink(e.value);
-              if (e.value) setSelectPartner(null);
+              if (e.value) setSelectPartner([]);
             }}
             options={smartLinks.data}
             optionLabel="campaign_name"
@@ -348,7 +344,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             <label className="flex items-center gap-2 font-semibold text-gray-700">
               <FaPeopleGroup className="text-green-600" /> Select Partner
             </label>
-            <Dropdown
+            <MultiSelect
               value={selectPartner}
               onChange={(e) => {
                 setSelectPartner(e.value);
@@ -386,7 +382,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <Dropdown
             value={currentcyConverted}
             onChange={(e) => setCurrencyConverted(e.value)}
-            options={currencies.filter((c) => c.value !== currencyTarget)}
+            options={currencies}
             optionLabel="label"
             placeholder="Select Convert To Currency"
             className="w-full border"
