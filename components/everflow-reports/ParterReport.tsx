@@ -231,7 +231,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         const listData = Object.entries(data);
         return listData;
       }),
-    refetchInterval: 1000 * 10,
+    refetchInterval: 1000 * 60 * 5,
   });
 
   useEffect(() => {
