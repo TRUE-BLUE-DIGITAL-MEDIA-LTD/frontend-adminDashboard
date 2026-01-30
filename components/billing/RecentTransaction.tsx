@@ -2,7 +2,7 @@ import { IconType } from "react-icons";
 import { Transaction, TransactionStatus, TransactionType } from "../../models";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { FaUndo } from "react-icons/fa";
-import { formatCurrency } from "../../utils";
+import { formatCurrency, formatUSDCurrency } from "../../utils";
 import { useGetTransacntionOxypoint } from "../../react-query";
 import { FormEvent, useState } from "react";
 import { Box, Button, Pagination, TextField } from "@mui/material";
@@ -111,7 +111,7 @@ const RecentTransaction: React.FC = () => {
                 <p className={`font-bold ${amountColor}`}>
                   {tx.status === TransactionStatus.FAILED
                     ? "Failed"
-                    : `${amountPrefix}${formatCurrency(tx.amount)}`}
+                    : `${amountPrefix}${formatUSDCurrency(tx.amount)}`}
                 </p>
               </div>
             </div>
