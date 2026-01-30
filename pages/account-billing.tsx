@@ -6,7 +6,7 @@ import { FaEdit, FaWallet } from "react-icons/fa";
 import DashboardLayout from "../layouts/dashboardLayout";
 import { ErrorMessages, User } from "../models";
 import { GetUser } from "../services/admin/user";
-import { formatCurrency } from "../utils";
+import { formatUSDCurrency } from "../utils";
 import RecentTransaction from "../components/billing/RecentTransaction";
 import { useRefundOxypoint, useTopupOxypoint } from "../react-query";
 import Swal from "sweetalert2";
@@ -21,7 +21,7 @@ function Index({ user }: Props) {
   const [customAmount, setCustomAmount] = useState<number | "">("");
   const checkout = useTopupOxypoint();
   const refund = useRefundOxypoint();
-  const current_money = formatCurrency(user.oxyclick_points);
+  const current_money = formatUSDCurrency(user.oxyclick_points);
   const quickAmounts = [
     { amount: 25, label: "Quick top-up" },
     { amount: 50, label: "Popular choice" },

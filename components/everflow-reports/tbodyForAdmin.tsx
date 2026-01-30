@@ -193,12 +193,12 @@ function TbodyForAdmin({
       <td className="px-2">{item.reporting.cvr?.toFixed(2)}%</td>
       <td className="px-2">{item.reporting.event}</td>
       <td className="px-2">{item.reporting.evr?.toFixed(2)}%</td>
-      <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.rpc.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.rpa.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.revenue.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.payout.toLocaleString()}</td>
-      <td className="px-2 ">${item.reporting.profit.toLocaleString()}</td>
+      <td className="px-2">{item.reporting.cpc.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.rpc.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.rpa.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.revenue.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.payout.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.profit.toLocaleString()}</td>
       <td className="px-2 ">{item.reporting.margin.toLocaleString()}%</td>
       {partnerPerformanceDayByDay.isLoading ? (
         <td className="animate-pulse px-2 font-bold text-yellow-600">

@@ -118,6 +118,7 @@ type InputUpdatePartnerService = {
   body: {
     managerId?: string;
     affiliateId?: string;
+    currency_id?:string
     name?: string;
     isAllowUsingSMSPVA?: boolean;
     isAllowUsingSMSPOOL?: boolean;

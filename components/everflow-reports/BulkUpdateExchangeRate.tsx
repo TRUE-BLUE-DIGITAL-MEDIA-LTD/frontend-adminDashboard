@@ -6,6 +6,7 @@ import moment from "moment";
 import { countries, Countries } from "../../data/country";
 import {
   useGetCampaigns,
+  useGetPartners,
   useUpdateBulkExchangeRate,
 } from "../../react-query/partner";
 import { CiCalendarDate } from "react-icons/ci";
@@ -27,7 +28,8 @@ import {
 } from "../../services/everflow/partner";
 import { useCreateAdjustLeadRate } from "../../react-query";
 import Swal from "sweetalert2";
-import { ErrorMessages } from "../../models";
+import { ErrorMessages, Partner } from "../../models";
+import { FaPeopleGroup } from "react-icons/fa6";
 
 type Props = {
   onClose: () => void;
@@ -40,10 +42,14 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     const today = moment().format("YYYY-MM-DD");
     return [moment(today).toDate(), moment(today).toDate()];
   });
-
+  const partners = useGetPartners({
+    limit: 100,
+    page: 1,
+  });
   const smartLinks = useGetCampaigns({ campaign_name: "TH" });
   const createAdjustLeadRateMutation = useCreateAdjustLeadRate();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [selectPartner, setSelectPartner] = useState<Partner | null>(null);
   const [selectedSmartLink, setSelectedSmartLink] =
     useState<ResponseCampaign | null>(null);
   const [rate, setRate] = useState<string>("");
@@ -95,14 +101,13 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
       return;
     }
 
-    if (!selectedSmartLink) {
-      alert("Please select a smart link");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       if (updateType === "live") {
+        if (!selectedSmartLink) {
+          alert("Please select a smart link");
+          return;
+        }
         await createAdjustLeadRateMutation.mutateAsync({
           country: selectedCountry.country,
           rate: Number(rate),
@@ -119,7 +124,12 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           target_currency: Number(rate),
           currency_id: currencyTarget,
           currency_converted_id: currentcyConverted,
-          campaign_id: selectedSmartLink?.network_campaign_id,
+          ...(selectPartner && {
+            everflow_partner_id: selectPartner.affiliateId,
+          }),
+          ...(selectedSmartLink && {
+            campaign_id: selectedSmartLink.network_campaign_id.toString(),
+          }),
         });
         setResults(data);
       }
@@ -230,7 +240,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   }
 
   return (
-    <div className="relative flex h-max w-11/12 flex-col gap-6 rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg md:w-7/12">
+    <div className="relative flex h-5/6 w-11/12 flex-col gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg md:w-7/12">
       <button
         onClick={onClose}
         className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700"
@@ -307,21 +317,53 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           />
         </div>
 
+        {updateType === "once" && (
+          <div className="col-span-1 rounded border border-yellow-200 bg-yellow-50 p-2 text-sm text-yellow-700 md:col-span-2">
+            <span className="font-bold">Note:</span> You can only select either
+            selectedSmartLink or selectPartner.
+          </div>
+        )}
+
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
             <FaLink className="text-purple-500" /> Select Smart Link
           </label>
           <Dropdown
             value={selectedSmartLink}
-            onChange={(e) => setSelectedSmartLink(e.value)}
+            onChange={(e) => {
+              setSelectedSmartLink(e.value);
+              if (e.value) setSelectPartner(null);
+            }}
             options={smartLinks.data}
             optionLabel="campaign_name"
             placeholder="Select a Smart Link"
             filter
+            showClear
             className="w-full border"
             loading={smartLinks.isLoading}
           />
         </div>
+        {updateType === "once" && (
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 font-semibold text-gray-700">
+              <FaPeopleGroup className="text-green-600" /> Select Partner
+            </label>
+            <Dropdown
+              value={selectPartner}
+              onChange={(e) => {
+                setSelectPartner(e.value);
+                if (e.value) setSelectedSmartLink(null);
+              }}
+              options={partners.data?.data}
+              optionLabel="name"
+              showClear
+              placeholder="Select a Partner"
+              filter
+              className="w-full border"
+              loading={partners.isLoading}
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">

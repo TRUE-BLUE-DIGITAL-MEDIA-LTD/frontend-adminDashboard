@@ -2,10 +2,10 @@ import React, { memo, useEffect, useState } from "react";
 import { Column, TableEntry } from "../../services/everflow/partner";
 import { UseQueryResult } from "@tanstack/react-query";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 
 type TbodyForEditorProps = {
-  user: User;
+  user: User & { partner: Partner | null };
   onTriggerConversion: (column: Column[]) => void;
   odd: number;
   item: TableEntry;
@@ -198,9 +198,9 @@ function TbodyForEditor({
       <td className="px-2">{item.reporting.event}</td>
       <td className="px-2">{item.reporting.evr?.toFixed(2)}%</td>
 
-      <td className="px-2">${item.reporting.cpc.toLocaleString()}</td>
+      <td className="px-2">{item.reporting.cpc.toLocaleString()}</td>
 
-      <td className="px-2 ">${item.reporting.payout.toLocaleString()}</td>
+      <td className="px-2 ">{item.reporting.payout.toLocaleString()}</td>
       {partnerPerformanceDayByDay.isLoading ? (
         <td className="animate-pulse px-2 font-bold text-yellow-600">
           loading..

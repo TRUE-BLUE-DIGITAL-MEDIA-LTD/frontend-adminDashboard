@@ -15,7 +15,7 @@ import {
 } from "../../services/everflow/partner";
 import { groupBy } from "../../utils/groupBy";
 import { LuArrowDownUp } from "react-icons/lu";
-import { User } from "../../models";
+import { Partner, User } from "../../models";
 import SummaryReport from "./summaryReport";
 import TbodyForEditor from "./tbodyForEditor";
 import TbodyForAdmin from "./tbodyForAdmin";
@@ -141,7 +141,7 @@ const aggregateReporting = (reports: Reporting[]): Reporting => {
 };
 
 export type ActiceColumnKey = { key: string; child?: string; active: boolean };
-function ParterReport({ user }: { user: User }) {
+function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
   const [activeColumnDropdown, setActiveColumnDropdown] =
     useState<ActiceColumnKey[]>();
 

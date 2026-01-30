@@ -409,7 +409,8 @@ export type UpdateBulkExchangeRateDto = {
   target_currency: number;
   currency_id: string;
   currency_converted_id: string;
-  campaign_id: number;
+  campaign_id?: string;
+  everflow_partner_id?: string;
 };
 
 export async function UpdateBulkExchangeRateService(

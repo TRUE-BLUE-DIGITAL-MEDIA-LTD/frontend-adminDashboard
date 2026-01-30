@@ -4,16 +4,10 @@ import {
   ResponseGetConversionParterReportService,
 } from "../../services/everflow/partner";
 import { useGetConversionPartnerReport } from "../../react-query";
+import { formatCurrency } from "../../utils";
 
 const formatTimestamp = (timestamp: number): string => {
   return new Date(timestamp * 1000).toLocaleString();
-};
-
-const formatCurrency = (amount: number, currency: string): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency || "USD", // Fallback to USD
-  }).format(amount);
 };
 
 interface ConversionsTableProps {
@@ -26,6 +20,7 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
   onPageChange,
 }) => {
   // Helper to render the status with a colored pill
+
   const renderStatus = (status: string) => {
     const isApproved = status.toLowerCase() === "approved";
     const bgColor = isApproved ? "bg-green-100" : "bg-yellow-100";
