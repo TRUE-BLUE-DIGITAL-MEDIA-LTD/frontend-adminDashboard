@@ -97,12 +97,12 @@ function CreatePartner({
         className="flex h-max w-96 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7"
       >
         <TextField className="flex flex-col gap-1" isRequired>
-          <Label>Partner ID</Label>
+          <Label>AffiliateId ID</Label>
           <Input
             className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
             duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
-            name="managerId"
+            name="affiliateId"
             onChange={handleChangeCreatePartnerData}
             maxLength={255}
           />
