@@ -82,7 +82,7 @@ export async function GetPartnerByPageService(
 }
 
 type InputCreatePartnerService = {
-  userId: string;
+  managerId: string;
   affiliateId: string;
   name: string;
 };
@@ -118,7 +118,7 @@ type InputUpdatePartnerService = {
   body: {
     managerId?: string;
     affiliateId?: string;
-    currency_id?:string
+    currency_id?: string;
     name?: string;
     isAllowUsingSMSPVA?: boolean;
     isAllowUsingSMSPOOL?: boolean;

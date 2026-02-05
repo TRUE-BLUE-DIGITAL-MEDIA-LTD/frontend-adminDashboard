@@ -33,9 +33,9 @@ function CreatePartner({
   partners,
 }: CreatePartnerProps) {
   const [createPartnerData, setCreatePartnerData] = useState<{
-    partnerId?: string;
+    managerId?: string;
+    affiliateId?: string;
     partnerName?: string;
-    userId?: string;
   }>();
 
   const handleChangeCreatePartnerData = (
@@ -61,15 +61,15 @@ function CreatePartner({
         },
       });
       if (
-        !createPartnerData?.userId ||
-        !createPartnerData?.partnerId ||
-        !createPartnerData?.partnerName
+        !createPartnerData?.managerId ||
+        !createPartnerData?.partnerName ||
+        !createPartnerData?.affiliateId
       ) {
         throw new Error("Please fill all the fields");
       }
       const createPartner = await CreatePartnerService({
-        userId: createPartnerData?.userId,
-        affiliateId: createPartnerData?.partnerId,
+        affiliateId: createPartnerData?.affiliateId,
+        managerId: createPartnerData.managerId,
         name: createPartnerData?.partnerName,
       });
       await partners.refetch();
@@ -102,7 +102,7 @@ function CreatePartner({
             className="h-14 w-80 rounded-sm border border-gray-400 bg-white p-2 outline-none transition
             duration-75 hover:border-black focus:drop-shadow-md"
             type="text"
-            name="partnerId"
+            name="managerId"
             onChange={handleChangeCreatePartnerData}
             maxLength={255}
           />
@@ -126,7 +126,7 @@ function CreatePartner({
             required
             select
             className="h-14 w-80"
-            value={createPartnerData?.userId ?? ""}
+            value={createPartnerData?.managerId ?? ""}
             helperText="Please select your partner manager here"
           >
             {accounts.data?.accounts.map((account) => {
@@ -136,7 +136,7 @@ function CreatePartner({
                     setCreatePartnerData((prev) => {
                       return {
                         ...prev,
-                        userId: e.currentTarget.dataset.value as string,
+                        managerId: e.currentTarget.dataset.value as string,
                       };
                     });
                   }}
