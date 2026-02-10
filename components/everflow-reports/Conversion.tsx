@@ -3,7 +3,7 @@ import {
   Column,
   ResponseGetConversionParterReportService,
 } from "../../services/everflow/partner";
-import { useGetConversionPartnerReport } from "../../react-query";
+import { useGetConversionPartnerReport, useGetUser } from "../../react-query";
 import { formatCurrency } from "../../utils";
 
 const formatTimestamp = (timestamp: number): string => {
@@ -20,7 +20,7 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
   onPageChange,
 }) => {
   // Helper to render the status with a colored pill
-
+  const user = useGetUser();
   const renderStatus = (status: string) => {
     const isApproved = status.toLowerCase() === "approved";
     const bgColor = isApproved ? "bg-green-100" : "bg-yellow-100";
@@ -216,6 +216,14 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                         conv.currency_converted_id,
                       )
                     : formatCurrency(Number(conv.payout), conv.currency_id)}
+                  {conv.currency_converted_id &&
+                    user.data?.role === "admin" && (
+                      <span className="text-xs">
+                        {" "}
+                        / Original{" "}
+                        {formatCurrency(Number(conv.payout), conv.currency_id)}
+                      </span>
+                    )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {conv.country}

@@ -185,6 +185,8 @@ const AdjustLeadRatesTable = () => {
               <table className="w-full text-left text-sm text-gray-600">
                 <thead className="bg-gray-100 text-xs uppercase text-gray-700">
                   <tr>
+                    <th className="px-6 py-3">Type</th>
+
                     {groupBy !== "country" && (
                       <th className="px-6 py-3">Country</th>
                     )}
@@ -207,6 +209,11 @@ const AdjustLeadRatesTable = () => {
                         key={rate.id}
                         className="transition-colors hover:bg-gray-50"
                       >
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                            {rate.type}
+                          </span>
+                        </td>
                         {groupBy !== "country" && (
                           <td className="px-6 py-4 font-medium text-gray-900">
                             <div className="flex items-center gap-2">

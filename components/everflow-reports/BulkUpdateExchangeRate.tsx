@@ -61,7 +61,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const [currencyTarget, setCurrencyTarget] = useState<string>("");
   const [currentcyConverted, setCurrencyConverted] = useState<string>("");
   const [updateType, setUpdateType] = useState<"once" | "live">("once");
-  console.log(selectPartner);
   const currencies = [
     { label: "THB", value: "THB" },
     { label: "USD", value: "USD" },
@@ -110,6 +109,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
         await createAdjustLeadRateMutation.mutateAsync({
           country: selectedCountry.country,
           rate: Number(rate),
+          type: selectRateType === "Fixed" ? "fixed" : "exchange",
           targetCurrency: currencyTarget,
           convertedCurrency: currentcyConverted,
           campaignId: String(selectedSmartLink.network_campaign_id),
@@ -425,7 +425,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                 value="Fixed"
                 onChange={(e) => setSelectRateType(e.value)}
                 checked={selectRateType === "Fixed"}
-                disabled={updateType === "live"}
               />
               <label
                 htmlFor="rateFixed"
