@@ -208,9 +208,11 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                   {conv.conversion_id}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {conv.exchange_rate && conv.currency_converted_id
+                  {conv.currency_converted_id
                     ? formatCurrency(
-                        Number(conv.payout) * Number(conv.exchange_rate || 1),
+                        Number(
+                          conv.fixed_rate ? conv.fixed_rate : conv.payout,
+                        ) * Number(conv.exchange_rate || 1),
                         conv.currency_converted_id,
                       )
                     : formatCurrency(Number(conv.payout), conv.currency_id)}

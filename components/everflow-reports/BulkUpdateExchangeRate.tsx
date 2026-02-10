@@ -47,6 +47,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     limit: 100,
     page: 1,
   });
+  const [selectRateType, setSelectRateType] = useState<"Custom" | "Fixed">(
+    "Custom",
+  );
   const smartLinks = useGetCampaigns({ campaign_name: "TH" });
   const createAdjustLeadRateMutation = useCreateAdjustLeadRate();
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -117,7 +120,8 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           startDate: moment(dates[0]).format("YYYY-MM-DD"),
           endDate: moment(dates[1]).format("YYYY-MM-DD"),
           country: selectedCountry.country,
-          target_currency: Number(rate),
+          rate: Number(rate),
+          isFixRate: selectRateType === "Fixed" ? true : false,
           currency_id: currencyTarget,
           currency_converted_id: currentcyConverted,
           ...(selectPartner.length > 0 && {
@@ -207,6 +211,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <Column
             header="Calculated Payout"
             body={(rowData: ConversionRawData) => {
+              if (selectRateType === "Fixed") {
+                return parseFloat(rowData.fixed_rate || rate || "0").toFixed(2);
+              }
               const payout = parseFloat(rowData.payout || "0");
               const exchangeRate = parseFloat(
                 rowData.exchange_rate || rate || "0",
@@ -271,7 +278,12 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
               inputId="updateLive"
               name="updateType"
               value="live"
-              onChange={(e) => setUpdateType(e.value)}
+              onChange={(e) => {
+                setUpdateType(e.value);
+                if (e.value === "live") {
+                  setSelectRateType("Custom");
+                }
+              }}
               checked={updateType === "live"}
             />
             <label htmlFor="updateLive" className="ml-2 cursor-pointer">
@@ -391,16 +403,60 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
 
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaMoneyBillWave className="text-yellow-500" /> Exchange Rate
+            <FaExchangeAlt className="text-pink-500" /> Rate Type
+          </label>
+          <div className="flex h-12 items-center gap-4">
+            <div className="flex items-center">
+              <RadioButton
+                inputId="rateCustom"
+                name="rateType"
+                value="Custom"
+                onChange={(e) => setSelectRateType(e.value)}
+                checked={selectRateType === "Custom"}
+              />
+              <label htmlFor="rateCustom" className="ml-2 cursor-pointer">
+                Custom Rate
+              </label>
+            </div>
+            <div className="flex items-center">
+              <RadioButton
+                inputId="rateFixed"
+                name="rateType"
+                value="Fixed"
+                onChange={(e) => setSelectRateType(e.value)}
+                checked={selectRateType === "Fixed"}
+                disabled={updateType === "live"}
+              />
+              <label
+                htmlFor="rateFixed"
+                className={`ml-2 cursor-pointer ${updateType === "live" ? "text-gray-400" : ""}`}
+              >
+                Fixed Amount
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaMoneyBillWave className="text-yellow-500" />
+            {selectRateType === "Fixed" ? "Fixed Amount" : "Exchange Rate"}
           </label>
           <input
             type="number"
             step="0.0001"
-            placeholder="Enter rate"
+            placeholder={
+              selectRateType === "Fixed" ? "Enter fixed amount" : "Enter rate"
+            }
             className="h-12 w-60 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
             value={rate}
             onChange={(e) => setRate(e.target.value)}
           />
+          {selectRateType === "Fixed" && (
+            <small className="text-gray-500">
+              Example: Italy €4 = pay partner 70 THB. Enter 70.
+            </small>
+          )}
         </div>
       </div>
       <div className="flex justify-end gap-3 pt-2">

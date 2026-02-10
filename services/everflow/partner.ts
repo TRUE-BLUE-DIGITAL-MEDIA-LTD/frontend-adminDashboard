@@ -406,7 +406,8 @@ export type UpdateBulkExchangeRateDto = {
   startDate: string;
   endDate: string;
   country: string;
-  target_currency: number;
+  rate: number;
+  isFixRate: boolean;
   currency_id: string;
   currency_converted_id: string;
   campaign_id?: string;
@@ -465,6 +466,7 @@ export interface ConversionRawData {
   /** Float represented as string (e.g. "0.04") */
   delta_hours: string;
   network_id: string;
+  fixed_rate?: string;
   network_affiliate_id: string;
   network_offer_id: string;
   network_offer_group_id: string;
