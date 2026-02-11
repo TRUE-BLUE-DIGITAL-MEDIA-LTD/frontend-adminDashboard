@@ -120,7 +120,7 @@ const AdjustLeadRatesTable = () => {
   }
 
   return (
-    <div className="flex w-9/12 flex-col gap-6 rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
+    <div className="flex h-5/6 w-9/12 flex-col  gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
           <FaMoneyBillWave className="text-green-500" />
