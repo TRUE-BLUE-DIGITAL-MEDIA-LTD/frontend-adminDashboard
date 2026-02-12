@@ -27,19 +27,19 @@ const formatLargeNumber = (num: number, digits = 1) => {
       break;
     }
   }
-  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+  return (num / si[i].value)?.toFixed(digits).replace(rx, "$1") + si[i].symbol;
 };
 
 const formatCurrency = (num: number) => {
   if (num >= 1000) {
     return `$${formatLargeNumber(num)}`;
   }
-  return `$${num.toFixed(2)}`;
+  return `$${num?.toFixed(2)}`;
 };
 
 /** Formats a number as a percentage string (e.g., 0.1257 -> 12.57%) */
 const formatPercentage = (num: number) => {
-  return `${num.toFixed(2)}%`;
+  return `${num?.toFixed(2)}%`;
 };
 
 interface StatCardProps {
@@ -157,7 +157,7 @@ const StatCard: React.FC<StatCardProps> = ({
   lastMonthValue,
 }) => {
   const isPositive = percentChange >= 0;
-  const percentChangeText = `${isPositive ? "+" : ""}${(percentChange * 100).toFixed(0)}%`;
+  const percentChangeText = `${isPositive ? "+" : ""}${(percentChange * 100)?.toFixed(0)}%`;
 
   return (
     <div className="w-full rounded-lg border border-slate-200 bg-slate-50 p-4 shadow-sm">
