@@ -79,7 +79,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.gross_click,
             stats.lastMonth.gross_click,
           )}
-          todayValue={stats.today.gross_click.toString()}
+          todayValue={stats.today.gross_click?.toString() ?? ""}
           yesterdayValue={stats.yesterday.gross_click.toString()}
           lastMonthValue={formatLargeNumber(stats.lastMonth.gross_click)}
         />
@@ -91,7 +91,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.payout,
             stats.lastMonth.payout,
           )}
-          todayValue={formatCurrency(stats.today.payout)}
+          todayValue={formatCurrency(stats.today?.payout) ?? ""}
           yesterdayValue={formatCurrency(stats.yesterday.payout)}
           lastMonthValue={formatCurrency(stats.lastMonth.payout)}
         />
@@ -103,7 +103,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.cv,
             stats.lastMonth.cv,
           )}
-          todayValue={stats.today.cv.toString()}
+          todayValue={stats.today.cv?.toString() ?? ""}
           yesterdayValue={stats.yesterday.cv.toString()}
           lastMonthValue={formatLargeNumber(stats.lastMonth.cv)}
         />
@@ -115,7 +115,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.cvr,
             stats.lastMonth.cvr,
           )}
-          todayValue={formatPercentage(stats.today.cvr)}
+          todayValue={formatPercentage(stats.today?.cvr) ?? ""}
           yesterdayValue={formatPercentage(stats.yesterday.cvr)}
           lastMonthValue={formatPercentage(stats.lastMonth.cvr)}
         />
@@ -127,7 +127,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.event,
             stats.lastMonth.event,
           )}
-          todayValue={stats.today.event.toString()}
+          todayValue={stats.today.event?.toString() ?? ""}
           yesterdayValue={stats.yesterday.event.toString()}
           lastMonthValue={stats.lastMonth.event.toString()}
         />
@@ -139,7 +139,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.thisMonth.evr,
             stats.lastMonth.evr,
           )}
-          todayValue={formatPercentage(stats.today.evr)}
+          todayValue={formatPercentage(stats.today?.evr) ?? ""}
           yesterdayValue={formatPercentage(stats.yesterday.evr)}
           lastMonthValue={formatPercentage(stats.lastMonth.evr)}
         />
