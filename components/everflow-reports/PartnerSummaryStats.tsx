@@ -32,9 +32,9 @@ const formatLargeNumber = (num: number, digits = 1) => {
 
 const formatCurrency = (num: number) => {
   if (num >= 1000) {
-    return `$${formatLargeNumber(num)}`;
+    return `${formatLargeNumber(num)}`;
   }
-  return `$${num?.toFixed(2)}`;
+  return `${num?.toFixed(2)}`;
 };
 
 /** Formats a number as a percentage string (e.g., 0.1257 -> 12.57%) */

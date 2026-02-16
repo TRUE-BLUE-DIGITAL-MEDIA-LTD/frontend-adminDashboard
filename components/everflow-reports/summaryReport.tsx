@@ -16,7 +16,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.media_buying_cost.toLocaleString()}
+            {summary.data?.media_buying_cost.toLocaleString()}
           </p>
         )}
       </div>
@@ -86,7 +86,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-500 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.cpc.toLocaleString()}
+            {summary.data?.cpc.toLocaleString()}
           </p>
         )}
       </div>
@@ -96,7 +96,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-200 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.cpa.toLocaleString()}
+            {summary.data?.cpa.toLocaleString()}
           </p>
         )}
       </div>
@@ -106,7 +106,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.rpc.toLocaleString()}
+            {summary.data?.rpc.toLocaleString()}
           </p>
         )}
       </div>
@@ -116,7 +116,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-600 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.rpa.toLocaleString()}
+            {summary.data?.rpa.toLocaleString()}
           </p>
         )}
       </div>
@@ -126,7 +126,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.payout.toLocaleString()}
+            {summary.data?.payout.toLocaleString()}
           </p>
         )}
       </div>
@@ -136,7 +136,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-50 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.revenue.toLocaleString()}
+            {summary.data?.revenue.toLocaleString()}
           </p>
         )}
       </div>
@@ -146,7 +146,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-400 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.profit.toLocaleString()}
+            {summary.data?.profit.toLocaleString()}
           </p>
         )}
       </div>
@@ -166,7 +166,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.avg_sale_value.toLocaleString()}
+            {summary.data?.avg_sale_value.toLocaleString()}
           </p>
         )}
       </div>
@@ -176,7 +176,7 @@ function SummaryReport({ summary }: SummaryReportProps) {
           <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
         ) : (
           <p className="w-max text-base font-semibold text-slate-600">
-            ${summary.data?.gross_sales.toLocaleString()}
+            {summary.data?.gross_sales.toLocaleString()}
           </p>
         )}
       </div>
