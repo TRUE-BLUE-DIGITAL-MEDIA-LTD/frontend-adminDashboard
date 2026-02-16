@@ -60,15 +60,17 @@ const SidebarDashboard = forwardRef<
             !user.partner.isAllowLandingPageManage &&
             menu.title === "Landing Pages"
           ) {
-            return true;
+            return false;
           }
 
           if (
             !user.partner.isAllowDomainManage &&
             menu.title === "Domains Library"
           ) {
-            return true;
+            return false;
           }
+
+          return true;
         })
         .map((list, index) => {
           return (
