@@ -41,7 +41,10 @@ function SidbarList({ isSelect, list }: Props) {
         >
           {list.childs
             .filter((menu) => {
-              if (user.role === "partner" && menu.title === "SMS Report") {
+              if (user.role === "admin") {
+                return true;
+              }
+              if (menu.title === "SMS Report") {
                 return false;
               }
               if (
@@ -53,7 +56,6 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
                 user.partner.isAllowUsingSMSPOOL === false &&
                 menu.title === "Oxy Pool"
               ) {
@@ -61,7 +63,20 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
+                user.partner.isAllowUsingSmsBower === false &&
+                menu.title === "Oxy Bow"
+              ) {
+                return false;
+              }
+
+              if (
+                user.partner.isAllowUsingSmsBower === false &&
+                menu.title === "Oxy Bow"
+              ) {
+                return false;
+              }
+
+              if (
                 user.partner.isAllowUsingSMSPVA === false &&
                 menu.title === "Oxy PVA"
               ) {
@@ -69,7 +84,6 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
                 user.partner.isAllowUsingSMS_Daisy === false &&
                 menu.title === "Oxy Day"
               ) {
@@ -77,7 +91,6 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
                 user.partner.isAllowUsingSMS_Pinverify === false &&
                 menu.title === "Oxy Pin"
               ) {
@@ -85,7 +98,6 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
                 user.partner.isAllowUsingSMS_TEXTVERIFIED === false &&
                 menu.title === "Oxy Text"
               ) {
@@ -93,12 +105,16 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.role === "partner" &&
                 !user.partner.isAllowCloudPhone &&
                 menu.title === "Cloud Phone"
               ) {
                 return false;
               }
+
+              if (!user.partner.isAllowOxySms && menu.title === "Oxy SMS") {
+                return false;
+              }
+
               return true;
             })
             .map((child, index) => {

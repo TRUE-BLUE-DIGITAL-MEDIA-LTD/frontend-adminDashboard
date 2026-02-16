@@ -35,6 +35,10 @@ const SidebarDashboard = forwardRef<
     >
       {menusSidebar
         .filter((menu) => {
+          if (user.role === "admin") {
+            return true;
+          }
+
           if (user.role === "partner" && menu.title === "Control Center") {
             return false;
           }
@@ -46,14 +50,25 @@ const SidebarDashboard = forwardRef<
           }
 
           if (
-            user.role === "manager" &&
             !user.partner.isAllowManagePartner &&
             menu.title === "Control Center"
           ) {
             return false;
           }
 
-          return true;
+          if (
+            !user.partner.isAllowLandingPageManage &&
+            menu.title === "Landing Pages"
+          ) {
+            return true;
+          }
+
+          if (
+            !user.partner.isAllowDomainManage &&
+            menu.title === "Domains Library"
+          ) {
+            return true;
+          }
         })
         .map((list, index) => {
           return (

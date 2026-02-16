@@ -21,6 +21,9 @@ export type Partner = {
   isAllowManagePartner: boolean;
   isAllowBonuSystem: boolean;
   isAllowCloudPhone: boolean;
+  isAllowDomainManage: boolean;
+  isAllowLandingPageManage: boolean;
+  isAllowOxySms: boolean;
   refill_oxyclick_points: number;
   isAllowUsingSmsBower: boolean;
   isAllowManageSmsBowerAccount: boolean;

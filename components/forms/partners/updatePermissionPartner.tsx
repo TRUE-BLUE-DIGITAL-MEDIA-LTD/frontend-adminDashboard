@@ -35,6 +35,11 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowUsingSMSPOOL",
     },
     {
+      title: "Allow Using SMS BOW",
+      allow: selectPartner.isAllowUsingSmsBower,
+      slug: "isAllowUsingSmsBower",
+    },
+    {
       title: "Allow Manage SMS Pool Account",
       allow: selectPartner.isAllowSmsPoolAccount,
       slug: "isAllowSmsPoolAccount",
@@ -73,6 +78,21 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       title: "Allow Cloud Phone",
       allow: selectPartner.isAllowCloudPhone,
       slug: "isAllowCloudPhone",
+    },
+    {
+      title: "Allow Manage Domain",
+      allow: selectPartner.isAllowDomainManage,
+      slug: "isAllowDomainManage",
+    },
+    {
+      title: "Allow Manage Landing Page",
+      allow: selectPartner.isAllowLandingPageManage,
+      slug: "isAllowLandingPageManage",
+    },
+    {
+      title: "Allow Manage Oxy Sms",
+      allow: selectPartner.isAllowOxySms,
+      slug: "isAllowOxySms",
     },
   ]);
 

@@ -92,6 +92,9 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           currency_id: "",
           isAllowManageSmsBowerAccount: true,
           isAllowUsingSmsBower: true,
+          isAllowDomainManage: true,
+          isAllowLandingPageManage: true,
+          isAllowOxySms: true,
         });
         addSeeAll.push({
           createAt: new Date(),
@@ -123,6 +126,9 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           simCardOnPartner: [],
           isAllowSmsPinverifyAccount: false,
           isAllowUsingSMS_Pinverify: false,
+          isAllowDomainManage: true,
+          isAllowLandingPageManage: true,
+          isAllowOxySms: true,
         });
 
         setSelectPartner(() => addSeeAll[0] as Partner);
