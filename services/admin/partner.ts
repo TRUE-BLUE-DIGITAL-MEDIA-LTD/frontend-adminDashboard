@@ -134,6 +134,9 @@ type InputUpdatePartnerService = {
     isAllowSmsPinverifyAccount?: boolean;
     isAllowUsingSMS_Daisy?: boolean;
     isAllowSmsDaisyAccount?: boolean;
+    isAllowManagePartner?: boolean;
+    isAllowBonuSystem?: boolean;
+    isAllowCloudPhone?: boolean;
   };
 };
 export async function UpdatePartnerService(

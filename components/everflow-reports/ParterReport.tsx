@@ -197,7 +197,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
   const bonusRate = useQuery({
     queryKey: ["bonusRate", { userId: user.id }],
     queryFn: () => GetBonusRateByUserIdService({ userId: user.id }),
-    enabled: user.role === "manager" || user.role === "admin",
+    enabled: user.partner?.isAllowBonuSystem || user.role === "admin",
   });
 
   const paterPerfomaces = useQuery({
@@ -521,7 +521,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         </PopupLayout>
       )}
       <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
-        {user.role === "manager" && (
+        {user.partner?.isAllowBonuSystem && (
           <BonusCaluator
             bonusRate={bonusRate.data ?? bonusRateDefault}
             summary={summary}
@@ -717,7 +717,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                       </th>
                     );
                   })}
-                {user.role === "manager" && (
+                {user.partner?.isAllowBonuSystem && (
                   <th
                     className={`left-0 
                 cursor-pointer bg-white p-2  

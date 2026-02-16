@@ -59,6 +59,21 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       allow: selectPartner.isAllowSmsDaisyAccount,
       slug: "isAllowSmsDaisyAccount",
     },
+    {
+      title: "Allow Manage Partner",
+      allow: selectPartner.isAllowManagePartner,
+      slug: "isAllowManagePartner",
+    },
+    {
+      title: "Allow Bonus System",
+      allow: selectPartner.isAllowBonuSystem,
+      slug: "isAllowBonuSystem",
+    },
+    {
+      title: "Allow Cloud Phone",
+      allow: selectPartner.isAllowCloudPhone,
+      slug: "isAllowCloudPhone",
+    },
   ]);
 
   const handleUpdatePermission = async (slug: string, isAllow: boolean) => {
@@ -85,7 +100,7 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
   };
 
   return (
-    <div className="h-96 w-96 rounded-lg border bg-white p-5 md:w-10/12 lg:w-7/12">
+    <div className="h-96 w-96 overflow-auto rounded-lg border bg-white p-5 md:w-10/12 lg:w-7/12">
       <h1 className="flex items-center justify-start gap-2 border-b text-lg font-semibold text-gray-800">
         <MdSettings /> Update Permission
       </h1>

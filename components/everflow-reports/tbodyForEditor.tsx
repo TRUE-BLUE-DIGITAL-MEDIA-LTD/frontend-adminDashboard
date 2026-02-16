@@ -206,7 +206,7 @@ function TbodyForEditor({
           loading..
         </td>
       ) : (
-        user.role === "manager" && (
+        user.partner?.isAllowBonuSystem && (
           <td className="px-2 font-bold text-yellow-600 ">
             ${bonos?.bonus.toLocaleString()}
           </td>

@@ -91,6 +91,14 @@ function SidbarList({ isSelect, list }: Props) {
               ) {
                 return false;
               }
+
+              if (
+                user.role === "partner" &&
+                !user.partner.isAllowCloudPhone &&
+                menu.title === "Cloud Phone"
+              ) {
+                return false;
+              }
               return true;
             })
             .map((child, index) => {

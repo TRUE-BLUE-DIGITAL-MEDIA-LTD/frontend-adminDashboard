@@ -18,6 +18,9 @@ export type Partner = {
   isAllowSmsPinverifyAccount: boolean;
   isAllowUsingSMS_Daisy?: boolean;
   isAllowSmsDaisyAccount?: boolean;
+  isAllowManagePartner: boolean;
+  isAllowBonuSystem: boolean;
+  isAllowCloudPhone: boolean;
   refill_oxyclick_points: number;
   isAllowUsingSmsBower: boolean;
   isAllowManageSmsBowerAccount: boolean;

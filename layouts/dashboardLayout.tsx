@@ -6,7 +6,7 @@ import DashboardNavbar from "../components/navbars/dashboardNavbar";
 import SidebarDashboard from "../components/sidebars/sidebarDashboard";
 import useClickOutside from "../hooks/useClickOutside";
 import { User } from "../models";
-import { useGetLatestAnnouncement } from "../react-query";
+import { useGetLatestAnnouncement, useGetUser } from "../react-query";
 
 export default function DashboardLayout({
   children,
@@ -19,6 +19,7 @@ export default function DashboardLayout({
   const [triggerSidebar, setTriggerSidebar] = useState<boolean>(false);
   const annoucement = useGetLatestAnnouncement();
   const divRef = useRef<HTMLUListElement>(null);
+  const userFetch = useGetUser();
 
   useClickOutside(divRef, () => {
     setTriggerSidebar(() => false);
@@ -33,7 +34,9 @@ export default function DashboardLayout({
       {user && <TawkToChat user={user} />}
 
       <DashboardNavbar setTriggerSidebar={setTriggerSidebar} />
-      {triggerSidebar && <SidebarDashboard user={user} ref={divRef} />}
+      {triggerSidebar && userFetch.data && (
+        <SidebarDashboard user={userFetch.data} ref={divRef} />
+      )}
       {children}
       {annoucement.data && <div className="h-14"></div>}
       {annoucement.data && <AnnoucementShow announcement={annoucement.data} />}
