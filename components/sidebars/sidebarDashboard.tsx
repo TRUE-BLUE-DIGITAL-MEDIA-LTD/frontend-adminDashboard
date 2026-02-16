@@ -38,7 +38,10 @@ const SidebarDashboard = forwardRef<
           if (user.role === "partner" && menu.title === "Control Center") {
             return false;
           }
-          if (user.role === "manager" && menu.title === "Submissions") {
+          if (
+            (user.role === "manager" || user.role === "partner") &&
+            menu.title === "Submissions"
+          ) {
             return false;
           }
 
