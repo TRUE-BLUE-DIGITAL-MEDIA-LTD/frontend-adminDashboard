@@ -3,12 +3,12 @@ import {
   Column,
   ResponseGetConversionParterReportService,
 } from "../../services/everflow/partner";
-import { useGetConversionPartnerReport, useGetUser } from "../../react-query";
+import {
+  useGetConversionPartnerReport,
+  useGetTimezone,
+  useGetUser,
+} from "../../react-query";
 import { formatCurrency } from "../../utils";
-
-const formatTimestamp = (timestamp: number): string => {
-  return new Date(timestamp * 1000).toLocaleString();
-};
 
 interface ConversionsTableProps {
   data: ResponseGetConversionParterReportService;
@@ -19,6 +19,14 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
   data,
   onPageChange,
 }) => {
+  const { data: timezone } = useGetTimezone();
+
+  const formatTimestamp = (timestamp: number): string => {
+    return new Date(timestamp * 1000).toLocaleString("en-GB", {
+      timeZone: timezone || "Europe/London",
+    });
+  };
+
   // Helper to render the status with a colored pill
   const user = useGetUser();
   const renderStatus = (status: string) => {
@@ -181,7 +189,7 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                   {formatTimestamp(conv.conversion_timestamp)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {conv.click_date}
+                  {formatTimestamp(conv.click_timestamp)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                   {calculateAndFormatDelta(

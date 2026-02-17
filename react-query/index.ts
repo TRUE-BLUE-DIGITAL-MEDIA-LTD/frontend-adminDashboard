@@ -12,3 +12,4 @@ export * from "./oxypoint";
 export * from "./user";
 export * from "./sms-report";
 export * from "./adjust-lead-rate";
+export * from "./timezone";

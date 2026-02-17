@@ -27,6 +27,7 @@ export type Partner = {
   refill_oxyclick_points: number;
   isAllowUsingSmsBower: boolean;
   isAllowManageSmsBowerAccount: boolean;
+  isShowWallet?: boolean;
   smartLink?: string | undefined;
   name: string;
 };

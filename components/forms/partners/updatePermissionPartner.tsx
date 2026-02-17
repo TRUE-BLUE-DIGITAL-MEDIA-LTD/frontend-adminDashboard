@@ -94,6 +94,11 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       allow: selectPartner.isAllowOxySms,
       slug: "isAllowOxySms",
     },
+    {
+      title: "Allow show wallet",
+      allow: selectPartner.isShowWallet,
+      slug: "isShowWallet",
+    },
   ]);
 
   const handleUpdatePermission = async (slug: string, isAllow: boolean) => {

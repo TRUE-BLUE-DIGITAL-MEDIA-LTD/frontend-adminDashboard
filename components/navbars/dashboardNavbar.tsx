@@ -7,7 +7,8 @@ import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import { BsPlusCircleFill } from "react-icons/bs";
 import { FaWallet } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
-import { useGetUser } from "../../react-query";
+import { useGetTimezone, useGetUser, useSetTimezone } from "../../react-query";
+import { timezones } from "../../data/timezones";
 import { GetImpersonateUser } from "../../services/admin/user";
 import ImpersonateNavBar from "./impersonateNavBar";
 import Image from "next/image";
@@ -21,6 +22,8 @@ function DashboardNavbar({
   const queryClient = useQueryClient();
   const [triggerAccountMenu, setTriggerAccountMenu] = useState(false);
   const user = useGetUser();
+  const { data: timezone } = useGetTimezone();
+  const setTimezone = useSetTimezone();
   const impersonateUser = useQuery({
     queryKey: ["user-impersonate"],
     queryFn: () => {
@@ -74,29 +77,44 @@ function DashboardNavbar({
       )}
 
       <ul className="relative flex h-16 w-max items-center justify-end gap-2 pr-2 text-sm font-semibold md:gap-5 lg:gap-10">
-        <Link
-          href={"/account-billing"}
-          className="group flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
+        <select
+          value={timezone}
+          onChange={(e) => setTimezone(e.target.value)}
+          className="h-10 rounded-lg border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
         >
-          <div className="rounded-full bg-blue-100 p-2">
-            <FaWallet className="text-lg text-blue-600" />
-          </div>
-          <div className="relative hidden flex-col md:flex">
-            <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
-              {holdingPoints !== 0 && (
-                <>
-                  <span className="text-sm text-gray-500 group-hover:text-white">
-                    {(holdingPoints / 100).toFixed(2)}
-                  </span>{" "}
-                  <span className="text-sm">/</span>{" "}
-                </>
-              )}
-              {(points / 100).toFixed(2)} $
-            </span>
-            <span className="text-[10px]  font-normal">Available Balance</span>
-          </div>
-          <BsPlusCircleFill className="hidden text-xl md:block" />
-        </Link>
+          {timezones.map((tz) => (
+            <option key={tz} value={tz}>
+              {tz}
+            </option>
+          ))}
+        </select>
+        {user.data?.partner.isShowWallet && (
+          <Link
+            href={"/account-billing"}
+            className="group flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
+          >
+            <div className="rounded-full bg-blue-100 p-2">
+              <FaWallet className="text-lg text-blue-600" />
+            </div>
+            <div className="relative hidden flex-col md:flex">
+              <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
+                {holdingPoints !== 0 && (
+                  <>
+                    <span className="text-sm text-gray-500 group-hover:text-white">
+                      {(holdingPoints / 100).toFixed(2)}
+                    </span>{" "}
+                    <span className="text-sm">/</span>{" "}
+                  </>
+                )}
+                {(points / 100).toFixed(2)} $
+              </span>
+              <span className="text-[10px]  font-normal">
+                Available Balance
+              </span>
+            </div>
+            <BsPlusCircleFill className="hidden text-xl md:block" />
+          </Link>
+        )}
 
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
