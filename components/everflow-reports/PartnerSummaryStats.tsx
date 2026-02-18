@@ -74,14 +74,14 @@ function PartnerSummaryStats({ user }: Props) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard
           title="Clicks"
-          mainStatValue={formatLargeNumber(stats.thisMonth.gross_click)}
+          mainStatValue={formatLargeNumber(stats.thisMonth.unique_click)}
           percentChange={getPercentChange(
-            stats.thisMonth.gross_click,
-            stats.lastMonth.gross_click,
+            stats.thisMonth.unique_click,
+            stats.lastMonth.unique_click,
           )}
-          todayValue={stats.today.gross_click?.toString() ?? ""}
-          yesterdayValue={stats.yesterday.gross_click.toString()}
-          lastMonthValue={formatLargeNumber(stats.lastMonth.gross_click)}
+          todayValue={stats.today.unique_click?.toString() ?? ""}
+          yesterdayValue={stats.yesterday.unique_click.toString()}
+          lastMonthValue={formatLargeNumber(stats.lastMonth.unique_click)}
         />
 
         <StatCard
