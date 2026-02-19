@@ -23,6 +23,7 @@ import {
 import { useGetDomainsByPage } from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { GetUser } from "../../services/admin/user";
+import SpinLoading from "../../components/loadings/spinLoading";
 
 function Index({ user }: { user: User & { partner: Partner } }) {
   const [searchField, setSearchField] = useState<string>("");
@@ -44,9 +45,11 @@ function Index({ user }: { user: User & { partner: Partner } }) {
     filter:
       selectPartner?.id === "no-partner"
         ? "no-partner"
-        : selectPartner?.id === "all"
-          ? "all"
-          : undefined,
+        : selectPartner?.id === "no-landing-page"
+          ? "no-landing-page"
+          : selectPartner?.id === "all"
+            ? "all"
+            : undefined,
   });
 
   useEffect(() => {
@@ -123,6 +126,38 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           responsibilityOnPartner: new Array(
             domains.data?.totalNoPartnerDomain,
           ),
+          simCardOnPartner: [],
+          isAllowSmsPinverifyAccount: false,
+          isAllowUsingSMS_Pinverify: false,
+          isAllowDomainManage: true,
+          isAllowLandingPageManage: true,
+          isAllowOxySms: true,
+        });
+        addSeeAll.push({
+          createAt: new Date(),
+          currency_id: "",
+          managerId: "",
+          isAllowUsingSMS_TEXTVERIFIED: true,
+          isAllowManageAssginCategory: true,
+          isAllowManageAssignDomain: true,
+          isAllowManageAssignPhoneNumber: true,
+          isAllowManageSmsOxy: true,
+          isAllowSmsPoolAccount: true,
+          isAllowBonuSystem: true,
+          isAllowCloudPhone: true,
+          isAllowManagePartner: true,
+          isAllowManageSmsBowerAccount: true,
+          isAllowUsingSmsBower: true,
+          updateAt: new Date(),
+          affiliateId: "none",
+          userId: "none",
+          isAllowUsingSMSPOOL: true,
+          name: "No Landing Page",
+          refill_oxyclick_points: 20,
+          id: "no-landing-page",
+          isAllowUsingSMSPVA: true,
+          account: null,
+          responsibilityOnPartner: [],
           simCardOnPartner: [],
           isAllowSmsPinverifyAccount: false,
           isAllowUsingSMS_Pinverify: false,
@@ -213,7 +248,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 )}
                 optionLabel="name"
                 loading={partners.isLoading}
-                options={partners.data}
+                options={partners.data ?? []}
                 placeholder="Select Partner"
                 className="h-10 w-96  rounded-lg text-left outline-0 ring-2 ring-icon-color "
               />
@@ -222,6 +257,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          {domains.isFetching && <SpinLoading />}
           <div className="h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12">
             <table className="w-max min-w-full border-collapse">
               <thead className="h-14 border-b-2 border-black font-bold text-blue-700 drop-shadow-md">
@@ -242,37 +278,19 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 </tr>
               </thead>
               <tbody className="">
-                {domains.isLoading ? (
-                  loadingNumber.map((list, index) => {
-                    return (
-                      <tr
-                        className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
-                        key={index}
-                      >
-                        {Array.from({ length: 10 }).map((_, i) => (
-                          <th key={i}>
-                            <Skeleton />
-                          </th>
-                        ))}
-                      </tr>
-                    );
-                  })
-                ) : domains.isError ? (
-                  <tr>NO domain Found</tr>
-                ) : (
-                  domains.data?.domains.map((list, index) => {
-                    return (
-                      <ListDomain
-                        key={index}
-                        list={list}
-                        domains={domains}
-                        setCurrentUpdateDomain={setCurrentUpdateDomain}
-                        setTriggerUpdateDomain={setTriggerUpdateDomain}
-                        user={user}
-                      />
-                    );
-                  })
-                )}
+                {domains.isError && <tr>NO domain Found</tr>}
+                {domains.data?.domains.map((list, index) => {
+                  return (
+                    <ListDomain
+                      key={index}
+                      list={list}
+                      domains={domains}
+                      setCurrentUpdateDomain={setCurrentUpdateDomain}
+                      setTriggerUpdateDomain={setTriggerUpdateDomain}
+                      user={user}
+                    />
+                  );
+                })}
               </tbody>
             </table>
           </div>

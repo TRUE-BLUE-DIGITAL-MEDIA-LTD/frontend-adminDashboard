@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   GetAllDomainsByPage,
   InputGetAllDomainsByPage,
@@ -25,9 +30,11 @@ const keyDomains = {
       filter:
         input.selectPartnerId === "no-partner"
           ? "no-partner"
-          : input.selectPartnerId === "all"
-            ? "all"
-            : undefined,
+          : input.selectPartnerId === "no-landing-page"
+            ? "no-landing-page"
+            : input.selectPartnerId === "all"
+              ? "all"
+              : undefined,
     },
   ],
 } as const;
@@ -41,6 +48,7 @@ export function useGetDomainsByPage(request: InputGetAllDomainsByPage) {
     }),
     queryFn: () => GetAllDomainsByPage(request),
     staleTime: 1000 * 60,
+    placeholderData: keepPreviousData,
     refetchInterval: 1000 * 60,
   });
 }

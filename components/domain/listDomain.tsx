@@ -136,14 +136,10 @@ function ListDomain({
   return (
     <tr className="h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200">
       <td className="px-2">
-        {domains.isFetching ? (
-          <div className="relative z-10 h-5 w-full animate-pulse bg-gray-400"></div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <MdLanguage />
-            {list?.name}
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <MdLanguage />
+          {list?.name}
+        </div>
       </td>
       <td className="px-2">
         {moment(list.updateAt).format("DD/MM/YY hh:mm A")}

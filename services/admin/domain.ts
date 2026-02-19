@@ -52,14 +52,18 @@ export interface InputGetAllDomainsByPage {
   page: number;
   searchField?: string;
   partnerId?: string;
-  filter?: "all" | "no-partner";
+  filter?: "all" | "no-partner" | "no-landing-page";
 }
 
 export async function GetAllDomainsByPage(
   input: InputGetAllDomainsByPage,
 ): Promise<ResponseGetAllDomainsByPage> {
   try {
-    if (input.partnerId === "all" || input.partnerId === "no-partner")
+    if (
+      input.partnerId === "all" ||
+      input.partnerId === "no-partner" ||
+      input.partnerId === "no-landing-page"
+    )
       delete input.partnerId;
     const cookies = parseCookies();
     const access_token = cookies.access_token;
