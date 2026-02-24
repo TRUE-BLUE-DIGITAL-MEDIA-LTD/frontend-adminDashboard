@@ -106,6 +106,7 @@ const columns = [
   { name: "Sub1", code: "sub1" },
   { name: "Hour", code: "hour" },
   { name: "Smart Link", code: "campaign" },
+  { name: "Region", code: "region" },
 ];
 
 const aggregateReporting = (reports: Reporting[]): Reporting => {
