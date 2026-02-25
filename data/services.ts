@@ -163,6 +163,7 @@ export const services = [
     icon: "https://tinder.com/static/android-chrome-192x192.png",
     code: "opt9",
     sms_bower: "oi",
+    sms_berry: 27,
   },
   {
     title: "Flickr",
