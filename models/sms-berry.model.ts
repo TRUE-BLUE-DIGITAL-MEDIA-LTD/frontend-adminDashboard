@@ -23,3 +23,13 @@ export type SmsBerryMessage = {
   phoneNumber: string;
   smsBerryId: string;
 };
+
+export type SmsBerryBalance = {
+  id: string;
+  creditLimit: number;
+  postedBalance: string;
+  holdAmount: string;
+  availableAmount: string;
+  expDate: string | null;
+  accountBalance: boolean;
+};

@@ -1,6 +1,9 @@
 import { RiErrorWarningLine } from "react-icons/ri";
 import { User, Partner } from "../../models";
-import { useGetActiveSmsBerryNumbers } from "../../react-query/sms-berry";
+import {
+  useGetActiveSmsBerryNumbers,
+  useGetSmsBerryBalance,
+} from "../../react-query/sms-berry";
 import ActiveNumber from "./ActiveNumber";
 import SelectService from "./SelectService";
 
@@ -10,6 +13,7 @@ type Props = {
 
 function SmsBerry({ user }: Props) {
   const activeNumbers = useGetActiveSmsBerryNumbers();
+  const balance = useGetSmsBerryBalance(user.role !== "partner");
 
   return (
     <>
@@ -20,6 +24,11 @@ function SmsBerry({ user }: Props) {
           from different countries at fair and affordable prices for receiving
           SMS messages.
         </span>
+        {user.role !== "partner" && balance.data && balance.data.length > 0 && (
+          <div className="mt-2 text-lg font-medium text-green-600">
+            Available Balance: {balance.data[0].availableAmount} $
+          </div>
+        )}
       </header>
       <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
         <section className="flex w-10/12 flex-col items-start justify-start gap-5">

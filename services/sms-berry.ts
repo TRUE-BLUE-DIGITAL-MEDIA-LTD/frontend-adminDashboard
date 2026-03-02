@@ -1,5 +1,5 @@
 import { parseCookies } from "nookies";
-import { SmsBerry, SmsBerryMessage } from "../models";
+import { SmsBerry, SmsBerryBalance, SmsBerryMessage } from "../models";
 import axios from "axios";
 
 export type ResponseGetActiveSmsBerryNumbersService = (SmsBerry & {
@@ -13,6 +13,28 @@ export async function GetActiveSmsBerryNumbersService(): Promise<ResponseGetActi
     const response = await axios({
       method: "GET",
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-berrys`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+      responseType: "json",
+    });
+
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response?.data || err;
+  }
+}
+
+export type ResponseGetSmsBerryBalanceService = SmsBerryBalance[];
+
+export async function GetSmsBerryBalanceService(): Promise<ResponseGetSmsBerryBalanceService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-berrys/balance`,
       headers: {
         Authorization: "Bearer " + access_token,
       },
