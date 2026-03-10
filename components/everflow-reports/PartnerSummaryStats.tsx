@@ -80,7 +80,7 @@ function PartnerSummaryStats({ user }: Props) {
             stats.lastMonth.unique_click,
           )}
           todayValue={stats.today.unique_click?.toString() ?? ""}
-          yesterdayValue={stats.yesterday.unique_click.toString()}
+          yesterdayValue={stats.yesterday.unique_click?.toString()}
           lastMonthValue={formatLargeNumber(stats.lastMonth.unique_click)}
         />
 
@@ -122,14 +122,14 @@ function PartnerSummaryStats({ user }: Props) {
 
         <StatCard
           title="Events"
-          mainStatValue={stats.thisMonth.event.toString()}
+          mainStatValue={stats.thisMonth.event?.toString()}
           percentChange={getPercentChange(
             stats.thisMonth.event,
             stats.lastMonth.event,
           )}
           todayValue={stats.today.event?.toString() ?? ""}
-          yesterdayValue={stats.yesterday.event.toString()}
-          lastMonthValue={stats.lastMonth.event.toString()}
+          yesterdayValue={stats.yesterday.event?.toString()}
+          lastMonthValue={stats.lastMonth.event?.toString()}
         />
 
         <StatCard
