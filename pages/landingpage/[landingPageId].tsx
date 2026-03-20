@@ -20,14 +20,14 @@ import {
   UploadURLSingtureFavorIconService,
 } from "../../services/admin/landingPage";
 import { GetUser } from "../../services/admin/user";
-// import EmailEditor from "react-email-editor";
 import { Dropdown } from "primereact/dropdown";
 import EmailEditor, { EditorRef, EmailEditorProps } from "react-email-editor";
 import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
-
+import Example from "../../../../landingpage.json";
+import AiDesign from "../../components/common/AiDesign";
 interface UpdateLandingPageData {
   name: string;
   title: string;
@@ -121,7 +121,7 @@ function Index({ user }: { user: User }) {
 
   const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
     if (landingPage.data) {
-      const json = JSON.parse(landingPage?.data?.json);
+      const json = JSON.parse(landingPage.data.json);
       emailEditorRef?.current?.editor?.loadDesign(json);
     }
   };
@@ -304,6 +304,13 @@ function Index({ user }: { user: User }) {
           <div className="mt-5 flex w-11/12 justify-end">
             <ImageLibaray />{" "}
           </div>
+          <AiDesign
+            onSuccess={(json: any) => {
+              if (emailEditorRef.current?.editor) {
+                emailEditorRef.current?.editor?.loadDesign(json);
+              }
+            }}
+          />
         </main>
 
         <div className="flex w-full justify-start">

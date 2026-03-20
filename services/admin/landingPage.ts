@@ -320,3 +320,31 @@ export async function RemoveDomainNameFromLandingPageService(
     throw err.response.data;
   }
 }
+
+interface RequestCreateNewDesignOnLandingPageByAiService {
+  context: string;
+}
+export async function CreateNewDesignOnLandingPageByAiService(
+  input: RequestCreateNewDesignOnLandingPageByAiService,
+): Promise<any> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const landingPage = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/ai`,
+      {
+        ...input,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+
+    return landingPage.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
