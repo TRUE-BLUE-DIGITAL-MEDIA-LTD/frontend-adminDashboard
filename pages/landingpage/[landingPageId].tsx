@@ -26,7 +26,6 @@ import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
-import Example from "../../../../landingpage.json";
 import AiDesign from "../../components/common/AiDesign";
 interface UpdateLandingPageData {
   name: string;
