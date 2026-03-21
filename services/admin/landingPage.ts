@@ -323,28 +323,57 @@ export async function RemoveDomainNameFromLandingPageService(
 
 interface RequestCreateNewDesignOnLandingPageByAiService {
   context: string;
+  landingPageId: string;
+  onStream?: (chunk: string) => void;
 }
 export async function CreateNewDesignOnLandingPageByAiService(
   input: RequestCreateNewDesignOnLandingPageByAiService,
-): Promise<any> {
+): Promise<string> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const landingPage = await axios.post(
+
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/ai`,
       {
-        ...input,
-      },
-      {
+        method: "POST",
         headers: {
           Authorization: "Bearer " + access_token,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          context: input.context,
+          landingPageId: input.landingPageId,
+        }),
       },
     );
 
-    return landingPage.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw errorData || new globalThis.Error("Failed to generate design");
+    }
+
+    if (!response.body) {
+      throw new globalThis.Error("No response body");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      result += chunk;
+      if (input.onStream) {
+        input.onStream(chunk);
+      }
+    }
+
+    return result;
   } catch (err: any) {
     console.log(err);
-    throw err.response.data;
+    throw err;
   }
 }

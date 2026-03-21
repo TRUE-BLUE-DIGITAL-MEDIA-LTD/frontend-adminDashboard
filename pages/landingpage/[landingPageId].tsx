@@ -303,13 +303,16 @@ function Index({ user }: { user: User }) {
           <div className="mt-5 flex w-11/12 justify-end">
             <ImageLibaray />{" "}
           </div>
-          <AiDesign
-            onSuccess={(json: any) => {
-              if (emailEditorRef.current?.editor) {
-                emailEditorRef.current?.editor?.loadDesign(json);
-              }
-            }}
-          />
+          {landingPage.data && (
+            <AiDesign
+              landingPageId={landingPage.data.id}
+              onSuccess={(json: any) => {
+                if (emailEditorRef.current?.editor) {
+                  emailEditorRef.current?.editor?.loadDesign(json);
+                }
+              }}
+            />
+          )}
         </main>
 
         <div className="flex w-full justify-start">
