@@ -98,7 +98,9 @@ function UpdatePartner({
           refill_oxyclick_points:
             updatePartnerData.refill_oxyclick_points * 100,
 
-          smartLink: updatePartnerData.smartLink,
+          smartLink: !updatePartnerData.smartLink
+            ? null
+            : updatePartnerData.smartLink,
         },
       });
       await partners.refetch();
