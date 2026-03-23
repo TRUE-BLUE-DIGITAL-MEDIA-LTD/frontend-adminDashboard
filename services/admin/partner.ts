@@ -129,7 +129,7 @@ type InputUpdatePartnerService = {
     isAllowManageAssignDomain?: boolean;
     isAllowManageAssginCategory?: boolean;
     refill_oxyclick_points?: number;
-    smartLink: string | null;
+    smartLink?: string | null;
     isAllowUsingSMS_Pinverify?: boolean;
     isAllowSmsPinverifyAccount?: boolean;
     isAllowUsingSMS_Daisy?: boolean;
