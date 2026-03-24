@@ -8,8 +8,10 @@ import {
   GetAllDomainsByPage,
   InputGetAllDomainsByPage,
   InputSummitSitemapDomainService,
+  InputUpdateSeoScoreService,
   InputVerifyDomainOnGoogleService,
   SummitSitemapDomainService,
+  UpdateSeoScoreService,
   VerifyDomainOnGoogleService,
 } from "../services/admin/domain";
 
@@ -81,5 +83,13 @@ export function useUpdateSitemap() {
         queryKey: keyDomains.domains,
       });
     },
+  });
+}
+
+export function useUpdateSeoScore() {
+  return useMutation({
+    mutationKey: ["domain", "seo"],
+    mutationFn: (request: InputUpdateSeoScoreService) =>
+      UpdateSeoScoreService(request),
   });
 }

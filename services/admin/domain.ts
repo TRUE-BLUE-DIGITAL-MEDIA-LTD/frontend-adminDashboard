@@ -98,7 +98,6 @@ export interface ResponseGetDomainService {
 }
 interface InputGetDomainService {
   domainId: string;
-  days: number;
 }
 export async function GetDomainService(
   input: InputGetDomainService,
@@ -156,7 +155,6 @@ export async function CreateDomainService(
 
 type ResponseUpdateDomainService = Domain;
 export interface InputUpdateDomainService {
-  name: string;
   domainNameId: string;
   googleAnalyticsId?: string | null;
   oxyeyeAnalyticsId?: string | null | undefined;
@@ -266,6 +264,32 @@ export async function SummitSitemapDomainService(
     const access_token = cookies.access_token;
     const domain = await axios.patch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/sitemap`,
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+    return domain.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export type ResponseUpdateSeoScoreService = Domain;
+export interface InputUpdateSeoScoreService {
+  domainId: string;
+}
+export async function UpdateSeoScoreService(
+  input: InputUpdateSeoScoreService,
+): Promise<ResponseUpdateSeoScoreService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const domain = await axios.patch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/seo`,
       {},
       {
         headers: {

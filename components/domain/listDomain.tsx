@@ -57,6 +57,20 @@ function ListDomain({
 }: Props) {
   const verifyGoogle = useVerifyDomain();
   const summitSitemap = useUpdateSitemap();
+  const averageSEOMobile: number =
+    (((list.accessibilityScoreMobile ?? 0) +
+      (list.seoScoreMobile ?? 0) +
+      (list.bestPracticesScoreMobile ?? 0) +
+      (list.performanceScoreMobile ?? 0)) /
+      4) *
+    100;
+  const averageSEODesktop: number =
+    (((list.accessibilityScoreDesktop ?? 0) +
+      (list.seoScoreDesktop ?? 0) +
+      (list.bestPracticesScoreDesktop ?? 0) +
+      (list.performanceScoreDesktop ?? 0)) /
+      4) *
+    100;
   const handleViewNameServer = ({
     nameServer,
     domain,
@@ -297,6 +311,34 @@ function ListDomain({
               <span>No Landing Page</span>
             </div>
           )}
+        </div>
+      </td>
+      <td className="px-2">
+        <div className="flex  items-center gap-5">
+          <div className="text-xs uppercase text-gray-500">Desktop</div>
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
+              averageSEODesktop >= 90
+                ? "border-green-500 bg-green-50 text-green-500"
+                : averageSEODesktop >= 50
+                  ? "border-orange-500 bg-orange-50 text-orange-500"
+                  : "border-red-500 bg-red-50 text-red-500"
+            }`}
+          >
+            {averageSEODesktop.toFixed(1)}
+          </div>
+          <div className="mt-1 text-xs uppercase text-gray-500">Mobile</div>
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
+              averageSEOMobile >= 90
+                ? "border-green-500 bg-green-50 text-green-500"
+                : averageSEOMobile >= 50
+                  ? "border-orange-500 bg-orange-50 text-orange-500"
+                  : "border-red-500 bg-red-50 text-red-500"
+            }`}
+          >
+            {averageSEOMobile}
+          </div>
         </div>
       </td>
       <td className="flex h-14 w-20 items-center gap-2">

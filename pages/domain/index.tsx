@@ -185,6 +185,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         <DomainUpdate
           domain={currentUpdateDomain as Domain}
           setTriggerUpdateDomain={setTriggerUpdateDomain}
+          domains={domains}
         />
       )}
       <div className="w-full">
@@ -271,6 +272,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   <td>Nameserver</td>
                   <td>Partners</td>
                   <td>Landing Pages</td>
+                  <td>Average SEO Score</td>
                   <td className="flex items-center gap-2">
                     <MdSettings />
                     Options

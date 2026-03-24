@@ -11,6 +11,15 @@ export interface Domain {
   dns_servers: string[];
   google_domain_id: string | null;
   sitemap_status: "NOT_FOUND" | "PEDDING" | "COMPLETED";
+  seoScoreDesktop?: number;
+  accessibilityScoreDesktop?: number;
+  bestPracticesScoreDesktop?: number;
+  performanceScoreDesktop?: number;
+
+  seoScoreMobile?: number;
+  accessibilityScoreMobile?: number;
+  bestPracticesScoreMobile?: number;
+  performanceScoreMobile?: number;
 }
 
 export type SiteBuild = {
