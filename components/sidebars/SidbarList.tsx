@@ -84,13 +84,6 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
-                user.partner.isAllowUsingSMS_Daisy === false &&
-                menu.title === "Oxy Day"
-              ) {
-                return false;
-              }
-
-              if (
                 user.partner.isAllowUsingSMS_Pinverify === false &&
                 menu.title === "Oxy Pin"
               ) {
