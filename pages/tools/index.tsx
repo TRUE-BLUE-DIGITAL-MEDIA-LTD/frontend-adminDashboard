@@ -40,7 +40,6 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "sms-textverified" && <SmsTextVerified user={user} />}
         {menu === "league-table" && <PartnerLeague user={user} />}
         {menu === "sms-pinverify" && <SmsPinverify user={user} />}
-        {menu === "sms-daisy" && <SmsDaisy user={user} />}
         {menu === "sms-report" && <SmsReport />}
         {menu === "sms-berry" && <SmsBerry user={user} />}
         {menu === "cloud-phone" && <CloudPhone />}
