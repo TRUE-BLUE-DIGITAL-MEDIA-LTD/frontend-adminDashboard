@@ -194,7 +194,9 @@ function Index({ user }: { user: User & { partner: Partner } }) {
             <span className="text-icon-color">D</span>
             <span>omains</span>
           </h1>
-          {user.role === "admin" && (
+          {(user.role === "admin" ||
+            (user.role === "manager" &&
+              user.partner.isAllowCreateDomain === true)) && (
             <button
               onClick={() => {
                 document.body.style.overflow = "hidden";

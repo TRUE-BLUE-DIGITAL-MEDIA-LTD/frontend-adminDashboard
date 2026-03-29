@@ -30,6 +30,7 @@ export type Partner = {
   isShowWallet?: boolean;
   smartLink?: string | undefined;
   name: string;
+  isAllowCreateDomain?: boolean;
 };
 
 export type ResponsibilityOnPartner = {

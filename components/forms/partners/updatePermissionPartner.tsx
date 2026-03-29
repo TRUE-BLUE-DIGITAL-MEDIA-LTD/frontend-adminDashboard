@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ErrorMessages, Pagination, Partner, User } from "../../../models";
 import { MdCheck, MdCheckBox, MdClear, MdSettings } from "react-icons/md";
 import { UseQueryResult } from "@tanstack/react-query";
+import { useGetUser } from "../../../react-query";
 import { UpdatePartnerService } from "../../../services/admin/partner";
 import Swal from "sweetalert2";
 
@@ -18,6 +19,7 @@ type Props = {
 };
 
 function UpdatePermissionPartner({ selectPartner, partners }: Props) {
+  const user = useGetUser();
   const [permissionLists, setPermissionLists] = useState([
     {
       title: "Allow Using SMS Pva",
@@ -99,6 +101,11 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       allow: selectPartner.isShowWallet,
       slug: "isShowWallet",
     },
+    {
+      title: "Allow Create Domain",
+      allow: selectPartner.isAllowCreateDomain,
+      slug: "isAllowCreateDomain",
+    },
   ]);
 
   const handleUpdatePermission = async (slug: string, isAllow: boolean) => {
@@ -131,6 +138,13 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       </h1>
       <ul className="mt-5 grid w-full grid-cols-2 gap-3">
         {permissionLists.map((permission, index) => {
+          if (
+            permission.slug === "isAllowCreateDomain" &&
+            user.data?.role !== "admin"
+          ) {
+            return null;
+          }
+
           if (permission.allow === true) {
             return (
               <button
