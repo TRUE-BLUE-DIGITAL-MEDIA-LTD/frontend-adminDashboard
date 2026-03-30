@@ -72,6 +72,23 @@ const SidebarDashboard = forwardRef<
 
           return true;
         })
+        .map((menu) => {
+          if (menu.title === "Oxy Tools" && menu.childs) {
+            return {
+              ...menu,
+              childs: menu.childs.filter((child) => {
+                if (
+                  !user.partner.isAllowUsingSmsBerry &&
+                  child.title === "Oxy Berry"
+                ) {
+                  return false;
+                }
+                return true;
+              }),
+            };
+          }
+          return menu;
+        })
         .map((list, index) => {
           return (
             <SidbarList

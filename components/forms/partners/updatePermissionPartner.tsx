@@ -42,6 +42,11 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowUsingSmsBower",
     },
     {
+      title: "Allow Using SMS Berry",
+      allow: selectPartner.isAllowUsingSmsBerry,
+      slug: "isAllowUsingSmsBerry",
+    },
+    {
       title: "Allow Manage SMS Pool Account",
       allow: selectPartner.isAllowSmsPoolAccount,
       slug: "isAllowSmsPoolAccount",

@@ -77,6 +77,13 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
+                user.partner.isAllowUsingSmsBerry === false &&
+                menu.title === "Oxy Berry"
+              ) {
+                return false;
+              }
+
+              if (
                 user.partner.isAllowUsingSMSPVA === false &&
                 menu.title === "Oxy PVA"
               ) {
