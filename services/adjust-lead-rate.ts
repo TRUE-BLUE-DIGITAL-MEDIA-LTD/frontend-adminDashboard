@@ -11,6 +11,8 @@ export type AdjustLeadRate = {
   campaignId: string;
   country: string;
   type: "fixed" | "exchange";
+  startDate?: string;
+  endDate?: string;
 };
 
 export type ResponseFindAllAdjustLeadRateService = AdjustLeadRate[];
@@ -41,6 +43,8 @@ export type CreateAdjustLeadRateDto = {
   campaignId: string;
   country: string;
   type: "fixed" | "exchange";
+  startDate?: string;
+  endDate?: string;
 };
 
 export type ResponseCreateAdjustLeadRateService = AdjustLeadRate;
@@ -74,6 +78,8 @@ export type UpdateAdjustLeadRateDto = {
   convertedCurrency?: string;
   campaignId?: string;
   country?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 export type ResponseUpdateAdjustLeadRateService = AdjustLeadRate;

@@ -112,6 +112,32 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           alert("Please select a smart link");
           return;
         }
+
+        let liveStartDate: Date | undefined = undefined;
+        let liveEndDate: Date | undefined = undefined;
+
+        if (dates && dates[0]) {
+          const sd = moment.tz(moment(dates[0]).format("YYYY-MM-DD"), timezone);
+          if (startTime) {
+            sd.hour(startTime.getHours())
+              .minute(startTime.getMinutes())
+              .second(startTime.getSeconds());
+          }
+          liveStartDate = sd.toDate();
+        }
+
+        if (dates && dates[1]) {
+          const ed = moment.tz(moment(dates[1]).format("YYYY-MM-DD"), timezone);
+          if (endTime) {
+            ed.hour(endTime.getHours())
+              .minute(endTime.getMinutes())
+              .second(endTime.getSeconds());
+          } else {
+            // If end date but no end time, assume end of day? Or just 00:00:00
+          }
+          liveEndDate = ed.toDate();
+        }
+
         await createAdjustLeadRateMutation.mutateAsync({
           country: selectedCountry.country,
           rate: Number(rate),
@@ -119,6 +145,8 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           targetCurrency: currencyTarget,
           convertedCurrency: currentcyConverted,
           campaignId: String(selectedSmartLink.network_campaign_id),
+          ...(liveStartDate && { startDate: liveStartDate.toISOString() }),
+          ...(liveEndDate && { endDate: liveEndDate.toISOString() }),
         });
       } else {
         if (!dates || !dates[0] || !dates[1]) return;
@@ -305,59 +333,61 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {updateType === "once" && (
-          <>
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 font-semibold text-gray-700">
-                <FaCalendarAlt className="text-orange-500" /> Select Date Range
-              </label>
-              <Calendar
-                value={dates}
-                onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
-                selectionMode="range"
-                className="border"
-              />
-            </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaCalendarAlt className="text-orange-500" /> Select Date Range{" "}
+            {updateType === "live" && (
+              <span className="text-sm font-normal text-gray-500">
+                (Optional for Live Update)
+              </span>
+            )}
+          </label>
+          <Calendar
+            value={dates}
+            onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
+            selectionMode="range"
+            className="border"
+          />
+        </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 font-semibold text-gray-700">
-                <FaCalendarAlt className="text-orange-500" /> Select Time Range
-              </label>
-              <div className="flex gap-2">
-                <Calendar
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.value as Date | null)}
-                  timeOnly
-                  className="w-full border"
-                  placeholder="Start Time (Optional)"
-                />
-                <span className="flex items-center text-gray-500">-</span>
-                <Calendar
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.value as Date | null)}
-                  timeOnly
-                  className="w-full border"
-                  placeholder="End Time (Optional)"
-                />
-              </div>
-            </div>
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaCalendarAlt className="text-orange-500" /> Select Time Range
+          </label>
+          <div className="flex gap-2">
+            <Calendar
+              value={startTime}
+              onChange={(e) => setStartTime(e.value as Date | null)}
+              timeOnly
+              className="w-full border"
+              placeholder="Start Time (Optional)"
+            />
+            <span className="flex items-center text-gray-500">-</span>
+            <Calendar
+              value={endTime}
+              onChange={(e) => setEndTime(e.value as Date | null)}
+              timeOnly
+              className="w-full border"
+              placeholder="End Time (Optional)"
+            />
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 font-semibold text-gray-700">
-                <FaGlobe className="text-blue-500" /> Select Time Zone
-              </label>
-              <Dropdown
-                value={timezone}
-                onChange={(e) => setTimezone(e.value)}
-                options={timezones}
-                optionLabel="label"
-                placeholder="Select a Time Zone"
-                filter
-                className="w-full border"
-              />
-            </div>
-          </>
-        )}
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaGlobe className="text-blue-500" /> Select Time Zone
+          </label>
+          <Dropdown
+            value={timezone}
+            onChange={(e) => setTimezone(e.value)}
+            options={timezones}
+            optionLabel="label"
+            placeholder="Select a Time Zone"
+            filter
+            className="w-full border"
+          />
+        </div>
+
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
             <FaGlobe className="text-blue-500" /> Select Country
@@ -383,7 +413,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           </div>
         )}
 
-        <div className="flex flex-col gap-2">
+        <div
+          className={`flex flex-col gap-2 ${updateType === "once" ? "" : "col-span-2"}`}
+        >
           <label className="flex items-center gap-2 font-semibold text-gray-700">
             <FaLink className="text-purple-500" /> Select Smart Link
           </label>

@@ -196,6 +196,7 @@ const AdjustLeadRatesTable = () => {
                     <th className="px-6 py-3">Target Currency</th>
                     <th className="px-6 py-3">Converted Currency</th>
                     <th className="px-6 py-3">Rate</th>
+                    <th className="px-6 py-3">Schedule</th>
                     <th className="px-6 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -245,6 +246,25 @@ const AdjustLeadRatesTable = () => {
                         </td>
                         <td className="px-6 py-4 font-bold text-gray-800">
                           {rate.rate.toFixed(4)}
+                        </td>
+                        <td className="px-6 py-4 text-xs text-gray-500">
+                          {rate.startDate && (
+                            <div className="whitespace-nowrap">
+                              <span className="font-semibold">Start:</span>{" "}
+                              {new Date(rate.startDate).toLocaleString()}
+                            </div>
+                          )}
+                          {rate.endDate && (
+                            <div className="whitespace-nowrap">
+                              <span className="font-semibold">End:</span>{" "}
+                              {new Date(rate.endDate).toLocaleString()}
+                            </div>
+                          )}
+                          {!rate.startDate && !rate.endDate && (
+                            <span className="italic text-gray-400">
+                              Always active
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
