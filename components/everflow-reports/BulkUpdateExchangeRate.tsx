@@ -423,6 +423,19 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             />
           </div>
         )}
+        <div className="flex flex-col gap-2">
+          <label className="flex items-center gap-2 font-semibold text-gray-700">
+            <FaMoneyBillWave className="text-green-500" /> Target Currency
+          </label>
+          <Dropdown
+            value={currencyTarget}
+            onChange={(e) => setCurrencyTarget(e.value)}
+            options={currencies}
+            optionLabel="label"
+            placeholder="Select Target Currency"
+            className="w-full border"
+          />
+        </div>
 
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
