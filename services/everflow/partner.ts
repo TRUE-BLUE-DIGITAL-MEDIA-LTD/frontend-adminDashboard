@@ -405,6 +405,9 @@ export async function GetPartnerSummaryStatsService(): Promise<ResponseGetPartne
 export type UpdateBulkExchangeRateDto = {
   startDate: string;
   endDate: string;
+  startTime?: string;
+  endTime?: string;
+  timezone?: string;
   country: string;
   rate: number;
   isFixRate: boolean;

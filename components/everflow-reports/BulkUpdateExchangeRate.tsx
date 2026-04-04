@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Nullable } from "primereact/ts-helpers";
-import moment from "moment";
+import moment from "moment-timezone";
 import { countries, Countries } from "../../data/country";
 import {
   useGetCampaigns,
@@ -43,6 +43,12 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     const today = moment().format("YYYY-MM-DD");
     return [moment(today).toDate(), moment(today).toDate()];
   });
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [timezone, setTimezone] = useState<string>(moment.tz.guess());
+
+  const timezones = moment.tz.names().map((tz) => ({ label: tz, value: tz }));
+
   const partners = useGetPartners({
     limit: 100,
     page: 1,
@@ -119,6 +125,11 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
         const data = await mutateAsync({
           startDate: moment(dates[0]).format("YYYY-MM-DD"),
           endDate: moment(dates[1]).format("YYYY-MM-DD"),
+          startTime: startTime
+            ? moment(startTime).format("HH:mm:ss")
+            : undefined,
+          endTime: endTime ? moment(endTime).format("HH:mm:ss") : undefined,
+          timezone: timezone,
           country: selectedCountry.country,
           rate: Number(rate),
           isFixRate: selectRateType === "Fixed" ? true : false,
@@ -295,17 +306,57 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {updateType === "once" && (
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 font-semibold text-gray-700">
-              <FaCalendarAlt className="text-orange-500" /> Select Date Range
-            </label>
-            <Calendar
-              value={dates}
-              onChange={(e) => setDates(e.value)}
-              selectionMode="range"
-              className="border"
-            />
-          </div>
+          <>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-semibold text-gray-700">
+                <FaCalendarAlt className="text-orange-500" /> Select Date Range
+              </label>
+              <Calendar
+                value={dates}
+                onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
+                selectionMode="range"
+                className="border"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-semibold text-gray-700">
+                <FaCalendarAlt className="text-orange-500" /> Select Time Range
+              </label>
+              <div className="flex gap-2">
+                <Calendar
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.value as Date | null)}
+                  timeOnly
+                  className="w-full border"
+                  placeholder="Start Time (Optional)"
+                />
+                <span className="flex items-center text-gray-500">-</span>
+                <Calendar
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.value as Date | null)}
+                  timeOnly
+                  className="w-full border"
+                  placeholder="End Time (Optional)"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-semibold text-gray-700">
+                <FaGlobe className="text-blue-500" /> Select Time Zone
+              </label>
+              <Dropdown
+                value={timezone}
+                onChange={(e) => setTimezone(e.value)}
+                options={timezones}
+                optionLabel="label"
+                placeholder="Select a Time Zone"
+                filter
+                className="w-full border"
+              />
+            </div>
+          </>
         )}
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
@@ -372,20 +423,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             />
           </div>
         )}
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaMoneyBillWave className="text-green-500" /> Target Currency
-          </label>
-          <Dropdown
-            value={currencyTarget}
-            onChange={(e) => setCurrencyTarget(e.value)}
-            options={currencies}
-            optionLabel="label"
-            placeholder="Select Target Currency"
-            className="w-full border"
-          />
-        </div>
 
         <div className="flex flex-col gap-2">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
