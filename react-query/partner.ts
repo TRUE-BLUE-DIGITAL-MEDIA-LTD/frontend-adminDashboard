@@ -71,6 +71,7 @@ export function useGetPartnerLeagueTable(
   return useQuery({
     queryKey: ["league-table", input],
     queryFn: () => GetPartnerLeagueTableService(input),
+    enabled: !!input.startDate && !!input.endDate && !!input.timezone,
   });
 }
 
