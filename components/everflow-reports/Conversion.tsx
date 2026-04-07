@@ -271,7 +271,9 @@ type Props = {
 
 function Conversion({ startDate, endDate, columns }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
+  const { data: timezone } = useGetTimezone();
   const data = useGetConversionPartnerReport({
+    timezone: timezone,
     page: currentPage,
     startDate,
     endDate,

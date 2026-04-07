@@ -1,6 +1,6 @@
 import React from "react";
 import { User } from "../../models";
-import { useGetPartnerSummaryStats } from "../../react-query";
+import { useGetPartnerSummaryStats, useGetTimezone } from "../../react-query";
 import { MdArrowCircleDown, MdArrowCircleUp } from "react-icons/md";
 
 type Props = {
@@ -51,7 +51,10 @@ interface StatCardProps {
   lastMonthValue: string;
 }
 function PartnerSummaryStats({ user }: Props) {
-  const { data: stats, isLoading } = useGetPartnerSummaryStats();
+  const { data: timezone } = useGetTimezone();
+  const { data: stats, isLoading } = useGetPartnerSummaryStats({
+    timezone,
+  });
 
   if (isLoading) {
     return <div className="p-4 text-slate-500">Loading stats...</div>;

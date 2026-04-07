@@ -5,6 +5,7 @@ import { parseCookies } from "nookies";
 export type RequestGetParterPerformancesByDate = {
   startDate: Date;
   endDate: Date;
+  timezone?: string;
   columns: ({ column: column_type } | undefined)[]; // columns can be undefined or an array of objects with a column property of column_type or undefined
 };
 export type ResponseGetParterPerfomacesByDate = {
@@ -79,6 +80,7 @@ export async function GetSummaryParterReportService(
       {
         startDate: moment(input.startDate).format("YYYY-MM-DD"),
         endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        timezone: input.timezone,
         columns: input.columns,
       },
       {
@@ -115,6 +117,7 @@ export async function GetParterPerformanceByDate(
       data: {
         startDate: moment(input.startDate).format("YYYY-MM-DD"),
         endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        timezone: input.timezone,
         columns: input.columns,
       },
       headers: {
@@ -144,6 +147,7 @@ export async function GetParterPerfomacesByDayByDayService(
       data: {
         startDate: moment(input.startDate).format("YYYY-MM-DD"),
         endDate: moment(input.endDate).format("YYYY-MM-DD"),
+        timezone: input.timezone,
         columns: input.columns,
       },
       headers: {
@@ -324,6 +328,7 @@ export type ResponseGetConversionParterReportService = ConversionRawData[];
 export type ReqeustGetConversionParterReportService = {
   startDate: string;
   endDate: string;
+  timezone?: string;
   resource_types: { resource_type: string; filter_id_value: string }[];
   page: number;
 };
@@ -383,12 +388,18 @@ export interface ResponseGetPartnerSummaryStatsService {
   lastMonth: Reporting;
 }
 
-export async function GetPartnerSummaryStatsService(): Promise<ResponseGetPartnerSummaryStatsService> {
+export type RequestGetPartnerSummaryStatsService = {
+  timezone?: string;
+};
+export async function GetPartnerSummaryStatsService(
+  request: RequestGetPartnerSummaryStatsService,
+): Promise<ResponseGetPartnerSummaryStatsService> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
     const summary = await axios({
       method: "GET",
+      params: request,
       url: `${process.env.NEXT_PUBLIC_SERVER_URL}/partner-report/summary-stats`,
       headers: {
         Authorization: "Bearer " + access_token,

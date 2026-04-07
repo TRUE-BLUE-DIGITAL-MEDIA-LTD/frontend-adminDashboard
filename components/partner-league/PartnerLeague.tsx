@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useGetPartnerLeagueTable } from "../../react-query";
+import { useGetPartnerLeagueTable, useGetTimezone } from "../../react-query";
 import { Skeleton } from "@mui/material";
 import { countries } from "../../data/country";
 import { a } from "react-spring";
@@ -76,8 +76,9 @@ function PartnerLeague({ user }: Props) {
   const [toDate, setToDate] = useState("");
   // State for the selected country
   const [country, setCountry] = useState("United States");
-
+  const { data: timezone } = useGetTimezone();
   const table = useGetPartnerLeagueTable({
+    timezone,
     startDate: fromDate,
     endDate: toDate,
     ...(country !== "SELECT ALL" && { country: country }),

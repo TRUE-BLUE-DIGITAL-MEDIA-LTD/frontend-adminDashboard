@@ -15,6 +15,7 @@ import {
   ReqeustGetCampaignsService,
   ReqeustGetConversionParterReportService,
   RequestGetParterPerformancesByDate,
+  RequestGetPartnerSummaryStatsService,
   UpdateBulkExchangeRateService,
 } from "../services/everflow/partner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -103,10 +104,12 @@ export function useGetPartnerReportByDate(
   });
 }
 
-export function useGetPartnerSummaryStats() {
+export function useGetPartnerSummaryStats(
+  request: RequestGetPartnerSummaryStatsService,
+) {
   return useQuery({
-    queryKey: ["partner-summary-stats"],
-    queryFn: () => GetPartnerSummaryStatsService(),
+    queryKey: ["partner-summary-stats", request],
+    queryFn: () => GetPartnerSummaryStatsService(request),
     refetchInterval: 1000 * 30,
   });
 }

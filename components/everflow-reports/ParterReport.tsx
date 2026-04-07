@@ -1,7 +1,6 @@
 import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
 import React, { useEffect, useState } from "react";
-import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -30,6 +29,7 @@ import Conversion from "./Conversion";
 import PartnerSummaryStats from "./PartnerSummaryStats";
 import BulkUpdateExchangeRate from "./BulkUpdateExchangeRate";
 import AdjustLeadRatesTable from "./AdjustLeadRatesTable";
+import { useGetTimezone } from "@/react-query";
 
 const menuTables = [
   { title: "Network Affiliate ID", sort: "up", admin: false },
@@ -194,6 +194,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
     title: "Network Affiliate ID",
     sort: "up",
   });
+  const { data: timezone } = useGetTimezone();
 
   const bonusRate = useQuery({
     queryKey: ["bonusRate", { userId: user.id }],
@@ -211,10 +212,12 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
           child: selectColumns.child?.code,
           grandchild: selectColumns.grandchild?.code,
         },
+        timezone: timezone,
       },
     ],
     queryFn: () =>
       GetParterPerformanceByDate({
+        timezone: timezone,
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
         columns: [
@@ -263,9 +266,10 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
   }, [paterPerfomaces.isSuccess]);
 
   const partnerPerformanceDayByDay = useQuery({
-    queryKey: ["partnerBonuse", dates],
+    queryKey: ["partnerBonuse", dates, timezone],
     queryFn: () =>
       GetParterPerfomacesByDayByDayService({
+        timezone: timezone,
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
         columns: [{ column: "affiliate" }],
