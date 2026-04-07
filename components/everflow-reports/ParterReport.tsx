@@ -235,6 +235,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         const listData = Object.entries(data);
         return listData;
       }),
+    enabled: !!dates && !!timezone,
     refetchInterval: 1000 * 60 * 5,
   });
 
