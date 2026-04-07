@@ -345,6 +345,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
     queryKey: ["summary", dates],
     queryFn: () =>
       GetSummaryParterReportService({
+        timezone: timezone,
         startDate: moment(dates?.[0]).toDate(),
         endDate: moment(dates?.[1]).toDate(),
         columns: [{ column: "affiliate" }],
