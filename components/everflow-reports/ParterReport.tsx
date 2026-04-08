@@ -350,6 +350,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         endDate: moment(dates?.[1]).toDate(),
         columns: [{ column: "affiliate" }],
       }),
+      enabled: !!dates && !!timezone,
   });
 
   const renderChildrenRows = (entries: TableEntry[], parentId: string) => {
