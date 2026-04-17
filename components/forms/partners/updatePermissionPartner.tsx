@@ -22,7 +22,7 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
   const user = useGetUser();
   const [permissionLists, setPermissionLists] = useState([
     {
-      title: "Allow Using SMS Pva",
+      title: "Allow Using Oxy Pva",
       allow: selectPartner.isAllowUsingSMSPVA,
       slug: "isAllowUsingSMSPVA",
     },
@@ -32,42 +32,37 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowUsingSMS_TEXTVERIFIED",
     },
     {
-      title: "Allow Using SMS Pool",
+      title: "Allow Using Oxy Pool",
       allow: selectPartner.isAllowUsingSMSPOOL,
       slug: "isAllowUsingSMSPOOL",
     },
     {
-      title: "Allow Using SMS BOW",
+      title: "Allow Using Oxy BOW",
       allow: selectPartner.isAllowUsingSmsBower,
       slug: "isAllowUsingSmsBower",
     },
     {
-      title: "Allow Using SMS Berry",
+      title: "Allow Using Oxy Berry",
       allow: selectPartner.isAllowUsingSmsBerry,
       slug: "isAllowUsingSmsBerry",
     },
     {
-      title: "Allow Manage SMS Pool Account",
+      title: "Allow Manage Oxy Pool Account",
       allow: selectPartner.isAllowSmsPoolAccount,
       slug: "isAllowSmsPoolAccount",
     },
     {
-      title: "Allow Using SmsPin",
+      title: "Allow Using Oxy Pin",
       allow: selectPartner.isAllowUsingSMS_Pinverify,
       slug: "isAllowUsingSMS_Pinverify",
     },
     {
-      title: "Allow Manage SMS Pin Account",
+      title: "Allow Manage Oxy Pin Account",
       allow: selectPartner.isAllowSmsPinverifyAccount,
       slug: "isAllowSmsPinverifyAccount",
     },
     {
-      title: "Allow Using SmsDay",
-      allow: selectPartner.isAllowUsingSMS_Daisy,
-      slug: "isAllowUsingSMS_Daisy",
-    },
-    {
-      title: "Allow Manage SMS Day Account",
+      title: "Allow Manage Oxy Berry Account",
       allow: selectPartner.isAllowSmsDaisyAccount,
       slug: "isAllowSmsDaisyAccount",
     },

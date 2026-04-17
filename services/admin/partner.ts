@@ -137,6 +137,7 @@ type InputUpdatePartnerService = {
     isAllowManagePartner?: boolean;
     isAllowBonuSystem?: boolean;
     isAllowCloudPhone?: boolean;
+    isAllowUsingSmsBerry?: boolean;
   };
 };
 export async function UpdatePartnerService(
