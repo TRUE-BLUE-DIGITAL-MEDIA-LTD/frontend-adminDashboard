@@ -39,6 +39,7 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
   const [groupBy, setGroupBy] = useState<GroupByOption>("country");
   const [editingRate, setEditingRate] = useState<AdjustLeadRate | null>(null);
   const [newRateValue, setNewRateValue] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"active" | "history">("active");
 
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
@@ -85,10 +86,27 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
     }
   };
 
-  const groupedData = useMemo(() => {
-    if (!rates) return {};
+  const { activeRates, historyRates } = useMemo(() => {
+    if (!rates) return { activeRates: [], historyRates: [] };
+    const now = new Date();
+    const active: AdjustLeadRate[] = [];
+    const history: AdjustLeadRate[] = [];
 
-    return rates.reduce(
+    rates.forEach((rate) => {
+      if (rate.endDate && new Date(rate.endDate) < now) {
+        history.push(rate);
+      } else {
+        active.push(rate);
+      }
+    });
+
+    return { activeRates: active, historyRates: history };
+  }, [rates]);
+
+  const displayRates = viewMode === "active" ? activeRates : historyRates;
+
+  const groupedData = useMemo(() => {
+    return displayRates.reduce(
       (acc, rate) => {
         let key = "";
         if (groupBy === "country") key = rate.country;
@@ -103,7 +121,7 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
       },
       {} as Record<string, AdjustLeadRate[]>,
     );
-  }, [rates, groupBy]);
+  }, [displayRates, groupBy]);
 
   const getCountryFlag = (countryName: string) => {
     const country = countries.find(
@@ -121,12 +139,38 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
   }
 
   return (
-    <div className="flex h-5/6 w-9/12 flex-col  gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
+    <div className="flex h-5/6 w-7/12 flex-col  gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-          <FaMoneyBillWave className="text-green-500" />
-          Adjust Lead Rates
-        </h2>
+        <div className="flex flex-col items-center gap-4 md:flex-row">
+          <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
+            <FaMoneyBillWave className="text-green-500" />
+            Lead Rates
+          </h2>
+          <div className="flex rounded-md shadow-sm" role="group">
+            <button
+              type="button"
+              onClick={() => setViewMode("active")}
+              className={`rounded-l-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                viewMode === "active"
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("history")}
+              className={`rounded-r-lg border-b border-r border-t px-4 py-2 text-sm font-medium transition-colors ${
+                viewMode === "history"
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              History
+            </button>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
             <FaLayerGroup className="text-blue-500" /> Group By:
@@ -305,7 +349,10 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
         {Object.keys(groupedData).length === 0 && (
           <div className="flex flex-col items-center justify-center py-10 text-gray-500">
             <FaLayerGroup className="mb-3 text-4xl text-gray-300" />
-            <p>No adjust lead rates found.</p>
+            <p>
+              No {viewMode === "active" ? "active" : "history"} adjust lead
+              rates found.
+            </p>
           </div>
         )}
       </div>
