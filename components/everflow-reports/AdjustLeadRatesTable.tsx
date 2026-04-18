@@ -20,6 +20,7 @@ import { Dialog } from "primereact/dialog";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { useGetCampaigns } from "../../react-query";
+import { User } from "@/models";
 
 type GroupByOption = "country" | "campaignId" | "convertedCurrency";
 
@@ -29,7 +30,7 @@ const groupByOptions = [
   { label: "Converted Currency", value: "convertedCurrency" },
 ];
 
-const AdjustLeadRatesTable = () => {
+const AdjustLeadRatesTable = ({ user }: { user: User }) => {
   const { data: rates, isLoading, refetch } = useFindAllAdjustLeadRate();
   const deleteMutation = useDeleteAdjustLeadRate();
   const updateMutation = useUpdateAdjustLeadRate();
@@ -164,7 +165,13 @@ const AdjustLeadRatesTable = () => {
                 <>
                   <FaBullhorn className="text-xl" />
                   <span className="text-lg font-bold">
-                    Campaign: {groupKey}
+                    Campaign: {groupKey} (
+                    {
+                      smartLinks.data?.find(
+                        (i) => i.network_campaign_id === Number(groupKey),
+                      )?.campaign_name
+                    }
+                    )
                   </span>
                 </>
               )}
@@ -186,7 +193,6 @@ const AdjustLeadRatesTable = () => {
                 <thead className="bg-gray-100 text-xs uppercase text-gray-700">
                   <tr>
                     <th className="px-6 py-3">Type</th>
-
                     {groupBy !== "country" && (
                       <th className="px-6 py-3">Country</th>
                     )}
@@ -197,7 +203,9 @@ const AdjustLeadRatesTable = () => {
                     <th className="px-6 py-3">Converted Currency</th>
                     <th className="px-6 py-3">Rate</th>
                     <th className="px-6 py-3">Schedule</th>
-                    <th className="px-6 py-3 text-right">Actions</th>
+                    {user.role === "admin" && (
+                      <th className="px-6 py-3 text-right">Actions</th>
+                    )}{" "}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -266,24 +274,26 @@ const AdjustLeadRatesTable = () => {
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => openEditModal(rate)}
-                              className="rounded-full bg-yellow-100 p-2 text-yellow-600 transition-colors hover:bg-yellow-200 hover:text-yellow-700"
-                              title="Edit"
-                            >
-                              <FaEdit />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(rate.id)}
-                              className="rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 hover:text-red-700"
-                              title="Delete"
-                            >
-                              <FaTrash />
-                            </button>
-                          </div>
-                        </td>
+                        {user.role === "admin" && (
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => openEditModal(rate)}
+                                className="rounded-full bg-yellow-100 p-2 text-yellow-600 transition-colors hover:bg-yellow-200 hover:text-yellow-700"
+                                title="Edit"
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(rate.id)}
+                                className="rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 hover:text-red-700"
+                                title="Delete"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

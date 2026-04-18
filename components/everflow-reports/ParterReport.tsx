@@ -350,7 +350,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         endDate: moment(dates?.[1]).toDate(),
         columns: [{ column: "affiliate" }],
       }),
-      enabled: !!dates && !!timezone,
+    enabled: !!dates && !!timezone,
   });
 
   const renderChildrenRows = (entries: TableEntry[], parentId: string) => {
@@ -525,7 +525,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
       )}
       {showAdjustRates && (
         <PopupLayout onClose={() => setShowAdjustRates(false)}>
-          <AdjustLeadRatesTable />
+          <AdjustLeadRatesTable user={user} />
         </PopupLayout>
       )}
       <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
@@ -654,25 +654,26 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
               selectionMode="range"
             />
           </div>
-          {user.role === "admin" && (
-            <div className="flex w-full flex-col items-start justify-center gap-1 text-base font-semibold">
-              <label className="flex items-center justify-center gap-1 text-base text-black">
-                Action
-              </label>
+
+          <div className="flex w-full flex-col items-start justify-center gap-1 text-base font-semibold">
+            <label className="flex items-center justify-center gap-1 text-base text-black">
+              Action
+            </label>
+            {user.role === "admin" && (
               <button
                 onClick={() => setShowBulkUpdate(true)}
                 className="h-10 w-full rounded bg-blue-600 px-4 font-bold text-white hover:bg-blue-700 xl:w-60"
               >
                 Create Rate
               </button>
-              <button
-                onClick={() => setShowAdjustRates(true)}
-                className="h-10 w-full rounded bg-green-600 px-4 font-bold text-white hover:bg-green-700 xl:w-60"
-              >
-                Manage Rates
-              </button>
-            </div>
-          )}
+            )}
+            <button
+              onClick={() => setShowAdjustRates(true)}
+              className="h-10 w-full rounded bg-green-600 px-4 font-bold text-white hover:bg-green-700 xl:w-60"
+            >
+              View Rates
+            </button>
+          </div>
         </div>
         {user.role === "admin" && (
           <SummaryReport user={user} summary={summary} />
