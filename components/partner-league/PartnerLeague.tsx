@@ -282,7 +282,7 @@ function PartnerLeague({ user }: Props) {
                           {table.data?.[1].partnerName}
                         </div>
                         <div className="text-xs text-gray-700">
-                          {table.data?.[1].sumEvent.toFixed(2)} EVT
+                          {table.data?.[1].sumEvent?.toFixed(2)} EVT
                         </div>
                       </div>
                     </div>
@@ -312,7 +312,7 @@ function PartnerLeague({ user }: Props) {
                           {table.data?.[0].partnerName}
                         </div>
                         <div className="text-sm text-yellow-100">
-                          {table.data?.[0].sumEvent.toFixed(2)} EVT
+                          {table.data?.[0].sumEvent?.toFixed(2)} EVT
                         </div>
                         <div className="mt-1 rounded-full bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-800">
                           CHAMPION
@@ -338,7 +338,7 @@ function PartnerLeague({ user }: Props) {
                           {table.data?.[2].partnerName}
                         </div>
                         <div className="text-xs text-orange-100">
-                          {table.data?.[2].sumEvent.toFixed(2)} EVT
+                          {table.data?.[2].sumEvent?.toFixed(2)} EVT
                         </div>
                       </div>
                     </div>
@@ -346,7 +346,7 @@ function PartnerLeague({ user }: Props) {
                 </section>
 
                 <section className="flex w-full items-center justify-center gap-2">
-                  {stats_overviews.map((stats) => {
+                  {stats_overviews.map((stats, index) => {
                     let number = 0;
 
                     switch (stats.title) {
@@ -371,7 +371,7 @@ function PartnerLeague({ user }: Props) {
                     }
                     return (
                       <div
-                        key={stats.title}
+                        key={index}
                         className="w-60 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
                       >
                         <div className="flex items-center justify-between">
@@ -452,8 +452,14 @@ function PartnerLeague({ user }: Props) {
                     <tbody className=" ">
                       {table.data?.map((partner, index) => {
                         const position = index + 1;
-                        const cvr = (partner.sumCv / partner.sumClick) * 100;
-                        const evr = (partner.sumEvent / partner.sumCv) * 100;
+                        const cvr =
+                          partner.sumClick > 0
+                            ? (partner.sumCv / partner.sumClick) * 100
+                            : 0;
+                        const evr =
+                          partner.sumCv > 0
+                            ? (partner.sumEvent / partner.sumCv) * 100
+                            : 0;
                         const name = parseName(partner.partnerName);
                         return (
                           <>
@@ -466,7 +472,7 @@ function PartnerLeague({ user }: Props) {
                                   return partner;
                                 })
                               }
-                              key={partner.partnerId}
+                              key={index}
                               className="border-b transition-colors duration-200 hover:bg-gray-100"
                             >
                               <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
@@ -527,7 +533,7 @@ function PartnerLeague({ user }: Props) {
                                 </span>
                               </td>
                               <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                                {(Number.isNaN(cvr) ? 0 : cvr).toFixed(2)}. %
+                                {(Number.isNaN(cvr) ? 0 : cvr)?.toFixed(2)} %
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
@@ -539,7 +545,7 @@ function PartnerLeague({ user }: Props) {
                                 </span>
                               </td>
                               <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
-                                {(Number.isNaN(evr) ? 0 : evr).toFixed(2)}. %
+                                {(Number.isNaN(evr) ? 0 : evr)?.toFixed(2)} %
                               </td>
                               <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
                                 {country}
@@ -582,7 +588,7 @@ function PartnerLeague({ user }: Props) {
                                         </span>
                                       </td>
                                       <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                        {a.cvr && a.cvr.toFixed(2)}%
+                                        {a.cvr && a.cvr?.toFixed(2)}%
                                       </td>
                                       <td className="px-6 py-4 text-center">
                                         <span
@@ -594,7 +600,7 @@ function PartnerLeague({ user }: Props) {
                                         </span>
                                       </td>
                                       <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
-                                        {a.evr.toFixed(2)}%
+                                        {a.evr?.toFixed(2)}%
                                       </td>
                                       <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-500 hover:cursor-pointer">
                                         {a.country}

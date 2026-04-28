@@ -33,6 +33,8 @@ export const menusSidebar = [
       { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy Bow", params: "sms-bower" },
       { title: "Oxy SMS", params: "sms-etms" },
+      { title: "IntimateInfo Content", params: "intimate-info-content" },
+
       {
         title: "Website Builder",
         url: "https://sitestudio.oxyclick.com",
