@@ -1,11 +1,19 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
 
+export interface GetIntimateInfoContentsParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  search?: string;
+  status?: string;
+}
+
 export type IntimateInfoContent = {
   id: string;
   createAt: string;
   updateAt: string;
-  keyword?: string;
   title: string;
   status: "unpublish" | "publish";
   html?: string;
@@ -14,6 +22,7 @@ export type IntimateInfoContent = {
   slug?: string;
   author?: string;
   category?: string;
+  featuredImage?: string;
   focusKeyword?: string;
   metaTitle?: string;
   permalink?: string;
@@ -22,7 +31,7 @@ export type IntimateInfoContent = {
 };
 
 export async function getIntimateInfoContents(
-  params: any,
+  params: GetIntimateInfoContentsParams,
 ): Promise<{ data: IntimateInfoContent[]; meta: any }> {
   try {
     const cookies = parseCookies();
@@ -123,26 +132,87 @@ export async function deleteIntimateInfoContent(id: string): Promise<any> {
   }
 }
 
-export async function generateHtmlForContent(dto: {
-  title: string;
-  keyword: string;
-  excerpt: string;
-}): Promise<string> {
+export function parseGeneratedText(text: string) {
+  const thoughtRegex = /---THOUGHT---\n([\s\S]*?)(?:\n---END_THOUGHT---|$)/g;
+  let thoughts = "";
+  let match;
+  while ((match = thoughtRegex.exec(text)) !== null) {
+    thoughts += match[1] + "\n\n";
+  }
+
+  const cleanText = text.replace(
+    /---THOUGHT---\n[\s\S]*?(?:\n---END_THOUGHT---\n?|$)/g,
+    "",
+  );
+
+  const slugMatch = cleanText.match(/---SLUG---\n([\s\S]*?)(?=\n---|$)/);
+  const metaTitleMatch = cleanText.match(
+    /---META_TITLE---\n([\s\S]*?)(?=\n---|$)/,
+  );
+  const metaDescMatch = cleanText.match(
+    /---META_DESCRIPTION---\n([\s\S]*?)(?=\n---|$)/,
+  );
+  const htmlMatch = cleanText.match(/---HTML---\n([\s\S]*)$/);
+
+  return {
+    thought: thoughts.trim(),
+    slug: slugMatch ? slugMatch[1].trim() : "",
+    metaTitle: metaTitleMatch ? metaTitleMatch[1].trim() : "",
+    metaDescription: metaDescMatch ? metaDescMatch[1].trim() : "",
+    html: htmlMatch ? htmlMatch[1].trim() : "",
+    cleanText,
+  };
+}
+
+export async function generateHtmlForContent(
+  dto: {
+    title: string;
+    keyword: string;
+    excerpt: string;
+  },
+  onChunk?: (text: string) => void,
+): Promise<{
+  slug: string;
+  metaTitle: string;
+  metaDescription: string;
+  html: string;
+}> {
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const response = await axios({
-      method: "POST",
-      data: dto,
-      url: `${process.env.NEXT_PUBLIC_SERVER_URL}/intimate-info-content/generate-html`,
-      headers: {
-        Authorization: "Bearer " + access_token,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/intimate-info-content/generate-html`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + access_token,
+        },
+        body: JSON.stringify(dto),
       },
-      responseType: "json",
-    });
-    return response.data;
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    let fullText = "";
+
+    if (reader) {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullText += chunk;
+        if (onChunk) onChunk(fullText);
+      }
+    }
+
+    return parseGeneratedText(fullText);
   } catch (err: any) {
-    throw err.response?.data || err;
+    throw err;
   }
 }
 

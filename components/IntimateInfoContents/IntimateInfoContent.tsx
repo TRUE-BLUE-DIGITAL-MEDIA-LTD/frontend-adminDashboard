@@ -40,6 +40,7 @@ function IntimateInfoContent({ user }: Props) {
         <IntimateInfoContentEditor
           contentId={selectedId}
           onBack={handleBackToList}
+          onSaveSuccess={handleEdit}
         />
       )}
     </div>

@@ -8,6 +8,7 @@ import {
   useWordpressCategories,
   useWordpressAuthors,
 } from "../../react-query/intimate-info-content";
+import { parseGeneratedText } from "../../services/intimate-info-content";
 import { FaArrowLeft, FaRobot, FaUpload, FaSave } from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
@@ -17,9 +18,14 @@ import Swal from "sweetalert2";
 type Props = {
   contentId: string | null;
   onBack: () => void;
+  onSaveSuccess?: (id: string) => void;
 };
 
-const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
+const IntimateInfoContentEditor = ({
+  contentId,
+  onBack,
+  onSaveSuccess,
+}: Props) => {
   const isEditing = !!contentId;
 
   const { data: contentData, isLoading: isLoadingContent } =
@@ -33,9 +39,25 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
   const generateHtmlMutation = useGenerateHtmlForContent();
   const uploadToWpMutation = useUploadToWordpress();
 
-  const [formData, setFormData] = useState({
+  const [thoughtProcess, setThoughtProcess] = useState<string>("");
+  const [showThoughtProcess, setShowThoughtProcess] = useState(false);
+
+  const [formData, setFormData] = useState<{
+    title: string;
+    excerpt?: string;
+    slug?: string;
+    author?: string;
+    category?: string;
+    focusKeyword?: string;
+    metaTitle?: string;
+    permalink?: string;
+    metaDescription?: string;
+    featuredImage?: string;
+    qaCheck?: string;
+    html?: string;
+    status: "unpublish" | "publish";
+  }>({
     title: "",
-    keyword: "",
     excerpt: "",
     slug: "",
     author: "",
@@ -44,7 +66,7 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
     metaTitle: "",
     permalink: "",
     metaDescription: "",
-    qaCheck: "",
+    featuredImage: "",
     html: "",
     status: "unpublish",
   });
@@ -52,18 +74,18 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
   useEffect(() => {
     if (isEditing && contentData) {
       setFormData({
-        title: contentData.title || "",
-        keyword: contentData.keyword || "",
-        excerpt: contentData.excerpt || "",
-        slug: contentData.slug || "",
-        author: contentData.author || "",
-        category: contentData.category || "",
-        focusKeyword: contentData.focusKeyword || "",
-        metaTitle: contentData.metaTitle || "",
-        permalink: contentData.permalink || "",
-        metaDescription: contentData.metaDescription || "",
-        qaCheck: contentData.qaCheck || "",
-        html: contentData.html || "",
+        title: contentData.title,
+        excerpt: contentData.excerpt,
+        slug: contentData.slug,
+        author: contentData.author,
+        category: contentData.category,
+        featuredImage: contentData.featuredImage,
+        focusKeyword: contentData.focusKeyword,
+        metaTitle: contentData.metaTitle,
+        permalink: contentData.permalink,
+        metaDescription: contentData.metaDescription,
+        qaCheck: contentData.qaCheck,
+        html: contentData.html,
         status: contentData.status || "unpublish",
       });
     }
@@ -92,8 +114,22 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
         Swal.fire("Success", "Content updated successfully", "success");
       } else {
         const res = await createMutation.mutateAsync(formData);
-        Swal.fire("Success", "Content created successfully", "success");
-        // We could redirect to edit mode or let the user continue editing
+        Swal.fire({
+          title: "Success",
+          text: "Content created successfully",
+          icon: "success",
+          showCancelButton: true,
+          confirmButtonText: "Continue Editing",
+          cancelButtonText: "Back to List",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (onSaveSuccess && res?.id) {
+              onSaveSuccess(res.id);
+            }
+          } else {
+            onBack();
+          }
+        });
       }
     } catch (error: any) {
       Swal.fire("Error", error.message || "Failed to save", "error");
@@ -102,7 +138,7 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
 
   const handleGenerateHtml = async () => {
     try {
-      if (!formData.keyword || !formData.excerpt || !formData.title) {
+      if (!formData.focusKeyword || !formData.excerpt || !formData.title) {
         Swal.fire(
           "Wait!",
           "Please provide both Keyword and Excerpt for better AI results.",
@@ -110,13 +146,36 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
         );
         return;
       }
+      setThoughtProcess("");
+      setShowThoughtProcess(true);
+
       const response = await generateHtmlMutation.mutateAsync({
         title: formData.title,
-        keyword: formData.keyword,
+        keyword: formData.focusKeyword,
         excerpt: formData.excerpt,
+        onChunk: (text) => {
+          const parsed = parseGeneratedText(text);
+          if (parsed.thought) setThoughtProcess(parsed.thought);
+
+          setFormData((prev) => ({
+            ...prev,
+            html: parsed.html || parsed.cleanText.replace(/---.*?---/g, ""),
+            slug: parsed.slug || prev.slug,
+            metaTitle: parsed.metaTitle || prev.metaTitle,
+            metaDescription: parsed.metaDescription || prev.metaDescription,
+          }));
+        },
       });
 
-      setFormData((prev) => ({ ...prev, html: response }));
+      // parse the final response too in case we want the parsed result directly
+      // Actually generateHtmlForContent returns { slug, metaTitle, metaDescription, html } directly since we mapped it.
+      setFormData((prev) => ({
+        ...prev,
+        html: response.html,
+        slug: response.slug || prev.slug,
+        metaTitle: response.metaTitle || prev.metaTitle,
+        metaDescription: response.metaDescription || prev.metaDescription,
+      }));
     } catch (error: any) {
       Swal.fire("Error", error.message || "Failed to generate HTML", "error");
     }
@@ -218,6 +277,7 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
           {isEditing && (
             <>
               <button
+                type="button"
                 onClick={handlePublish}
                 disabled={uploadToWpMutation.isPending || !formData.html}
                 className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 font-medium text-white transition hover:bg-green-700 disabled:opacity-50"
@@ -235,10 +295,34 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Side: Preview HTML */}
-        <div className="flex-1 overflow-auto border-r bg-white p-6 shadow-inner">
-          <h3 className="mb-4 text-lg font-semibold text-gray-700">
-            Live Preview
-          </h3>
+        <div className="flex flex-1 flex-col overflow-auto border-r bg-white p-6 shadow-inner">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Live Preview
+            </h3>
+            {thoughtProcess && (
+              <button
+                onClick={() => setShowThoughtProcess(!showThoughtProcess)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                {showThoughtProcess
+                  ? "Hide AI Thought Process"
+                  : "Show AI Thought Process"}
+              </button>
+            )}
+          </div>
+
+          {showThoughtProcess && thoughtProcess && (
+            <div className="mb-6 rounded-md border border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 shadow-sm transition-all">
+              <h4 className="mb-2 font-bold text-purple-800">
+                AI Thinking Process:
+              </h4>
+              <pre className="whitespace-pre-wrap font-mono text-xs opacity-80">
+                {thoughtProcess}
+              </pre>
+            </div>
+          )}
+
           <div className="min-h-full rounded-md border border-gray-200 bg-gray-50 p-4">
             {formData.html ? (
               <div
@@ -276,13 +360,13 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-600">
-                Keyword
+                Focus Keyword
               </label>
               <InputText
-                name="keyword"
-                value={formData.keyword}
+                name="focusKeyword"
+                value={formData.focusKeyword}
                 onChange={handleChange}
-                placeholder="Target keywords for AI"
+                placeholder="SEO focus keyword"
                 className="w-full rounded border px-3 py-2"
               />
             </div>
@@ -342,22 +426,22 @@ const IntimateInfoContentEditor = ({ contentId, onBack }: Props) => {
               />
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-700">
-              SEO & Meta
-            </h3>
-
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-600">
-                Focus Keyword
+                Featured Image (ID or URL)
               </label>
               <InputText
-                name="focusKeyword"
-                value={formData.focusKeyword}
+                name="featuredImage"
+                value={formData.featuredImage}
                 onChange={handleChange}
-                placeholder="SEO focus keyword"
+                placeholder="Image URL or Media ID"
                 className="w-full rounded border px-3 py-2"
               />
             </div>
+
+            <h3 className="mt-4 text-lg font-semibold text-gray-700">
+              SEO & Meta
+            </h3>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-600">

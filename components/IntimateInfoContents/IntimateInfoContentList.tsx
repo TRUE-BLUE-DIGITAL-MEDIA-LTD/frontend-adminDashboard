@@ -136,7 +136,7 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                     </td>
                   </tr>
                 ) : (
-                  data?.data?.map((item: any) => (
+                  data?.data?.map((item) => (
                     <tr
                       key={item.id}
                       className="transition-colors hover:bg-gray-50"
@@ -144,7 +144,7 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                       <td className="px-6 py-4 font-medium text-gray-900">
                         {item.title}
                       </td>
-                      <td className="px-6 py-4">{item.keyword || "-"}</td>
+                      <td className="px-6 py-4">{item.focusKeyword || "-"}</td>
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${

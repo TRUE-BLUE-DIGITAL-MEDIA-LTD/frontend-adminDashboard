@@ -9,9 +9,12 @@ import {
   uploadToWordpress,
   getWordpressCategories,
   getWordpressAuthors,
+  GetIntimateInfoContentsParams,
 } from "../services/intimate-info-content";
 
-export const useIntimateInfoContents = (params: any) => {
+export const useIntimateInfoContents = (
+  params: GetIntimateInfoContentsParams,
+) => {
   return useQuery({
     queryKey: ["intimateInfoContents", params],
     queryFn: () => getIntimateInfoContents(params),
@@ -61,7 +64,15 @@ export const useDeleteIntimateInfoContent = () => {
 
 export const useGenerateHtmlForContent = () => {
   return useMutation({
-    mutationFn: generateHtmlForContent,
+    mutationFn: (variables: {
+      title: string;
+      keyword: string;
+      excerpt: string;
+      onChunk?: (text: string) => void;
+    }) => {
+      const { onChunk, ...dto } = variables;
+      return generateHtmlForContent(dto, onChunk);
+    },
   });
 };
 
