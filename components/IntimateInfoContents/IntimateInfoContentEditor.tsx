@@ -9,7 +9,8 @@ import {
   useWordpressAuthors,
 } from "../../react-query/intimate-info-content";
 import { parseGeneratedText } from "../../services/intimate-info-content";
-import { FaArrowLeft, FaRobot, FaUpload, FaSave } from "react-icons/fa";
+import { useGetUser } from "../../react-query/user";
+import { FaArrowLeft, FaRobot, FaUpload, FaSave, FaBan } from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -27,6 +28,8 @@ const IntimateInfoContentEditor = ({
   onSaveSuccess,
 }: Props) => {
   const isEditing = !!contentId;
+
+  const { data: user } = useGetUser();
 
   const { data: contentData, isLoading: isLoadingContent } =
     useIntimateInfoContent(contentId || "");
@@ -211,6 +214,23 @@ const IntimateInfoContentEditor = ({
     }
   };
 
+  const handleUnpublish = async () => {
+    if (!isEditing || !contentId) return;
+
+    try {
+      await updateMutation.mutateAsync({
+        id: contentId,
+        ...formData,
+        status: "unpublish",
+      });
+
+      setFormData((prev) => ({ ...prev, status: "unpublish" }));
+      Swal.fire("Success", "Content unpublished successfully!", "success");
+    } catch (error: any) {
+      Swal.fire("Error", error.message || "Failed to unpublish", "error");
+    }
+  };
+
   const categoryOptions =
     categories?.map((c: any) => ({ label: c.name, value: c.id.toString() })) ||
     [];
@@ -274,19 +294,30 @@ const IntimateInfoContentEditor = ({
               ? "Generating..."
               : "AI Generate HTML"}
           </button>
-          {isEditing && (
+          {isEditing && user?.role === "admin" && (
             <>
-              <button
-                type="button"
-                onClick={handlePublish}
-                disabled={uploadToWpMutation.isPending || !formData.html}
-                className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 font-medium text-white transition hover:bg-green-700 disabled:opacity-50"
-              >
-                <FaUpload />{" "}
-                {uploadToWpMutation.isPending
-                  ? "Publishing..."
-                  : "Publish to WP"}
-              </button>
+              {formData.status !== "publish" ? (
+                <button
+                  type="button"
+                  onClick={handlePublish}
+                  disabled={uploadToWpMutation.isPending || !formData.html}
+                  className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 font-medium text-white transition hover:bg-green-700 disabled:opacity-50"
+                >
+                  <FaUpload />{" "}
+                  {uploadToWpMutation.isPending
+                    ? "Publishing..."
+                    : "Publish to WP"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleUnpublish}
+                  disabled={updateMutation.isPending}
+                  className="flex items-center gap-2 rounded-md bg-orange-600 px-4 py-2 font-medium text-white transition hover:bg-orange-700 disabled:opacity-50"
+                >
+                  <FaBan /> Unpublish
+                </button>
+              )}
             </>
           )}
         </div>
