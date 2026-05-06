@@ -10,6 +10,10 @@ import {
 } from "../../react-query/intimate-info-content";
 import { parseGeneratedText } from "../../services/intimate-info-content";
 import { useGetUser } from "../../react-query/user";
+import {
+  GetSignURLService,
+  UploadSignURLService,
+} from "../../services/cloud-storage";
 import { FaArrowLeft, FaRobot, FaUpload, FaSave, FaBan } from "react-icons/fa";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
@@ -74,6 +78,8 @@ const IntimateInfoContentEditor = ({
     status: "unpublish",
   });
 
+  const [additionalPrompt, setAdditionalPrompt] = useState("");
+
   useEffect(() => {
     if (isEditing && contentData) {
       setFormData({
@@ -103,6 +109,38 @@ const IntimateInfoContentEditor = ({
 
   const handleDropdownChange = (name: string, value: any) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      Swal.fire({
+        title: "Uploading...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const signRes = await GetSignURLService({
+        fileName: file.name,
+        fileType: file.type,
+        category: "image-library",
+      });
+
+      await UploadSignURLService({
+        contentType: file.type,
+        file: file,
+        signURL: signRes.signURL,
+      });
+
+      setFormData((prev) => ({ ...prev, featuredImage: signRes.originalURL }));
+
+      Swal.close();
+      Swal.fire("Success", "Image uploaded successfully", "success");
+    } catch (error: any) {
+      Swal.fire("Error", "Failed to upload image", "error");
+    }
   };
 
   const handleSave = async () => {
@@ -156,6 +194,7 @@ const IntimateInfoContentEditor = ({
         title: formData.title,
         keyword: formData.focusKeyword,
         excerpt: formData.excerpt,
+        additionalPrompt,
         onChunk: (text) => {
           const parsed = parseGeneratedText(text);
           if (parsed.thought) setThoughtProcess(parsed.thought);
@@ -418,6 +457,19 @@ const IntimateInfoContentEditor = ({
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-600">
+                Additional AI Prompt (Optional)
+              </label>
+              <InputTextarea
+                value={additionalPrompt}
+                onChange={(e) => setAdditionalPrompt(e.target.value)}
+                placeholder="E.g. Focus on younger audience, or include specific facts..."
+                className="w-full rounded border px-3 py-2"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-600">
                 Slug
               </label>
               <InputText
@@ -461,13 +513,32 @@ const IntimateInfoContentEditor = ({
               <label className="text-sm font-semibold text-gray-600">
                 Featured Image (ID or URL)
               </label>
-              <InputText
-                name="featuredImage"
-                value={formData.featuredImage}
-                onChange={handleChange}
-                placeholder="Image URL or Media ID"
-                className="w-full rounded border px-3 py-2"
-              />
+              <div className="flex gap-2">
+                <InputText
+                  name="featuredImage"
+                  value={formData.featuredImage}
+                  onChange={handleChange}
+                  placeholder="Image URL or Media ID"
+                  className="w-full rounded border px-3 py-2"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="featuredImageUpload"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.getElementById("featuredImageUpload")?.click()
+                  }
+                  className="flex items-center gap-2 rounded-md bg-gray-200 px-3 py-2 font-medium text-gray-700 transition hover:bg-gray-300"
+                  title="Upload Image"
+                >
+                  <FaUpload />
+                </button>
+              </div>
             </div>
 
             <h3 className="mt-4 text-lg font-semibold text-gray-700">

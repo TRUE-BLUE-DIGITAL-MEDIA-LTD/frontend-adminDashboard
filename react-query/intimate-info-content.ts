@@ -68,6 +68,7 @@ export const useGenerateHtmlForContent = () => {
       title: string;
       keyword: string;
       excerpt: string;
+      additionalPrompt?: string;
       onChunk?: (text: string) => void;
     }) => {
       const { onChunk, ...dto } = variables;

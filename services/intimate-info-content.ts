@@ -169,6 +169,7 @@ export async function generateHtmlForContent(
     title: string;
     keyword: string;
     excerpt: string;
+    additionalPrompt?: string;
   },
   onChunk?: (text: string) => void,
 ): Promise<{
