@@ -1,0 +1,1313 @@
+/*
+ * Visual styling for the @oxyclick/editor panels.
+ * Palette:
+ *   #1B3C53 — deepest navy   (primary text, headings, active fills)
+ *   #234C6A — medium navy    (accents, hover borders, selected outline)
+ *   #456882 — slate blue     (secondary borders, icons, helper text)
+ *   #D2C1B6 — warm beige     (soft borders/backgrounds, hover surfaces)
+ *
+ * Loaded after grapesjs/dist/css/grapes.min.css so these rules win.
+ */
+
+/* ───────────────── Blocks panel (left sidebar) ───────────────── */
+
+.oxy-blocks-panel {
+  background: #fafaf8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.oxy-blocks-panel .gjs-blocks-cs {
+  background: transparent;
+}
+
+.oxy-blocks-panel .gjs-block-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oxy-blocks-panel .gjs-block-category {
+  background: transparent;
+  border: 0;
+}
+
+.oxy-blocks-panel .gjs-block-category > .gjs-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #456882;
+  font-weight: 700;
+  padding: 16px 14px 8px;
+  background: transparent;
+  border: 0;
+  display: block;
+}
+
+.oxy-blocks-panel .gjs-block-category > .gjs-title::before {
+  display: none;
+}
+
+.oxy-blocks-panel .gjs-blocks-c {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 4px 12px 16px;
+  background: transparent;
+}
+
+.oxy-blocks-panel .gjs-block {
+  width: 100%;
+  height: auto;
+  min-height: 100px;
+  margin: 0;
+  padding: 18px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1.5px solid #d2c1b6;
+  border-radius: 10px;
+  box-shadow: none;
+  cursor: grab;
+  color: #456882;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.oxy-blocks-panel .gjs-block:hover {
+  border-color: #234c6a;
+  background: #ffffff;
+  color: #1b3c53;
+  box-shadow: 0 4px 10px rgba(27, 60, 83, 0.12);
+  transform: translateY(-1px);
+}
+
+.oxy-blocks-panel .gjs-block:active {
+  cursor: grabbing;
+  transform: translateY(0);
+}
+
+.oxy-blocks-panel .gjs-block__media {
+  width: 32px;
+  height: 32px;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.oxy-blocks-panel .gjs-block__media svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.oxy-blocks-panel .gjs-block-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b3c53;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ───────────────── Properties panel (right sidebar) ───────────────── */
+
+/*
+ * Rebind GrapesJS's atomic theme variables to the oxyclick palette inside
+ * this scope. Anything we don't override below — e.g. raw .gjs-two-color
+ * text nodes — would otherwise resolve against grapes.min.css's :root
+ * defaults (white-ish text), rendering invisibly on our white panel.
+ */
+.oxy-properties-panel {
+  --gjs-primary-color: #ffffff;
+  --gjs-secondary-color: #1b3c53;
+  --gjs-tertiary-color: #234c6a;
+  --gjs-quaternary-color: #1b3c53;
+  --gjs-font-color: #1b3c53;
+  --gjs-font-color-active: #ffffff;
+
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #1b3c53;
+}
+
+/*
+ * Catch-all: any text inside the panel that didn't get an explicit color rule
+ * inherits dark navy. Prevents transparent / inherited-white text from
+ * disappearing on the white background.
+ */
+.oxy-properties-panel,
+.oxy-properties-panel .gjs-two-color,
+.oxy-properties-panel .gjs-sm-property *,
+.oxy-properties-panel .gjs-trt-trait * {
+  color: #1b3c53;
+}
+
+/* Selected radio / tab labels need the inverse — white on navy. */
+.oxy-properties-panel .gjs-four-color,
+.oxy-properties-panel .gjs-four-color-h:hover,
+.oxy-properties-panel .gjs-radio-item input:checked + .gjs-radio-item-label {
+  color: #ffffff;
+}
+
+/* Native <select> dropdown text — browsers paint <option> on body bg, not
+ * the field. Force a white surface + dark text so the open list is legible. */
+.oxy-properties-panel select,
+.oxy-properties-panel select option {
+  background-color: #ffffff;
+  color: #1b3c53;
+}
+
+.oxy-properties-panel__header {
+  padding: 14px 18px;
+  border-bottom: 2px solid #234c6a;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  font-weight: 700;
+  background: #1b3c53;
+}
+
+.oxy-properties-panel__empty {
+  padding: 22px 18px;
+  color: #234c6a;
+  font-size: 14px;
+  line-height: 1.6;
+  background: #f4eee6;
+  border-bottom: 1px solid #d2c1b6;
+  font-weight: 500;
+}
+
+/* ── Style Manager (sectors of editable CSS properties) ── */
+
+.oxy-properties-panel .gjs-sm-sectors {
+  background: #ffffff;
+}
+
+.oxy-properties-panel .gjs-sm-sector {
+  border: 0;
+  border-bottom: 1px solid #d2c1b6;
+  background: #ffffff;
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title {
+  background: #f4eee6;
+  color: #1b3c53;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 14px 18px;
+  border: 0;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title:hover {
+  background: #ebe1d2;
+}
+
+.oxy-properties-panel .gjs-sm-sector.gjs-sm-open > .gjs-sm-title {
+  background: #ffffff;
+  border-left-color: #234c6a;
+  color: #1b3c53;
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title::before {
+  color: #1b3c53;
+  font-weight: 700;
+}
+
+.oxy-properties-panel .gjs-sm-properties {
+  padding: 12px 16px 18px;
+  background: #ffffff;
+}
+
+.oxy-properties-panel .gjs-sm-property {
+  margin: 0 4px 14px;
+  padding: 0;
+}
+
+.oxy-properties-panel .gjs-sm-label,
+.oxy-properties-panel .gjs-sm-property .gjs-sm-label,
+.oxy-properties-panel .gjs-sm-property > .gjs-label {
+  font-size: 12px;
+  color: #1b3c53;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+}
+
+/* ── Inputs / fields — force light theme over grapesjs defaults ── */
+
+/*
+ * Only the outer `.gjs-field` wrapper shows a visible border. Inner wrappers
+ * (.gjs-input-holder, .gjs-field-input, etc.) are stripped so we don't get
+ * a "border within a border" effect, and the wrapper is laid out as flex so
+ * inputs / units / arrows fill it consistently regardless of field type.
+ */
+.oxy-properties-panel .gjs-field {
+  background: #ffffff;
+  border: 1.5px solid #456882;
+  border-radius: 6px;
+  box-shadow: none;
+  width: 100%;
+  min-height: 34px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.oxy-properties-panel .gjs-field:hover {
+  border-color: #234c6a;
+}
+
+.oxy-properties-panel .gjs-field:focus-within {
+  border-color: #1b3c53;
+  box-shadow: 0 0 0 3px rgba(35, 76, 106, 0.15);
+}
+
+/*
+ * Inner GrapesJS wrappers nested inside `.gjs-field`. Strip their default
+ * border / background / radius so they blend into the outer field, and let
+ * them flex-grow so the input area fills the wrapper.
+ */
+.oxy-properties-panel .gjs-field .gjs-input-holder,
+.oxy-properties-panel .gjs-field .gjs-field-input,
+.oxy-properties-panel .gjs-field .gjs-field-holder,
+.oxy-properties-panel .gjs-field .gjs-fields {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.oxy-properties-panel .gjs-field input,
+.oxy-properties-panel .gjs-field select,
+.oxy-properties-panel .gjs-field textarea,
+.oxy-properties-panel input.gjs-input,
+.oxy-properties-panel select.gjs-select {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1b3c53;
+  background: transparent;
+  padding: 6px 10px;
+  border: 0;
+  outline: 0;
+  height: auto;
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  line-height: 1.4;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Native focus rings inside a borderless input would clash with the field's
+ * own focus ring. Suppress them — the wrapper :focus-within handles focus. */
+.oxy-properties-panel .gjs-field input:focus,
+.oxy-properties-panel .gjs-field select:focus,
+.oxy-properties-panel .gjs-field textarea:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.oxy-properties-panel .gjs-field input::placeholder {
+  color: #8aa1b3;
+}
+
+/* Number input arrows */
+.oxy-properties-panel .gjs-field-arrows {
+  color: #234c6a;
+  background: #f4eee6;
+  border-left: 1px solid #d2c1b6;
+}
+
+.oxy-properties-panel .gjs-field-arrow-u,
+.oxy-properties-panel .gjs-field-arrow-d {
+  border-color: #234c6a transparent;
+}
+
+/* Unit selector inside number fields */
+.oxy-properties-panel .gjs-field-units {
+  color: #234c6a;
+  background: transparent;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.oxy-properties-panel .gjs-input-unit {
+  color: #234c6a;
+  font-weight: 600;
+}
+
+/* Color picker — make the swatch obvious */
+.oxy-properties-panel .gjs-field-color {
+  background: #ffffff;
+}
+
+.oxy-properties-panel .gjs-field-color-picker {
+  border-radius: 4px;
+  border: 2px solid #456882;
+  width: 26px;
+  height: 26px;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+/* ── Color picker (Typography > Text color, Decorations > Background) ──
+ * Swatch + hex input pair in the property cell. The popover is mounted to
+ * <body> with position:fixed (rules below outside the .oxy-properties-panel
+ * scope) so it never gets clipped by the panel's scroll container. */
+
+.oxy-properties-panel .oxy-color-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.oxy-properties-panel .oxy-color-swatch {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #d2c1b6;
+  background: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: inset 0 0 0 2px #ffffff;
+  transition:
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.oxy-properties-panel .oxy-color-swatch:hover {
+  border-color: #456882;
+  transform: translateY(-1px);
+}
+
+.oxy-properties-panel .oxy-color-swatch.is-empty {
+  background:
+    linear-gradient(
+        45deg,
+        transparent 45%,
+        #dc2626 45%,
+        #dc2626 55%,
+        transparent 55%
+      ),
+    #ffffff;
+}
+
+.oxy-properties-panel .oxy-color-hex {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b3c53;
+  background: #ffffff;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  padding: 7px 10px;
+  text-transform: uppercase;
+  outline: 0;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-color-hex::placeholder {
+  color: #8aa1b3;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.oxy-properties-panel .oxy-color-hex:hover {
+  border-color: #456882;
+}
+
+.oxy-properties-panel .oxy-color-hex:focus {
+  border-color: #234c6a;
+  box-shadow: 0 0 0 3px rgba(35, 76, 106, 0.12);
+}
+
+/* ── Background-image picker (Decorations > Background image) ──
+ * Designed to fit the ~300px Properties panel. Three stacked rows:
+ *   1. Drop tile — full-width clickable preview that doubles as the upload
+ *      target; shows a friendly empty-state hint until an image is set.
+ *   2. URL input — paste a remote URL.
+ *   3. Status + Remove — quiet footer row.
+ * Borders are 1px soft beige so the control feels light at rest and only
+ * brightens on hover / when an upload is in flight. */
+
+.oxy-properties-panel .oxy-bg-image-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Whole tile is a <label> wrapping the hidden file input — click anywhere
+ * inside to open the file picker. */
+.oxy-properties-panel .oxy-bg-image-drop {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 96px;
+  border-radius: 8px;
+  border: 1.5px dashed #d2c1b6;
+  background: #fafaf8;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-bg-image-drop:hover {
+  border-color: #456882;
+  background: #f4eee6;
+}
+
+.oxy-properties-panel .oxy-bg-image-drop.has-image {
+  border-style: solid;
+  border-color: #d2c1b6;
+  background: #ffffff;
+}
+
+.oxy-properties-panel .oxy-bg-image-drop.is-uploading {
+  border-color: #456882;
+  cursor: wait;
+}
+
+.oxy-properties-panel .oxy-bg-image-preview {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: transparent;
+}
+
+/* Empty-state hint over the tile — fades out once an image is set, fades
+ * back in on hover so users can find "click to replace". */
+.oxy-properties-panel .oxy-bg-image-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+  padding: 8px;
+  transition: opacity 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-bg-image-drop.has-image .oxy-bg-image-hint {
+  opacity: 0;
+}
+
+.oxy-properties-panel .oxy-bg-image-drop.has-image:hover .oxy-bg-image-hint {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.oxy-properties-panel .oxy-bg-image-hint__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #234c6a;
+  letter-spacing: 0.02em;
+}
+
+.oxy-properties-panel .oxy-bg-image-hint__sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #456882;
+}
+
+.oxy-properties-panel
+  .oxy-bg-image-drop.is-uploading
+  .oxy-bg-image-hint__title {
+  color: #1b3c53;
+}
+
+.oxy-properties-panel
+  .oxy-bg-image-drop.is-uploading
+  .oxy-bg-image-hint__title::after {
+  content: " …";
+}
+
+/* URL input — soft beige border, focus ring matches other panel fields. */
+.oxy-properties-panel .oxy-bg-image-url {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1b3c53;
+  background: #ffffff;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  padding: 7px 10px;
+  outline: 0;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-bg-image-url::placeholder {
+  color: #8aa1b3;
+  font-weight: 400;
+}
+
+.oxy-properties-panel .oxy-bg-image-url:hover {
+  border-color: #456882;
+}
+
+.oxy-properties-panel .oxy-bg-image-url:focus {
+  border-color: #234c6a;
+  box-shadow: 0 0 0 3px rgba(35, 76, 106, 0.12);
+}
+
+/* Footer row — status on the left, quiet "Remove image" link on the
+ * right. Remove is disabled (muted) when no image is set. */
+.oxy-properties-panel .oxy-bg-image-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.oxy-properties-panel .oxy-bg-image-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: #456882;
+}
+
+.oxy-properties-panel .oxy-bg-image-status.is-error {
+  color: #b91c1c;
+}
+
+.oxy-properties-panel .oxy-bg-image-clear {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: transparent;
+  color: #234c6a;
+  border: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-bg-image-clear:hover:not(:disabled) {
+  background: #f4eee6;
+  color: #1b3c53;
+}
+
+.oxy-properties-panel .oxy-bg-image-clear:disabled {
+  color: #b8c4cf;
+  cursor: not-allowed;
+}
+
+/* Composite property cells (e.g. padding/margin grid) */
+.oxy-properties-panel .gjs-sm-composite .gjs-field,
+.oxy-properties-panel .gjs-fields .gjs-field {
+  background: #ffffff;
+}
+
+.oxy-properties-panel .gjs-sm-composite {
+  background: #fafaf8;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* Radio / button-group properties (e.g. text-align) */
+.oxy-properties-panel .gjs-radio-items,
+.oxy-properties-panel .gjs-field-radio {
+  background: #ffffff;
+  border: 1.5px solid #456882;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.oxy-properties-panel .gjs-radio-item {
+  background: #ffffff;
+  color: #234c6a;
+  border-right: 1px solid #d2c1b6;
+  font-weight: 600;
+}
+
+.oxy-properties-panel .gjs-radio-item:last-child {
+  border-right: 0;
+}
+
+.oxy-properties-panel .gjs-radio-item input:checked + .gjs-radio-item-label,
+.oxy-properties-panel .gjs-radio-item-label.gjs-four-color {
+  background: #234c6a;
+  color: #ffffff;
+}
+
+.oxy-properties-panel .gjs-radio-item-label {
+  padding: 8px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Trait Manager (per-component attributes like href, alt) ── */
+
+.oxy-properties-panel .gjs-trt-traits {
+  padding: 14px 16px 18px;
+  background: #ffffff;
+  border-top: 1px solid #d2c1b6;
+}
+
+.oxy-properties-panel .gjs-trt-header {
+  padding: 12px 16px 4px;
+  background: #ffffff;
+  color: #1b3c53;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.oxy-properties-panel .gjs-trt-trait {
+  margin: 0 0 14px;
+  background: transparent;
+}
+
+.oxy-properties-panel .gjs-trt-trait .gjs-label-wrp,
+.oxy-properties-panel .gjs-trt-trait .gjs-label {
+  font-size: 12px;
+  color: #1b3c53;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+  text-transform: capitalize;
+}
+
+/* ───────────────── Fixture picker bar (top of page) ───────────────── */
+
+.oxy-fixture-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #1b3c53;
+  color: #ffffff;
+  border-bottom: 1px solid #234c6a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.oxy-fixture-bar__label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #d2c1b6;
+  font-size: 11px;
+}
+
+.oxy-fixture-bar__select {
+  background: #234c6a;
+  color: #ffffff;
+  border: 1px solid #456882;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 320px;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.oxy-fixture-bar__select:hover {
+  background: #2c5a7d;
+}
+
+.oxy-fixture-bar__select:focus {
+  outline: none;
+  border-color: #d2c1b6;
+}
+
+.oxy-fixture-bar__select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.oxy-fixture-bar__count {
+  color: #d2c1b6;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.oxy-fixture-bar__error {
+  margin-left: auto;
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ───────────────── Device preview toolbar (above canvas) ───────────────── */
+
+.oxy-device-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid #d2c1b6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.oxy-device-toolbar__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #456882;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.oxy-device-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #456882;
+  background: #fafaf8;
+  border: 1px solid #d2c1b6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.oxy-device-toolbar__btn:hover {
+  background: #f4eee6;
+  color: #1b3c53;
+  border-color: #456882;
+}
+
+.oxy-device-toolbar__btn--active,
+.oxy-device-toolbar__btn--active:hover {
+  background: #234c6a;
+  color: #ffffff;
+  border-color: #1b3c53;
+}
+
+.oxy-device-toolbar__btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.oxy-device-toolbar__divider {
+  width: 1px;
+  height: 22px;
+  background: #d2c1b6;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Icon-only toolbar button (e.g. Undo / Redo). Tight padding so the icon
+ * sits on its own without a text label. */
+.oxy-device-toolbar__btn.oxy-device-toolbar__btn--icon {
+  padding: 7px 9px;
+  gap: 0;
+}
+
+/* Disabled toolbar buttons (e.g. Undo when stack is empty). */
+.oxy-device-toolbar__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #fafaf8;
+  color: #456882;
+}
+
+.oxy-device-toolbar__btn:disabled:hover {
+  background: #fafaf8;
+  color: #456882;
+  border-color: #d2c1b6;
+}
+
+/* Highlight the Preview button so it's discoverable as the "see live" CTA. */
+.oxy-device-toolbar__btn.oxy-device-toolbar__btn--preview {
+  background: #1b3c53;
+  color: #ffffff;
+  border-color: #1b3c53;
+}
+
+.oxy-device-toolbar__btn.oxy-device-toolbar__btn--preview:hover {
+  background: #234c6a;
+  border-color: #234c6a;
+  color: #ffffff;
+}
+
+/* ───────────────── Live HTML preview overlay ───────────────── */
+
+.oxy-preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.oxy-preview-overlay__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: #1b3c53;
+  color: #ffffff;
+  border-bottom: 1px solid #234c6a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  flex-shrink: 0;
+}
+
+.oxy-preview-overlay__title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+}
+
+.oxy-preview-overlay__hint {
+  font-size: 12px;
+  color: #d2c1b6;
+  font-weight: 500;
+  flex: 1;
+}
+
+.oxy-preview-overlay__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1b3c53;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.oxy-preview-overlay__close:hover {
+  background: #d2c1b6;
+  color: #1b3c53;
+}
+
+.oxy-preview-overlay__frame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #ffffff;
+}
+
+/* ───────────────── Layers panel (component tree) ───────────────── */
+
+.oxy-layers-panel {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #1b3c53;
+  background: #ffffff;
+}
+
+.oxy-layers-panel__header {
+  padding: 14px 18px;
+  border-bottom: 2px solid #234c6a;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  font-weight: 700;
+  background: #1b3c53;
+}
+
+/* GrapesJS' default Layer Manager theme paints text in light grey for its
+ * dark canvas. On our light panel that becomes near-invisible. The block
+ * below forces dark navy on every text-bearing element and brand-tinted
+ * icons on the affordance buttons. Specificity is bumped to beat GrapesJS'
+ * built-in `.gjs-*` rules without resorting to `!important`. */
+.oxy-layers-panel .gjs-layer,
+.oxy-layers-panel .gjs-layer-item,
+.oxy-layers-panel .gjs-layer-name,
+.oxy-layers-panel .gjs-layer-title,
+.oxy-layers-panel .gjs-layer-count {
+  color: #1b3c53;
+}
+
+.oxy-layers-panel .gjs-layer {
+  background: transparent;
+  border-bottom: 1px solid #f4eee6;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.oxy-layers-panel .gjs-layer-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.oxy-layers-panel .gjs-layer-name {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.oxy-layers-panel .gjs-layer-count {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #456882;
+}
+
+.oxy-layers-panel .gjs-layer.gjs-hovered > .gjs-layer-item,
+.oxy-layers-panel .gjs-layer:hover > .gjs-layer-item {
+  background: #f4eee6;
+  color: #1b3c53;
+}
+
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-name,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-title,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-count {
+  background: #1b3c53;
+  color: #ffffff;
+}
+
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-caret,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-vis,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-move {
+  color: #f4eee6;
+  opacity: 1;
+}
+
+.oxy-layers-panel .gjs-layer-title {
+  padding: 0;
+  font-weight: 600;
+  color: inherit;
+}
+
+.oxy-layers-panel .gjs-layer-caret,
+.oxy-layers-panel .gjs-layer-vis,
+.oxy-layers-panel .gjs-layer-move {
+  color: #456882;
+  opacity: 0.85;
+  transition: opacity 0.12s ease;
+}
+
+.oxy-layers-panel .gjs-layer-caret:hover,
+.oxy-layers-panel .gjs-layer-vis:hover,
+.oxy-layers-panel .gjs-layer-move:hover {
+  opacity: 1;
+}
+
+/* Inline rename input — GrapesJS renders an <input> when the user double-
+ * clicks a layer to rename. Without an explicit color it inherits the OS
+ * default which is often invisible against our white panel. */
+.oxy-layers-panel .gjs-layer-name input,
+.oxy-layers-panel input[type="text"] {
+  background: #ffffff;
+  color: #1b3c53;
+  border: 1px solid #d2c1b6;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+}
+
+.oxy-layers-panel .gjs-layer-name input:focus,
+.oxy-layers-panel input[type="text"]:focus {
+  border-color: #234c6a;
+  box-shadow: 0 0 0 2px rgba(35, 76, 106, 0.18);
+}
+
+/* Children indent guide — keeps deeply nested layers scannable. */
+.oxy-layers-panel .gjs-layer-children {
+  border-left: 1px solid #f4eee6;
+  margin-left: 12px;
+}
+
+/* Canvas selection cues — use medium navy so it's clearly visible */
+.gjs-selected {
+  outline: 2px solid #234c6a !important;
+  outline-offset: -2px;
+}
+
+.gjs-hovered {
+  outline: 1px dashed #456882 !important;
+  outline-offset: -1px;
+}
+
+/* ───────────────── Color picker popover (body-mounted) ─────────────────
+ * Lives outside the .oxy-properties-panel scope because the popup element
+ * is appended to <body> so it can use position:fixed and escape the
+ * panel's overflow:auto clipping. */
+
+.oxy-color-popup {
+  position: fixed;
+  z-index: 99999;
+  width: 224px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #d2c1b6;
+  border-radius: 10px;
+  box-shadow:
+    0 12px 28px rgba(27, 60, 83, 0.18),
+    0 2px 4px rgba(27, 60, 83, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.oxy-color-popup[hidden] {
+  display: none;
+}
+
+.oxy-color-popup__native {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  padding: 2px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.oxy-color-popup__presets {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.oxy-color-popup__preset {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  border: 1px solid rgba(27, 60, 83, 0.18);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    transform 0.1s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.oxy-color-popup__preset:hover {
+  transform: scale(1.08);
+  border-color: #234c6a;
+  box-shadow: 0 2px 4px rgba(27, 60, 83, 0.15);
+}
+
+.oxy-color-popup__row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.oxy-color-popup__hex {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b3c53;
+  background: #ffffff;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+.oxy-color-popup__hex::placeholder {
+  color: #8aa1b3;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.oxy-color-popup__hex:focus {
+  border-color: #234c6a;
+  box-shadow: 0 0 0 3px rgba(35, 76, 106, 0.12);
+}
+
+.oxy-color-popup__clear {
+  padding: 4px 10px;
+  background: transparent;
+  color: #234c6a;
+  border: 0;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.oxy-color-popup__clear:hover {
+  background: #f4eee6;
+  color: #1b3c53;
+}
+
+/* ============================================================
+ * Multi-step form — step-list trait inside the root form's
+ * Properties panel. Renders the live list of steps as clickable
+ * pills; clicking switches the canvas to that step.
+ * ============================================================ */
+.oxy-properties-panel .oxy-mf-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 8px;
+  width: 100%;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__empty {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 8px 10px;
+  background: #f8f5f0;
+  border: 1px dashed #d2c1b6;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  background: #f8f5f0;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #1b3c53;
+  text-align: left;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item:hover {
+  background: #f4eee6;
+  border-color: #456882;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item.is-active {
+  background: #1b3c53;
+  border-color: #1b3c53;
+  color: #f4eee6;
+  font-weight: 600;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1b3c53;
+  border: 1px solid #d2c1b6;
+  font-size: 12px;
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item.is-active .oxy-mf-step-list__num {
+  background: #f4eee6;
+  border-color: #f4eee6;
+  color: #1b3c53;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
