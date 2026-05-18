@@ -19,17 +19,13 @@ import {
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Alert, MenuItem, Skeleton, Snackbar, TextField } from "@mui/material";
 import FullLoading from "../../components/loadings/fullLoading";
-import dynamic from "next/dynamic";
 import { languages } from "../../data/languages";
 import { BiUpload } from "react-icons/bi";
 import Image, { ImageLoaderProps } from "next/image";
 import { GetAllCategories } from "../../services/admin/categories";
 import { MdDomainVerification } from "react-icons/md";
-import { Editor, EditorRef, EmailEditorProps } from "react-email-editor";
+import { OxyEditor, type OxyEditorRef } from "@/editor";
 import Swal from "sweetalert2";
-const EmailEditor = dynamic(() => import("react-email-editor"), {
-  ssr: false,
-});
 
 interface CreateLandingPageData {
   name: string;
@@ -46,7 +42,10 @@ interface CreateLandingPageData {
 }
 
 function Index({ user }: { user: User }) {
-  const emailEditorRef = useRef<EditorRef | null>(null);
+  // OxyEditorRef mirrors the legacy `{ editor }` shape so the existing
+  // `emailEditorRef.current?.editor?.exportHtml(...)` access pattern still
+  // works without renaming anything.
+  const emailEditorRef = useRef<OxyEditorRef | null>(null);
   const router = useRouter();
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
@@ -81,20 +80,9 @@ function Index({ user }: { user: User }) {
     },
   );
 
-  //trigger overflow hiden to the body
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-  }, []);
-
-  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
-    emailEditorRef.current = { editor: unlayer };
-    unlayer.exportHtml((data) => {
-      const { design, html } = data;
-    });
-    document.body.style.overflow = "auto";
-    setIsLoadingEditor(() => false);
-    // unlayer.loadDesign(json);
-  };
+  // OxyEditor populates `ref.current.editor` automatically via
+  // useImperativeHandle, so we only need onReady to clear the loading
+  // overlay and restore body scrolling. No manual ref assignment.
 
   const handleChangeLandingPageData = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -130,10 +118,26 @@ function Index({ user }: { user: User }) {
         if (landingPageData.categoryId) {
           createLandingPageData.categoryId = landingPageData.categoryId;
         }
-        const { design, html } = data;
+        const { design, html, css } = data;
+        // Bundle GrapesJS' CSS into the saved HTML — same self-contained
+        // document shape Unlayer's exportHtml used to return, so the
+        // backend stores a directly-servable page.
+        const fullHtml = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${(landingPageData.title ?? "").replace(/</g, "&lt;")}</title>
+<meta name="description" content="${(landingPageData.description ?? "")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")}">
+<style>${css ?? ""}</style>
+</head>
+<body>${html}</body>
+</html>`;
         const json = JSON.stringify(design);
         await CreateLandingPageService({
-          html: html,
+          html: fullHtml,
           json: json,
           icon: icon,
           ...createLandingPageData,
@@ -185,14 +189,21 @@ function Index({ user }: { user: User }) {
             Create Landing Page
           </div>
         </div>
-        <main className="relative my-10 font-Poppins">
-          <EmailEditor
-            ref={emailEditorRef}
-            onReady={handleOnReadyEmailEditor}
-            options={{ displayMode: "web" }}
-            projectId={270222}
-          />
-        </main>
+
+        <OxyEditor
+          ref={emailEditorRef}
+          mode="page"
+          onReady={() => {
+            document.body.style.overflow = "auto";
+            setIsLoadingEditor(false);
+          }}
+          height="40rem"
+          showBlocksPanel
+          showLayersPanel
+          showPropertiesPanel
+          showDeviceToolbar
+        />
+
         <div className="flex w-full justify-start">
           <div className="ml-20 w-full border-b-2 pb-2 text-2xl font-bold">
             General Information
@@ -352,6 +363,7 @@ function Index({ user }: { user: User }) {
                 select
                 name="domainId"
                 label="Select"
+                value={landingPageData.domainId ?? ""}
                 onChange={handleChangeLandingPageData}
                 helperText="Please select your domain name"
               >
@@ -382,6 +394,7 @@ function Index({ user }: { user: User }) {
                 select
                 name="categoryId"
                 label="Select"
+                value={landingPageData.categoryId ?? ""}
                 onChange={handleChangeLandingPageData}
                 helperText="Please select your category here"
               >

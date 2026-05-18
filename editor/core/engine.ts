@@ -19,6 +19,11 @@ import {
 import { importUnlayerDesign } from "../compat/unlayer-import";
 import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
 import type { UnlayerDesign } from "../compat/unlayer-types";
+import {
+  GetSignURLService,
+  UploadSignURLService,
+  type CategoryFile,
+} from "@/services/cloud-storage";
 
 export interface EngineMountOptions {
   container: HTMLElement;
@@ -206,6 +211,11 @@ const STYLE_SECTORS = [
 export function mountEngine(opts: EngineMountOptions): Engine {
   const modeConfig = modeConfigs[opts.mode];
 
+  // Captured by the AssetManager.uploadFile closure below — assigned right
+  // after grapesjs.init() returns, before any user interaction can fire
+  // the upload handler.
+  let grapesInstance: GrapesEditor | undefined;
+
   const grapes = grapesjs.init({
     container: opts.container,
     height: opts.height ?? "100vh",
@@ -236,8 +246,65 @@ export function mountEngine(opts: EngineMountOptions): Engine {
         { id: "mobile", name: "Mobile", width: "320px", widthMedia: "480px" },
       ],
     },
+    /**
+     * Asset Manager — handles local file picking when the user double-clicks
+     * an Image component (or any block that opens the asset picker). We
+     * disable the default server-upload endpoint and provide our own
+     * `uploadFile` that:
+     *   1. Requests a signed PUT URL from the dashboard's cloud-storage API
+     *      (`GetSignURLService`) using the file's name + MIME + category.
+     *   2. PUTs the bytes directly to that signed URL (`UploadSignURLService`).
+     *   3. Adds the resulting public `originalURL` to the AssetManager so the
+     *      author can click the uploaded asset to apply it to the selected
+     *      image component.
+     * Routes images → `image-library`, video/audio → matching libraries,
+     * everything else → `other-library`.
+     */
+    assetManager: {
+      upload: false,
+      multiUpload: true,
+      autoAdd: true,
+      uploadFile: async (ev: Event) => {
+        if (!grapesInstance) return;
+        const dt = (ev as DragEvent).dataTransfer;
+        const inputFiles = (ev.target as HTMLInputElement | null)?.files ?? null;
+        const fileList = dt && dt.files && dt.files.length > 0
+          ? dt.files
+          : inputFiles;
+        if (!fileList || fileList.length === 0) return;
+        const am = grapesInstance.AssetManager;
+        for (const file of Array.from(fileList)) {
+          try {
+            const category: CategoryFile = file.type.startsWith("image/")
+              ? "image-library"
+              : file.type.startsWith("video/")
+                ? "video-library"
+                : file.type.startsWith("audio/")
+                  ? "audio-library"
+                  : "other-library";
+            const sign = await GetSignURLService({
+              fileName: file.name,
+              fileType: file.type,
+              category,
+            });
+            await UploadSignURLService({
+              file,
+              signURL: sign.signURL,
+              contentType: file.type,
+            });
+            am.add({ src: sign.originalURL, type: "image" });
+          } catch (err) {
+            // Signed-URL service throws the parsed error body on failure.
+            // Log without breaking the manager so the user can retry.
+            console.error("[oxy-editor] asset upload failed", err);
+          }
+        }
+      },
+    },
     canvas: { styles: [], scripts: [] },
   });
+
+  grapesInstance = grapes;
 
   void modeConfig;
 

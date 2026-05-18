@@ -1,13 +1,51 @@
 /*
  * Visual styling for the @oxyclick/editor panels.
- * Palette:
- *   #1B3C53 — deepest navy   (primary text, headings, active fills)
- *   #234C6A — medium navy    (accents, hover borders, selected outline)
- *   #456882 — slate blue     (secondary borders, icons, helper text)
- *   #D2C1B6 — warm beige     (soft borders/backgrounds, hover surfaces)
+ *
+ * Theme: modern minimalist dark mode.
+ * Deep black surfaces, hairline 1px borders, ghost/outline buttons,
+ * muted steel blue used SPARINGLY as the single accent. Pure white for
+ * primary text; medium gray for everything secondary. Display type is
+ * Geist (refined geometric sans); chip labels and numeric values use
+ * JetBrains Mono for editor-grade character.
+ *
+ * Earlier rules in this file were written for a light cream/navy theme;
+ * the dark-theme override block at the bottom of this file re-skins
+ * every component using the CSS variables declared here. Source-order
+ * specificity wins, so legacy rules are preserved but visually replaced.
  *
  * Loaded after grapesjs/dist/css/grapes.min.css so these rules win.
  */
+
+:root {
+  /* Surfaces — deep blacks, with one elevation step and one hover tint */
+  --oxy-bg: #050505;
+  --oxy-bg-elev: #0c0d0f;
+  --oxy-bg-hover: #15171a;
+
+  /* Hairlines — never thicker than 1px */
+  --oxy-border: #1c1c1f;
+  --oxy-border-strong: #2a2c30;
+
+  /* Typography — white primary, medium gray secondary, dim for hints */
+  --oxy-text: #ffffff;
+  --oxy-text-muted: #a3a3a3;
+  --oxy-text-dim: #6b6e74;
+
+  /* Accent — muted steel blue, used sparingly. The "soft" variant is
+   * for backgrounds at low alpha; the "strong" for hover lift. */
+  --oxy-accent: #5682a3;
+  --oxy-accent-strong: #7ba3c4;
+  --oxy-accent-soft: rgba(86, 130, 163, 0.22);
+
+  --oxy-danger: #d97a6c;
+
+  /* Fonts */
+  --oxy-font:
+    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
+  --oxy-mono:
+    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
 
 /* ───────────────── Blocks panel (left sidebar) ───────────────── */
 
@@ -1310,4 +1348,821 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ============================================================================
+ *
+ *  DARK THEME OVERRIDES — modern minimalist editor chrome
+ *
+ *  All chrome (toolbar, panels, popovers) is reskinned to a deep-black
+ *  surface with hairline borders, ghost/outline buttons, and steel-blue
+ *  used as the SINGLE emphasis color. The canvas iframe itself shows the
+ *  user's design and is never themed — only the workspace around it.
+ *
+ *  Source order beats earlier rules; specificity matches the originals
+ *  exactly so we don't escalate the specificity arms race.
+ *
+ * ============================================================================ */
+
+/* GrapesJS canvas chrome (around the iframe). The iframe contents are the
+ * user's design and stay untouched. */
+.gjs-cv-canvas,
+.gjs-editor-cont {
+  background: var(--oxy-bg) !important;
+}
+.gjs-cv-tools,
+.gjs-cv-canvas__frames {
+  background: transparent;
+}
+
+/* ───────────────── Blocks panel ───────────────── */
+.oxy-blocks-panel {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  border-right: 1px solid var(--oxy-border);
+}
+
+.oxy-blocks-panel .gjs-block-category > .gjs-title {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 18px 16px 8px;
+}
+
+.oxy-blocks-panel .gjs-block {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border);
+  color: var(--oxy-text-muted);
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.oxy-blocks-panel .gjs-block:hover {
+  border-color: var(--oxy-accent);
+  background: var(--oxy-bg-hover);
+  color: var(--oxy-text);
+  box-shadow: 0 0 0 1px var(--oxy-accent-soft);
+  transform: none;
+}
+
+.oxy-blocks-panel .gjs-block:active {
+  border-color: var(--oxy-accent-strong);
+  background: var(--oxy-bg-hover);
+}
+
+.oxy-blocks-panel .gjs-block__media {
+  color: var(--oxy-text);
+}
+
+.oxy-blocks-panel .gjs-block__media svg {
+  color: var(--oxy-text);
+  fill: currentColor;
+}
+
+.oxy-blocks-panel .gjs-block-label {
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* ───────────────── Properties panel ───────────────── */
+.oxy-properties-panel {
+  /* Rebind GrapesJS theme vars to the dark palette. */
+  --gjs-primary-color: var(--oxy-bg);
+  --gjs-secondary-color: var(--oxy-text);
+  --gjs-tertiary-color: var(--oxy-accent);
+  --gjs-quaternary-color: var(--oxy-accent-strong);
+  --gjs-font-color: var(--oxy-text);
+  --gjs-font-color-active: #ffffff;
+  background: var(--oxy-bg) !important;
+  color: var(--oxy-text) !important;
+  font-family: var(--oxy-font);
+  border-left: 1px solid var(--oxy-border);
+}
+
+.oxy-properties-panel,
+.oxy-properties-panel .gjs-two-color,
+.oxy-properties-panel .gjs-sm-property *,
+.oxy-properties-panel .gjs-trt-trait * {
+  color: var(--oxy-text);
+}
+
+.oxy-properties-panel select,
+.oxy-properties-panel select option {
+  background: var(--oxy-bg-elev);
+  color: var(--oxy-text);
+}
+
+.oxy-properties-panel__header {
+  background: var(--oxy-bg) !important;
+  color: var(--oxy-text) !important;
+  border-bottom: 1px solid var(--oxy-border) !important;
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 18px 20px;
+}
+
+.oxy-properties-panel__empty {
+  color: var(--oxy-text-dim) !important;
+  background: var(--oxy-bg) !important;
+  font-family: var(--oxy-font);
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--oxy-border) !important;
+}
+
+/* Style Manager sectors — !important on surfaces because the legacy
+ * light-theme rules earlier in this file (and GrapesJS' own defaults)
+ * target the same selectors. Source order picks ours, but some bundlers
+ * reorder global CSS; !important removes the risk. */
+.oxy-properties-panel .gjs-sm-sectors {
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-sm-sector {
+  border-bottom: 1px solid var(--oxy-border) !important;
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title {
+  background: var(--oxy-bg) !important;
+  color: var(--oxy-text) !important;
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 14px 20px;
+  border-bottom: 0;
+}
+
+/* Sector body — the container that holds each sector's property cells.
+ * Was white in the legacy block (line 275); this is what produced the
+ * white seams between fields the user reported. */
+.oxy-properties-panel .gjs-sm-properties {
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-sm-property {
+  background: transparent !important;
+}
+
+.oxy-properties-panel .gjs-sm-composite,
+.oxy-properties-panel .gjs-sm-stack,
+.oxy-properties-panel .gjs-sm-stack .gjs-sm-properties,
+.oxy-properties-panel .gjs-fields {
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title:hover {
+  background: var(--oxy-bg-hover);
+  color: var(--oxy-accent-strong);
+}
+
+.oxy-properties-panel .gjs-sm-sector.gjs-sm-open > .gjs-sm-title {
+  border-bottom: 1px solid var(--oxy-border);
+  color: var(--oxy-accent-strong);
+}
+
+.oxy-properties-panel .gjs-sm-sector .gjs-sm-title::before {
+  color: var(--oxy-text-dim);
+}
+
+/* Property labels */
+.oxy-properties-panel .gjs-sm-label,
+.oxy-properties-panel .gjs-sm-property .gjs-sm-label,
+.oxy-properties-panel .gjs-sm-property > .gjs-label {
+  color: var(--oxy-text-muted) !important;
+  background: transparent !important;
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* Inputs */
+.oxy-properties-panel .gjs-field {
+  background: var(--oxy-bg-elev) !important;
+  border: 1px solid var(--oxy-border-strong) !important;
+  color: var(--oxy-text);
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.oxy-properties-panel .gjs-field:hover {
+  border-color: var(--oxy-text-dim);
+  background: var(--oxy-bg-elev);
+}
+
+.oxy-properties-panel .gjs-field:focus-within {
+  border-color: var(--oxy-accent);
+  box-shadow: 0 0 0 1px var(--oxy-accent-soft);
+  background: var(--oxy-bg-elev);
+}
+
+.oxy-properties-panel .gjs-field input,
+.oxy-properties-panel .gjs-field select,
+.oxy-properties-panel .gjs-field textarea,
+.oxy-properties-panel input.gjs-input,
+.oxy-properties-panel select.gjs-select {
+  background: transparent;
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  font-size: 13px;
+}
+
+.oxy-properties-panel .gjs-field input::placeholder {
+  color: var(--oxy-text-dim);
+}
+
+.oxy-properties-panel .gjs-field-units,
+.oxy-properties-panel .gjs-input-unit {
+  color: var(--oxy-text-muted);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+.oxy-properties-panel .gjs-field-arrows,
+.oxy-properties-panel .gjs-field-arrow-u,
+.oxy-properties-panel .gjs-field-arrow-d {
+  color: var(--oxy-text-muted);
+}
+
+/* Custom color field — swatch + hex */
+.oxy-properties-panel .oxy-color-field {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+}
+
+.oxy-properties-panel .oxy-color-swatch {
+  border: 1px solid var(--oxy-border-strong);
+}
+
+.oxy-properties-panel .oxy-color-swatch:hover {
+  border-color: var(--oxy-accent);
+}
+
+.oxy-properties-panel .oxy-color-swatch.is-empty {
+  background:
+    linear-gradient(45deg, var(--oxy-bg-hover) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--oxy-bg-hover) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--oxy-bg-hover) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--oxy-bg-hover) 75%);
+  background-size: 8px 8px;
+  background-position:
+    0 0,
+    0 4px,
+    4px -4px,
+    -4px 0;
+}
+
+.oxy-properties-panel .oxy-color-hex {
+  background: transparent;
+  color: var(--oxy-text);
+  font-family: var(--oxy-mono);
+  font-size: 12px;
+  border: 0;
+}
+
+.oxy-properties-panel .oxy-color-hex::placeholder {
+  color: var(--oxy-text-dim);
+}
+
+.oxy-properties-panel .oxy-color-hex:focus {
+  box-shadow: none;
+}
+
+/* Background-image picker */
+.oxy-properties-panel .oxy-bg-image-field {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border);
+}
+
+.oxy-properties-panel .oxy-bg-image-drop {
+  background: var(--oxy-bg);
+  border: 1px dashed var(--oxy-border-strong);
+  color: var(--oxy-text-muted);
+}
+
+.oxy-properties-panel .oxy-bg-image-drop:hover {
+  border-color: var(--oxy-accent);
+  color: var(--oxy-text);
+  background: var(--oxy-bg-hover);
+}
+
+.oxy-properties-panel .oxy-bg-image-hint__title {
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+}
+
+.oxy-properties-panel .oxy-bg-image-hint__sub {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.oxy-properties-panel .oxy-bg-image-url {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-mono);
+  font-size: 12px;
+}
+
+.oxy-properties-panel .oxy-bg-image-url::placeholder {
+  color: var(--oxy-text-dim);
+}
+
+.oxy-properties-panel .oxy-bg-image-url:hover {
+  border-color: var(--oxy-text-dim);
+}
+
+.oxy-properties-panel .oxy-bg-image-url:focus {
+  border-color: var(--oxy-accent);
+  box-shadow: 0 0 0 1px var(--oxy-accent-soft);
+}
+
+.oxy-properties-panel .oxy-bg-image-clear {
+  background: transparent;
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text-muted);
+  font-family: var(--oxy-font);
+}
+
+.oxy-properties-panel .oxy-bg-image-clear:hover:not(:disabled) {
+  border-color: var(--oxy-accent);
+  color: var(--oxy-accent-strong);
+  background: transparent;
+}
+
+.oxy-properties-panel .oxy-bg-image-clear:disabled {
+  opacity: 0.4;
+  border-color: var(--oxy-border);
+  color: var(--oxy-text-dim);
+}
+
+.oxy-properties-panel .oxy-bg-image-status {
+  color: var(--oxy-text-muted);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+.oxy-properties-panel .oxy-bg-image-status.is-error {
+  color: var(--oxy-danger);
+}
+
+/* Trait Manager */
+.oxy-properties-panel .gjs-trt-traits {
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-trt-header {
+  background: var(--oxy-bg) !important;
+  color: var(--oxy-text-muted) !important;
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  border-bottom: 1px solid var(--oxy-border) !important;
+  padding: 14px 20px;
+}
+
+.oxy-properties-panel .gjs-trt-trait {
+  background: var(--oxy-bg) !important;
+}
+
+.oxy-properties-panel .gjs-trt-trait .gjs-label-wrp,
+.oxy-properties-panel .gjs-trt-trait .gjs-label {
+  color: var(--oxy-text-muted) !important;
+  background: transparent !important;
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* Radio groups — Left / Center / Right / Justify style segments */
+.oxy-properties-panel .gjs-radio-items,
+.oxy-properties-panel .gjs-field-radio {
+  background: var(--oxy-bg-elev) !important;
+  border: 1px solid var(--oxy-border-strong) !important;
+  border-radius: 4px;
+}
+
+.oxy-properties-panel .gjs-radio-item {
+  background: transparent !important;
+  border-right: 1px solid var(--oxy-border);
+}
+
+.oxy-properties-panel .gjs-radio-item:last-child {
+  border-right: 0;
+}
+
+/* Inactive segment — transparent so the dark container shows through.
+ * GrapesJS' default theme paints these white; the !important here
+ * neutralizes that. */
+.oxy-properties-panel .gjs-radio-item-label {
+  background: transparent !important;
+  color: var(--oxy-text-muted) !important;
+  font-family: var(--oxy-font);
+  font-weight: 500;
+}
+
+.oxy-properties-panel .gjs-radio-item input:checked + .gjs-radio-item-label {
+  background: var(--oxy-accent) !important;
+  color: #ffffff !important;
+}
+
+/* Step-list trait (multi-form) */
+.oxy-properties-panel .oxy-mf-step-list__item {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  font-size: 13px;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item:hover {
+  background: var(--oxy-bg-hover);
+  border-color: var(--oxy-accent);
+  color: var(--oxy-text);
+}
+
+.oxy-properties-panel .oxy-mf-step-list__item.is-active {
+  background: var(--oxy-accent);
+  border-color: var(--oxy-accent);
+  color: #ffffff;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__num {
+  background: var(--oxy-bg);
+  color: var(--oxy-text-muted);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-mono);
+}
+
+.oxy-properties-panel
+  .oxy-mf-step-list__item.is-active
+  .oxy-mf-step-list__num {
+  background: #ffffff;
+  color: var(--oxy-accent);
+  border-color: #ffffff;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__empty {
+  background: var(--oxy-bg-elev);
+  border: 1px dashed var(--oxy-border-strong);
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+/* ───────────────── Layers panel ───────────────── */
+.oxy-layers-panel {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  border-right: 1px solid var(--oxy-border);
+}
+
+.oxy-layers-panel__header {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  border-bottom: 1px solid var(--oxy-border);
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 18px 20px;
+}
+
+.oxy-layers-panel .gjs-layer,
+.oxy-layers-panel .gjs-layer-item,
+.oxy-layers-panel .gjs-layer-name,
+.oxy-layers-panel .gjs-layer-title {
+  color: var(--oxy-text-muted);
+}
+
+.oxy-layers-panel .gjs-layer-count {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 10px;
+}
+
+.oxy-layers-panel .gjs-layer {
+  border-bottom: 1px solid var(--oxy-border);
+}
+
+.oxy-layers-panel .gjs-layer.gjs-hovered > .gjs-layer-item,
+.oxy-layers-panel .gjs-layer:hover > .gjs-layer-item {
+  background: var(--oxy-bg-hover);
+  color: var(--oxy-text);
+}
+
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-name,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-title,
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .gjs-layer-count {
+  background: var(--oxy-accent-soft);
+  color: var(--oxy-text);
+  box-shadow: inset 2px 0 0 var(--oxy-accent);
+}
+
+.oxy-layers-panel .gjs-layer-caret,
+.oxy-layers-panel .gjs-layer-vis,
+.oxy-layers-panel .gjs-layer-move {
+  color: var(--oxy-text-dim);
+}
+
+.oxy-layers-panel .gjs-layer-caret:hover,
+.oxy-layers-panel .gjs-layer-vis:hover,
+.oxy-layers-panel .gjs-layer-move:hover {
+  color: var(--oxy-text);
+}
+
+.oxy-layers-panel .gjs-layer-children {
+  border-left: 1px solid var(--oxy-border);
+}
+
+.oxy-layers-panel .gjs-layer-name input,
+.oxy-layers-panel input[type="text"] {
+  background: var(--oxy-bg-elev);
+  color: var(--oxy-text);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+.oxy-layers-panel .gjs-layer-name input:focus,
+.oxy-layers-panel input[type="text"]:focus {
+  border-color: var(--oxy-accent);
+  box-shadow: 0 0 0 1px var(--oxy-accent-soft);
+}
+
+/* ───────────────── Top toolbar ───────────────── */
+.oxy-device-toolbar {
+  background: var(--oxy-bg);
+  border-bottom: 1px solid var(--oxy-border);
+  padding: 10px 18px;
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.oxy-device-toolbar__label {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-weight: 500;
+  padding: 0 4px;
+}
+
+.oxy-device-toolbar__divider {
+  background: var(--oxy-border-strong);
+  width: 1px;
+  height: 20px;
+  margin: 0 6px;
+}
+
+/* Ghost outline buttons — the dominant chrome action style */
+.oxy-device-toolbar__btn {
+  background: var(--oxy-bg);
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text-muted);
+  padding: 7px 13px;
+  font-family: var(--oxy-font);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.oxy-device-toolbar__btn:hover {
+  border-color: var(--oxy-text);
+  color: var(--oxy-text);
+  background: var(--oxy-bg);
+}
+
+.oxy-device-toolbar__btn--active {
+  border-color: var(--oxy-text);
+  color: var(--oxy-text);
+  background: var(--oxy-bg-hover);
+}
+
+.oxy-device-toolbar__btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+  border-color: var(--oxy-border);
+  color: var(--oxy-text-dim);
+  background: var(--oxy-bg);
+}
+
+.oxy-device-toolbar__btn:disabled:hover {
+  border-color: var(--oxy-border);
+  color: var(--oxy-text-dim);
+}
+
+.oxy-device-toolbar__btn--icon {
+  padding: 7px 9px;
+  gap: 0;
+}
+
+/* The single emphasis button — steel-blue outline, accent-tinted fill on hover */
+.oxy-device-toolbar__btn--preview {
+  background: var(--oxy-bg);
+  border-color: var(--oxy-accent);
+  color: var(--oxy-accent-strong);
+}
+
+.oxy-device-toolbar__btn--preview:hover {
+  background: var(--oxy-accent);
+  color: #ffffff;
+  border-color: var(--oxy-accent);
+}
+
+/* ───────────────── Fixture bar (dev preview only) ───────────────── */
+.oxy-fixture-bar {
+  background: var(--oxy-bg);
+  border-bottom: 1px solid var(--oxy-border);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+}
+
+.oxy-fixture-bar__label {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+.oxy-fixture-bar__select {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-font);
+  font-size: 12px;
+}
+
+.oxy-fixture-bar__select:hover {
+  border-color: var(--oxy-text);
+}
+
+.oxy-fixture-bar__select:focus {
+  border-color: var(--oxy-accent);
+  box-shadow: 0 0 0 1px var(--oxy-accent-soft);
+  outline: 0;
+}
+
+.oxy-fixture-bar__select:disabled {
+  opacity: 0.4;
+}
+
+.oxy-fixture-bar__count {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+.oxy-fixture-bar__error {
+  color: var(--oxy-danger);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+/* ───────────────── Preview overlay ───────────────── */
+.oxy-preview-overlay {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.oxy-preview-overlay__bar {
+  background: var(--oxy-bg);
+  border-bottom: 1px solid var(--oxy-border);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+}
+
+.oxy-preview-overlay__title {
+  color: var(--oxy-text);
+  font-family: var(--oxy-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 500;
+  font-size: 11px;
+}
+
+.oxy-preview-overlay__hint {
+  color: var(--oxy-text-dim);
+  font-family: var(--oxy-font);
+  font-size: 12px;
+}
+
+.oxy-preview-overlay__close {
+  background: transparent;
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.oxy-preview-overlay__close:hover {
+  border-color: var(--oxy-accent);
+  color: var(--oxy-accent-strong);
+  background: transparent;
+}
+
+/* ───────────────── Color popup (body-mounted) ───────────────── */
+.oxy-color-popup {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+  border-radius: 6px;
+}
+
+.oxy-color-popup__preset {
+  border: 1px solid var(--oxy-border);
+}
+
+.oxy-color-popup__preset:hover {
+  border-color: var(--oxy-text);
+}
+
+.oxy-color-popup__hex {
+  background: var(--oxy-bg);
+  color: var(--oxy-text);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-mono);
+  font-size: 12px;
+}
+
+.oxy-color-popup__hex:focus {
+  border-color: var(--oxy-accent);
+  outline: 0;
+}
+
+.oxy-color-popup__clear {
+  background: transparent;
+  color: var(--oxy-text-muted);
+  border: 1px solid var(--oxy-border-strong);
+  font-family: var(--oxy-font);
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.oxy-color-popup__clear:hover {
+  border-color: var(--oxy-accent);
+  color: var(--oxy-accent-strong);
+  background: transparent;
+}
+
+/* Canvas selection cue — accent steel blue */
+.gjs-selected {
+  outline-color: var(--oxy-accent) !important;
+}
+
+.gjs-toolbar {
+  background: var(--oxy-bg-elev) !important;
+  border: 1px solid var(--oxy-border-strong) !important;
+  color: var(--oxy-text) !important;
+}
+
+.gjs-toolbar-item {
+  color: var(--oxy-text) !important;
+}
+
+.gjs-toolbar-item:hover {
+  background: var(--oxy-bg-hover) !important;
+  color: var(--oxy-accent-strong) !important;
 }

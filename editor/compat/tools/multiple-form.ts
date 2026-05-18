@@ -579,9 +579,7 @@ function defineCommands(editor: GrapesEditor): void {
         totalSteps: totalAfter,
         isFirst: false,
         isActive: false,
-        options: [
-          { display: "Option A", value: "a", url: "", moveToStep: "" },
-        ],
+        options: [{ display: "Option A", value: "a", url: "", moveToStep: "" }],
       });
       asLike(root).append(newStep);
       renumberSteps(root);
@@ -757,9 +755,15 @@ function defineComponentTypes(editor: GrapesEditor): void {
         "step-type": str("data-oxy-step-type", "answer"),
         "button-color": str("data-oxy-button-color", DEFAULT_BUTTON_COLOR),
         "text-color": str("data-oxy-text-color", DEFAULT_TEXT_COLOR),
-        "button-padding": num("data-oxy-button-padding", DEFAULT_BUTTON_PADDING),
+        "button-padding": num(
+          "data-oxy-button-padding",
+          DEFAULT_BUTTON_PADDING,
+        ),
         "button-radius": num("data-oxy-button-radius", DEFAULT_BUTTON_RADIUS),
-        "button-spacing": num("data-oxy-button-spacing", DEFAULT_BUTTON_SPACING),
+        "button-spacing": num(
+          "data-oxy-button-spacing",
+          DEFAULT_BUTTON_SPACING,
+        ),
       };
     },
     model: {
@@ -1060,9 +1064,11 @@ function injectCanvasStyles(editor: GrapesEditor): void {
  * editor visually consistent with what the user is editing.
  */
 function wireActiveStepFollowsSelection(editor: GrapesEditor): void {
-  (editor as unknown as {
-    on: (event: string, cb: (...args: unknown[]) => void) => void;
-  }).on("component:selected", (...args: unknown[]) => {
+  (
+    editor as unknown as {
+      on: (event: string, cb: (...args: unknown[]) => void) => void;
+    }
+  ).on("component:selected", (...args: unknown[]) => {
     const selected = args[0] as Component | undefined;
     if (!selected) return;
     const step = findAncestor(selected, STEP_TYPE);
@@ -1117,15 +1123,19 @@ export function appendMultipleFormRuntime(html: string): string {
 
   // The runtime script reads the final redirect URL from a script tag with
   // class `script_multiple_form`, not from the form root's data-attr.
-  if (!new RegExp(`class="[^"]*\\b${RUNTIME_LINK_CLASS}\\b[^"]*"`).test(result)) {
+  if (
+    !new RegExp(`class="[^"]*\\b${RUNTIME_LINK_CLASS}\\b[^"]*"`).test(result)
+  ) {
     const linkMatch = result.match(/data-oxy-form-link="([^"]*)"/);
     const link = linkMatch ? unescapeAttr(linkMatch[1]) : "";
     const payload = escapeAttr(JSON.stringify({ link }));
     result += `\n<script class="${RUNTIME_LINK_CLASS}" value="${payload}" defer></script>`;
   }
-
+  const isOnLocalhost =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
   if (!result.includes(MULTIPLE_FORM_RUNTIME_SRC)) {
-    result += `\n<script src="${MULTIPLE_FORM_RUNTIME_SRC}" defer></script>`;
+    result += `\n<script src="${isOnLocalhost === true ? "http://localhost:8080" : "https://oxyclick.com"}${MULTIPLE_FORM_RUNTIME_SRC}" defer></script>`;
   }
 
   return result;

@@ -46,12 +46,10 @@ export const builtInToolNames = [
   "form",
   "input",
   "textarea",
-  "select",
   "checkbox",
   "label",
   // Extra / custom
   "multiple-form",
-  "custom-basic",
 ] as const;
 
 export type BuiltInToolName = (typeof builtInToolNames)[number];
@@ -81,11 +79,10 @@ const ICONS: Record<BuiltInToolName, string> = {
   form: iconHtml(BiClipboard),
   input: iconHtml(BiEditAlt),
   textarea: iconHtml(BiTextarea),
-  select: iconHtml(BiSelectMultiple),
+
   checkbox: iconHtml(BiCheckboxChecked),
   label: iconHtml(BiTask),
   "multiple-form": iconHtml(BiListUl),
-  "custom-basic": iconHtml(BiStar),
 };
 
 const CATEGORY_CONTENT = "Content";
@@ -141,6 +138,12 @@ export function registerBuiltInTools(
     });
   }
   if (include.has("image")) {
+    // Local-file upload behavior lives in engine.ts: the AssetManager's
+    // `uploadFile` callback routes picked files through cloud-storage's
+    // signed PUT URL flow (`GetSignURLService` + `UploadSignURLService`)
+    // and adds the resulting public URL as a selectable asset. Drop this
+    // block, double-click the image, click Upload — the dialog calls
+    // into that flow automatically.
     bm.add("oxy-image", {
       label: "Image",
       category: CATEGORY_CONTENT,
@@ -165,7 +168,7 @@ export function registerBuiltInTools(
       media: ICONS.button,
       content: {
         type: "link",
-        attributes: { href: "#", class: "oxy-button-block" },
+        attributes: { href: "", class: "oxy-button-block" },
         content: "Button",
         style: {
           display: "inline-block",
@@ -408,19 +411,7 @@ export function registerBuiltInTools(
       },
     });
   }
-  if (include.has("select")) {
-    bm.add("oxy-select", {
-      label: "Select",
-      category: CATEGORY_FORM,
-      media: ICONS.select,
-      content: {
-        tagName: "label",
-        attributes: { class: "oxy-select-block" },
-        components: `<span style="display:block;font-size:14px;color:#374151;margin-bottom:4px;font-weight:500;">Choose one</span><select name="choice" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;box-sizing:border-box;"><option value="">Select an option…</option><option value="a">Option A</option><option value="b">Option B</option><option value="c">Option C</option></select>`,
-        style: { display: "block", "margin-bottom": "12px" },
-      },
-    });
-  }
+
   if (include.has("checkbox")) {
     bm.add("oxy-checkbox", {
       label: "Checkbox",
@@ -462,14 +453,6 @@ export function registerBuiltInTools(
     registerMultipleFormBlock(grapes, {
       blockCategory: CATEGORY_EXTRA,
       icon: ICONS["multiple-form"],
-    });
-  }
-  if (include.has("custom-basic")) {
-    bm.add("oxy-custom-basic", {
-      label: "Custom Tool",
-      category: CATEGORY_CUSTOM,
-      media: ICONS["custom-basic"],
-      content: renderBasicCustomTool({ myText: "My Text" }),
     });
   }
 }

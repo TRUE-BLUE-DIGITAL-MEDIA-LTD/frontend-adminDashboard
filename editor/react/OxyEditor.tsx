@@ -113,7 +113,6 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       if (!engineRef.current) return;
       engineRef.current.instance.exportHtml(({ html, css }) => {
         const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Preview</title><style>${css ?? ""}</style></head><body>${html}</body></html>`;
-        console.log(doc);
         setPreviewHtml(doc);
       });
     }
@@ -278,7 +277,6 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 width: blocksPanelWidth ?? "280px",
                 flexShrink: 0,
                 height: "100%",
-                borderRight: "1px solid #d2c1b6",
                 overflow: "auto",
                 display: blocksOpen ? "block" : "none",
               }}
@@ -291,11 +289,9 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 width: layersPanelWidth ?? "260px",
                 flexShrink: 0,
                 height: "100%",
-                borderRight: "1px solid #d2c1b6",
                 overflow: "auto",
                 display: layersOpen ? "flex" : "none",
                 flexDirection: "column",
-                background: "#ffffff",
               }}
             >
               <div className="oxy-layers-panel__header">Layers</div>
@@ -433,7 +429,6 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 width: propertiesPanelWidth ?? "300px",
                 flexShrink: 0,
                 height: "100%",
-                borderLeft: "1px solid #d2c1b6",
                 overflow: "auto",
                 display: propertiesOpen ? "flex" : "none",
                 flexDirection: "column",
