@@ -45,6 +45,7 @@ const KNOWN_TYPES = new Set([
   "social",
   "timer",
   "custom",
+  "form",
 ]);
 
 function collectUnknownBlocks(design: UnlayerDesign): UnknownBlockReport[] {

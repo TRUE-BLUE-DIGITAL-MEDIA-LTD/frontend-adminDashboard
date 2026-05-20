@@ -96,6 +96,8 @@ function renderContent(
       return renderTimer(content, baseStyle, hide, opts);
     case "custom":
       return renderCustom(content, baseStyle, hide, opts);
+    case "form":
+      return renderForm(content, baseStyle, hide, opts);
     default:
       return renderUnknown(content, baseStyle, hide, opts);
   }
@@ -476,6 +478,218 @@ function escapeHtml(value: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+/**
+ * Unlayer `form` widget → editable Form component.
+ *
+ * Emits the DOM contract recognised by the `oxy-form` / `oxy-form-field`
+ * component types in `editor/compat/tools/form.ts`:
+ *   • Root  : <form class="oxy-form"> + data-oxy-button-* attributes
+ *   • Field : <div class="oxy-form-field"> + data-oxy-field-* attributes
+ *   • Submit: <button class="oxy-form-submit" type="submit">
+ *
+ * Unlayer forms with an empty `fields` array (the common "styled CTA button"
+ * case) come through as just the submit button. The class is hardcoded
+ * "oxy-form" — not `opts.classPrefix` — because the component type keys off
+ * that literal string (same choice `renderMultipleForm` made).
+ */
+const FORM_FIELD_TYPE_MAP: Record<string, string> = {
+  text: "text",
+  email: "email",
+  phone: "tel",
+  tel: "tel",
+  number: "number",
+  textarea: "textarea",
+  long_answer: "textarea",
+  dropdown: "select",
+  select: "select",
+  checkbox: "checkbox",
+  boolean: "checkbox",
+  hidden: "hidden",
+};
+
+interface FormFieldControlData {
+  name: string;
+  label: string;
+  placeholder: string;
+  required: boolean;
+  options: string[];
+}
+
+function renderForm(
+  content: UnlayerContent,
+  baseStyle: string,
+  hide: string,
+  opts: Required<UnlayerToHtmlOptions>,
+): string {
+  void opts;
+  const v = content.values;
+  const action = (v.action as Record<string, unknown> | undefined) ?? {};
+  const actionUrl = (action.url as string) ?? "";
+  const method =
+    String((action.method as string) ?? "GET").toUpperCase() === "POST"
+      ? "POST"
+      : "GET";
+
+  const buttonColors =
+    (v.buttonColors as Record<string, unknown> | undefined) ?? {};
+  const buttonText = (v.buttonText as string) ?? "Continue";
+  const buttonColor = (buttonColors.backgroundColor as string) ?? "#2563eb";
+  const buttonTextColor = (buttonColors.color as string) ?? "#ffffff";
+  const buttonWidthObj =
+    (v.buttonWidth as Record<string, unknown> | undefined) ?? {};
+  const buttonWidth =
+    buttonWidthObj.autoWidth === true
+      ? "auto"
+      : (buttonWidthObj.width as string) ?? "100%";
+  const buttonRadius = (v.buttonBorderRadius as string) ?? "8px";
+  const buttonFontSize = (v.buttonFontSize as string) ?? "16px";
+
+  const formWidthObj =
+    (v.formWidth as Record<string, unknown> | undefined) ?? {};
+  const formWidth =
+    formWidthObj.autoWidth === true
+      ? "auto"
+      : (formWidthObj.width as string) ?? "100%";
+  const formAlign = (v.formAlign as string) ?? "center";
+  const fieldDistance = (v.fieldDistance as string) ?? "15px";
+
+  const fields = Array.isArray(v.fields) ? (v.fields as unknown[]) : [];
+  const fieldsHtml = fields.map((f) => renderFormField(f)).join("");
+
+  const submitStyle = composeStyle("", {
+    "background-color": buttonColor,
+    color: buttonTextColor,
+    width: buttonWidth,
+    "border-radius": buttonRadius,
+    border: "0",
+    padding: "12px 16px",
+    "font-size": buttonFontSize,
+    "font-weight": "600",
+    cursor: "pointer",
+  });
+  const submitHtml = `<button type="submit" class="oxy-form-submit" style="${submitStyle}">${escapeHtml(
+    buttonText,
+  )}</button>`;
+
+  const marginX = formAlign === "center" ? "auto" : "0";
+  const formStyle = composeStyle(baseStyle, {
+    display: "flex",
+    "flex-direction": "column",
+    gap: fieldDistance,
+    width: formWidth,
+    "margin-left": marginX,
+    "margin-right": marginX,
+    "box-sizing": "border-box",
+  });
+
+  const dataAttrs =
+    ` data-oxy-button-text="${escapeAttr(buttonText)}"` +
+    ` data-oxy-button-color="${escapeAttr(buttonColor)}"` +
+    ` data-oxy-button-text-color="${escapeAttr(buttonTextColor)}"` +
+    ` data-oxy-button-width="${escapeAttr(buttonWidth)}"` +
+    ` data-oxy-button-radius="${escapeAttr(buttonRadius)}"`;
+
+  return (
+    `<form class="oxy-form${hide}" method="${method}"` +
+    ` action="${escapeAttr(actionUrl)}"${dataAttrs} style="${formStyle}">` +
+    `${fieldsHtml}${submitHtml}</form>`
+  );
+}
+
+function renderFormField(raw: unknown): string {
+  if (!raw || typeof raw !== "object") return "";
+  const f = raw as Record<string, unknown>;
+  const rawType = String(f.type ?? "text").toLowerCase();
+  const type = FORM_FIELD_TYPE_MAP[rawType] ?? "text";
+  const name = (f.name as string) ?? "";
+  const label = (f.label as string) ?? name;
+  const placeholder = (f.placeholder as string) ?? "";
+  const required = f.required === true;
+  const options = Array.isArray(f.options)
+    ? (f.options as unknown[]).map((o) => {
+        if (o && typeof o === "object") {
+          const obj = o as Record<string, unknown>;
+          return String(obj.label ?? obj.value ?? "");
+        }
+        return String(o);
+      })
+    : [];
+
+  const dataAttrs =
+    ` data-oxy-field-type="${escapeAttr(type)}"` +
+    ` data-oxy-field-name="${escapeAttr(name)}"` +
+    ` data-oxy-field-label="${escapeAttr(label)}"` +
+    ` data-oxy-field-placeholder="${escapeAttr(placeholder)}"` +
+    ` data-oxy-field-required="${required ? "true" : "false"}"` +
+    ` data-oxy-field-options="${escapeAttr(options.join(", "))}"`;
+
+  const wrapStyle =
+    type === "hidden"
+      ? "display:none;"
+      : type === "checkbox"
+        ? "display:flex;align-items:center;"
+        : "display:block;";
+
+  const inner = formFieldControlHtml(type, {
+    name,
+    label,
+    placeholder,
+    required,
+    options,
+  });
+
+  return `<div class="oxy-form-field"${dataAttrs} style="${wrapStyle}">${inner}</div>`;
+}
+
+function formFieldControlHtml(type: string, d: FormFieldControlData): string {
+  const nameAttr = d.name ? ` name="${escapeAttr(d.name)}"` : "";
+  const phAttr = d.placeholder
+    ? ` placeholder="${escapeAttr(d.placeholder)}"`
+    : "";
+  const reqAttr = d.required ? " required" : "";
+  const inputStyle =
+    "width:100%;padding:10px 12px;border:1px solid #d1d5db;" +
+    "border-radius:6px;font-size:14px;box-sizing:border-box;";
+  const labelText = escapeHtml(d.label || d.name || "Field");
+
+  if (type === "hidden") {
+    return `<input type="hidden"${nameAttr} value="">`;
+  }
+  if (type === "checkbox") {
+    return (
+      `<input type="checkbox"${nameAttr}${reqAttr} ` +
+      `style="margin-right:8px;width:16px;height:16px;cursor:pointer;">` +
+      `<span class="oxy-form-field-label" ` +
+      `style="font-size:14px;color:#374151;">${labelText}</span>`
+    );
+  }
+  const labelHtml =
+    `<label class="oxy-form-field-label" ` +
+    `style="display:block;font-size:14px;color:#374151;` +
+    `margin-bottom:4px;font-weight:500;">${labelText}</label>`;
+  if (type === "textarea") {
+    return (
+      labelHtml +
+      `<textarea${nameAttr}${phAttr}${reqAttr} rows="4" ` +
+      `style="${inputStyle}font-family:inherit;resize:vertical;"></textarea>`
+    );
+  }
+  if (type === "select") {
+    const opts = d.options
+      .map((o) => `<option value="${escapeAttr(o)}">${escapeHtml(o)}</option>`)
+      .join("");
+    return (
+      labelHtml +
+      `<select${nameAttr}${reqAttr} style="${inputStyle}">${opts}</select>`
+    );
+  }
+  return (
+    labelHtml +
+    `<input type="${escapeAttr(type)}"${nameAttr}${phAttr}${reqAttr} ` +
+    `style="${inputStyle}">`
+  );
 }
 
 function renderDivider(

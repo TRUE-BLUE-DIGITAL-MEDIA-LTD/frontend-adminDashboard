@@ -26,6 +26,7 @@ import {
 import { MdHorizontalRule, MdSubtitles } from "react-icons/md";
 import type { Editor as GrapesEditor } from "grapesjs";
 import { registerMultipleFormBlock } from "./multiple-form";
+import { registerFormBlock } from "./form";
 
 export const builtInToolNames = [
   // Content
@@ -247,28 +248,9 @@ export function registerBuiltInTools(
   }
 
   if (include.has("form")) {
-    bm.add("oxy-form", {
-      label: "Form",
-      category: CATEGORY_FORM,
-      media: ICONS.form,
-      content: {
-        tagName: "form",
-        attributes: {
-          class: "oxy-form-block",
-          method: "GET",
-          action: "",
-        },
-        components: `<label style="display:flex;flex-direction:column;font-size:14px;color:#374151;margin-bottom:12px;">Email<input type="email" name="email" placeholder="you@example.com" style="margin-top:4px;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;" /></label><button type="submit" style="padding:10px 16px;background:#2563eb;color:#fff;border:0;border-radius:8px;font-size:16px;cursor:pointer;width:100%;">Continue</button>`,
-        style: {
-          display: "flex",
-          "flex-direction": "column",
-          "max-width": "420px",
-          margin: "0 auto",
-          padding: "16px",
-          background: "#ffffff",
-          "border-radius": "8px",
-        },
-      },
+    registerFormBlock(grapes, {
+      blockCategory: CATEGORY_FORM,
+      icon: ICONS.form,
     });
   }
   if (include.has("link")) {

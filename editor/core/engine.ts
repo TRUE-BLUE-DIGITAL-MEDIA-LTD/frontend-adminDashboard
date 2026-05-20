@@ -218,6 +218,25 @@ export function mountEngine(opts: EngineMountOptions): Engine {
 
   const grapes = grapesjs.init({
     container: opts.container,
+    /**
+     * Custom Style Manager / Trait Manager property types MUST be registered
+     * as plugins, not after `grapesjs.init()` returns.
+     *
+     * `grapesjs.init()` runs synchronously as: plugins → `loadOnStart()` →
+     * return. `loadOnStart()` calls `StyleManager.onLoad()`, which adds
+     * `styleManager.sectors` and builds each property model, binding it to a
+     * view class resolved *at that instant*. A type referenced by
+     * STYLE_SECTORS (e.g. `background-image-picker`) only resolves to its
+     * custom view if it was registered before that point. Registering via
+     * `addType()` after init is too late — the `background-image` property is
+     * already bound to GrapesJS' default text-input view, so the Decorations
+     * sector shows a raw `url("...")` field instead of the upload picker.
+     */
+    plugins: [
+      registerColorPopupType,
+      registerColorPopupTraitType,
+      registerBackgroundImagePickerType,
+    ],
     height: opts.height ?? "100vh",
     width: opts.width ?? "auto",
     storageManager: false,
@@ -308,19 +327,11 @@ export function mountEngine(opts: EngineMountOptions): Engine {
 
   void modeConfig;
 
-  // Override the default `color` Style Manager type with a swatch + hex
-  // input that opens a body-mounted, fixed-positioned popover. The OS
-  // native picker drifts to unpredictable viewport positions inside a
-  // narrow side panel; ours anchors to the swatch's bounding rect.
-  registerColorPopupType(grapes);
-  // Register the same picker as a Trait Manager type so component traits
-  // (e.g. multi-step form's button-color, text-color) get the friendly
-  // popup instead of the OS-native trait color input.
-  registerColorPopupTraitType(grapes);
-
-  // Register the URL + Upload background-image picker. The Decorations
-  // sector references this type via `{ type: 'background-image-picker' }`.
-  registerBackgroundImagePickerType(grapes);
+  // The Style Manager (`registerColorPopupType`) and Trait Manager
+  // (`registerColorPopupTraitType`) custom types, plus the background-image
+  // upload picker (`registerBackgroundImagePickerType`), are registered via
+  // the `plugins` array above so they exist before GrapesJS builds the
+  // Style Manager sectors during `init()`. See the comment on `plugins`.
 
   if (opts.registerDefaultTools !== false) {
     registerBuiltInTools(grapes);
