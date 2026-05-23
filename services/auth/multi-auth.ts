@@ -15,6 +15,7 @@ export async function GenerateTOTPService(): Promise<{
         "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,
       },
+      withCredentials: true,
     });
     return totp.data;
   } catch (error: any) {
@@ -44,6 +45,7 @@ export async function VerifyTOTPService(
         "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,
       },
+      withCredentials: true,
     });
     return totp.data;
   } catch (error: any) {
@@ -55,6 +57,7 @@ export async function VerifyTOTPService(
 type RequestValidatePasscodeTOTPService = {
   code: string;
   email: string;
+  trustDevice?: boolean;
 };
 export async function ValidatePasscodeTOTPService(
   request: RequestValidatePasscodeTOTPService,
@@ -70,6 +73,7 @@ export async function ValidatePasscodeTOTPService(
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return totp.data;
   } catch (error: any) {
@@ -95,6 +99,7 @@ export async function BackupTOTPService(
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return totp.data;
   } catch (error: any) {

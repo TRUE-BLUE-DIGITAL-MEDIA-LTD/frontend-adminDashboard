@@ -23,6 +23,7 @@ export async function signInService(
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       },
     );
     return signIn.data;
