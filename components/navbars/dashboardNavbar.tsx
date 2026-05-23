@@ -157,6 +157,12 @@ function DashboardNavbar({
               >
                 account settings
               </Link>
+              <Link
+                href={"/account/devices"}
+                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
+              >
+                Trusted Devices
+              </Link>
               <li
                 onClick={signOut}
                 className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
