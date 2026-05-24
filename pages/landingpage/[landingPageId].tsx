@@ -21,7 +21,7 @@ import {
 } from "../../services/admin/landingPage";
 import { GetUser } from "../../services/admin/user";
 import { Dropdown } from "primereact/dropdown";
-import EmailEditor, { EditorRef, EmailEditorProps } from "react-email-editor";
+import { OxyEditor, type OxyEditorRef } from "@/editor";
 import { MdDomainVerification } from "react-icons/md";
 import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import SpinLoading from "../../components/loadings/spinLoading";
@@ -44,7 +44,10 @@ interface UpdateLandingPageData {
 }
 
 function Index({ user }: { user: User }) {
-  const emailEditorRef = useRef<EditorRef | null>(null);
+  // Kept the variable name to minimize churn in the AiDesign + save call
+  // sites below. OxyEditorRef has the same `{ editor }` shape as
+  // react-email-editor's EditorRef, so existing accessors keep working.
+  const emailEditorRef = useRef<OxyEditorRef | null>(null);
   const router = useRouter();
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
@@ -118,12 +121,9 @@ function Index({ user }: { user: User }) {
     }
   }, [landingPage.data]);
 
-  const handleOnReadyEmailEditor: EmailEditorProps["onReady"] = (unlayer) => {
-    if (landingPage.data) {
-      const json = JSON.parse(landingPage.data.json);
-      emailEditorRef?.current?.editor?.loadDesign(json);
-    }
-  };
+  // No onReady-driven loadDesign: the editor is rendered only after the
+  // landingPage query resolves (see the JSX below), so `initialDesign`
+  // is sufficient. Drops the old Unlayer onReady wiring entirely.
 
   const handleChangeLandingPageData = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -155,8 +155,8 @@ function Index({ user }: { user: User }) {
         body: {
           title: landingPageData.title,
           domainId: landingPageData?.domainId,
-          html: html,
-          json: json,
+          ...(blurEditor === false && { html }),
+          ...(blurEditor === false && { json }),
           route:
             !landingPageData.route || landingPageData.route === ""
               ? null
@@ -281,23 +281,31 @@ function Index({ user }: { user: User }) {
                 SHOW
               </button>
             </div>
-          ) : (
-            <EmailEditor
-              editorId="editor"
+          ) : landingPage.data ? (
+            <OxyEditor
               ref={emailEditorRef}
-              onReady={handleOnReadyEmailEditor}
-              style={{ height: "40rem", width: "80%" }}
-              options={{
-                displayMode: "web",
-                customJS: [
-                  window.location.hostname === "localhost" ||
-                  window.location.href.includes("localhost")
-                    ? "http://localhost:8080/unlayer-custom/multiple-form.js"
-                    : "https://oxyclick.com/unlayer-custom/multiple-form.js",
-                ],
-              }}
-              projectId={270222}
+              mode="page"
+              // EditorInstance.loadDesign auto-detects Unlayer designs
+              // (body.rows) vs GrapesJS project data (pages), so the
+              // stringified JSON saved by the legacy editor loads
+              // straight through. The multi-form custom tool is now a
+              // built-in component type — no customJS shim needed.
+              initialDesign={JSON.parse(landingPage.data.json)}
+              height="40rem"
+              style={{ width: "100%" }}
+              showBlocksPanel
+              showLayersPanel
+              showPropertiesPanel
+              showDeviceToolbar
             />
+          ) : (
+            <div
+              className="flex h-[40rem] w-4/5 items-center justify-center"
+              aria-busy="true"
+              aria-label="Loading editor"
+            >
+              <SpinLoading />
+            </div>
           )}
 
           <div className="mt-5 flex w-11/12 justify-end">
@@ -306,10 +314,8 @@ function Index({ user }: { user: User }) {
           {landingPage.data && (
             <AiDesign
               landingPageId={landingPage.data.id}
-              onSuccess={(json: any) => {
-                if (emailEditorRef.current?.editor) {
-                  emailEditorRef.current?.editor?.loadDesign(json);
-                }
+              onSuccess={(html: string) => {
+                emailEditorRef.current?.editor?.setHtml(html);
               }}
             />
           )}
@@ -565,9 +571,17 @@ function Index({ user }: { user: User }) {
             onClick={() => {
               if (emailEditorRef.current?.editor) {
                 emailEditorRef.current?.editor?.exportHtml((data) => {
-                  const { design, html } = data;
-                  // Call a function to process the data
-                  handleUpdateLandingPage(design, html);
+                  const { design, html, css } = data;
+                  // Wrap GrapesJS' html + css into a single self-contained
+                  // document — matches what Unlayer's exportHtml used to
+                  // return, so the saved record is independently servable
+                  // without the backend needing to know about the editor.
+                  const fullHtml = `
+                  <style>${css ?? ""}</style>
+                  </head>
+                  <body>${html}</body>
+                  </html>`;
+                  handleUpdateLandingPage(design, fullHtml);
                 });
               } else {
                 handleUpdateLandingPage(undefined, undefined);

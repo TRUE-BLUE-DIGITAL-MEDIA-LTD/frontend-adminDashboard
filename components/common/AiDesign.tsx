@@ -3,8 +3,26 @@ import { CreateNewDesignOnLandingPageByAiService } from "../../services/admin/la
 import SpinLoading from "../loadings/spinLoading";
 
 interface AiDesignProps {
-  onSuccess?: (json: any) => void;
+  onSuccess?: (html: string) => void;
   landingPageId: string;
+}
+
+function extractHtml(raw: string): string {
+  let cleaned = raw.trim();
+  const fence = cleaned.match(/```(?:html)?\s*([\s\S]*?)\s*```/i);
+  if (fence && fence[1]) cleaned = fence[1].trim();
+
+  const doc = new DOMParser().parseFromString(cleaned, "text/html");
+
+  const styleEls = Array.from(doc.querySelectorAll("style"));
+  const styles = styleEls.map((el) => el.textContent ?? "").join("\n");
+  styleEls.forEach((el) => el.remove());
+
+  doc.querySelectorAll("script").forEach((el) => el.remove());
+
+  const bodyInner = doc.body?.innerHTML ?? cleaned;
+  const prefix = styles ? `<style>${styles}</style>` : "";
+  return (prefix + bodyInner).trim();
 }
 
 function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
@@ -27,23 +45,11 @@ function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
         },
       });
 
-      if (onSuccess) {
-        let cleanJsonString = result;
-        const jsonMatch = result.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-        if (jsonMatch && jsonMatch[1]) {
-          cleanJsonString = jsonMatch[1];
-        } else {
-          // Fallback: Try to find the first '{' and last '}'
-          const startIndex = result.indexOf("{");
-          const endIndex = result.lastIndexOf("}");
-          if (startIndex !== -1 && endIndex !== -1) {
-            cleanJsonString = result.substring(startIndex, endIndex + 1);
-          }
-        }
-
-        const designJson = JSON.parse(cleanJsonString.trim());
-        onSuccess(designJson);
+      const html = extractHtml(result);
+      if (!html) {
+        throw new Error("AI returned no output. Please try again.");
       }
+      onSuccess?.(html);
       setContext("");
       setStreamedResponse("");
     } catch (err: any) {

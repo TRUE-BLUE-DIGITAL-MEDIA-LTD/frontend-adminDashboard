@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
-import DashboardLayout from "../layouts/dashboardLayout";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
-import { GetUser } from "../services/admin/user";
-import { Language, User } from "../models";
-import Searchbar from "../components/category/searchbar";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { GetAllDomains } from "../services/admin/domain";
 import { Skeleton } from "@mui/material";
-import { languages } from "../data/languages";
-import { GetAllCategoriesByPartnerService } from "../services/admin/categories";
+import { useQuery } from "@tanstack/react-query";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { GetAllLandingPageService } from "../services/admin/landingPage";
-import LandingPageLists from "../components/landingPages/landingPageLists";
+import { parseCookies } from "nookies";
+import { useState } from "react";
+import Searchbar from "../components/category/searchbar";
+import { languages } from "../data/languages";
+import DashboardLayout from "../layouts/dashboardLayout";
+import { Language, User } from "../models";
+import { GetAllCategoriesByPartnerService } from "../services/admin/categories";
+import { GetAllDomains } from "../services/admin/domain";
+import { GetUser } from "../services/admin/user";
 
 export type QueryFilterLandingPages = {
   categoryId?: string;
