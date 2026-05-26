@@ -1,7 +1,7 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { Category, Domain, LandingPage, Language } from "../../models";
+import { Category, Domain, LandingPage, Language, Translations } from "../../models";
 
 export interface InputCreateLandingPageService {
   title: string;
@@ -18,6 +18,9 @@ export interface InputCreateLandingPageService {
   description: string;
   googleAnalyticsId?: string | null;
   route?: string;
+  primaryLanguage?: Language;
+  supportedLanguages?: Language[];
+  translations?: Translations;
 }
 export async function CreateLandingPageService(
   input: InputCreateLandingPageService,
@@ -67,6 +70,9 @@ interface InputUpdateLandingPageService {
     secondOffer?: string | null;
     backOffer?: string | null;
     route?: string | null;
+    primaryLanguage?: Language;
+    supportedLanguages?: Language[];
+    translations?: Translations;
   };
 }
 export async function UpdateLandingPageService(
