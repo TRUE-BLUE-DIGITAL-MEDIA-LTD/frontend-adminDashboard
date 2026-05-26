@@ -27,6 +27,7 @@ export interface LandingPage {
 }
 
 export type Language =
+  | "th"
   | "en"
   | "es"
   | "fr"
