@@ -17,7 +17,9 @@ import {
   BiRedo,
 } from "react-icons/bi";
 import { mountEngine, type Engine } from "../core/engine";
-import type { DesignJson, EditorInstance, EditorMode } from "../types";
+import type { DesignJson, EditorInstance, EditorMode, Language, Translations } from "../types";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { TranslationsPanel } from "./TranslationsPanel";
 
 export type OxyDeviceId = "desktop" | "mobile";
 
@@ -56,6 +58,17 @@ export interface OxyEditorProps {
    */
   showDeviceToolbar?: boolean;
   initialDevice?: OxyDeviceId;
+
+  /** When provided, enables multilingual editing in the toolbar/panels. */
+  primaryLanguage?: Language;
+  supportedLanguages?: Language[];
+  currentLanguage?: Language;
+  translations?: Translations;
+  onTranslationsChange?(next: Translations): void;
+  onCurrentLanguageChange?(lang: Language): void;
+  onAddLanguage?(): void;
+  /** Fires the bulk dialog flow. Parent runs the actual stream. */
+  onRequestTranslateAll?(): void;
 }
 
 export interface OxyEditorRef {
@@ -81,6 +94,14 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       layersPanelWidth,
       showDeviceToolbar,
       initialDevice = "desktop",
+      primaryLanguage,
+      supportedLanguages,
+      currentLanguage,
+      translations,
+      onTranslationsChange,
+      onCurrentLanguageChange,
+      onAddLanguage,
+      onRequestTranslateAll,
     },
     ref,
   ) {
@@ -92,6 +113,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     const [instance, setInstance] = useState<EditorInstance | null>(null);
     const [hasSelection, setHasSelection] = useState<boolean>(false);
     const [device, setDevice] = useState<OxyDeviceId>(initialDevice);
+    const [selectedI18nKey, setSelectedI18nKey] = useState<string | null>(null);
 
     // Local toggle state for the three side panels. The `showXxxPanel` props
     // gate whether the panel is mounted at all; the toggles below control
@@ -149,8 +171,15 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         engine.grapes.setDevice(initialDevice);
       }
 
-      const onSelect = () => setHasSelection(true);
-      const onDeselect = () => setHasSelection(false);
+      const onSelect = (comp?: any) => {
+        setHasSelection(true);
+        const key = comp?.getAttributes?.()?.['data-i18n'] ?? null;
+        setSelectedI18nKey(typeof key === 'string' ? key : null);
+      };
+      const onDeselect = () => {
+        setHasSelection(false);
+        setSelectedI18nKey(null);
+      };
       engine.grapes.on("component:selected", onSelect);
       engine.grapes.on("component:deselected", onDeselect);
 
@@ -161,6 +190,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         engineRef.current = null;
         setInstance(null);
         setHasSelection(false);
+        setSelectedI18nKey(null);
       };
     }, [mode]);
 
@@ -222,6 +252,23 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         document.removeEventListener("keydown", onKeyDown);
       };
     }, [instance]);
+
+    useEffect(() => {
+      const engine = engineRef.current;
+      if (!engine || !translations || !primaryLanguage || !currentLanguage) return;
+      const wrapper = engine.grapes.getWrapper();
+      if (!wrapper) return;
+
+      wrapper.find('[data-i18n]').forEach((comp: any) => {
+        const key = comp.getAttributes()['data-i18n'];
+        if (!key) return;
+        const text =
+          translations[currentLanguage]?.strings?.[key] ??
+          translations[primaryLanguage]?.strings?.[key] ??
+          '';
+        comp.set('content', text);
+      });
+    }, [currentLanguage, translations, primaryLanguage]);
 
     const useLayout =
       showBlocksPanel ||
@@ -333,6 +380,27 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 >
                   <BiRedo size={16} />
                 </button>
+                {primaryLanguage && supportedLanguages && currentLanguage && (
+                  <>
+                    <span className="oxy-device-toolbar__divider" aria-hidden />
+                    <LanguageSwitcher
+                      primary={primaryLanguage}
+                      supported={supportedLanguages}
+                      current={currentLanguage}
+                      onChange={(lang) => onCurrentLanguageChange?.(lang)}
+                      onAddLanguage={() => onAddLanguage?.()}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => onRequestTranslateAll?.()}
+                      className="oxy-device-toolbar__btn"
+                      aria-label="Translate all"
+                      title="Translate all"
+                    >
+                      ↻ Translate all
+                    </button>
+                  </>
+                )}
                 <span className="oxy-device-toolbar__divider" aria-hidden />
                 {showBlocksPanel && (
                   <button
@@ -451,6 +519,28 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                   overflow: "auto",
                 }}
               />
+              {primaryLanguage && supportedLanguages && translations && (
+                <TranslationsPanel
+                  i18nKey={selectedI18nKey}
+                  primary={primaryLanguage}
+                  supported={supportedLanguages}
+                  translations={translations}
+                  onChange={(lang, key, value) => {
+                    const next: Translations = {
+                      ...translations,
+                      [lang]: {
+                        ...(translations[lang] ?? { strings: {}, title: '', description: '' }),
+                        strings: { ...(translations[lang]?.strings ?? {}), [key]: value },
+                      },
+                    };
+                    onTranslationsChange?.(next);
+                  }}
+                  onTranslateOne={(lang, key) => {
+                    // Hand off to parent. Parent decides what AI flow to run.
+                    onRequestTranslateAll?.();
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
