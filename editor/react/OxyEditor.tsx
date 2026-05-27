@@ -17,7 +17,13 @@ import {
   BiRedo,
 } from "react-icons/bi";
 import { mountEngine, type Engine } from "../core/engine";
-import type { DesignJson, EditorInstance, EditorMode, Language, Translations } from "../types";
+import type {
+  DesignJson,
+  EditorInstance,
+  EditorMode,
+  Language,
+  Translations,
+} from "../types";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TranslationsPanel } from "./TranslationsPanel";
 
@@ -171,10 +177,25 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         engine.grapes.setDevice(initialDevice);
       }
 
+      const findI18nKey = (comp: any): string | null => {
+        if (!comp) return null;
+        const own = comp.getAttributes?.()?.["data-i18n"];
+        if (typeof own === "string" && own.length > 0) return own;
+        // Recursive descent — GrapesJS `find()` with attribute selectors is
+        // unreliable across versions, so walk the tree by hand.
+        const children = comp.components?.();
+        const len = children?.length ?? 0;
+        for (let i = 0; i < len; i++) {
+          const child = children.at(i);
+          const found = findI18nKey(child);
+          if (found) return found;
+        }
+        return null;
+      };
+
       const onSelect = (comp?: any) => {
         setHasSelection(true);
-        const key = comp?.getAttributes?.()?.['data-i18n'] ?? null;
-        setSelectedI18nKey(typeof key === 'string' ? key : null);
+        setSelectedI18nKey(findI18nKey(comp));
       };
       const onDeselect = () => {
         setHasSelection(false);
@@ -255,20 +276,35 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
 
     useEffect(() => {
       const engine = engineRef.current;
-      if (!engine || !translations || !primaryLanguage || !currentLanguage) return;
-      const wrapper = engine.grapes.getWrapper();
-      if (!wrapper) return;
+      if (
+        !engine ||
+        !instance ||
+        !translations ||
+        !primaryLanguage ||
+        !currentLanguage
+      ) {
+        return;
+      }
+      const doc = engine.grapes.Canvas.getDocument();
+      if (!doc) return;
 
-      wrapper.find('[data-i18n]').forEach((comp: any) => {
-        const key = comp.getAttributes()['data-i18n'];
+      doc.querySelectorAll("[data-i18n]").forEach((node) => {
+        const tag = node.tagName.toLowerCase();
+        if (tag === "script" || tag === "style") return;
+        const key = node.getAttribute("data-i18n");
         if (!key) return;
-        const text =
-          translations[currentLanguage]?.strings?.[key] ??
-          translations[primaryLanguage]?.strings?.[key] ??
-          '';
-        comp.set('content', text);
+
+        const target = translations[currentLanguage]?.strings?.[key];
+        if (typeof target === "string" && target.length > 0) {
+          node.textContent = target;
+          return;
+        }
+        const primary = translations[primaryLanguage]?.strings?.[key];
+        if (typeof primary === "string" && primary.length > 0) {
+          node.textContent = primary;
+        }
       });
-    }, [currentLanguage, translations, primaryLanguage]);
+    }, [currentLanguage, translations, primaryLanguage, instance]);
 
     const useLayout =
       showBlocksPanel ||
@@ -529,8 +565,15 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                     const next: Translations = {
                       ...translations,
                       [lang]: {
-                        ...(translations[lang] ?? { strings: {}, title: '', description: '' }),
-                        strings: { ...(translations[lang]?.strings ?? {}), [key]: value },
+                        ...(translations[lang] ?? {
+                          strings: {},
+                          title: "",
+                          description: "",
+                        }),
+                        strings: {
+                          ...(translations[lang]?.strings ?? {}),
+                          [key]: value,
+                        },
                       },
                     };
                     onTranslationsChange?.(next);

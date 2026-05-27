@@ -87,6 +87,10 @@ function Index({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
   const [translateDialogOpen, setTranslateDialogOpen] = useState(false);
   const [translateProgress, setTranslateProgress] = useState<Partial<Record<Language, { processed: number; total: number; failed?: string }>>>({});
+  // Bumped after a successful Update so OxyEditor remounts with the freshly-
+  // saved data — lets the user verify what landed in the DB without reloading
+  // the whole page.
+  const [editorReloadKey, setEditorReloadKey] = useState(0);
   const [landingPageData, setLandingPageData] = useState<UpdateLandingPageData>(
     {
       name: "",
@@ -218,6 +222,11 @@ function Index({ user }: { user: User }) {
           "https://" + domain?.[0]?.name
         }>click to open : ${domain?.[0]?.name}</a>`,
       });
+      // Pull the freshly-saved row, then remount the editor against it so the
+      // canvas reflects exactly what's now persisted (e.g. data-i18n keys
+      // stamped by the i18n plugin land in `json` only after this save).
+      await landingPage.refetch();
+      setEditorReloadKey((k) => k + 1);
       setIsLoading(() => false);
       setOpen(() => true);
     } catch (err: any) {
@@ -301,6 +310,10 @@ function Index({ user }: { user: User }) {
             </div>
           ) : landingPage.data ? (
             <OxyEditor
+              // Changing key forces React to unmount + remount the editor,
+              // which re-runs the mount effect with the latest initialDesign
+              // from the refetched lander. Bumped on every successful save.
+              key={editorReloadKey}
               ref={emailEditorRef}
               mode="page"
               // EditorInstance.loadDesign auto-detects Unlayer designs
@@ -354,11 +367,22 @@ function Index({ user }: { user: User }) {
             progress={translateProgress}
             onTranslate={async ({ sourceLanguage, targetLanguages, scope }) => {
               setTranslateProgress({});
+              // Pull the editor's live HTML so the backend translates against
+              // the current canvas — picks up edits the user hasn't saved yet.
+              // `exportHtml` is callback-based, so wrap it in a Promise.
+              const currentHtml = await new Promise<string | undefined>(
+                (resolve) => {
+                  const editor = emailEditorRef.current?.editor;
+                  if (!editor) return resolve(undefined);
+                  editor.exportHtml(({ html }) => resolve(html));
+                },
+              );
               await TranslateLandingPageService({
                 landingPageId: router.query.landingPageId as string,
                 sourceLanguage: sourceLanguage as Language,
                 targetLanguages: targetLanguages as Language[],
                 scope,
+                ...(currentHtml !== undefined ? { html: currentHtml } : {}),
                 onEvent: (e) => {
                   if (e.type === 'string' && e.key && typeof e.value === 'string') {
                     setLandingPageData((p) => {
