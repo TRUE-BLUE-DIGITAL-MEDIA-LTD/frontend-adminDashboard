@@ -1,7 +1,13 @@
 import axios from "axios";
 import Error from "next/error";
 import { parseCookies } from "nookies";
-import { Category, Domain, LandingPage, Language } from "../../models";
+import {
+  Category,
+  Domain,
+  LandingPage,
+  Language,
+  Translations,
+} from "../../models";
 
 export interface InputCreateLandingPageService {
   title: string;
@@ -18,6 +24,9 @@ export interface InputCreateLandingPageService {
   description: string;
   googleAnalyticsId?: string | null;
   route?: string;
+  primaryLanguage?: Language;
+  supportedLanguages?: Language[];
+  translations?: Translations;
 }
 export async function CreateLandingPageService(
   input: InputCreateLandingPageService,
@@ -67,6 +76,9 @@ interface InputUpdateLandingPageService {
     secondOffer?: string | null;
     backOffer?: string | null;
     route?: string | null;
+    primaryLanguage?: Language;
+    supportedLanguages?: Language[];
+    translations?: Translations;
   };
 }
 export async function UpdateLandingPageService(
@@ -375,5 +387,80 @@ export async function CreateNewDesignOnLandingPageByAiService(
   } catch (err: any) {
     console.log(err);
     throw err;
+  }
+}
+
+export interface TranslationEvent {
+  type: "string" | "language-complete" | "language-error";
+  lang: string;
+  key?: string;
+  value?: string;
+  count?: number;
+  message?: string;
+}
+
+export interface TranslateLandingPageInput {
+  landingPageId: string;
+  sourceLanguage: Language;
+  targetLanguages: Language[];
+  scope: "overwrite" | "missing";
+  onlyKeys?: string[];
+  /**
+   * The editor's current HTML. When supplied, the backend translates against
+   * this instead of the saved DB copy — so unsaved canvas edits are picked up.
+   */
+  html?: string;
+  onEvent?(event: TranslationEvent): void;
+}
+
+export async function TranslateLandingPageService(
+  input: TranslateLandingPageInput,
+): Promise<void> {
+  const cookies = parseCookies();
+  const access_token = cookies.access_token;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/landing-page/translate`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + access_token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        landingPageId: input.landingPageId,
+        sourceLanguage: input.sourceLanguage,
+        targetLanguages: input.targetLanguages,
+        scope: input.scope,
+        ...(input.onlyKeys ? { onlyKeys: input.onlyKeys } : {}),
+        ...(input.html !== undefined ? { html: input.html } : {}),
+      }),
+    },
+  );
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new globalThis.Error(text || "Translate request failed");
+  }
+  if (!response.body) throw new globalThis.Error("No response body");
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    let nl: number;
+    while ((nl = buf.indexOf("\n")) >= 0) {
+      const line = buf.slice(0, nl).trim();
+      buf = buf.slice(nl + 1);
+      if (!line) continue;
+      try {
+        const evt = JSON.parse(line) as TranslationEvent;
+        input.onEvent?.(evt);
+      } catch {
+        // ignore malformed lines
+      }
+    }
   }
 }

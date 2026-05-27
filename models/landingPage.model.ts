@@ -21,9 +21,13 @@ export interface LandingPage {
   creatorId: string;
   domainId: string | null;
   route: string | undefined | null;
+  primaryLanguage?: Language;
+  supportedLanguages?: Language[];
+  translations?: Translations;
 }
 
 export type Language =
+  | "th"
   | "en"
   | "es"
   | "fr"
@@ -42,3 +46,11 @@ export type Language =
   | "hu"
   | "pl"
   | "cs";
+
+export interface LandingPageTranslation {
+  strings: Record<string, string>;
+  title: string;
+  description: string;
+}
+
+export type Translations = Partial<Record<Language, LandingPageTranslation>>;

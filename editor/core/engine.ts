@@ -19,6 +19,7 @@ import {
 import { importUnlayerDesign } from "../compat/unlayer-import";
 import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
 import type { UnlayerDesign } from "../compat/unlayer-types";
+import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
 import {
   GetSignURLService,
   UploadSignURLService,
@@ -425,10 +426,13 @@ export function mountEngine(opts: EngineMountOptions): Engine {
     },
   };
 
+  const teardownI18n = registerI18nKeysPlugin(grapes);
+
   return {
     instance,
     grapes,
     destroy() {
+      teardownI18n();
       grapes.destroy();
     },
   };

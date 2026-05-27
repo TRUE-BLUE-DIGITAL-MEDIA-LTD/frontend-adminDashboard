@@ -57,3 +57,15 @@ export interface PropertyEditorDefinition<TValue = unknown> {
     updateValue: (next: TValue) => void,
   ): void;
 }
+
+export type Language =
+  | 'th' | 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'hr' | 'de-ch'
+  | 'fr-ch' | 'it-ch' | 'nl' | 'fi' | 'no' | 'sv' | 'ro' | 'hu' | 'pl' | 'cs';
+
+export interface LandingPageTranslation {
+  strings: Record<string, string>;
+  title: string;
+  description: string;
+}
+
+export type Translations = Partial<Record<Language, LandingPageTranslation>>;

@@ -6,6 +6,7 @@ import {
   ErrorMessages,
   Language,
   Message,
+  Translations,
   UnlayerMethods,
   User,
 } from "../../models";
@@ -17,7 +18,7 @@ import {
   UploadURLSingtureFavorIconService,
 } from "../../services/admin/landingPage";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Alert, MenuItem, Skeleton, Snackbar, TextField } from "@mui/material";
+import { Alert, Autocomplete, MenuItem, Skeleton, Snackbar, TextField } from "@mui/material";
 import FullLoading from "../../components/loadings/fullLoading";
 import { languages } from "../../data/languages";
 import { BiUpload } from "react-icons/bi";
@@ -38,6 +39,9 @@ interface CreateLandingPageData {
   categoryId?: string;
   googleAnalyticsId?: string | null;
   language: Language;
+  primaryLanguage: Language;
+  supportedLanguages: Language[];
+  translations: Translations;
   route?: string | undefined;
 }
 
@@ -76,6 +80,9 @@ function Index({ user }: { user: User }) {
       categoryId: "",
       googleAnalyticsId: "",
       language: "en",
+      primaryLanguage: "en",
+      supportedLanguages: ["en"],
+      translations: { en: { strings: {}, title: "", description: "" } },
       route: "",
     },
   );
@@ -110,6 +117,16 @@ function Index({ user }: { user: User }) {
           language: landingPageData.language,
           description: landingPageData.description,
           googleAnalyticsId: landingPageData?.googleAnalyticsId,
+          primaryLanguage: landingPageData.primaryLanguage,
+          supportedLanguages: landingPageData.supportedLanguages,
+          translations: {
+            ...landingPageData.translations,
+            [landingPageData.primaryLanguage]: {
+              ...(landingPageData.translations[landingPageData.primaryLanguage] ?? { strings: {} }),
+              title: landingPageData.title,
+              description: landingPageData.description,
+            },
+          },
           ...(landingPageData.route && { route: landingPageData.route }),
         };
         if (landingPageData.domainId) {
@@ -202,6 +219,13 @@ function Index({ user }: { user: User }) {
           showLayersPanel
           showPropertiesPanel
           showDeviceToolbar
+          primaryLanguage={landingPageData.primaryLanguage}
+          supportedLanguages={landingPageData.supportedLanguages}
+          currentLanguage={landingPageData.primaryLanguage}
+          translations={landingPageData.translations}
+          onTranslationsChange={(next) =>
+            setLandingPageData((p) => ({ ...p, translations: next }))
+          }
         />
 
         <div className="flex w-full justify-start">
@@ -222,22 +246,39 @@ function Index({ user }: { user: User }) {
             <TextField
               required
               select
-              name="language"
-              label="Select"
-              value={landingPageData.language}
-              onChange={handleChangeLandingPageData}
-              helperText="Please select language"
+              name="primaryLanguage"
+              label="Primary language"
+              value={landingPageData.primaryLanguage}
+              onChange={(e) => {
+                const v = e.target.value as Language;
+                setLandingPageData((p) => ({
+                  ...p,
+                  primaryLanguage: v,
+                  language: v, // keep legacy field in sync
+                  supportedLanguages: Array.from(new Set([...p.supportedLanguages, v])),
+                }));
+              }}
+              helperText="Source language for AI translation"
             >
-              {languages?.map((option) => {
-                return (
-                  <MenuItem key={option.value} value={option.value}>
-                    <div className="flex items-center justify-start gap-2">
-                      <span>{option.name}</span>
-                    </div>
-                  </MenuItem>
-                );
-              })}
+              {languages?.map((option) => (
+                <MenuItem key={option.value} value={option.value}>{option.name}</MenuItem>
+              ))}
             </TextField>
+
+            <Autocomplete
+              multiple
+              options={languages.map((l) => l.value)}
+              getOptionLabel={(v) => languages.find((l) => l.value === v)?.name ?? v}
+              value={landingPageData.supportedLanguages}
+              onChange={(_, value) => {
+                const next = value as Language[];
+                if (!next.includes(landingPageData.primaryLanguage)) {
+                  next.push(landingPageData.primaryLanguage);
+                }
+                setLandingPageData((p) => ({ ...p, supportedLanguages: next }));
+              }}
+              renderInput={(params) => <TextField {...params} label="Supported languages" />}
+            />
             <TextField
               onChange={handleChangeLandingPageData}
               name="route"

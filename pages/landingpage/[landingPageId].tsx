@@ -1,4 +1,4 @@
-import { Alert, MenuItem, Snackbar, TextField } from "@mui/material";
+import { Alert, Autocomplete, MenuItem, Snackbar, Tab, Tabs, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Image from "next/image";
@@ -9,13 +9,14 @@ import { BiUpload } from "react-icons/bi";
 import Swal from "sweetalert2";
 import { languages } from "../../data/languages";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Category, Language, Message, User } from "../../models";
+import { Category, Language, Message, Translations, User } from "../../models";
 import {
   DomainWithLandingPage,
   GetAllDomains,
 } from "../../services/admin/domain";
 import {
   GetLandingPageService,
+  TranslateLandingPageService,
   UpdateLandingPageService,
   UploadURLSingtureFavorIconService,
 } from "../../services/admin/landingPage";
@@ -27,6 +28,7 @@ import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
 import AiDesign from "../../components/common/AiDesign";
+import { TranslateAllDialog } from "@/editor/react/TranslateAllDialog";
 interface UpdateLandingPageData {
   name: string;
   title: string;
@@ -41,6 +43,9 @@ interface UpdateLandingPageData {
   backOffer: string;
   googleAnalyticsId: string | null;
   route: string | undefined | null;
+  primaryLanguage: Language;
+  supportedLanguages: Language[];
+  translations: Translations;
 }
 
 function Index({ user }: { user: User }) {
@@ -80,6 +85,12 @@ function Index({ user }: { user: User }) {
     message: "",
   });
   const [open, setOpen] = useState(false);
+  const [translateDialogOpen, setTranslateDialogOpen] = useState(false);
+  const [translateProgress, setTranslateProgress] = useState<Partial<Record<Language, { processed: number; total: number; failed?: string }>>>({});
+  // Bumped after a successful Update so OxyEditor remounts with the freshly-
+  // saved data — lets the user verify what landed in the DB without reloading
+  // the whole page.
+  const [editorReloadKey, setEditorReloadKey] = useState(0);
   const [landingPageData, setLandingPageData] = useState<UpdateLandingPageData>(
     {
       name: "",
@@ -95,8 +106,12 @@ function Index({ user }: { user: User }) {
       secondOffer: "",
       backOffer: "",
       route: "",
+      primaryLanguage: "en",
+      supportedLanguages: ["en"],
+      translations: { en: { strings: {}, title: "", description: "" } },
     },
   );
+  const [currentLanguage, setCurrentLanguage] = useState<Language>("en");
 
   useEffect(() => {
     if (landingPage.data) {
@@ -115,9 +130,13 @@ function Index({ user }: { user: User }) {
           secondOffer: landingPage?.data?.secondOffer as string,
           backOffer: landingPage?.data?.backOffer as string,
           route: landingPage.data.route,
+          primaryLanguage: landingPage.data.primaryLanguage ?? landingPage.data.language,
+          supportedLanguages: landingPage.data.supportedLanguages ?? [landingPage.data.language],
+          translations: landingPage.data.translations ?? {},
         };
       });
       setIcon(() => landingPage?.data?.icon);
+      setCurrentLanguage(landingPage.data.primaryLanguage ?? landingPage.data.language);
     }
   }, [landingPage.data]);
 
@@ -153,7 +172,9 @@ function Index({ user }: { user: User }) {
           id: router?.query?.landingPageId as string,
         },
         body: {
-          title: landingPageData.title,
+          title: landingPageData.translations[landingPageData.primaryLanguage]?.title ?? landingPageData.title,
+          description: landingPageData.translations[landingPageData.primaryLanguage]?.description ?? landingPageData.description,
+          language: landingPageData.primaryLanguage,
           domainId: landingPageData?.domainId,
           ...(blurEditor === false && { html }),
           ...(blurEditor === false && { json }),
@@ -170,8 +191,6 @@ function Index({ user }: { user: User }) {
           name: landingPageData.name,
           icon: icon,
           categoryId: landingPageData.categoryId,
-          language: landingPageData.language,
-          description: landingPageData.description,
           googleAnalyticsId: landingPageData?.googleAnalyticsId as string,
           secondOffer:
             landingPageData.secondOffer === ""
@@ -180,6 +199,9 @@ function Index({ user }: { user: User }) {
           backOffer:
             landingPageData.backOffer === "" ? null : landingPageData.backOffer,
           ...(landingPageData.route && { route: landingPageData.route }),
+          primaryLanguage: landingPageData.primaryLanguage,
+          supportedLanguages: landingPageData.supportedLanguages,
+          translations: landingPageData.translations,
         },
       });
       setMessage(() => {
@@ -200,6 +222,11 @@ function Index({ user }: { user: User }) {
           "https://" + domain?.[0]?.name
         }>click to open : ${domain?.[0]?.name}</a>`,
       });
+      // Pull the freshly-saved row, then remount the editor against it so the
+      // canvas reflects exactly what's now persisted (e.g. data-i18n keys
+      // stamped by the i18n plugin land in `json` only after this save).
+      await landingPage.refetch();
+      setEditorReloadKey((k) => k + 1);
       setIsLoading(() => false);
       setOpen(() => true);
     } catch (err: any) {
@@ -283,6 +310,10 @@ function Index({ user }: { user: User }) {
             </div>
           ) : landingPage.data ? (
             <OxyEditor
+              // Changing key forces React to unmount + remount the editor,
+              // which re-runs the mount effect with the latest initialDesign
+              // from the refetched lander. Bumped on every successful save.
+              key={editorReloadKey}
               ref={emailEditorRef}
               mode="page"
               // EditorInstance.loadDesign auto-detects Unlayer designs
@@ -297,6 +328,15 @@ function Index({ user }: { user: User }) {
               showLayersPanel
               showPropertiesPanel
               showDeviceToolbar
+              primaryLanguage={landingPageData.primaryLanguage}
+              supportedLanguages={landingPageData.supportedLanguages}
+              currentLanguage={currentLanguage}
+              translations={landingPageData.translations}
+              onTranslationsChange={(next) =>
+                setLandingPageData((p) => ({ ...p, translations: next as Translations }))
+              }
+              onCurrentLanguageChange={(lang) => setCurrentLanguage(lang as Language)}
+              onRequestTranslateAll={() => setTranslateDialogOpen(true)}
             />
           ) : (
             <div
@@ -319,6 +359,59 @@ function Index({ user }: { user: User }) {
               }}
             />
           )}
+          <TranslateAllDialog
+            open={translateDialogOpen}
+            primary={landingPageData.primaryLanguage}
+            supported={landingPageData.supportedLanguages}
+            onClose={() => setTranslateDialogOpen(false)}
+            progress={translateProgress}
+            onTranslate={async ({ sourceLanguage, targetLanguages, scope }) => {
+              setTranslateProgress({});
+              // Pull the editor's live HTML so the backend translates against
+              // the current canvas — picks up edits the user hasn't saved yet.
+              // `exportHtml` is callback-based, so wrap it in a Promise.
+              const currentHtml = await new Promise<string | undefined>(
+                (resolve) => {
+                  const editor = emailEditorRef.current?.editor;
+                  if (!editor) return resolve(undefined);
+                  editor.exportHtml(({ html }) => resolve(html));
+                },
+              );
+              await TranslateLandingPageService({
+                landingPageId: router.query.landingPageId as string,
+                sourceLanguage: sourceLanguage as Language,
+                targetLanguages: targetLanguages as Language[],
+                scope,
+                ...(currentHtml !== undefined ? { html: currentHtml } : {}),
+                onEvent: (e) => {
+                  if (e.type === 'string' && e.key && typeof e.value === 'string') {
+                    setLandingPageData((p) => {
+                      const lang = e.lang as Language;
+                      const existing = p.translations[lang] ?? { strings: {}, title: '', description: '' };
+                      const next = { ...existing };
+                      if (e.key === '_seo_title') next.title = e.value!;
+                      else if (e.key === '_seo_description') next.description = e.value!;
+                      else next.strings = { ...existing.strings, [e.key!]: e.value! };
+                      return { ...p, translations: { ...p.translations, [lang]: next } };
+                    });
+                    setTranslateProgress((p) => ({
+                      ...p,
+                      [e.lang]: {
+                        processed: (p[e.lang as Language]?.processed ?? 0) + 1,
+                        total: p[e.lang as Language]?.total ?? 0,
+                      },
+                    }));
+                  } else if (e.type === 'language-error') {
+                    setTranslateProgress((p) => ({
+                      ...p,
+                      [e.lang]: { processed: p[e.lang as Language]?.processed ?? 0, total: p[e.lang as Language]?.total ?? 0, failed: e.message ?? 'failed' },
+                    }));
+                  }
+                },
+              });
+              await landingPage.refetch();
+            }}
+          />
         </main>
 
         <div className="flex w-full justify-start">
@@ -339,22 +432,38 @@ function Index({ user }: { user: User }) {
             <TextField
               required
               select
-              name="language"
-              label="Select"
-              value={landingPageData.language}
-              onChange={handleChangeLandingPageData}
-              helperText="Please select language"
+              name="primaryLanguage"
+              label="Primary language"
+              value={landingPageData.primaryLanguage}
+              onChange={(e) => {
+                const v = e.target.value as Language;
+                setLandingPageData((p) => ({
+                  ...p,
+                  primaryLanguage: v,
+                  supportedLanguages: Array.from(new Set([...p.supportedLanguages, v])),
+                }));
+              }}
+              helperText="Source language for AI translation"
             >
-              {languages?.map((option) => {
-                return (
-                  <MenuItem key={option.value} value={option.value}>
-                    <div className="flex items-center justify-start gap-2">
-                      <span>{option.name}</span>
-                    </div>
-                  </MenuItem>
-                );
-              })}
+              {languages?.map((option) => (
+                <MenuItem key={option.value} value={option.value}>{option.name}</MenuItem>
+              ))}
             </TextField>
+
+            <Autocomplete
+              multiple
+              options={languages.map((l) => l.value)}
+              getOptionLabel={(v) => languages.find((l) => l.value === v)?.name ?? v}
+              value={landingPageData.supportedLanguages}
+              onChange={(_, value) => {
+                const next = value as Language[];
+                if (!next.includes(landingPageData.primaryLanguage)) {
+                  next.push(landingPageData.primaryLanguage);
+                }
+                setLandingPageData((p) => ({ ...p, supportedLanguages: next }));
+              }}
+              renderInput={(params) => <TextField {...params} label="Supported languages" />}
+            />
             <TextField
               onChange={handleChangeLandingPageData}
               name="route"
@@ -371,22 +480,50 @@ function Index({ user }: { user: User }) {
         </div>
         <div className="flex w-full items-center justify-center gap-5 py-5">
           <div className="grid w-10/12 grid-cols-2 gap-5 2xl:grid-cols-3">
-            <TextField
-              onChange={handleChangeLandingPageData}
-              name="title"
-              label="title"
-              variant="outlined"
-              required
-              value={landingPageData.title}
-            />
-            <TextField
-              onChange={handleChangeLandingPageData}
-              name="description"
-              label="description"
-              variant="outlined"
-              required
-              value={landingPageData.description}
-            />
+            <div style={{ gridColumn: 'span 2' }}>
+              <Tabs
+                value={currentLanguage}
+                onChange={(_, v) => setCurrentLanguage(v as Language)}
+                variant="scrollable"
+              >
+                {landingPageData.supportedLanguages.map((lang) => (
+                  <Tab key={lang} value={lang} label={languages.find((l) => l.value === lang)?.name ?? lang} />
+                ))}
+              </Tabs>
+              {landingPageData.supportedLanguages.map((lang) => {
+                const t = landingPageData.translations[lang] ?? { strings: {}, title: '', description: '' };
+                return currentLanguage === lang ? (
+                  <div key={lang} style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 12 }}>
+                    <TextField
+                      label="Title"
+                      value={t.title}
+                      onChange={(e) => {
+                        setLandingPageData((p) => ({
+                          ...p,
+                          translations: {
+                            ...p.translations,
+                            [lang]: { ...t, title: e.target.value },
+                          },
+                        }));
+                      }}
+                    />
+                    <TextField
+                      label="Description"
+                      value={t.description}
+                      onChange={(e) => {
+                        setLandingPageData((p) => ({
+                          ...p,
+                          translations: {
+                            ...p.translations,
+                            [lang]: { ...t, description: e.target.value },
+                          },
+                        }));
+                      }}
+                    />
+                  </div>
+                ) : null;
+              })}
+            </div>
             <TextField
               onChange={handleChangeLandingPageData}
               name="imageLink"

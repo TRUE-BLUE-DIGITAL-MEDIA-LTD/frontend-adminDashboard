@@ -17,7 +17,15 @@ import {
   BiRedo,
 } from "react-icons/bi";
 import { mountEngine, type Engine } from "../core/engine";
-import type { DesignJson, EditorInstance, EditorMode } from "../types";
+import type {
+  DesignJson,
+  EditorInstance,
+  EditorMode,
+  Language,
+  Translations,
+} from "../types";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { TranslationsPanel } from "./TranslationsPanel";
 
 export type OxyDeviceId = "desktop" | "mobile";
 
@@ -56,6 +64,17 @@ export interface OxyEditorProps {
    */
   showDeviceToolbar?: boolean;
   initialDevice?: OxyDeviceId;
+
+  /** When provided, enables multilingual editing in the toolbar/panels. */
+  primaryLanguage?: Language;
+  supportedLanguages?: Language[];
+  currentLanguage?: Language;
+  translations?: Translations;
+  onTranslationsChange?(next: Translations): void;
+  onCurrentLanguageChange?(lang: Language): void;
+  onAddLanguage?(): void;
+  /** Fires the bulk dialog flow. Parent runs the actual stream. */
+  onRequestTranslateAll?(): void;
 }
 
 export interface OxyEditorRef {
@@ -81,6 +100,14 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       layersPanelWidth,
       showDeviceToolbar,
       initialDevice = "desktop",
+      primaryLanguage,
+      supportedLanguages,
+      currentLanguage,
+      translations,
+      onTranslationsChange,
+      onCurrentLanguageChange,
+      onAddLanguage,
+      onRequestTranslateAll,
     },
     ref,
   ) {
@@ -92,6 +119,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     const [instance, setInstance] = useState<EditorInstance | null>(null);
     const [hasSelection, setHasSelection] = useState<boolean>(false);
     const [device, setDevice] = useState<OxyDeviceId>(initialDevice);
+    const [selectedI18nKey, setSelectedI18nKey] = useState<string | null>(null);
 
     // Local toggle state for the three side panels. The `showXxxPanel` props
     // gate whether the panel is mounted at all; the toggles below control
@@ -149,8 +177,30 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         engine.grapes.setDevice(initialDevice);
       }
 
-      const onSelect = () => setHasSelection(true);
-      const onDeselect = () => setHasSelection(false);
+      const findI18nKey = (comp: any): string | null => {
+        if (!comp) return null;
+        const own = comp.getAttributes?.()?.["data-i18n"];
+        if (typeof own === "string" && own.length > 0) return own;
+        // Recursive descent — GrapesJS `find()` with attribute selectors is
+        // unreliable across versions, so walk the tree by hand.
+        const children = comp.components?.();
+        const len = children?.length ?? 0;
+        for (let i = 0; i < len; i++) {
+          const child = children.at(i);
+          const found = findI18nKey(child);
+          if (found) return found;
+        }
+        return null;
+      };
+
+      const onSelect = (comp?: any) => {
+        setHasSelection(true);
+        setSelectedI18nKey(findI18nKey(comp));
+      };
+      const onDeselect = () => {
+        setHasSelection(false);
+        setSelectedI18nKey(null);
+      };
       engine.grapes.on("component:selected", onSelect);
       engine.grapes.on("component:deselected", onDeselect);
 
@@ -161,6 +211,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         engineRef.current = null;
         setInstance(null);
         setHasSelection(false);
+        setSelectedI18nKey(null);
       };
     }, [mode]);
 
@@ -222,6 +273,38 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         document.removeEventListener("keydown", onKeyDown);
       };
     }, [instance]);
+
+    useEffect(() => {
+      const engine = engineRef.current;
+      if (
+        !engine ||
+        !instance ||
+        !translations ||
+        !primaryLanguage ||
+        !currentLanguage
+      ) {
+        return;
+      }
+      const doc = engine.grapes.Canvas.getDocument();
+      if (!doc) return;
+
+      doc.querySelectorAll("[data-i18n]").forEach((node) => {
+        const tag = node.tagName.toLowerCase();
+        if (tag === "script" || tag === "style") return;
+        const key = node.getAttribute("data-i18n");
+        if (!key) return;
+
+        const target = translations[currentLanguage]?.strings?.[key];
+        if (typeof target === "string" && target.length > 0) {
+          node.textContent = target;
+          return;
+        }
+        const primary = translations[primaryLanguage]?.strings?.[key];
+        if (typeof primary === "string" && primary.length > 0) {
+          node.textContent = primary;
+        }
+      });
+    }, [currentLanguage, translations, primaryLanguage, instance]);
 
     const useLayout =
       showBlocksPanel ||
@@ -333,6 +416,27 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 >
                   <BiRedo size={16} />
                 </button>
+                {primaryLanguage && supportedLanguages && currentLanguage && (
+                  <>
+                    <span className="oxy-device-toolbar__divider" aria-hidden />
+                    <LanguageSwitcher
+                      primary={primaryLanguage}
+                      supported={supportedLanguages}
+                      current={currentLanguage}
+                      onChange={(lang) => onCurrentLanguageChange?.(lang)}
+                      onAddLanguage={() => onAddLanguage?.()}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => onRequestTranslateAll?.()}
+                      className="oxy-device-toolbar__btn"
+                      aria-label="Translate all"
+                      title="Translate all"
+                    >
+                      ↻ Translate all
+                    </button>
+                  </>
+                )}
                 <span className="oxy-device-toolbar__divider" aria-hidden />
                 {showBlocksPanel && (
                   <button
@@ -451,6 +555,35 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                   overflow: "auto",
                 }}
               />
+              {primaryLanguage && supportedLanguages && translations && (
+                <TranslationsPanel
+                  i18nKey={selectedI18nKey}
+                  primary={primaryLanguage}
+                  supported={supportedLanguages}
+                  translations={translations}
+                  onChange={(lang, key, value) => {
+                    const next: Translations = {
+                      ...translations,
+                      [lang]: {
+                        ...(translations[lang] ?? {
+                          strings: {},
+                          title: "",
+                          description: "",
+                        }),
+                        strings: {
+                          ...(translations[lang]?.strings ?? {}),
+                          [key]: value,
+                        },
+                      },
+                    };
+                    onTranslationsChange?.(next);
+                  }}
+                  onTranslateOne={(lang, key) => {
+                    // Hand off to parent. Parent decides what AI flow to run.
+                    onRequestTranslateAll?.();
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
