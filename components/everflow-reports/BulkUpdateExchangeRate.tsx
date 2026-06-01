@@ -423,7 +423,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             value={selectedSmartLink}
             onChange={(e) => {
               setSelectedSmartLink(e.value);
-              if (e.value) setSelectPartner([]);
             }}
             options={smartLinks.data}
             optionLabel="campaign_name"
@@ -443,7 +442,6 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
               value={selectPartner}
               onChange={(e) => {
                 setSelectPartner(e.value);
-                if (e.value) setSelectedSmartLink(null);
               }}
               options={partners.data?.data}
               optionLabel="name"
