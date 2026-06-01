@@ -41,6 +41,11 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
   const [newRateValue, setNewRateValue] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"active" | "history">("active");
 
+  // Role capabilities: admins/managers see all rates + history; partners/users
+  // only ever see "Always Active" rates. Edit/delete remains admin-only.
+  const canSeeHistory = user.role === "admin" || user.role === "manager";
+  const canManage = user.role === "admin";
+
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -103,7 +108,11 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
     return { activeRates: active, historyRates: history };
   }, [rates]);
 
-  const displayRates = viewMode === "active" ? activeRates : historyRates;
+  const displayRates = canSeeHistory
+    ? viewMode === "active"
+      ? activeRates
+      : historyRates
+    : activeRates.filter((rate) => !rate.startDate && !rate.endDate);
 
   const groupedData = useMemo(() => {
     return displayRates.reduce(
@@ -146,30 +155,32 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
             <FaMoneyBillWave className="text-green-500" />
             Lead Rates
           </h2>
-          <div className="flex rounded-md shadow-sm" role="group">
-            <button
-              type="button"
-              onClick={() => setViewMode("active")}
-              className={`rounded-l-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                viewMode === "active"
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              Active
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("history")}
-              className={`rounded-r-lg border-b border-r border-t px-4 py-2 text-sm font-medium transition-colors ${
-                viewMode === "history"
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              History
-            </button>
-          </div>
+          {canSeeHistory && (
+            <div className="flex rounded-md shadow-sm" role="group">
+              <button
+                type="button"
+                onClick={() => setViewMode("active")}
+                className={`rounded-l-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                  viewMode === "active"
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("history")}
+                className={`rounded-r-lg border-b border-r border-t px-4 py-2 text-sm font-medium transition-colors ${
+                  viewMode === "history"
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                History
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 font-semibold text-gray-700">
@@ -247,7 +258,7 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
                     <th className="px-6 py-3">Converted Currency</th>
                     <th className="px-6 py-3">Rate</th>
                     <th className="px-6 py-3">Schedule</th>
-                    {user.role === "admin" && (
+                    {canManage && (
                       <th className="px-6 py-3 text-right">Actions</th>
                     )}{" "}
                   </tr>
@@ -318,7 +329,7 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
                             </span>
                           )}
                         </td>
-                        {user.role === "admin" && (
+                        {canManage && (
                           <td className="px-6 py-4 text-right">
                             <div className="flex justify-end gap-2">
                               <button
@@ -350,8 +361,9 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
           <div className="flex flex-col items-center justify-center py-10 text-gray-500">
             <FaLayerGroup className="mb-3 text-4xl text-gray-300" />
             <p>
-              No {viewMode === "active" ? "active" : "history"} adjust lead
-              rates found.
+              {canSeeHistory
+                ? `No ${viewMode === "active" ? "active" : "history"} adjust lead rates found.`
+                : "No adjust lead rates found."}
             </p>
           </div>
         )}
