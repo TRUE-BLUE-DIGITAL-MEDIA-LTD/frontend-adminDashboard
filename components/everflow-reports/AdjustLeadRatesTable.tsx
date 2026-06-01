@@ -1,10 +1,13 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   useFindAllAdjustLeadRate,
   useDeleteAdjustLeadRate,
   useUpdateAdjustLeadRate,
 } from "../../react-query/adjust-lead-rate";
 import { AdjustLeadRate } from "../../services/adjust-lead-rate";
+import { computeDisplayRates } from "./computeDisplayRates";
+import { buildRateMatrix } from "./buildRateMatrix";
+import LeadRatesMatrix from "./LeadRatesMatrix";
 import { countries } from "../../data/country";
 import {
   FaEdit,
@@ -91,28 +94,43 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
     }
   };
 
-  const { activeRates, historyRates } = useMemo(() => {
-    if (!rates) return { activeRates: [], historyRates: [] };
-    const now = new Date();
-    const active: AdjustLeadRate[] = [];
-    const history: AdjustLeadRate[] = [];
+  const displayRates = useMemo(
+    () =>
+      computeDisplayRates({
+        rates,
+        canSeeHistory,
+        viewMode,
+        now: new Date(),
+      }),
+    [rates, canSeeHistory, viewMode],
+  );
 
-    rates.forEach((rate) => {
-      if (rate.endDate && new Date(rate.endDate) < now) {
-        history.push(rate);
-      } else {
-        active.push(rate);
-      }
+  const [primaryView, setPrimaryView] = useState<"detailed" | "matrix">(
+    "detailed",
+  );
+  const showMatrix = !canSeeHistory || primaryView === "matrix";
+
+  // The matrix always uses the partner effective view (live temp replaces
+  // its always-active twin), independent of the admin Active/History toggle.
+  const matrix = useMemo(() => {
+    const effective = computeDisplayRates({
+      rates,
+      canSeeHistory: false,
+      viewMode: "active",
+      now: new Date(),
     });
-
-    return { activeRates: active, historyRates: history };
+    const qualifying = effective.filter(
+      (r) => r.convertedCurrency === "USD" || r.convertedCurrency === "THB",
+    );
+    return buildRateMatrix(qualifying);
   }, [rates]);
 
-  const displayRates = canSeeHistory
-    ? viewMode === "active"
-      ? activeRates
-      : historyRates
-    : activeRates.filter((rate) => !rate.startDate && !rate.endDate);
+  const campaignName = useCallback(
+    (campaignId: string) =>
+      smartLinks.data?.find((c) => c.network_campaign_id === Number(campaignId))
+        ?.campaign_name ?? campaignId,
+    [smartLinks.data],
+  );
 
   const groupedData = useMemo(() => {
     return displayRates.reduce(
@@ -159,6 +177,32 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
             <div className="flex rounded-md shadow-sm" role="group">
               <button
                 type="button"
+                onClick={() => setPrimaryView("detailed")}
+                className={`rounded-l-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                  primaryView === "detailed"
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                Detailed
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrimaryView("matrix")}
+                className={`rounded-r-lg border-b border-r border-t px-4 py-2 text-sm font-medium transition-colors ${
+                  primaryView === "matrix"
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                Matrix
+              </button>
+            </div>
+          )}
+          {canSeeHistory && !showMatrix && (
+            <div className="flex rounded-md shadow-sm" role="group">
+              <button
+                type="button"
                 onClick={() => setViewMode("active")}
                 className={`rounded-l-lg border px-4 py-2 text-sm font-medium transition-colors ${
                   viewMode === "active"
@@ -182,192 +226,199 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaLayerGroup className="text-blue-500" /> Group By:
-          </label>
-          <Dropdown
-            value={groupBy}
-            options={groupByOptions}
-            onChange={(e) => setGroupBy(e.value)}
-            className="w-48"
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-6">
-        {Object.entries(groupedData).map(([groupKey, groupRates]) => (
-          <div
-            key={groupKey}
-            className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
-          >
-            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-3 text-white">
-              {groupBy === "country" && (
-                <>
-                  {getCountryFlag(groupKey) ? (
-                    <img
-                      src={getCountryFlag(groupKey)}
-                      alt={groupKey}
-                      className="h-6 w-8 rounded object-cover shadow-sm"
-                    />
-                  ) : (
-                    <FaGlobe className="text-xl" />
-                  )}
-                  <span className="text-lg font-bold">{groupKey}</span>
-                </>
-              )}
-              {groupBy === "campaignId" && (
-                <>
-                  <FaBullhorn className="text-xl" />
-                  <span className="text-lg font-bold">
-                    Campaign: {groupKey} (
-                    {
-                      smartLinks.data?.find(
-                        (i) => i.network_campaign_id === Number(groupKey),
-                      )?.campaign_name
-                    }
-                    )
-                  </span>
-                </>
-              )}
-              {groupBy === "convertedCurrency" && (
-                <>
-                  <FaMoneyBillWave className="text-xl" />
-                  <span className="text-lg font-bold">
-                    Currency: {groupKey}
-                  </span>
-                </>
-              )}
-              <span className="ml-auto rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-600">
-                {groupRates.length} Items
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-gray-600">
-                <thead className="bg-gray-100 text-xs uppercase text-gray-700">
-                  <tr>
-                    <th className="px-6 py-3">Type</th>
-                    {groupBy !== "country" && (
-                      <th className="px-6 py-3">Country</th>
-                    )}
-                    {groupBy !== "campaignId" && (
-                      <th className="px-6 py-3">Campaign ID</th>
-                    )}
-                    <th className="px-6 py-3">Target Currency</th>
-                    <th className="px-6 py-3">Converted Currency</th>
-                    <th className="px-6 py-3">Rate</th>
-                    <th className="px-6 py-3">Schedule</th>
-                    {canManage && (
-                      <th className="px-6 py-3 text-right">Actions</th>
-                    )}{" "}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {groupRates.map((rate) => {
-                    const campaign = smartLinks.data?.find(
-                      (c) => c.network_campaign_id === Number(rate.campaignId),
-                    );
-                    return (
-                      <tr
-                        key={rate.id}
-                        className="transition-colors hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                            {rate.type}
-                          </span>
-                        </td>
-                        {groupBy !== "country" && (
-                          <td className="px-6 py-4 font-medium text-gray-900">
-                            <div className="flex items-center gap-2">
-                              {getCountryFlag(rate.country) && (
-                                <img
-                                  src={getCountryFlag(rate.country)}
-                                  alt={rate.country}
-                                  className="h-4 w-6 rounded object-cover"
-                                />
-                              )}
-                              {rate.country}
-                            </div>
-                          </td>
-                        )}
-                        {groupBy !== "campaignId" && (
-                          <td className="px-6 py-4">
-                            {campaign?.campaign_name ?? rate.campaignId}
-                          </td>
-                        )}
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                            {rate.targetCurrency}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                            {rate.convertedCurrency}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 font-bold text-gray-800">
-                          {rate.rate.toFixed(4)}
-                        </td>
-                        <td className="px-6 py-4 text-xs text-gray-500">
-                          {rate.startDate && (
-                            <div className="whitespace-nowrap">
-                              <span className="font-semibold">Start:</span>{" "}
-                              {new Date(rate.startDate).toLocaleString()}
-                            </div>
-                          )}
-                          {rate.endDate && (
-                            <div className="whitespace-nowrap">
-                              <span className="font-semibold">End:</span>{" "}
-                              {new Date(rate.endDate).toLocaleString()}
-                            </div>
-                          )}
-                          {!rate.startDate && !rate.endDate && (
-                            <span className="italic text-gray-400">
-                              Always active
-                            </span>
-                          )}
-                        </td>
-                        {canManage && (
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => openEditModal(rate)}
-                                className="rounded-full bg-yellow-100 p-2 text-yellow-600 transition-colors hover:bg-yellow-200 hover:text-yellow-700"
-                                title="Edit"
-                              >
-                                <FaEdit />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(rate.id)}
-                                className="rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 hover:text-red-700"
-                                title="Delete"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
-        {Object.keys(groupedData).length === 0 && (
-          <div className="flex flex-col items-center justify-center py-10 text-gray-500">
-            <FaLayerGroup className="mb-3 text-4xl text-gray-300" />
-            <p>
-              {canSeeHistory
-                ? `No ${viewMode === "active" ? "active" : "history"} adjust lead rates found.`
-                : "No adjust lead rates found."}
-            </p>
+        {!showMatrix && (
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 font-semibold text-gray-700">
+              <FaLayerGroup className="text-blue-500" /> Group By:
+            </label>
+            <Dropdown
+              value={groupBy}
+              options={groupByOptions}
+              onChange={(e) => setGroupBy(e.value)}
+              className="w-48"
+            />
           </div>
         )}
       </div>
+
+      {showMatrix ? (
+        <LeadRatesMatrix matrix={matrix} campaignName={campaignName} />
+      ) : (
+        <div className="flex flex-col gap-6">
+          {Object.entries(groupedData).map(([groupKey, groupRates]) => (
+            <div
+              key={groupKey}
+              className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
+            >
+              <div className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-3 text-white">
+                {groupBy === "country" && (
+                  <>
+                    {getCountryFlag(groupKey) ? (
+                      <img
+                        src={getCountryFlag(groupKey)}
+                        alt={groupKey}
+                        className="h-6 w-8 rounded object-cover shadow-sm"
+                      />
+                    ) : (
+                      <FaGlobe className="text-xl" />
+                    )}
+                    <span className="text-lg font-bold">{groupKey}</span>
+                  </>
+                )}
+                {groupBy === "campaignId" && (
+                  <>
+                    <FaBullhorn className="text-xl" />
+                    <span className="text-lg font-bold">
+                      Campaign: {groupKey} (
+                      {
+                        smartLinks.data?.find(
+                          (i) => i.network_campaign_id === Number(groupKey),
+                        )?.campaign_name
+                      }
+                      )
+                    </span>
+                  </>
+                )}
+                {groupBy === "convertedCurrency" && (
+                  <>
+                    <FaMoneyBillWave className="text-xl" />
+                    <span className="text-lg font-bold">
+                      Currency: {groupKey}
+                    </span>
+                  </>
+                )}
+                <span className="ml-auto rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-600">
+                  {groupRates.length} Items
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-600">
+                  <thead className="bg-gray-100 text-xs uppercase text-gray-700">
+                    <tr>
+                      <th className="px-6 py-3">Type</th>
+                      {groupBy !== "country" && (
+                        <th className="px-6 py-3">Country</th>
+                      )}
+                      {groupBy !== "campaignId" && (
+                        <th className="px-6 py-3">Campaign ID</th>
+                      )}
+                      <th className="px-6 py-3">Target Currency</th>
+                      <th className="px-6 py-3">Converted Currency</th>
+                      <th className="px-6 py-3">Rate</th>
+                      <th className="px-6 py-3">Schedule</th>
+                      {canManage && (
+                        <th className="px-6 py-3 text-right">Actions</th>
+                      )}{" "}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {groupRates.map((rate) => {
+                      const campaign = smartLinks.data?.find(
+                        (c) =>
+                          c.network_campaign_id === Number(rate.campaignId),
+                      );
+                      return (
+                        <tr
+                          key={rate.id}
+                          className="transition-colors hover:bg-gray-50"
+                        >
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                              {rate.type}
+                            </span>
+                          </td>
+                          {groupBy !== "country" && (
+                            <td className="px-6 py-4 font-medium text-gray-900">
+                              <div className="flex items-center gap-2">
+                                {getCountryFlag(rate.country) && (
+                                  <img
+                                    src={getCountryFlag(rate.country)}
+                                    alt={rate.country}
+                                    className="h-4 w-6 rounded object-cover"
+                                  />
+                                )}
+                                {rate.country}
+                              </div>
+                            </td>
+                          )}
+                          {groupBy !== "campaignId" && (
+                            <td className="px-6 py-4">
+                              {campaign?.campaign_name ?? rate.campaignId}
+                            </td>
+                          )}
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                              {rate.targetCurrency}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                              {rate.convertedCurrency}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 font-bold text-gray-800">
+                            {rate.rate.toFixed(4)}
+                          </td>
+                          <td className="px-6 py-4 text-xs text-gray-500">
+                            {rate.startDate && (
+                              <div className="whitespace-nowrap">
+                                <span className="font-semibold">Start:</span>{" "}
+                                {new Date(rate.startDate).toLocaleString()}
+                              </div>
+                            )}
+                            {rate.endDate && (
+                              <div className="whitespace-nowrap">
+                                <span className="font-semibold">End:</span>{" "}
+                                {new Date(rate.endDate).toLocaleString()}
+                              </div>
+                            )}
+                            {!rate.startDate && !rate.endDate && (
+                              <span className="italic text-gray-400">
+                                Always active
+                              </span>
+                            )}
+                          </td>
+                          {canManage && (
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => openEditModal(rate)}
+                                  className="rounded-full bg-yellow-100 p-2 text-yellow-600 transition-colors hover:bg-yellow-200 hover:text-yellow-700"
+                                  title="Edit"
+                                >
+                                  <FaEdit />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(rate.id)}
+                                  className="rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 hover:text-red-700"
+                                  title="Delete"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+          {Object.keys(groupedData).length === 0 && (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+              <FaLayerGroup className="mb-3 text-4xl text-gray-300" />
+              <p>
+                {canSeeHistory
+                  ? `No ${viewMode === "active" ? "active" : "history"} adjust lead rates found.`
+                  : "No adjust lead rates found."}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       <Dialog
         header="Update Rate"
