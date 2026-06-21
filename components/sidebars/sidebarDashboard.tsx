@@ -85,7 +85,7 @@ const SidebarDashboard = forwardRef<
                 }
                 if (
                   !user.partner.isAllowUsingSmsGetatext &&
-                  child.title === "Oxy Getatext"
+                  child.title === "OxyGT"
                 ) {
                   return false;
                 }
