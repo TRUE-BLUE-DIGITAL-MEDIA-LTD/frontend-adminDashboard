@@ -67,12 +67,12 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowSmsDaisyAccount",
     },
     {
-      title: "Allow Using Oxy Getatext",
+      title: "Allow Using OxyGT",
       allow: selectPartner.isAllowUsingSmsGetatext,
       slug: "isAllowUsingSmsGetatext",
     },
     {
-      title: "Allow Manage Oxy Getatext Account",
+      title: "Allow Manage OxyGT Account",
       allow: selectPartner.isAllowManageSmsGetatextAccount,
       slug: "isAllowManageSmsGetatextAccount",
     },

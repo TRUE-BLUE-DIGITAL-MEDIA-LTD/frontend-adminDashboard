@@ -28,7 +28,7 @@ export const menusSidebar = [
       { title: "Cloud Phone", params: "cloud-phone" },
       { title: "Oxy PVA", params: "sms-pva" },
       { title: "Oxy Berry", params: "sms-berry" },
-      { title: "Oxy Getatext", params: "sms-getatext" },
+      { title: "OxyGT", params: "sms-getatext" },
       { title: "Oxy Pool", params: "sms-pool" },
       { title: "Oxy Text", params: "sms-textverified" },
       { title: "Oxy Pin", params: "sms-pinverify" },

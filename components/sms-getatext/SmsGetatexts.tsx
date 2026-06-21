@@ -83,10 +83,9 @@ function SmsGetatexts({ user }: Props) {
             </span>
           </div>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">Oxy Getatext</h1>
+        <h1 className="text-4xl font-semibold text-gray-800">OxyGT</h1>
         <span className="text-sm text-gray-500">
-          Oxy Getatext provides real US Non-VoIP phone numbers for SMS
-          verification.
+          OxyGT provides real US Non-VoIP phone numbers for SMS verification.
         </span>
       </header>
       <main className="mt-5 flex w-full flex-col items-center gap-5 pb-20">
