@@ -83,6 +83,12 @@ const SidebarDashboard = forwardRef<
                 ) {
                   return false;
                 }
+                if (
+                  !user.partner.isAllowUsingSmsGetatext &&
+                  child.title === "Oxy Getatext"
+                ) {
+                  return false;
+                }
                 return true;
               }),
             };

@@ -66,11 +66,6 @@ function SelectService({ activeNumbers }: Props) {
     }
   };
 
-  console.log(
-    "Selected Service:",
-    services.filter((s) => s.sms_getatext),
-  );
-
   return (
     <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
       <Dropdown
