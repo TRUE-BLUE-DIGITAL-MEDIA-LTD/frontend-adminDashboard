@@ -164,6 +164,7 @@ export const services = [
     code: "opt9",
     sms_bower: "oi",
     sms_berry: 27,
+    sms_getatext: "tinder",
   },
   {
     title: "Flickr",

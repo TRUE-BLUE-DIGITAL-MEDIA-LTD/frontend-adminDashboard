@@ -26,3 +26,4 @@ export * from "./transaction-oxypoint.model";
 export * from "./sms-report.model";
 export * from "./sms-bower.model";
 export * from "./sms-berry.model";
+export * from "./sms-getatext.model";

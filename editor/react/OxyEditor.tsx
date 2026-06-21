@@ -26,6 +26,7 @@ import type {
 } from "../types";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TranslationsPanel } from "./TranslationsPanel";
+import { QuizPanel } from "./QuizPanel";
 
 export type OxyDeviceId = "desktop" | "mobile";
 
@@ -120,6 +121,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     const [hasSelection, setHasSelection] = useState<boolean>(false);
     const [device, setDevice] = useState<OxyDeviceId>(initialDevice);
     const [selectedI18nKey, setSelectedI18nKey] = useState<string | null>(null);
+    const [quizSelected, setQuizSelected] = useState<any | null>(null);
 
     // Local toggle state for the three side panels. The `showXxxPanel` props
     // gate whether the panel is mounted at all; the toggles below control
@@ -196,10 +198,12 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       const onSelect = (comp?: any) => {
         setHasSelection(true);
         setSelectedI18nKey(findI18nKey(comp));
+        setQuizSelected(comp?.is?.("oxy-quiz") ? comp : null);
       };
       const onDeselect = () => {
         setHasSelection(false);
         setSelectedI18nKey(null);
+        setQuizSelected(null);
       };
       engine.grapes.on("component:selected", onSelect);
       engine.grapes.on("component:deselected", onDeselect);
@@ -212,6 +216,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         setInstance(null);
         setHasSelection(false);
         setSelectedI18nKey(null);
+        setQuizSelected(null);
       };
     }, [mode]);
 
@@ -539,7 +544,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
               }}
             >
               <div className="oxy-properties-panel__header">
-                {hasSelection ? "Element properties" : "Properties"}
+                {quizSelected ? "Quiz" : hasSelection ? "Element properties" : "Properties"}
               </div>
               {!hasSelection && (
                 <div className="oxy-properties-panel__empty">
@@ -551,10 +556,19 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 ref={propertiesPanelRef}
                 style={{
                   flex: 1,
-                  display: hasSelection ? "block" : "none",
+                  display: hasSelection && !quizSelected ? "block" : "none",
                   overflow: "auto",
                 }}
               />
+              {quizSelected && engineRef.current && (
+                <div style={{ flex: 1, overflow: "auto" }}>
+                  <QuizPanel
+                    key={String((quizSelected as { cid?: string }).cid ?? "quiz")}
+                    component={quizSelected}
+                    grapes={engineRef.current.grapes}
+                  />
+                </div>
+              )}
               {primaryLanguage && supportedLanguages && translations && (
                 <TranslationsPanel
                   i18nKey={selectedI18nKey}

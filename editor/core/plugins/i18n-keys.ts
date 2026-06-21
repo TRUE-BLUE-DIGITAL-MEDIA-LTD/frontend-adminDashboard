@@ -51,11 +51,26 @@ function hasOwnText(comp: any): boolean {
   return false;
 }
 
+// Quiz blocks (core/tools/quiz) stamp their own deterministic keys
+// (quiz.<stepId>.…) in render.ts. Auto-keying must leave the whole quiz
+// subtree alone: the seenKeys dedupe below would otherwise re-key those
+// nodes on every config re-render, orphaning saved translations.
+function isInsideQuiz(comp: any): boolean {
+  let cur = comp;
+  while (cur) {
+    const cls = String(cur.getAttributes?.()?.class ?? '');
+    if (cls.split(/\s+/).includes('oxy-quiz')) return true;
+    cur = cur.parent?.();
+  }
+  return false;
+}
+
 function ensureKey(
   comp: any,
   nextKey: () => string,
   seenKeys: Set<string>,
 ): void {
+  if (isInsideQuiz(comp)) return;
   // Never key script/style — same exclusion the backend uses.
   const tag = comp.get('tagName');
   if (tag === 'script' || tag === 'style') return;

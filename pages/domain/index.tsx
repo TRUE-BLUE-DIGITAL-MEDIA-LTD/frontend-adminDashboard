@@ -69,6 +69,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         }
         addSeeAll.unshift({
           isAllowUsingSmsBerry: true,
+          isAllowUsingSmsGetatext: true,
+          isAllowManageSmsGetatextAccount: true,
           createAt: new Date(),
           updateAt: new Date(),
           affiliateId: "all",
@@ -103,6 +105,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         addSeeAll.push({
           createAt: new Date(),
           isAllowUsingSmsBerry: true,
+          isAllowUsingSmsGetatext: true,
+          isAllowManageSmsGetatextAccount: true,
           currency_id: "",
           managerId: "",
           isAllowUsingSMS_TEXTVERIFIED: true,
@@ -139,6 +143,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           createAt: new Date(),
           currency_id: "",
           isAllowUsingSmsBerry: true,
+          isAllowUsingSmsGetatext: true,
+          isAllowManageSmsGetatextAccount: true,
           managerId: "",
           isAllowUsingSMS_TEXTVERIFIED: true,
           isAllowManageAssginCategory: true,

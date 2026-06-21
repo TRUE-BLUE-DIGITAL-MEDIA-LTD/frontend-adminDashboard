@@ -28,6 +28,8 @@ export type Partner = {
   isAllowUsingSmsBower: boolean;
   isAllowManageSmsBowerAccount: boolean;
   isAllowUsingSmsBerry: boolean;
+  isAllowUsingSmsGetatext: boolean;
+  isAllowManageSmsGetatextAccount: boolean;
   isShowWallet?: boolean;
   smartLink?: string | undefined;
   name: string;

@@ -22,11 +22,13 @@ import {
   BiText as BiTextarea,
   BiTask,
   BiListUl,
+  BiListCheck,
 } from "react-icons/bi";
 import { MdHorizontalRule, MdSubtitles } from "react-icons/md";
 import type { Editor as GrapesEditor } from "grapesjs";
 import { registerMultipleFormBlock } from "./multiple-form";
 import { registerFormBlock } from "./form";
+import { registerQuizBlock } from "../../core/tools/quiz/block";
 
 export const builtInToolNames = [
   // Content
@@ -51,6 +53,7 @@ export const builtInToolNames = [
   "label",
   // Extra / custom
   "multiple-form",
+  "quiz",
 ] as const;
 
 export type BuiltInToolName = (typeof builtInToolNames)[number];
@@ -84,6 +87,7 @@ const ICONS: Record<BuiltInToolName, string> = {
   checkbox: iconHtml(BiCheckboxChecked),
   label: iconHtml(BiTask),
   "multiple-form": iconHtml(BiListUl),
+  quiz: iconHtml(BiListCheck),
 };
 
 const CATEGORY_CONTENT = "Content";
@@ -435,6 +439,12 @@ export function registerBuiltInTools(
     registerMultipleFormBlock(grapes, {
       blockCategory: CATEGORY_EXTRA,
       icon: ICONS["multiple-form"],
+    });
+  }
+  if (include.has("quiz")) {
+    registerQuizBlock(grapes, {
+      blockCategory: CATEGORY_EXTRA,
+      icon: ICONS.quiz,
     });
   }
 }

@@ -18,6 +18,7 @@ import {
 } from "./style-types/color-popup";
 import { importUnlayerDesign } from "../compat/unlayer-import";
 import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
+import { appendQuizRuntime } from "./tools/quiz/runtime-inject";
 import type { UnlayerDesign } from "../compat/unlayer-types";
 import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
 import {
@@ -360,7 +361,7 @@ export function mountEngine(opts: EngineMountOptions): Engine {
   const instance: EditorInstance = {
     exportHtml(cb: ExportCallback) {
       const rawHtml = grapes.getHtml();
-      const html = appendMultipleFormRuntime(rawHtml);
+      const html = appendQuizRuntime(appendMultipleFormRuntime(rawHtml));
       const css = grapes.getCss() ?? "";
       const design = grapes.getProjectData();
       cb({ design, html, css });
