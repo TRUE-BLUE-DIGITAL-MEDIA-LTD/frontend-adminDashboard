@@ -50,7 +50,6 @@ function SelectService({ activeNumbers }: Props) {
         icon: "success",
       });
       setLoading(false);
-      setSelectedService(null);
     } catch (error) {
       setLoading(false);
       console.log(error);
