@@ -47,19 +47,24 @@ export const buySmsGetatextNumber = async (dto: {
   lock_area_code?: boolean;
   area_codes?: string;
 }): Promise<SmsGetatext> => {
-  const cookies = parseCookies();
-  const access_token = cookies.access_token;
-  const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/rent-a-number`,
-    dto,
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: "Bearer " + access_token,
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/rent-a-number`,
+      dto,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
       },
-    },
-  );
-  return response.data;
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error buying number from SmsGetatext", error);
+    throw error.response.data;
+  }
 };
 
 export const cancelSmsGetatextNumber = async (dto: {
