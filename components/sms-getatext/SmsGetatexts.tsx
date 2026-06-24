@@ -17,6 +17,7 @@ import {
 import SelectService from "./SelectService";
 import SmsGetatextAccountCard from "./SmsGetatextAccount";
 import SmsGetatextCard from "./SmsGetatextCard";
+import SmsGetatextHistory from "./SmsGetatextHistory";
 
 type Props = {
   user: User & { partner: Partner | null };
@@ -118,6 +119,7 @@ function SmsGetatexts({ user }: Props) {
         </section>
         <section className="flex w-full flex-col items-center justify-center gap-5">
           <SelectService activeNumbers={activeNumbers} />
+          <SmsGetatextHistory activeNumbers={activeNumbers} />
         </section>
       </main>
     </>

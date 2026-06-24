@@ -116,6 +116,27 @@ export const getSmsGetatextBalance = async (): Promise<{ balance: number }> => {
   return response.data;
 };
 
+export const getHistorySmsGetatext = async (dto: {
+  limit: number;
+  page: number;
+}): Promise<{
+  data: (SmsGetatext & { messages: SmsGetatextMessage[] })[];
+  totalPage: number;
+}> => {
+  const cookies = parseCookies();
+  const access_token = cookies.access_token;
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/history?limit=${dto.limit}&page=${dto.page}`,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    },
+  );
+  return response.data;
+};
+
 export const getActiveSmsGetatextAccounts = async (): Promise<
   SmsGetatextAccount[]
 > => {

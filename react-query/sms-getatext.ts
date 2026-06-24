@@ -8,9 +8,20 @@ import {
   getActiveSmsGetatextAccounts,
   getActiveSmsGetatextNumbers,
   getSmsGetatextBalance,
+  getHistorySmsGetatext,
   getSmsGetatextPrices,
   setActiveSmsGetatextAccount,
 } from "../services/sms-getatext";
+
+export const useGetHistorySmsGetatext = (dto: {
+  limit: number;
+  page: number;
+}) => {
+  return useQuery({
+    queryKey: ["sms-getatext-history", dto],
+    queryFn: () => getHistorySmsGetatext(dto),
+  });
+};
 
 export const useGetActiveSmsGetatextNumbers = () => {
   return useQuery({
