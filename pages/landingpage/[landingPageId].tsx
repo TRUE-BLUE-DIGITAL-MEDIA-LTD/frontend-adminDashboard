@@ -1,4 +1,12 @@
-import { Alert, Autocomplete, MenuItem, Snackbar, Tab, Tabs, TextField } from "@mui/material";
+import {
+  Alert,
+  Autocomplete,
+  MenuItem,
+  Snackbar,
+  Tab,
+  Tabs,
+  TextField,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Image from "next/image";
@@ -86,7 +94,11 @@ function Index({ user }: { user: User }) {
   });
   const [open, setOpen] = useState(false);
   const [translateDialogOpen, setTranslateDialogOpen] = useState(false);
-  const [translateProgress, setTranslateProgress] = useState<Partial<Record<Language, { processed: number; total: number; failed?: string }>>>({});
+  const [translateProgress, setTranslateProgress] = useState<
+    Partial<
+      Record<Language, { processed: number; total: number; failed?: string }>
+    >
+  >({});
   // Bumped after a successful Update so OxyEditor remounts with the freshly-
   // saved data — lets the user verify what landed in the DB without reloading
   // the whole page.
@@ -130,13 +142,18 @@ function Index({ user }: { user: User }) {
           secondOffer: landingPage?.data?.secondOffer as string,
           backOffer: landingPage?.data?.backOffer as string,
           route: landingPage.data.route,
-          primaryLanguage: landingPage.data.primaryLanguage ?? landingPage.data.language,
-          supportedLanguages: landingPage.data.supportedLanguages ?? [landingPage.data.language],
+          primaryLanguage:
+            landingPage.data.primaryLanguage ?? landingPage.data.language,
+          supportedLanguages: landingPage.data.supportedLanguages ?? [
+            landingPage.data.language,
+          ],
           translations: landingPage.data.translations ?? {},
         };
       });
       setIcon(() => landingPage?.data?.icon);
-      setCurrentLanguage(landingPage.data.primaryLanguage ?? landingPage.data.language);
+      setCurrentLanguage(
+        landingPage.data.primaryLanguage ?? landingPage.data.language,
+      );
     }
   }, [landingPage.data]);
 
@@ -172,8 +189,12 @@ function Index({ user }: { user: User }) {
           id: router?.query?.landingPageId as string,
         },
         body: {
-          title: landingPageData.translations[landingPageData.primaryLanguage]?.title ?? landingPageData.title,
-          description: landingPageData.translations[landingPageData.primaryLanguage]?.description ?? landingPageData.description,
+          title:
+            landingPageData.translations[landingPageData.primaryLanguage]
+              ?.title ?? landingPageData.title,
+          description:
+            landingPageData.translations[landingPageData.primaryLanguage]
+              ?.description ?? landingPageData.description,
           language: landingPageData.primaryLanguage,
           domainId: landingPageData?.domainId,
           ...(blurEditor === false && { html }),
@@ -333,9 +354,14 @@ function Index({ user }: { user: User }) {
               currentLanguage={currentLanguage}
               translations={landingPageData.translations}
               onTranslationsChange={(next) =>
-                setLandingPageData((p) => ({ ...p, translations: next as Translations }))
+                setLandingPageData((p) => ({
+                  ...p,
+                  translations: next as Translations,
+                }))
               }
-              onCurrentLanguageChange={(lang) => setCurrentLanguage(lang as Language)}
+              onCurrentLanguageChange={(lang) =>
+                setCurrentLanguage(lang as Language)
+              }
               onRequestTranslateAll={() => setTranslateDialogOpen(true)}
             />
           ) : (
@@ -384,15 +410,31 @@ function Index({ user }: { user: User }) {
                 scope,
                 ...(currentHtml !== undefined ? { html: currentHtml } : {}),
                 onEvent: (e) => {
-                  if (e.type === 'string' && e.key && typeof e.value === 'string') {
+                  if (
+                    e.type === "string" &&
+                    e.key &&
+                    typeof e.value === "string"
+                  ) {
                     setLandingPageData((p) => {
                       const lang = e.lang as Language;
-                      const existing = p.translations[lang] ?? { strings: {}, title: '', description: '' };
+                      const existing = p.translations[lang] ?? {
+                        strings: {},
+                        title: "",
+                        description: "",
+                      };
                       const next = { ...existing };
-                      if (e.key === '_seo_title') next.title = e.value!;
-                      else if (e.key === '_seo_description') next.description = e.value!;
-                      else next.strings = { ...existing.strings, [e.key!]: e.value! };
-                      return { ...p, translations: { ...p.translations, [lang]: next } };
+                      if (e.key === "_seo_title") next.title = e.value!;
+                      else if (e.key === "_seo_description")
+                        next.description = e.value!;
+                      else
+                        next.strings = {
+                          ...existing.strings,
+                          [e.key!]: e.value!,
+                        };
+                      return {
+                        ...p,
+                        translations: { ...p.translations, [lang]: next },
+                      };
                     });
                     setTranslateProgress((p) => ({
                       ...p,
@@ -401,10 +443,14 @@ function Index({ user }: { user: User }) {
                         total: p[e.lang as Language]?.total ?? 0,
                       },
                     }));
-                  } else if (e.type === 'language-error') {
+                  } else if (e.type === "language-error") {
                     setTranslateProgress((p) => ({
                       ...p,
-                      [e.lang]: { processed: p[e.lang as Language]?.processed ?? 0, total: p[e.lang as Language]?.total ?? 0, failed: e.message ?? 'failed' },
+                      [e.lang]: {
+                        processed: p[e.lang as Language]?.processed ?? 0,
+                        total: p[e.lang as Language]?.total ?? 0,
+                        failed: e.message ?? "failed",
+                      },
                     }));
                   }
                 },
@@ -440,20 +486,26 @@ function Index({ user }: { user: User }) {
                 setLandingPageData((p) => ({
                   ...p,
                   primaryLanguage: v,
-                  supportedLanguages: Array.from(new Set([...p.supportedLanguages, v])),
+                  supportedLanguages: Array.from(
+                    new Set([...p.supportedLanguages, v]),
+                  ),
                 }));
               }}
               helperText="Source language for AI translation"
             >
               {languages?.map((option) => (
-                <MenuItem key={option.value} value={option.value}>{option.name}</MenuItem>
+                <MenuItem key={option.value} value={option.value}>
+                  {option.name}
+                </MenuItem>
               ))}
             </TextField>
 
             <Autocomplete
               multiple
               options={languages.map((l) => l.value)}
-              getOptionLabel={(v) => languages.find((l) => l.value === v)?.name ?? v}
+              getOptionLabel={(v) =>
+                languages.find((l) => l.value === v)?.name ?? v
+              }
               value={landingPageData.supportedLanguages}
               onChange={(_, value) => {
                 const next = value as Language[];
@@ -462,7 +514,9 @@ function Index({ user }: { user: User }) {
                 }
                 setLandingPageData((p) => ({ ...p, supportedLanguages: next }));
               }}
-              renderInput={(params) => <TextField {...params} label="Supported languages" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Supported languages" />
+              )}
             />
             <TextField
               onChange={handleChangeLandingPageData}
@@ -480,20 +534,38 @@ function Index({ user }: { user: User }) {
         </div>
         <div className="flex w-full items-center justify-center gap-5 py-5">
           <div className="grid w-10/12 grid-cols-2 gap-5 2xl:grid-cols-3">
-            <div style={{ gridColumn: 'span 2' }}>
+            <div style={{ gridColumn: "span 2" }}>
               <Tabs
                 value={currentLanguage}
                 onChange={(_, v) => setCurrentLanguage(v as Language)}
                 variant="scrollable"
               >
                 {landingPageData.supportedLanguages.map((lang) => (
-                  <Tab key={lang} value={lang} label={languages.find((l) => l.value === lang)?.name ?? lang} />
+                  <Tab
+                    key={lang}
+                    value={lang}
+                    label={
+                      languages.find((l) => l.value === lang)?.name ?? lang
+                    }
+                  />
                 ))}
               </Tabs>
               {landingPageData.supportedLanguages.map((lang) => {
-                const t = landingPageData.translations[lang] ?? { strings: {}, title: '', description: '' };
+                const t = landingPageData.translations[lang] ?? {
+                  strings: {},
+                  title: "",
+                  description: "",
+                };
                 return currentLanguage === lang ? (
-                  <div key={lang} style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 12 }}>
+                  <div
+                    key={lang}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                      paddingTop: 12,
+                    }}
+                  >
                     <TextField
                       label="Title"
                       value={t.title}
