@@ -32,17 +32,19 @@ for (let i = 1; i <= multipleforms.length; i++) {
           const nextPage = document.getElementById(
             `form_step_${value.move_to_step ? value.move_to_step : i + 1}`,
           );
-          if (value.url && value.url !== "") {
+
+          // if (value.url && value.url !== "") {
+          //   window.open(value.url, "_blank");
+          //   return;
+          // }
+
+          if (i === multipleforms.length) {
             window.open(value.url, "_blank");
             return;
           }
 
           if (value) {
             multipleFormData.push(value);
-          }
-
-          if (i === multipleforms.length) {
-            window.open(mainLink.link, "_self");
           }
 
           if (currentForm) {
