@@ -32,7 +32,6 @@ import { GetUser } from "../../services/admin/user";
 import { Dropdown } from "primereact/dropdown";
 import { OxyEditor, type OxyEditorRef } from "@/editor";
 import { MdDomainVerification } from "react-icons/md";
-import ImageLibaray from "../../components/imageLibaray/ImageLibrary";
 import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
 import AiDesign from "../../components/common/AiDesign";
@@ -345,6 +344,7 @@ function Index({ user }: { user: User }) {
               initialDesign={JSON.parse(landingPage.data.json)}
               height="40rem"
               style={{ width: "100%" }}
+              isAdmin={user?.role !== "user"}
               showBlocksPanel
               showLayersPanel
               showPropertiesPanel
@@ -374,9 +374,6 @@ function Index({ user }: { user: User }) {
             </div>
           )}
 
-          <div className="mt-5 flex w-11/12 justify-end">
-            <ImageLibaray />{" "}
-          </div>
           {landingPage.data && (
             <AiDesign
               landingPageId={landingPage.data.id}

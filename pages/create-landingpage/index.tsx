@@ -215,6 +215,7 @@ function Index({ user }: { user: User }) {
             setIsLoadingEditor(false);
           }}
           height="40rem"
+          isAdmin={user?.role !== "user"}
           showBlocksPanel
           showLayersPanel
           showPropertiesPanel

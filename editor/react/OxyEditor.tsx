@@ -15,8 +15,15 @@ import {
   BiX,
   BiUndo,
   BiRedo,
+  BiImages,
+  BiImageAdd,
 } from "react-icons/bi";
 import { mountEngine, type Engine } from "../core/engine";
+import ImageLibraryModal from "./ImageLibraryModal";
+import {
+  GetSignURLService,
+  UploadSignURLService,
+} from "@/services/cloud-storage";
 import type {
   DesignJson,
   EditorInstance,
@@ -66,6 +73,9 @@ export interface OxyEditorProps {
   showDeviceToolbar?: boolean;
   initialDevice?: OxyDeviceId;
 
+  /** Admin users can upload/edit/delete library images; all users can browse. */
+  isAdmin?: boolean;
+
   /** When provided, enables multilingual editing in the toolbar/panels. */
   primaryLanguage?: Language;
   supportedLanguages?: Language[];
@@ -101,6 +111,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       layersPanelWidth,
       showDeviceToolbar,
       initialDevice = "desktop",
+      isAdmin = false,
       primaryLanguage,
       supportedLanguages,
       currentLanguage,
@@ -122,6 +133,12 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     const [device, setDevice] = useState<OxyDeviceId>(initialDevice);
     const [selectedI18nKey, setSelectedI18nKey] = useState<string | null>(null);
     const [quizSelected, setQuizSelected] = useState<any | null>(null);
+
+    // Image library modal. `onSelect` is supplied by whoever opened it
+    // (toolbar = insert <img>; bg-picker / asset-manager = set the URL).
+    const [libraryOpen, setLibraryOpen] = useState(false);
+    const librarySelectRef = useRef<((url: string) => void) | null>(null);
+    const logoInputRef = useRef<HTMLInputElement | null>(null);
 
     // Local toggle state for the three side panels. The `showXxxPanel` props
     // gate whether the panel is mounted at all; the toggles below control
@@ -150,6 +167,67 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       setPreviewHtml(null);
     }
 
+    function openLibrary(onSelect: (url: string) => void) {
+      librarySelectRef.current = onSelect;
+      setLibraryOpen(true);
+    }
+
+    function insertImageComponent(url: string) {
+      const g = engineRef.current?.grapes;
+      if (!g) return;
+      const node = {
+        type: "image",
+        attributes: { class: "oxy-image-block", alt: "", src: url },
+        style: {
+          padding: "8px",
+          "max-width": "100%",
+          display: "block",
+          "margin-left": "auto",
+          "margin-right": "auto",
+        },
+      };
+      const sel = g.getSelected();
+      if (sel) sel.append(node);
+      else g.getWrapper()?.append(node);
+    }
+
+    function insertLogoComponent(url: string) {
+      const g = engineRef.current?.grapes;
+      if (!g) return;
+      g.getWrapper()?.append({
+        type: "image",
+        attributes: { class: "oxy-logo", alt: "Logo", src: url },
+        style: {
+          display: "block",
+          "margin-left": "auto",
+          "margin-right": "auto",
+          "max-width": "200px",
+          padding: "8px",
+        },
+      });
+    }
+
+    async function handleLogoFile(e: React.ChangeEvent<HTMLInputElement>) {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      try {
+        const sign = await GetSignURLService({
+          fileName: file.name,
+          fileType: file.type,
+          category: "image-library",
+        });
+        await UploadSignURLService({
+          file,
+          signURL: sign.signURL,
+          contentType: file.type,
+        });
+        insertLogoComponent(sign.originalURL);
+      } catch (err) {
+        console.error("[oxy-editor] logo upload failed", err);
+      }
+    }
+
     useImperativeHandle(ref, () => ({ editor: instance }), [instance]);
 
     useEffect(() => {
@@ -170,6 +248,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
         layersPanelEl: showLayersPanel
           ? layersPanelRef.current ?? undefined
           : undefined,
+        isAdmin,
       });
       engineRef.current = engine;
       setInstance(engine.instance);
@@ -208,9 +287,17 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       engine.grapes.on("component:selected", onSelect);
       engine.grapes.on("component:deselected", onDeselect);
 
+      const onOpenLibrary = (payload?: {
+        onSelect?: (url: string) => void;
+      }) => {
+        openLibrary(payload?.onSelect ?? insertImageComponent);
+      };
+      engine.grapes.on("oxy:open-image-library", onOpenLibrary);
+
       return () => {
         engine.grapes.off("component:selected", onSelect);
         engine.grapes.off("component:deselected", onDeselect);
+        engine.grapes.off("oxy:open-image-library", onOpenLibrary);
         engine.destroy();
         engineRef.current = null;
         setInstance(null);
@@ -329,6 +416,13 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
             ...style,
           }}
         >
+          {libraryOpen && (
+            <ImageLibraryModal
+              isAdmin={isAdmin}
+              onSelect={(url) => librarySelectRef.current?.(url)}
+              onClose={() => setLibraryOpen(false)}
+            />
+          )}
           {previewHtml !== null && (
             <div
               className="oxy-preview-overlay"
@@ -487,6 +581,33 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 )}
                 <button
                   type="button"
+                  onClick={() => openLibrary(insertImageComponent)}
+                  className="oxy-device-toolbar__btn"
+                  aria-label="Open image library"
+                  title="Image library"
+                >
+                  <BiImages size={16} />
+                  Images
+                </button>
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  className="oxy-device-toolbar__btn"
+                  aria-label="Upload logo"
+                  title="Upload a logo for this lander (not saved to the library)"
+                >
+                  <BiImageAdd size={16} />
+                  Logo
+                </button>
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleLogoFile}
+                />
+                <button
+                  type="button"
                   onClick={openPreview}
                   className="oxy-device-toolbar__btn oxy-device-toolbar__btn--preview"
                   aria-label="Open live HTML preview"
@@ -544,7 +665,11 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
               }}
             >
               <div className="oxy-properties-panel__header">
-                {quizSelected ? "Quiz" : hasSelection ? "Element properties" : "Properties"}
+                {quizSelected
+                  ? "Quiz"
+                  : hasSelection
+                    ? "Element properties"
+                    : "Properties"}
               </div>
               {!hasSelection && (
                 <div className="oxy-properties-panel__empty">
@@ -563,7 +688,9 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
               {quizSelected && engineRef.current && (
                 <div style={{ flex: 1, overflow: "auto" }}>
                   <QuizPanel
-                    key={String((quizSelected as { cid?: string }).cid ?? "quiz")}
+                    key={String(
+                      (quizSelected as { cid?: string }).cid ?? "quiz",
+                    )}
                     component={quizSelected}
                     grapes={engineRef.current.grapes}
                   />
@@ -605,11 +732,20 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     }
 
     return (
-      <div
-        ref={containerRef}
-        className={className}
-        style={{ width: "100%", height: "100%", ...style }}
-      />
+      <>
+        <div
+          ref={containerRef}
+          className={className}
+          style={{ width: "100%", height: "100%", ...style }}
+        />
+        {libraryOpen && (
+          <ImageLibraryModal
+            isAdmin={isAdmin}
+            onSelect={(url) => librarySelectRef.current?.(url)}
+            onClose={() => setLibraryOpen(false)}
+          />
+        )}
+      </>
     );
   },
 );

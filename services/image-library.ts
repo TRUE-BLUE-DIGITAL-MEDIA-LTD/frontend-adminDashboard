@@ -7,6 +7,7 @@ type InputGetImageLibraryService = {
   page: number;
   limit: number;
   searchField?: string;
+  category?: string;
 };
 export async function GetImageLibraryService(
   input: InputGetImageLibraryService,
@@ -16,6 +17,9 @@ export async function GetImageLibraryService(
     const access_token = cookies.access_token;
     if (input.searchField === "") {
       delete input.searchField;
+    }
+    if (input.category === "") {
+      delete input.category;
     }
     const image = await axios({
       method: "GET",
@@ -42,6 +46,7 @@ type InputCreateImageLibraryService = {
   type: string;
   size: number;
   blurHash:string
+  autoTag?: boolean;
 };
 export async function CreateImageLibraryService(
   input: InputCreateImageLibraryService,

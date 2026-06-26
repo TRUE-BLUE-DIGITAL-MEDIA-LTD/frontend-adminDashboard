@@ -1,8 +1,5 @@
 import type { Editor as GrapesEditor } from "grapesjs";
-import {
-  GetSignURLService,
-  UploadSignURLService,
-} from "@/services/cloud-storage";
+import { uploadAndIndexImage } from "../upload-image";
 
 /**
  * Custom Style Manager property type for `background-image`. Renders a URL
@@ -32,6 +29,9 @@ function plainToCssUrl(url: string): string {
 
 export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
   const sm = editor.StyleManager;
+  const isAdmin = Boolean(
+    (editor.getConfig() as { oxyIsAdmin?: boolean }).oxyIsAdmin,
+  );
 
   sm.addType("background-image-picker", {
     create({
@@ -59,6 +59,7 @@ export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
         />
         <div class="oxy-bg-image-actions">
           <span class="oxy-bg-image-status" role="status" hidden></span>
+          <button type="button" class="oxy-bg-image-library">Choose from library</button>
           <button type="button" class="oxy-bg-image-clear">Remove image</button>
         </div>
       `;
@@ -81,6 +82,9 @@ export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
       const statusEl = root.querySelector(
         ".oxy-bg-image-status",
       ) as HTMLSpanElement;
+      const libraryBtn = root.querySelector(
+        ".oxy-bg-image-library",
+      ) as HTMLButtonElement;
 
       const setPreview = (url: string) => {
         if (url) {
@@ -117,6 +121,16 @@ export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
         commit("");
       });
 
+      libraryBtn.addEventListener("click", () => {
+        editor.trigger("oxy:open-image-library", {
+          onSelect: (url: string) => {
+            urlInput.value = url;
+            setPreview(url);
+            commit(url);
+          },
+        });
+      });
+
       const setUploading = (uploading: boolean) => {
         dropLabel.classList.toggle("is-uploading", uploading);
         fileInput.disabled = uploading;
@@ -132,20 +146,10 @@ export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
         setUploading(true);
 
         try {
-          const sign = await GetSignURLService({
-            fileName: file.name,
-            fileType: file.type,
-            category: "image-library",
-          });
-          await UploadSignURLService({
-            file,
-            signURL: sign.signURL,
-            contentType: file.type,
-          });
-
-          urlInput.value = sign.originalURL;
-          setPreview(sign.originalURL);
-          commit(sign.originalURL);
+          const url = await uploadAndIndexImage(file, { isAdmin });
+          urlInput.value = url;
+          setPreview(url);
+          commit(url);
 
           statusEl.textContent = "Uploaded";
           window.setTimeout(() => {

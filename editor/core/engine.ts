@@ -21,11 +21,7 @@ import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
 import { appendQuizRuntime } from "./tools/quiz/runtime-inject";
 import type { UnlayerDesign } from "../compat/unlayer-types";
 import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
-import {
-  GetSignURLService,
-  UploadSignURLService,
-  type CategoryFile,
-} from "@/services/cloud-storage";
+import { uploadAndIndexImage } from "./upload-image";
 
 export interface EngineMountOptions {
   container: HTMLElement;
@@ -57,6 +53,8 @@ export interface EngineMountOptions {
    * view of the component hierarchy. Toggled from the editor chrome.
    */
   layersPanelEl?: HTMLElement;
+  /** When true, inline uploads are indexed into the shared image library. */
+  isAdmin?: boolean;
 }
 
 export interface Engine {
@@ -132,6 +130,9 @@ const STYLE_SECTORS = [
         type: "background-image-picker",
         property: "background-image",
         label: "Background image",
+        // Render the picker cell at full sector width (GrapesJS otherwise
+        // lays properties out in half-width columns).
+        full: true,
       },
       {
         type: "select",
@@ -220,6 +221,8 @@ export function mountEngine(opts: EngineMountOptions): Engine {
 
   const grapes = grapesjs.init({
     container: opts.container,
+    // @ts-expect-error custom flag read by oxy plugins via editor.getConfig()
+    oxyIsAdmin: Boolean(opts.isAdmin),
     /**
      * Custom Style Manager / Trait Manager property types MUST be registered
      * as plugins, not after `grapesjs.init()` returns.
@@ -268,55 +271,37 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       ],
     },
     /**
-     * Asset Manager — handles local file picking when the user double-clicks
-     * an Image component (or any block that opens the asset picker). We
-     * disable the default server-upload endpoint and provide our own
-     * `uploadFile` that:
-     *   1. Requests a signed PUT URL from the dashboard's cloud-storage API
-     *      (`GetSignURLService`) using the file's name + MIME + category.
-     *   2. PUTs the bytes directly to that signed URL (`UploadSignURLService`).
-     *   3. Adds the resulting public `originalURL` to the AssetManager so the
-     *      author can click the uploaded asset to apply it to the selected
-     *      image component.
-     * Routes images → `image-library`, video/audio → matching libraries,
-     * everything else → `other-library`.
+     * Asset Manager — when the user double-clicks an Image component (or any
+     * block that opens the asset picker) we route to our React
+     * ImageLibraryModal via the `oxy:open-image-library` event bus instead of
+     * GrapesJS's default asset modal (see `custom.open` below). Any remaining
+     * programmatic upload path (`uploadFile`) goes through the shared
+     * `uploadAndIndexImage` helper: signed-URL upload + best-effort library
+     * index for admins.
      */
     assetManager: {
+      // Double-clicking an image (or dropping the Image block) is routed to our
+      // React ImageLibraryModal by overriding the `open-assets` command after
+      // init (see below) — that is what GrapesJS' image component actually runs
+      // (`Assets.open` → `Commands.run('open-assets', { select, target })`).
+      // `uploadFile` stays as a programmatic fallback so any default upload
+      // path goes through the shared helper (signed-URL + best-effort index).
       upload: false,
-      multiUpload: true,
-      autoAdd: true,
       uploadFile: async (ev: Event) => {
         if (!grapesInstance) return;
         const dt = (ev as DragEvent).dataTransfer;
-        const inputFiles = (ev.target as HTMLInputElement | null)?.files ?? null;
-        const fileList = dt && dt.files && dt.files.length > 0
-          ? dt.files
-          : inputFiles;
+        const inputFiles =
+          (ev.target as HTMLInputElement | null)?.files ?? null;
+        const fileList =
+          dt && dt.files && dt.files.length > 0 ? dt.files : inputFiles;
         if (!fileList || fileList.length === 0) return;
-        const am = grapesInstance.AssetManager;
         for (const file of Array.from(fileList)) {
           try {
-            const category: CategoryFile = file.type.startsWith("image/")
-              ? "image-library"
-              : file.type.startsWith("video/")
-                ? "video-library"
-                : file.type.startsWith("audio/")
-                  ? "audio-library"
-                  : "other-library";
-            const sign = await GetSignURLService({
-              fileName: file.name,
-              fileType: file.type,
-              category,
+            const url = await uploadAndIndexImage(file, {
+              isAdmin: Boolean(opts.isAdmin),
             });
-            await UploadSignURLService({
-              file,
-              signURL: sign.signURL,
-              contentType: file.type,
-            });
-            am.add({ src: sign.originalURL, type: "image" });
+            grapesInstance.AssetManager.add({ src: url, type: "image" });
           } catch (err) {
-            // Signed-URL service throws the parsed error body on failure.
-            // Log without breaking the manager so the user can retry.
             console.error("[oxy-editor] asset upload failed", err);
           }
         }
@@ -326,6 +311,32 @@ export function mountEngine(opts: EngineMountOptions): Engine {
   });
 
   grapesInstance = grapes;
+
+  // Override the built-in `open-assets` command (run by the Image component on
+  // double-click via `Assets.open`, and by drag-drop) to route to our React
+  // ImageLibraryModal through the editor event bus instead of GrapesJS' default
+  // asset modal. `opts.select` is GrapesJS' own handler that applies the chosen
+  // src to the active target; we also set src directly on the selected image as
+  // a belt-and-braces fallback.
+  grapes.Commands.add("open-assets", {
+    run(
+      editor: GrapesEditor,
+      _sender: unknown,
+      opts: {
+        target?: { addAttributes?: (attrs: Record<string, string>) => void };
+        select?: (asset: { getSrc: () => string }, complete?: boolean) => void;
+      } = {},
+    ) {
+      const apply = (url: string) => {
+        if (typeof opts.select === "function") {
+          opts.select({ getSrc: () => url }, true);
+        }
+        const target = opts.target ?? editor.getSelected();
+        target?.addAttributes?.({ src: url });
+      };
+      editor.trigger("oxy:open-image-library", { onSelect: apply });
+    },
+  });
 
   void modeConfig;
 

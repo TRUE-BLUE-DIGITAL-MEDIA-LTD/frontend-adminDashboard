@@ -40,11 +40,10 @@
   --oxy-danger: #d97a6c;
 
   /* Fonts */
-  --oxy-font:
-    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+  --oxy-font: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
     sans-serif;
-  --oxy-mono:
-    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --oxy-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
 }
 
 /* ───────────────── Blocks panel (left sidebar) ───────────────── */
@@ -274,6 +273,7 @@
 
 .oxy-properties-panel .gjs-sm-properties {
   padding: 12px 16px 18px;
+  width: 100%;
   background: #ffffff;
 }
 
@@ -455,14 +455,13 @@
 }
 
 .oxy-properties-panel .oxy-color-swatch.is-empty {
-  background:
-    linear-gradient(
-        45deg,
-        transparent 45%,
-        #dc2626 45%,
-        #dc2626 55%,
-        transparent 55%
-      ),
+  background: linear-gradient(
+      45deg,
+      transparent 45%,
+      #dc2626 45%,
+      #dc2626 55%,
+      transparent 55%
+    ),
     #ffffff;
 }
 
@@ -838,6 +837,8 @@
 
 .oxy-device-toolbar {
   display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   align-items: center;
   gap: 6px;
   padding: 10px 14px;
@@ -845,6 +846,12 @@
   border-bottom: 1px solid #d2c1b6;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
+}
+
+/* Keep toolbar items from squashing so the row scrolls horizontally
+   (overflow-x: auto) instead of compressing buttons. */
+.oxy-device-toolbar > * {
+  flex-shrink: 0;
 }
 
 .oxy-device-toolbar__label {
@@ -1614,8 +1621,7 @@
 }
 
 .oxy-properties-panel .oxy-color-swatch.is-empty {
-  background:
-    linear-gradient(45deg, var(--oxy-bg-hover) 25%, transparent 25%),
+  background: linear-gradient(45deg, var(--oxy-bg-hover) 25%, transparent 25%),
     linear-gradient(-45deg, var(--oxy-bg-hover) 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, var(--oxy-bg-hover) 75%),
     linear-gradient(-45deg, transparent 75%, var(--oxy-bg-hover) 75%);
@@ -1815,9 +1821,7 @@
   font-family: var(--oxy-mono);
 }
 
-.oxy-properties-panel
-  .oxy-mf-step-list__item.is-active
-  .oxy-mf-step-list__num {
+.oxy-properties-panel .oxy-mf-step-list__item.is-active .oxy-mf-step-list__num {
   background: #ffffff;
   color: var(--oxy-accent);
   border-color: #ffffff;
@@ -1923,6 +1927,8 @@
   color: var(--oxy-text);
   font-family: var(--oxy-font);
   display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   align-items: center;
   gap: 8px;
   min-height: 48px;
