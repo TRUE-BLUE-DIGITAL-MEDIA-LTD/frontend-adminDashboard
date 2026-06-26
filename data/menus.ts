@@ -4,6 +4,7 @@ import { FcCustomerSupport } from "react-icons/fc";
 import {
   MdAdminPanelSettings,
   MdEmail,
+  MdLinkOff,
   MdOutlineDomain,
   MdWeb,
 } from "react-icons/md";
@@ -17,6 +18,7 @@ export const menusSidebar = [
     url: "/manage-account",
     icon: MdAdminPanelSettings,
   },
+  { title: "Link Audit", url: "/link-audit", icon: MdLinkOff },
   {
     title: "Oxy Tools",
     url: "/tools",
@@ -47,7 +49,7 @@ export const menusSidebar = [
 ] as const;
 
 export type MenuSidebar = (typeof menusSidebar)[number] & {
-  childs?: (typeof menusSidebar)[4]["childs"];
+  childs?: (typeof menusSidebar)[5]["childs"];
 };
 export type OxyClickTools =
-  (typeof menusSidebar)[4]["childs"][number]["params"];
+  (typeof menusSidebar)[5]["childs"][number]["params"];

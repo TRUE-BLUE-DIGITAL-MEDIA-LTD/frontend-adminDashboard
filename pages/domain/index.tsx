@@ -8,7 +8,9 @@ import { Input, SearchField } from "react-aria-components";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { MdSettings } from "react-icons/md";
+import { useRouter } from "next/router";
 import ListDomain from "../../components/domain/listDomain";
+import DomainLinkAudit from "../../components/domain/domainLinkAudit";
 import DomainCreate from "../../components/forms/domains/domainCreate";
 import DomainUpdate from "../../components/forms/domains/domainUpdate";
 import { loadingNumber } from "../../data/loadingNumber";
@@ -26,7 +28,18 @@ import { GetUser } from "../../services/admin/user";
 import SpinLoading from "../../components/loadings/spinLoading";
 
 function Index({ user }: { user: User & { partner: Partner } }) {
-  const [searchField, setSearchField] = useState<string>("");
+  const router = useRouter();
+  const focusDomainId =
+    typeof router.query.domainId === "string"
+      ? router.query.domainId
+      : undefined;
+  // When arriving from the Link Audit page (?domainName=...), prefill the
+  // search box so the list is filtered to that domain on first load.
+  const focusDomainName =
+    typeof router.query.domainName === "string"
+      ? router.query.domainName
+      : "";
+  const [searchField, setSearchField] = useState<string>(focusDomainName);
   const [page, setPage] = useState<number>(1);
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [totalPage, setTotalPage] = useState(1);
@@ -269,6 +282,11 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         </header>
 
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          {focusDomainId && (
+            <div className="w-80 rounded border bg-white md:w-11/12">
+              <DomainLinkAudit domainId={focusDomainId} />
+            </div>
+          )}
           {domains.isFetching && <SpinLoading />}
           <div className="h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12">
             <table className="w-max min-w-full border-collapse">

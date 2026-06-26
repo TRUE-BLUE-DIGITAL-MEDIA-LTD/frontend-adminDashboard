@@ -1135,7 +1135,7 @@ export function appendMultipleFormRuntime(html: string): string {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1";
   if (!result.includes(MULTIPLE_FORM_RUNTIME_SRC)) {
-    result += `\n<script src="${isOnLocalhost === true ? "https://oxyclick.com" : "https://oxyclick.com"}${MULTIPLE_FORM_RUNTIME_SRC}" defer></script>`;
+    result += `\n<script src="${isOnLocalhost === true ? "http://localhost:8080" : "https://oxyclick.com"}${MULTIPLE_FORM_RUNTIME_SRC}" defer></script>`;
   }
 
   return result;
