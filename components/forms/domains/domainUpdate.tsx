@@ -26,6 +26,10 @@ import { useEnterKey, useEscKey } from "../../../hooks";
 import { FaGoogle, FaChartLine } from "react-icons/fa6";
 import { BiSitemap } from "react-icons/bi";
 import { useUpdateSeoScore } from "../../../react-query/domain";
+import {
+  isLandingPageDistributionValid,
+  sumLandingPagePercent,
+} from "./landingPageDistribution";
 
 interface DomainUpdate {
   domain: Domain;
@@ -59,6 +63,11 @@ function DomainUpdate({
 
   const updateSeoScore = useUpdateSeoScore();
 
+  const landingPagesList = domainData?.landingPages ?? [];
+  const totalPercent =
+    Math.round(sumLandingPagePercent(landingPagesList) * 100) / 100;
+  const distributionValid = isLandingPageDistributionValid(landingPagesList);
+
   useEffect(() => {
     setDomainData(() => {
       return {
@@ -77,14 +86,23 @@ function DomainUpdate({
   }, [getDomain.data]);
 
   const handleUpdateDomain = async () => {
+    if (!distributionValid) {
+      Swal.fire(
+        "Invalid distribution",
+        `Landing page percentages must total 100%. Current total: ${totalPercent}%`,
+        "error",
+      );
+      return;
+    }
     try {
       setIsLoading(() => true);
       await UpdateDomainService({
         domainNameId: domain.id,
         note: domainData.note,
         landingPages: domainData.landingPages,
-        oxyeyeAnalyticsId: domainData.oxyeyeAnalyticsId,
-        googleAnalyticsId: domainData?.googleAnalyticsId,
+        ...(domainData.googleAnalyticsId && {
+          googleAnalyticsId: domainData?.googleAnalyticsId,
+        }),
       });
       await getDomain.refetch();
       Swal.fire("Success", "Domain updated successfully", "success");
@@ -188,7 +206,7 @@ function DomainUpdate({
           className={`flex h-16 w-16 items-center justify-center rounded-full border-4 ${colorClass} ${bgColorClass} shadow-sm`}
         >
           <span className="text-xl font-bold">
-            {score !== undefined && score !== null ? percent : "N/A"}
+            {score !== undefined && score !== null ? percent.toFixed(0) : "N/A"}
           </span>
         </div>
         <span className="mt-2 text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -409,6 +427,15 @@ function DomainUpdate({
                   <MdList className="text-purple-600" /> Linked Landing Pages
                   <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700">
                     {domainData.landingPages.length}
+                  </span>
+                  <span
+                    className={`ml-auto rounded-full px-3 py-1 text-xs font-bold ${
+                      distributionValid
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    Total: {totalPercent}% / 100%
                   </span>
                 </h2>
                 <ul className="flex flex-col gap-4">
