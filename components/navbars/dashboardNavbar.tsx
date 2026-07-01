@@ -80,7 +80,7 @@ function DashboardNavbar({
         <select
           value={timezone}
           onChange={(e) => setTimezone(e.target.value)}
-          className="h-10 rounded-lg border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
+          className="h-10 w-40 rounded-lg border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
         >
           {timezones.map((tz) => (
             <option key={tz} value={tz}>
