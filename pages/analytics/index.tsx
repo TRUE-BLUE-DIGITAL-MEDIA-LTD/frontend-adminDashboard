@@ -22,6 +22,7 @@ import {
   SortKey,
   sortRows,
 } from "../../components/analytics/format";
+import LanderDetailPanel from "../../components/analytics/LanderDetailPanel";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { User } from "../../models";
 import { ListLanderAnalyticsService } from "../../services/admin/analytics";
@@ -176,10 +177,9 @@ function Index({ user }: { user: User }) {
                 />
               </div>
             )}
-            {/* Task 14 wires the detail panel here:
             {selected && (
               <LanderDetailPanel landingPageId={selected} from={from} />
-            )} */}
+            )}
           </>
         )}
       </div>
