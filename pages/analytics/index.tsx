@@ -50,15 +50,22 @@ function Index({ user }: { user: User }) {
   );
 
   const analytics = useQuery({
-    queryKey: ["lander-analytics", days, search],
-    queryFn: () =>
-      ListLanderAnalyticsService({ from, search: search || undefined }),
+    queryKey: ["lander-analytics", days],
+    queryFn: () => ListLanderAnalyticsService({ from }),
   });
 
-  const rows = useMemo(
-    () => sortRows(analytics.data?.rows ?? [], sortKey, sortDir),
-    [analytics.data, sortKey, sortDir],
-  );
+  const rows = useMemo(() => {
+    const allRows = analytics.data?.rows ?? [];
+    const term = search.trim().toLowerCase();
+    const filtered = term
+      ? allRows.filter(
+          (row) =>
+            (row.landingPageName ?? "").toLowerCase().includes(term) ||
+            (row.domainName ?? "").toLowerCase().includes(term),
+        )
+      : allRows;
+    return sortRows(filtered, sortKey, sortDir);
+  }, [analytics.data, search, sortKey, sortDir]);
   const totalPages = Math.ceil(rows.length / PAGE_SIZE) || 1;
   const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
