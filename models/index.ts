@@ -28,3 +28,4 @@ export * from "./sms-bower.model";
 export * from "./sms-berry.model";
 export * from "./sms-getatext.model";
 export * from "./link-audit.model";
+export * from "./analytics.model";

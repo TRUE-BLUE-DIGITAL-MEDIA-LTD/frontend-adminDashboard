@@ -24,7 +24,7 @@ const SidebarDashboard = forwardRef<
     } else if (lastRoute === "manage-account") {
       setCurrentMenuIndex(() => 4);
     } else if (lastRoute === "tools") {
-      setCurrentMenuIndex(() => 5);
+      setCurrentMenuIndex(() => 6);
     }
   }, [lastRoute]);
 
