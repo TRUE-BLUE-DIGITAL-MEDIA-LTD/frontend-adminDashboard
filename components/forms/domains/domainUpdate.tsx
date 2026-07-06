@@ -53,7 +53,6 @@ function DomainUpdate({
     note: "",
     domainNameId: "",
     googleAnalyticsId: "",
-    oxyeyeAnalyticsId: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const getDomain = useQuery({
@@ -74,7 +73,6 @@ function DomainUpdate({
         name: getDomain.data?.domain.name as string,
         domainNameId: getDomain.data?.domain.id as string,
         googleAnalyticsId: getDomain.data?.domain.googleAnalyticsId as string,
-        oxyeyeAnalyticsId: getDomain.data?.domain.oxyeyeAnalyticsId,
         note: getDomain.data?.domain.note as string,
         landingPages: getDomain.data?.landingPages as {
           name: string;

@@ -8,6 +8,7 @@ import {
 } from "../../services/image-library";
 import { ImageCard } from "./image-library/ImageCard";
 import { UploadForm } from "./image-library/UploadForm";
+import { BiShow, BiHide } from "react-icons/bi";
 
 export interface ImageLibraryModalProps {
   isAdmin: boolean;
@@ -25,6 +26,9 @@ export default function ImageLibraryModal({
   const [category, setCategory] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  // Privacy mode: library images are hidden until the user opts in.
+  // Deliberately resets on every open (component unmounts on close).
+  const [revealed, setRevealed] = useState(false);
 
   const images = useQuery({
     queryKey: ["image-library", { page, limit: 12, search, category }],
@@ -35,6 +39,7 @@ export default function ImageLibraryModal({
         searchField: search,
         category,
       }),
+    enabled: revealed,
   });
 
   const categories = useMemo(() => {
@@ -94,15 +99,35 @@ export default function ImageLibraryModal({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-center gap-3 border-b border-gray-200 p-4">
-          <input
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-main-color"
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="Search images…"
-          />
+          {revealed ? (
+            <input
+              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-main-color"
+              value={search}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              placeholder="Search images…"
+            />
+          ) : (
+            <span className="flex-1 text-sm font-medium text-gray-700">
+              Image library
+            </span>
+          )}
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-100"
+            onClick={() => setRevealed((v) => !v)}
+            aria-pressed={revealed}
+            title={
+              revealed
+                ? "Hide library images for privacy"
+                : "Show library images"
+            }
+          >
+            {revealed ? <BiHide size={16} /> : <BiShow size={16} />}
+            {revealed ? "Hide images" : "Show images"}
+          </button>
           {isAdmin && (
             <button
               type="button"
@@ -143,75 +168,95 @@ export default function ImageLibraryModal({
           />
         )}
 
-        <div className="flex flex-wrap gap-2 border-b border-gray-200 p-3">
-          <button
-            type="button"
-            className={chip(category === "")}
-            onClick={() => {
-              setPage(1);
-              setCategory("");
-            }}
-          >
-            All
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c}
-              type="button"
-              className={chip(category === c)}
-              onClick={() => {
-                setPage(1);
-                setCategory(c);
-              }}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-
-        {images.isLoading ? (
-          <div className="p-10 text-center text-sm text-gray-500">Loading…</div>
-        ) : (images.data?.data.length ?? 0) === 0 ? (
-          <div className="p-10 text-center text-sm text-gray-500">
-            No images found.
-          </div>
-        ) : (
-          <div className="grid flex-1 grid-cols-2 gap-4 overflow-auto p-4 sm:grid-cols-3 md:grid-cols-4">
-            {images.data?.data.map((item) => (
-              <ImageCard
-                key={item.id}
-                item={item}
-                isAdmin={isAdmin}
-                onSelect={(url) => {
-                  onSelect(url);
-                  onClose();
+        {revealed ? (
+          <>
+            <div className="flex flex-wrap gap-2 border-b border-gray-200 p-3">
+              <button
+                type="button"
+                className={chip(category === "")}
+                onClick={() => {
+                  setPage(1);
+                  setCategory("");
                 }}
-                onSaveMeta={saveMeta}
-                onDelete={remove}
-              />
-            ))}
+              >
+                All
+              </button>
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={chip(category === c)}
+                  onClick={() => {
+                    setPage(1);
+                    setCategory(c);
+                  }}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            {images.isLoading ? (
+              <div className="p-10 text-center text-sm text-gray-500">
+                Loading…
+              </div>
+            ) : (images.data?.data.length ?? 0) === 0 ? (
+              <div className="p-10 text-center text-sm text-gray-500">
+                No images found.
+              </div>
+            ) : (
+              <div className="grid flex-1 grid-cols-2 gap-4 overflow-auto p-4 sm:grid-cols-3 md:grid-cols-4">
+                {images.data?.data.map((item) => (
+                  <ImageCard
+                    key={item.id}
+                    item={item}
+                    isAdmin={isAdmin}
+                    onSelect={(url) => {
+                      onSelect(url);
+                      onClose();
+                    }}
+                    onSaveMeta={saveMeta}
+                    onDelete={remove}
+                  />
+                ))}
+              </div>
+            )}
+
+            <footer className="flex items-center justify-center gap-4 border-t border-gray-200 p-3 text-sm">
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-1 transition hover:bg-gray-100 disabled:opacity-40"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Prev
+              </button>
+              <span className="text-gray-600">Page {page}</span>
+              <button
+                type="button"
+                className="rounded-md border border-gray-300 px-3 py-1 transition hover:bg-gray-100 disabled:opacity-40"
+                disabled={!images.data?.meta.next}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </button>
+            </footer>
+          </>
+        ) : (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 p-10 text-center">
+            <BiHide size={28} className="text-gray-400" aria-hidden />
+            <p className="text-sm text-gray-500">
+              Library images are hidden for privacy.
+            </p>
+            <button
+              type="button"
+              className="rounded-md bg-main-color px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1b5669]"
+              onClick={() => setRevealed(true)}
+            >
+              Show images
+            </button>
           </div>
         )}
-
-        <footer className="flex items-center justify-center gap-4 border-t border-gray-200 p-3 text-sm">
-          <button
-            type="button"
-            className="rounded-md border border-gray-300 px-3 py-1 transition hover:bg-gray-100 disabled:opacity-40"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Prev
-          </button>
-          <span className="text-gray-600">Page {page}</span>
-          <button
-            type="button"
-            className="rounded-md border border-gray-300 px-3 py-1 transition hover:bg-gray-100 disabled:opacity-40"
-            disabled={!images.data?.meta.next}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </button>
-        </footer>
       </div>
     </div>,
     document.body,
