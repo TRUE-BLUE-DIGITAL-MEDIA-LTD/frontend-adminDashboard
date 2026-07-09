@@ -172,7 +172,7 @@ function ListDomain({
         ) : list.siteBuild?.deploy_state === "error" ? (
           <div className="flex w-max items-center gap-2 rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800">
             <MdPublic />
-            Error
+          {list.siteBuild?.error ?? "Error"}
           </div>
         ) : list.siteBuild?.deploy_state === "enqueued" ? (
           <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
