@@ -157,7 +157,6 @@ type ResponseUpdateDomainService = Domain;
 export interface InputUpdateDomainService {
   domainNameId: string;
   googleAnalyticsId?: string | null;
-  oxyeyeAnalyticsId?: string | null | undefined;
   note?: string;
   landingPages: {
     name?: string;

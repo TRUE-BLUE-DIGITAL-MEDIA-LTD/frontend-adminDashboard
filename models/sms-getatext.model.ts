@@ -47,3 +47,13 @@ export type SmsGetatextAccount = {
   isActive: boolean;
   lastActiveAt: string;
 };
+
+export type SmsGetatextDelayedMessage = {
+  phoneNumber: string;
+  serviceCode: string | null;
+  code: string | null;
+  receviedAt: string;
+  createAt: string;
+  delaySeconds: number;
+  activationId: string | null;
+};

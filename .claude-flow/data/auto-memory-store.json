@@ -1,0 +1,14 @@
+[
+  {
+    "id": "task-sms-getatext-delay-alerting",
+    "key": "sms-getatext-delay-alerting",
+    "content": "Task completed: sms-getatext-delay-alerting",
+    "namespace": "tasks",
+    "type": "task-outcome",
+    "metadata": {
+      "success": true,
+      "quality": 0.85
+    },
+    "createdAt": 1783597685400
+  }
+]

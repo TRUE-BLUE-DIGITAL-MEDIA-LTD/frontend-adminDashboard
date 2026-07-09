@@ -4,6 +4,7 @@ import {
   GetatextPrice,
   SmsGetatext,
   SmsGetatextAccount,
+  SmsGetatextDelayedMessage,
   SmsGetatextMessage,
 } from "../models";
 
@@ -162,6 +163,26 @@ export const setActiveSmsGetatextAccount = async (dto: {
   const response = await axios.post(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext-accounts/active/${dto.id}`,
     {},
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getSmsGetatextDelayedReport = async (dto: {
+  from: string;
+  to: string;
+}): Promise<SmsGetatextDelayedMessage[]> => {
+  const cookies = parseCookies();
+  const access_token = cookies.access_token;
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/delayed-report?from=${encodeURIComponent(
+      dto.from,
+    )}&to=${encodeURIComponent(dto.to)}`,
     {
       withCredentials: true,
       headers: {
