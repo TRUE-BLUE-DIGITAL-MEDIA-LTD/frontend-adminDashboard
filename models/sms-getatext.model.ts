@@ -57,3 +57,12 @@ export type SmsGetatextDelayedMessage = {
   delaySeconds: number;
   activationId: string | null;
 };
+
+export type SmsGetatextNoSmsRow = {
+  phoneNumber: string;
+  serviceCode: string;
+  activationId: string;
+  createAt: string;
+  expireAt: string;
+  userEmail: string | null;
+};

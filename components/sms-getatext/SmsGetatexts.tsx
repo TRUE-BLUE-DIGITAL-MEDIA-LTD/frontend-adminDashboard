@@ -18,6 +18,7 @@ import SelectService from "./SelectService";
 import SmsGetatextAccountCard from "./SmsGetatextAccount";
 import SmsGetatextCard from "./SmsGetatextCard";
 import SmsGetatextDelayReport from "./SmsGetatextDelayReport";
+import SmsGetatextNoSmsReport from "./SmsGetatextNoSmsReport";
 import SmsGetatextHistory from "./SmsGetatextHistory";
 
 type Props = {
@@ -83,7 +84,12 @@ function SmsGetatexts({ user }: Props) {
             <span className="rounded-md bg-gray-100 px-3 py-1 font-semibold text-gray-800 ring-1 ring-gray-300">
               Balance: {balance.data?.balance}
             </span>
-            <SmsGetatextDelayReport />
+            {user.role === "admin" && (
+              <>
+                <SmsGetatextDelayReport />
+                <SmsGetatextNoSmsReport />
+              </>
+            )}
           </div>
         )}
         <h1 className="text-4xl font-semibold text-gray-800">OxyGT</h1>

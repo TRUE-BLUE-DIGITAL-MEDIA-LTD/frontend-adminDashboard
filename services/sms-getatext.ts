@@ -6,6 +6,7 @@ import {
   SmsGetatextAccount,
   SmsGetatextDelayedMessage,
   SmsGetatextMessage,
+  SmsGetatextNoSmsRow,
 } from "../models";
 
 export const getActiveSmsGetatextNumbers = async (): Promise<
@@ -183,6 +184,29 @@ export const getSmsGetatextDelayedReport = async (dto: {
     `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/delayed-report?from=${encodeURIComponent(
       dto.from,
     )}&to=${encodeURIComponent(dto.to)}`,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getSmsGetatextNoSmsReport = async (dto: {
+  from: string;
+  to: string;
+  serviceCode?: string;
+}): Promise<SmsGetatextNoSmsRow[]> => {
+  const cookies = parseCookies();
+  const access_token = cookies.access_token;
+  const params = new URLSearchParams({ from: dto.from, to: dto.to });
+  if (dto.serviceCode) {
+    params.set("serviceCode", dto.serviceCode);
+  }
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/no-sms-report?${params.toString()}`,
     {
       withCredentials: true,
       headers: {
