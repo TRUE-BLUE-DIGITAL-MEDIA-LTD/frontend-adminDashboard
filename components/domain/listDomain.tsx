@@ -169,10 +169,18 @@ function ListDomain({
             <MdSettings />
             Building
           </div>
-        ) : list.siteBuild?.deploy_state === "error" ? (
-          <div className="flex w-max items-center gap-2 rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800">
+        ) : list.siteBuild?.deploy_state === "error" &&
+          list.siteBuild?.error === "Canceled build" ? (
+          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
             <MdPublic />
-          {list.siteBuild?.error ?? "Error"}
+            READY
+          </div>
+        ) : list.siteBuild?.deploy_state === "error" ? (
+          <div className="flex w-max  items-center gap-2 truncate rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800">
+            <MdPublic />
+            <span className="max-w-32 truncate">
+              {list.siteBuild?.error ?? "Error"}
+            </span>
           </div>
         ) : list.siteBuild?.deploy_state === "enqueued" ? (
           <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
