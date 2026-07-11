@@ -17,7 +17,14 @@ import { BiUpload } from "react-icons/bi";
 import Swal from "sweetalert2";
 import { languages } from "../../data/languages";
 import DashboardLayout from "../../layouts/dashboardLayout";
-import { Category, Language, Message, Translations, User } from "../../models";
+import {
+  Category,
+  Language,
+  LandingPage,
+  Message,
+  Translations,
+  User,
+} from "../../models";
 import {
   DomainWithLandingPage,
   GetAllDomains,
@@ -36,6 +43,11 @@ import SpinLoading from "../../components/loadings/spinLoading";
 import { GetAllCategories } from "../../services/admin/categories";
 import AiDesign from "../../components/common/AiDesign";
 import { TranslateAllDialog } from "@/editor/react/TranslateAllDialog";
+import ImportDesignDialog from "../../components/landingPages/ImportDesignDialog";
+import {
+  extractImportedTranslationState,
+  parseDesignJson,
+} from "../../utils/importDesign";
 interface UpdateLandingPageData {
   name: string;
   title: string;
@@ -93,6 +105,7 @@ function Index({ user }: { user: User }) {
   });
   const [open, setOpen] = useState(false);
   const [translateDialogOpen, setTranslateDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [translateProgress, setTranslateProgress] = useState<
     Partial<
       Record<Language, { processed: number; total: number; failed?: string }>
@@ -265,6 +278,33 @@ function Index({ user }: { user: User }) {
       });
     }
   };
+
+  // Copies another landing page's design + translated strings into local
+  // state only — nothing persists until the user clicks update. SEO
+  // title/description per language are kept from the current page. Thrown
+  // errors are surfaced inline by ImportDesignDialog, which stays open.
+  const handleImportDesign = async (source: LandingPage) => {
+    const editor = emailEditorRef.current?.editor;
+    if (!editor) {
+      throw new Error("Editor is not ready — click SHOW first");
+    }
+    const design = parseDesignJson(source.json);
+    editor.loadDesign(design);
+    // The old design's undo stack is meaningless against the new canvas.
+    editor.clearHistory();
+    const imported = extractImportedTranslationState(
+      source,
+      landingPageData.translations,
+    );
+    setLandingPageData((prev) => ({ ...prev, ...imported }));
+    setCurrentLanguage(imported.primaryLanguage);
+    setMessage({
+      status: "success",
+      message: `Design imported from "${source.name}" — click update to save`,
+    });
+    setOpen(true);
+  };
+
   const handleClose = (event: React.SyntheticEvent | Event, reason: string) => {
     if (reason === "clickaway") {
       return;
@@ -310,6 +350,20 @@ function Index({ user }: { user: User }) {
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             <span className="text-icon-color">U</span>pdate Landing Page
           </div>
+        </div>
+        <div className="ml-20 mt-4 flex gap-3">
+          <button
+            disabled={blurEditor || !landingPage.data}
+            onClick={() => setImportDialogOpen(true)}
+            title={
+              blurEditor
+                ? "Show the editor first"
+                : "Copy a design from another landing page"
+            }
+            className="main-button disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Import design
+          </button>
         </div>
         <main className="relative my-10   font-Poppins 2xl:w-full">
           {blurEditor ? (
@@ -454,6 +508,12 @@ function Index({ user }: { user: User }) {
               });
               await landingPage.refetch();
             }}
+          />
+          <ImportDesignDialog
+            open={importDialogOpen}
+            currentLandingPageId={router.query.landingPageId as string}
+            onClose={() => setImportDialogOpen(false)}
+            onImport={handleImportDesign}
           />
         </main>
 
