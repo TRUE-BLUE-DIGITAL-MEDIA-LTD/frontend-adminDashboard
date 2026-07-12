@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Chip,
   MenuItem,
   Pagination,
@@ -22,9 +23,15 @@ import moment from "moment";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { LinkAuditStatus, User } from "../../models";
 import {
+  FixDomainAuditService,
   ListLinkAuditService,
   RescanLinkAuditService,
 } from "../../services/admin/link-audit";
+import {
+  BulkFixOutcome,
+  buildBulkSummary,
+  selectableDomainIds,
+} from "../../components/link-audit/bulkFix";
 import { GetUser } from "../../services/admin/user";
 
 const STATUS_OPTIONS: { label: string; value: string }[] = [
@@ -72,12 +79,80 @@ function Index({ user }: { user: User }) {
     },
   });
 
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkProgress, setBulkProgress] = useState<{
+    done: number;
+    total: number;
+  } | null>(null);
+  const [bulkSummary, setBulkSummary] = useState<string | null>(null);
+
+  const results = audit.data?.results ?? [];
+  const selectableIds = selectableDomainIds(results);
+  const allSelected =
+    selectableIds.length > 0 &&
+    selectableIds.every((id) => selected.has(id));
+  const someSelected = selectableIds.some((id) => selected.has(id));
+  const bulkRunning = bulkProgress !== null;
+
+  const clearSelection = () => setSelected(new Set());
+
+  const toggleRow = (domainId: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(domainId)) next.delete(domainId);
+      else next.add(domainId);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelected(allSelected ? new Set() : new Set(selectableIds));
+  };
+
+  const runBulkFix = async () => {
+    const ids = selectableIds.filter((id) => selected.has(id));
+    setBulkSummary(null);
+    setBulkProgress({ done: 0, total: ids.length });
+    const outcomes: BulkFixOutcome[] = [];
+    for (let i = 0; i < ids.length; i++) {
+      const name =
+        results.find((r) => r.domainId === ids[i])?.domainName ?? ids[i];
+      try {
+        const res = await FixDomainAuditService(ids[i]);
+        outcomes.push({
+          domainName: name,
+          fixedPages: res.fixed,
+          failed: res.failed > 0,
+        });
+      } catch {
+        outcomes.push({ domainName: name, fixedPages: 0, failed: true });
+      }
+      setBulkProgress({ done: i + 1, total: ids.length });
+    }
+    setBulkProgress(null);
+    setSelected(new Set());
+    setBulkSummary(buildBulkSummary(outcomes));
+    queryClient.invalidateQueries({ queryKey: ["link-audit"] });
+  };
+
   return (
     <DashboardLayout user={user}>
       <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-semibold">Link Audit</h1>
           <div className="flex flex-wrap items-center gap-3">
+            {canRescan && selected.size > 0 && (
+              <Button
+                variant="contained"
+                color="error"
+                disabled={bulkRunning}
+                onClick={runBulkFix}
+              >
+                {bulkProgress
+                  ? `Fixing ${bulkProgress.done}/${bulkProgress.total}…`
+                  : `Fix selected (${selected.size})`}
+              </Button>
+            )}
             {canRescan && (
               <Button
                 variant="contained"
@@ -97,6 +172,7 @@ function Index({ user }: { user: User }) {
               onChange={(e) => {
                 setStatus(e.target.value);
                 setPage(1);
+                clearSelection();
               }}
               className="min-w-[160px] bg-white"
             >
@@ -111,6 +187,7 @@ function Index({ user }: { user: User }) {
               onSubmit={(value) => {
                 setSearch(value);
                 setPage(1);
+                clearSelection();
               }}
               className="flex items-center gap-1 rounded border bg-white px-2"
             >
@@ -123,10 +200,26 @@ function Index({ user }: { user: User }) {
           </div>
         </div>
 
+        {bulkSummary && (
+          <p className="rounded border border-green-300 bg-green-50 px-3 py-2 text-sm">
+            {bulkSummary}
+          </p>
+        )}
+
         <div className="rounded border bg-white">
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    size="small"
+                    disabled={selectableIds.length === 0 || bulkRunning}
+                    checked={allSelected}
+                    indeterminate={someSelected && !allSelected}
+                    onChange={toggleSelectAll}
+                    inputProps={{ "aria-label": "Select all mismatched domains" }}
+                  />
+                </TableCell>
                 <TableCell>Domain</TableCell>
                 <TableCell>Partner</TableCell>
                 <TableCell>Status</TableCell>
@@ -139,7 +232,7 @@ function Index({ user }: { user: User }) {
               {audit.isLoading &&
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={7}>
                       <Skeleton height={28} />
                     </TableCell>
                   </TableRow>
@@ -147,14 +240,23 @@ function Index({ user }: { user: User }) {
 
               {!audit.isLoading && (audit.data?.results.length ?? 0) === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     No domains match this filter.
                   </TableCell>
                 </TableRow>
               )}
 
-              {audit.data?.results.map((row) => (
+              {results.map((row) => (
                 <TableRow key={row.domainId} hover>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      size="small"
+                      disabled={row.status !== "MISMATCH" || bulkRunning}
+                      checked={selected.has(row.domainId)}
+                      onChange={() => toggleRow(row.domainId)}
+                      inputProps={{ "aria-label": `Select ${row.domainName}` }}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">
                     {row.domainName}
                   </TableCell>
@@ -194,7 +296,10 @@ function Index({ user }: { user: User }) {
             <Pagination
               count={audit.data?.totalPages ?? 1}
               page={page}
-              onChange={(_, p) => setPage(p)}
+              onChange={(_, p) => {
+                setPage(p);
+                clearSelection();
+              }}
             />
           </div>
         )}
