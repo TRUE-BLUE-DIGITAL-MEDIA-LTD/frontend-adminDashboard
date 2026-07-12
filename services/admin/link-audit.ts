@@ -65,3 +65,26 @@ export async function FixLinkService(
     throw err.response?.data ?? err;
   }
 }
+
+export interface FixDomainResult {
+  domainId: string;
+  fixed: number;
+  failed: number;
+  audit: DomainAudit;
+}
+
+export async function FixDomainAuditService(
+  domainId: string,
+): Promise<FixDomainResult> {
+  try {
+    const { data } = await axios.post(
+      `${base()}/fix-domain`,
+      { domainId },
+      auth(),
+    );
+    return data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response?.data ?? err;
+  }
+}
