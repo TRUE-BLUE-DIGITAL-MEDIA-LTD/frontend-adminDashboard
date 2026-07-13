@@ -11,6 +11,7 @@ export interface ResponseGetAllAccountByPageService {
 interface InputGetAllAccountByPageService {
   page: number;
   limit: number;
+  isDeleted?: boolean;
 }
 
 export async function GetAllAccountByPageService(
@@ -19,12 +20,10 @@ export async function GetAllAccountByPageService(
   try {
     const cookies = parseCookies();
     const access_token = cookies.access_token;
-    const users = await axios.get(
+    const users = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/account/get-all`,
+      input,
       {
-        params: {
-          ...input,
-        },
         headers: {
           Authorization: "Bearer " + access_token,
         },
@@ -192,6 +191,35 @@ export async function DeleteAccountService(
     );
 
     return user.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+interface ResponseRestoreAccountService {
+  message: string;
+}
+interface InputRestoreAccountService {
+  userId: string;
+}
+export async function RestoreAccountService(
+  input: InputRestoreAccountService,
+): Promise<ResponseRestoreAccountService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/account/restore`,
+      { ...input },
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+
+    return response.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;

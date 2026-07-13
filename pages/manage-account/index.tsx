@@ -6,7 +6,13 @@ import { useRouter } from "next/router";
 import { parseCookies, setCookie } from "nookies";
 import { useState } from "react";
 import { FaMoneyBillTrendUp, FaPeopleGroup, FaUser } from "react-icons/fa6";
-import { FiEdit, FiLogIn, FiPlusCircle, FiTrash2 } from "react-icons/fi";
+import {
+  FiEdit,
+  FiLogIn,
+  FiPlusCircle,
+  FiRotateCcw,
+  FiTrash2,
+} from "react-icons/fi";
 import Swal from "sweetalert2";
 import AnnoucementTable from "../../components/Annoucement/AnnoucementTable";
 import AssignPartner from "../../components/forms/accounts/assignPartner";
@@ -19,6 +25,7 @@ import { Partner, User } from "../../models";
 import {
   DeleteAccountService,
   GetAllAccountByPageService,
+  RestoreAccountService,
 } from "../../services/admin/account";
 import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
 import PartnerTable from "../../components/forms/partners/PartnerTable";
@@ -26,6 +33,7 @@ import PartnerTable from "../../components/forms/partners/PartnerTable";
 function Index({ user }: { user: User }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [view, setView] = useState<"active" | "suspended">("active");
   const [triggerCreateAccount, setTriggerCreateAccount] = useState(false);
   const [triggerResetPassword, setTriggerResetPassword] = useState(false);
   const [triggerEditAccount, setTriggerEditAccount] = useState(false);
@@ -37,8 +45,13 @@ function Index({ user }: { user: User }) {
   >();
   const [triggerUpdateBonusRate, setTriggerUpdateBonusRate] = useState(false);
   const accounts = useQuery({
-    queryKey: ["accounts", page],
-    queryFn: () => GetAllAccountByPageService({ page: page, limit: 30 }),
+    queryKey: ["accounts", page, view],
+    queryFn: () =>
+      GetAllAccountByPageService({
+        page: page,
+        limit: 30,
+        isDeleted: view === "suspended",
+      }),
     placeholderData: keepPreviousData,
   });
 
@@ -55,12 +68,12 @@ function Index({ user }: { user: User }) {
     content.innerHTML =
       "<div>Please type this</div> <strong>" +
       replacedText +
-      "</strong> <div>to confirm deleting</div>";
+      "</strong> <div>to confirm suspending</div>";
     const { value } = await Swal.fire({
-      title: "Delete Account",
+      title: "Suspend Account",
       input: "text",
       footer:
-        "Please keep it mind if you delete this account, it can not be reverted!",
+        "Please keep it mind if you suspend this account, it can not be reverted!",
       html: content,
       showCancelButton: true,
       inputValidator: (value) => {
@@ -72,7 +85,7 @@ function Index({ user }: { user: User }) {
     if (value) {
       try {
         Swal.fire({
-          title: "Trying To Delete",
+          title: "Trying To Suspend",
           html: "Loading....",
           allowEscapeKey: false,
           allowOutsideClick: false,
@@ -85,7 +98,7 @@ function Index({ user }: { user: User }) {
           userId: userId,
         });
         await accounts.refetch();
-        Swal.fire("Deleted!", "Successfully Deleted Account", "success");
+        Swal.fire("Suspended!", "Successfully Suspended Account", "success");
       } catch (err: any) {
         console.log(err);
         Swal.fire("error!", err.message?.toString(), "error");
@@ -121,6 +134,40 @@ function Index({ user }: { user: User }) {
         html: `Successfully Signed In As ${user.user.name}`,
         icon: "success",
       });
+    } catch (err: any) {
+      console.log(err);
+      Swal.fire("error!", err.message?.toString(), "error");
+    }
+  };
+
+  const handleRestoreAccount = async ({
+    userId,
+    email,
+  }: {
+    userId: string;
+    email: string;
+  }) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "Restore Account",
+      text: `Restore ${email}? The account will be able to sign in again.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Restore",
+    });
+    if (!isConfirmed) return;
+    try {
+      Swal.fire({
+        title: "Trying To Restore",
+        html: "Loading....",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      await RestoreAccountService({ userId });
+      await accounts.refetch();
+      Swal.fire("Restored!", "Successfully Restored Account", "success");
     } catch (err: any) {
       console.log(err);
       Swal.fire("error!", err.message?.toString(), "error");
@@ -171,6 +218,34 @@ function Index({ user }: { user: User }) {
                 <FaPeopleGroup />
                 Account Management
               </h1>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setView("active");
+                    setPage(1);
+                  }}
+                  className={`rounded-2xl px-4 py-2 shadow-md transition duration-150 ease-in-out active:scale-95 ${
+                    view === "active"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  Active
+                </button>
+                <button
+                  onClick={() => {
+                    setView("suspended");
+                    setPage(1);
+                  }}
+                  className={`rounded-2xl px-4 py-2 shadow-md transition duration-150 ease-in-out active:scale-95 ${
+                    view === "suspended"
+                      ? "bg-red-500 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  Suspended
+                </button>
+              </div>
               <button
                 onClick={() => {
                   document.body.style.overflow = "hidden";
@@ -353,17 +428,31 @@ function Index({ user }: { user: User }) {
                                   <FiEdit />
                                 </button>
 
-                                <button
-                                  onClick={() =>
-                                    handleDeletAccount({
-                                      userId: account.id,
-                                      email: account.email,
-                                    })
-                                  }
-                                  className="text-2xl text-red-600 transition duration-100 hover:text-red-800"
-                                >
-                                  <FiTrash2 />
-                                </button>
+                                {view === "active" ? (
+                                  <button
+                                    onClick={() =>
+                                      handleDeletAccount({
+                                        userId: account.id,
+                                        email: account.email,
+                                      })
+                                    }
+                                    className="text-2xl text-red-600 transition duration-100 hover:text-red-800"
+                                  >
+                                    <FiTrash2 />
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() =>
+                                      handleRestoreAccount({
+                                        userId: account.id,
+                                        email: account.email,
+                                      })
+                                    }
+                                    className="text-2xl text-green-600 transition duration-100 hover:text-green-800"
+                                  >
+                                    <FiRotateCcw />
+                                  </button>
+                                )}
                               </div>
                             </td>
                           </tr>
