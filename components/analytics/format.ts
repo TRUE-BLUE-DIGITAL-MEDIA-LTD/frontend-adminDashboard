@@ -3,6 +3,7 @@ import type { LanderAnalyticsRow } from "../../models";
 export type SortKey =
   | "views"
   | "clicks"
+  | "ctr"
   | "bounceRate"
   | "avgTimeOnPageMs"
   | "avgMaxScrollPct";
@@ -20,6 +21,14 @@ export function formatPct(v: number | null): string {
   if (v === null || !Number.isFinite(v)) return "—";
   const pct = v * 100;
   return `${Number.isInteger(pct) ? pct : pct.toFixed(1)}%`;
+}
+
+export function formatReturningPct(
+  returningViews: number,
+  identifiedViews: number,
+): string {
+  if (identifiedViews <= 0) return "—";
+  return formatPct(returningViews / identifiedViews);
 }
 
 export function sortRows(
