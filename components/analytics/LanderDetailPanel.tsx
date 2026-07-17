@@ -66,14 +66,17 @@ export default function LanderDetailPanel({
   landingPageId,
   from,
   to,
+  live = false,
 }: {
   landingPageId: string;
   from: string;
   to?: string;
+  live?: boolean;
 }) {
   const detail = useQuery({
     queryKey: ["lander-analytics-detail", landingPageId, from, to],
     queryFn: () => GetLanderAnalyticsDetailService(landingPageId, { from, to }),
+    refetchInterval: live ? 5000 : false,
   });
 
   if (detail.isLoading) {

@@ -65,11 +65,20 @@ function Index({ user }: { user: User }) {
     return rangeForPreset(preset);
   }, [preset, customFrom, customTo]);
 
+  // "Today" is live: refetch every 5s and leave `to` open so the server uses
+  // its own "now" — a pinned `to` would exclude sessions newer than the moment
+  // the preset was picked.
+  const isLive = preset === "today";
   const analytics = useQuery({
-    queryKey: ["lander-analytics", range?.from, range?.to],
+    queryKey: ["lander-analytics", preset, range?.from, range?.to],
     queryFn: () =>
-      ListLanderAnalyticsService({ from: range!.from, to: range!.to }),
+      ListLanderAnalyticsService(
+        isLive
+          ? { from: range!.from }
+          : { from: range!.from, to: range!.to },
+      ),
     enabled: !!range,
+    refetchInterval: isLive ? 5000 : false,
   });
 
   const rows = useMemo(() => {
@@ -342,7 +351,8 @@ function Index({ user }: { user: User }) {
               <LanderDetailPanel
                 landingPageId={selected}
                 from={range.from}
-                to={range.to}
+                to={isLive ? undefined : range.to}
+                live={isLive}
               />
             )}
           </>
