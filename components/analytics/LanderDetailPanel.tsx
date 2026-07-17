@@ -65,13 +65,15 @@ function Section({
 export default function LanderDetailPanel({
   landingPageId,
   from,
+  to,
 }: {
   landingPageId: string;
   from: string;
+  to?: string;
 }) {
   const detail = useQuery({
-    queryKey: ["lander-analytics-detail", landingPageId, from],
-    queryFn: () => GetLanderAnalyticsDetailService(landingPageId, { from }),
+    queryKey: ["lander-analytics-detail", landingPageId, from, to],
+    queryFn: () => GetLanderAnalyticsDetailService(landingPageId, { from, to }),
   });
 
   if (detail.isLoading) {
@@ -99,6 +101,27 @@ export default function LanderDetailPanel({
               color={EXIT_COLORS[e.exitType]}
             />
           ))}
+        </Section>
+        <Section title="New vs returning">
+          {d.identifiedViews > 0 ? (
+            <>
+              <Bar
+                label="New"
+                count={d.identifiedViews - d.returningViews}
+                total={d.identifiedViews}
+              />
+              <Bar
+                label="Returning"
+                count={d.returningViews}
+                total={d.identifiedViews}
+                color="bg-purple-500"
+              />
+            </>
+          ) : (
+            <p className="text-sm text-gray-500">
+              No visitor data in this range (collected from deploy day onward).
+            </p>
+          )}
         </Section>
         {d.funnel.length > 0 && (
           <Section title={`Step funnel${d.funnelSampled ? " (sampled)" : ""}`}>
