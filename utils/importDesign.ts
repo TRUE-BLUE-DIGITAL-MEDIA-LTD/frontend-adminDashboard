@@ -4,9 +4,10 @@ import { LandingPage, Language, Translations } from "../models";
 export class ImportDesignError extends Error {}
 
 /**
- * Parse a landing page's stored `json` column and validate it is one of the
- * two shapes EditorInstance.loadDesign auto-detects: GrapesJS project data
- * (`pages` array) or a legacy Unlayer design (`body.rows` array).
+ * Parse a landing page's stored `json` column and validate it is GrapesJS
+ * project data (`pages` array) — the only shape EditorInstance.loadDesign
+ * accepts. A legacy Unlayer design (`body.rows` array) is rejected with a
+ * clear message.
  */
 export function parseDesignJson(json: string | null | undefined): unknown {
   if (!json) {
@@ -23,15 +24,20 @@ export function parseDesignJson(json: string | null | undefined): unknown {
       ? (parsed as Record<string, unknown>)
       : null;
   const isGrapes = obj !== null && Array.isArray(obj.pages);
+  if (isGrapes) {
+    return parsed;
+  }
   const body =
     obj !== null && typeof obj.body === "object" && obj.body !== null
       ? (obj.body as Record<string, unknown>)
       : null;
   const isUnlayer = body !== null && Array.isArray(body.rows);
-  if (!isGrapes && !isUnlayer) {
-    throw new ImportDesignError("This page has no importable design");
+  if (isUnlayer) {
+    throw new ImportDesignError(
+      "This page uses the legacy Unlayer format, which is no longer supported",
+    );
   }
-  return parsed;
+  throw new ImportDesignError("This page has no importable design");
 }
 
 export interface ImportedTranslationState {

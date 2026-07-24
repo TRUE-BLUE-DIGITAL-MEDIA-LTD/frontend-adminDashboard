@@ -52,6 +52,7 @@
   "devDependencies": {
     "@types/core-js": "^2.5.8",
     "@types/event-source-polyfill": "^1.0.5",
+    "@types/jsdom": "^28.0.3",
     "@types/node": "^20.19.41",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18",
@@ -60,6 +61,7 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "^14.2.31",
+    "jsdom": "^29.1.1",
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",

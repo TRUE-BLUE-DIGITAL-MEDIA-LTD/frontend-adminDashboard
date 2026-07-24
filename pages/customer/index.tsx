@@ -1,21 +1,29 @@
-import React, { FormEvent, useEffect, useState } from "react";
-import { User } from "../../models";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
-import { GetUser } from "../../services/admin/user";
-import { useRouter } from "next/router";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import Swal from "sweetalert2";
-import DashboardLayout from "../../layouts/dashboardLayout";
 import { Box, Button, Pagination, Skeleton, TextField } from "@mui/material";
-import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
-import { loadingNumber } from "../../data/loadingNumber";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
+import { FormEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
+import { SiMicrosoftexcel } from "react-icons/si";
+import Swal from "sweetalert2";
+import * as XLSX from "xlsx-js-style";
+import { loadingNumber } from "../../data/loadingNumber";
+import DashboardLayout from "../../layouts/dashboardLayout";
+import { User } from "../../models";
+import { GetUser } from "../../services/admin/user";
 import {
   DeleteCustomerService,
   GetCustomerByPageService,
 } from "../../services/customer";
-import Link from "next/link";
+
+/** Render a customer's multi-step form answers as "key: value" pairs. */
+function formatAnswers(answers: Record<string, string> | null | undefined) {
+  const entries = Object.entries(answers ?? {});
+  if (entries.length === 0) return "-";
+  return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+}
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -39,6 +47,106 @@ function Index({ user }: { user: User }) {
     if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPage) {
       setPage(targetPage); // Set the new page
       setJumpToPageInput(""); // Clear the input field
+    }
+  };
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleDownloadExcel = async () => {
+    try {
+      setIsExporting(true);
+      // Pull every page; the endpoint is paginated only.
+      const limit = 500;
+      const first = await GetCustomerByPageService({ page: 1, limit });
+      const all = [...first.data];
+      for (let p = 2; p <= (first.meta.lastPage ?? 1); p++) {
+        const next = await GetCustomerByPageService({ page: p, limit });
+        all.push(...next.data);
+      }
+
+      // Form-answer keys are dynamic (defined per landing page form), so
+      // give each key its own column, in first-seen order. A key that
+      // collides with a fixed header (e.g. an editor naming an answer key
+      // "Email") gets a suffixed header so it can't overwrite real data.
+      const RESERVED_HEADERS = [
+        "Email",
+        "Name",
+        "Phone Number",
+        "Birthday",
+        "Company",
+        "Website",
+        "Zip Code",
+        "IP Address",
+        "Country",
+        "Landing Page",
+        "Created At",
+      ];
+      const answerKeys: string[] = [];
+      for (const customer of all) {
+        for (const key of Object.keys(customer.formAnswers ?? {})) {
+          if (!answerKeys.includes(key)) answerKeys.push(key);
+        }
+      }
+      const answerColumns = answerKeys.map((key) => ({
+        key,
+        header: RESERVED_HEADERS.includes(key) ? `${key} (answer)` : key,
+      }));
+
+      const excelData = all.map((customer) => {
+        const row: Record<string, string> = {
+          Email: customer.email ?? "-",
+          Name: customer.name ?? "-",
+          "Phone Number": customer.phone_number ?? "-",
+          Birthday: customer.birthday ?? "-",
+          Company: customer.company ?? "-",
+          Website: customer.website ?? "-",
+          "Zip Code": customer.zip_code ?? "-",
+          "IP Address": customer.ip ?? "-",
+          Country: customer.country ?? "-",
+        };
+        for (const col of answerColumns) {
+          row[col.header] = customer.formAnswers?.[col.key] ?? "-";
+        }
+        row["Landing Page"] = customer.landingPage?.name ?? "-";
+        row["Created At"] = new Date(customer.createAt).toLocaleString("en-US");
+        return row;
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      worksheet["!cols"] = [
+        { wch: 30 }, // Email
+        { wch: 20 }, // Name
+        { wch: 16 }, // Phone Number
+        { wch: 12 }, // Birthday
+        { wch: 16 }, // Company
+        { wch: 20 }, // Website
+        { wch: 10 }, // Zip Code
+        { wch: 16 }, // IP Address
+        { wch: 16 }, // Country
+        ...answerKeys.map(() => ({ wch: 16 })),
+        { wch: 24 }, // Landing Page
+        { wch: 22 }, // Created At
+      ];
+      if (worksheet["!ref"]) {
+        const range = XLSX.utils.decode_range(worksheet["!ref"]);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const address = XLSX.utils.encode_cell({ r: 0, c: C });
+          if (!worksheet[address]) continue;
+          worksheet[address].s = {
+            font: { bold: true },
+            alignment: { horizontal: "center", vertical: "center" },
+          };
+        }
+      }
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
+      const today = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `customers-${today}.xlsx`);
+    } catch (err: any) {
+      console.log(err);
+      Swal.fire("error!", err.message?.toString(), "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -92,6 +200,17 @@ function Index({ user }: { user: User }) {
           </h1>
         </header>
         <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+          <div className="flex w-80 justify-end md:w-11/12">
+            <Button
+              variant="contained"
+              color="success"
+              disabled={isExporting || customers.isLoading}
+              onClick={handleDownloadExcel}
+              startIcon={<SiMicrosoftexcel />}
+            >
+              {isExporting ? "Exporting..." : "Download Excel"}
+            </Button>
+          </div>
           <div
             className=" h-96 w-80 justify-center overflow-auto  
             md:w-11/12 "
@@ -109,6 +228,9 @@ function Index({ user }: { user: User }) {
                   <th>Company</th>
                   <th>Website</th>
                   <th>Zip Code</th>
+                  <th>IP Address</th>
+                  <th>Country</th>
+                  <th>Answers</th>
                   <th>Landing Page</th>
                   <th className="group flex gap-2">
                     <span>Create At</span>
@@ -147,10 +269,19 @@ function Index({ user }: { user: User }) {
                             <Skeleton animation="wave" />
                           </td>
                           <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
+                          </td>
+                          <td>
                             <Skeleton />
                           </td>
                           <td>
                             <Skeleton />
+                          </td>
+                          <td>
+                            <Skeleton animation="wave" />
                           </td>
                         </tr>
                       );
@@ -215,6 +346,21 @@ function Index({ user }: { user: User }) {
                           <td>
                             <div className="min-w-28 text-center">
                               {list?.zip_code ? list?.zip_code : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.ip ? list?.ip : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-28 text-center">
+                              {list?.country ? list?.country : "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="min-w-40 max-w-64 px-2 text-center text-sm">
+                              {formatAnswers(list?.formAnswers)}
                             </div>
                           </td>
 

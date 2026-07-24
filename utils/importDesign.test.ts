@@ -14,9 +14,12 @@ describe("parseDesignJson", () => {
     });
   });
 
-  it("accepts legacy Unlayer designs (body.rows array)", () => {
+  it("rejects legacy Unlayer designs (body.rows array) as unsupported", () => {
     const json = JSON.stringify({ body: { rows: [] }, counters: {} });
-    expect(parseDesignJson(json)).toEqual({ body: { rows: [] }, counters: {} });
+    expect(() => parseDesignJson(json)).toThrow(ImportDesignError);
+    expect(() => parseDesignJson(json)).toThrow(
+      "This page uses the legacy Unlayer format, which is no longer supported",
+    );
   });
 
   it("throws ImportDesignError for null/undefined/empty json", () => {

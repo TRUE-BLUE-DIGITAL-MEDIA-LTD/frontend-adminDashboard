@@ -16,10 +16,8 @@ import {
   registerColorPopupTraitType,
   OXY_COLOR_TYPE,
 } from "./style-types/color-popup";
-import { importUnlayerDesign } from "../compat/unlayer-import";
 import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
 import { appendQuizRuntime } from "./tools/quiz/runtime-inject";
-import type { UnlayerDesign } from "../compat/unlayer-types";
 import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
 import { uploadAndIndexImage } from "./upload-image";
 
@@ -357,10 +355,7 @@ export function mountEngine(opts: EngineMountOptions): Engine {
     if (opts.initialHtml) {
       grapes.setComponents(opts.initialHtml);
     } else if (opts.initialDesign) {
-      if (isUnlayerDesign(opts.initialDesign)) {
-        const { html } = importUnlayerDesign(opts.initialDesign);
-        grapes.setComponents(html);
-      } else if (isGrapesProjectData(opts.initialDesign)) {
+      if (isGrapesProjectData(opts.initialDesign)) {
         grapes.loadProjectData(opts.initialDesign);
       }
     }
@@ -384,17 +379,12 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       // would let the user "undo" their open-document action into the
       // previous one's content. Skip + clear, just like initial load.
       um.skip(() => {
-        if (isUnlayerDesign(parsed)) {
-          const { html } = importUnlayerDesign(parsed);
-          grapes.setComponents(html);
-          return;
-        }
         if (isGrapesProjectData(parsed)) {
           grapes.loadProjectData(parsed);
           return;
         }
         throw new Error(
-          "loadDesign received unrecognized data. Expected Unlayer design (body.rows) or GrapesJS project data (pages).",
+          "loadDesign received unrecognized data. Expected GrapesJS project data (pages). Legacy Unlayer designs are no longer supported.",
         );
       });
       um.clear();
@@ -456,13 +446,4 @@ function isGrapesProjectData(value: unknown): value is Record<string, unknown> {
     value !== null &&
     "pages" in (value as Record<string, unknown>)
   );
-}
-
-function isUnlayerDesign(value: unknown): value is UnlayerDesign {
-  if (typeof value !== "object" || value === null) return false;
-  const v = value as Record<string, unknown>;
-  if (!("body" in v) || typeof v.body !== "object" || v.body === null) {
-    return false;
-  }
-  return Array.isArray((v.body as Record<string, unknown>).rows);
 }

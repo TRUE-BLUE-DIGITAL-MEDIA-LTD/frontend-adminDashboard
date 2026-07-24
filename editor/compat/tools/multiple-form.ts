@@ -41,6 +41,18 @@ const ROOT_TYPE = "oxy-multiple-form";
 const STEP_TYPE = "oxy-form-step";
 const OPTION_TYPE = "oxy-form-option";
 
+const SUBMIT_STEP_TYPE = "oxy-form-submit-step";
+export const SUBMIT_STEP_CLASS = "oxy-form-submit-step";
+const EMAIL_INPUT_CLASS = "oxy-form-email-input";
+const CONSENT_ROW_CLASS = "oxy-form-consent-row";
+const CONSENT_CHECKBOX_CLASS = "oxy-form-consent-checkbox";
+const CONSENT_TEXT_CLASS = "oxy-form-consent-text";
+const SUBMIT_CTA_CLASS = "oxy-form-submit-cta";
+
+export const MAX_STEPS = 5;
+export const DEFAULT_CONSENT_TEXT =
+  "I agree to receive marketing communications and accept the privacy policy.";
+
 const STEP_LIST_TRAIT_TYPE = "oxy-step-list";
 
 const CMD_ADD_STEP = "oxy-mf:add-step";
@@ -181,6 +193,24 @@ const DIVIDER_STYLE: Record<string, string> = {
   background: "#000000",
 };
 
+const EMAIL_INPUT_STYLE: Record<string, string> = {
+  "min-width": "15rem",
+  padding: "10px 12px",
+  border: "1px solid #d1d5db",
+  "border-radius": "8px",
+  "font-size": "1rem",
+};
+
+const CONSENT_ROW_STYLE: Record<string, string> = {
+  display: "flex",
+  "align-items": "flex-start",
+  gap: "8px",
+  "max-width": "22rem",
+  "font-size": "0.875rem",
+  "text-align": "left",
+  cursor: "pointer",
+};
+
 const ROOT_STYLE: Record<string, string> = {
   width: "100%",
   display: "flex",
@@ -305,9 +335,120 @@ function makeStepTreeNode(args: {
   };
 }
 
-function makeDefaultRootTree() {
-  const stepType = "answer";
-  const totalSteps = 1;
+export function makeSubmitStepTreeNode(args: {
+  title: string;
+  emailPlaceholder: string;
+  consentText: string;
+  ctaText: string;
+  buttonColor: string;
+  textColor: string;
+  buttonPadding: number;
+  buttonRadius: number;
+  isActive: boolean;
+}) {
+  const ctaStyle = buttonStyleObject({
+    buttonColor: args.buttonColor,
+    textColor: args.textColor,
+    buttonPadding: args.buttonPadding,
+    buttonRadius: args.buttonRadius,
+  });
+  const classes = [STEP_CLASS, SUBMIT_STEP_CLASS];
+  if (args.isActive) classes.push(ACTIVE_STEP_CLASS);
+  // Structure is protected, but every child stays selectable/hoverable so
+  // the Style Manager can target it — same freedom as answer-step buttons.
+  const structural = {
+    draggable: false,
+    copyable: false,
+    removable: false,
+  };
+  // Text on these children is trait-driven (step-title / consent-text /
+  // cta-text) — block inline editing so canvas text can't diverge.
+  const traitText = { ...structural, editable: false };
+  return {
+    type: SUBMIT_STEP_TYPE,
+    "step-title": args.title,
+    "email-placeholder": args.emailPlaceholder,
+    "consent-text": args.consentText,
+    "cta-text": args.ctaText,
+    "button-color": args.buttonColor,
+    "text-color": args.textColor,
+    "button-padding": args.buttonPadding,
+    "button-radius": args.buttonRadius,
+    attributes: { class: classes.join(" ") },
+    // Submission step is never step 1 in practice, but mirror the same
+    // inline-display invariant the runtime expects.
+    style: stepStyleFor(args.isActive),
+    components: [
+      {
+        tagName: "div",
+        attributes: { class: TITLE_CLASS },
+        components: args.title,
+        style: { ...TITLE_STYLE, display: args.title ? "block" : "none" },
+        ...traitText,
+      },
+      {
+        tagName: "div",
+        attributes: { class: DIVIDER_CLASS },
+        style: DIVIDER_STYLE,
+        ...structural,
+      },
+      {
+        tagName: "input",
+        void: true,
+        attributes: {
+          type: "email",
+          required: "required",
+          class: EMAIL_INPUT_CLASS,
+          placeholder: args.emailPlaceholder,
+        },
+        style: EMAIL_INPUT_STYLE,
+        ...structural,
+      },
+      {
+        tagName: "label",
+        attributes: { class: CONSENT_ROW_CLASS },
+        style: CONSENT_ROW_STYLE,
+        ...structural,
+        components: [
+          {
+            tagName: "input",
+            void: true,
+            attributes: {
+              type: "checkbox",
+              required: "required",
+              class: CONSENT_CHECKBOX_CLASS,
+            },
+            ...structural,
+          },
+          {
+            tagName: "span",
+            attributes: { class: CONSENT_TEXT_CLASS },
+            components: args.consentText,
+            ...traitText,
+          },
+        ],
+      },
+      {
+        tagName: "button",
+        attributes: { type: "button", class: SUBMIT_CTA_CLASS },
+        components: args.ctaText,
+        style: ctaStyle,
+        ...traitText,
+      },
+    ],
+  };
+}
+
+export function makeDefaultRootTree() {
+  const totalSteps = 4;
+  const shared = {
+    buttonColor: DEFAULT_BUTTON_COLOR,
+    textColor: DEFAULT_TEXT_COLOR,
+    buttonPadding: DEFAULT_BUTTON_PADDING,
+    buttonRadius: DEFAULT_BUTTON_RADIUS,
+    buttonSpacing: DEFAULT_BUTTON_SPACING,
+    totalSteps,
+  };
   return {
     type: ROOT_TYPE,
     attributes: { class: MULTIPLE_FORM_MARKER_CLASS },
@@ -316,20 +457,56 @@ function makeDefaultRootTree() {
     "active-step": 1,
     components: [
       makeStepTreeNode({
-        title: "Pick an option",
-        stepType,
+        ...shared,
+        title: "I am a...",
+        stepType: "gender",
+        isFirst: true,
+        isActive: true,
+        options: [
+          { display: "Male", value: "male", url: "", moveToStep: "" },
+          { display: "Female", value: "female", url: "", moveToStep: "" },
+        ],
+      }),
+      makeStepTreeNode({
+        ...shared,
+        title: "How old are you?",
+        stepType: "age",
+        isFirst: false,
+        isActive: false,
+        options: [
+          { display: "18–24", value: "18-24", url: "", moveToStep: "" },
+          { display: "25–34", value: "25-34", url: "", moveToStep: "" },
+          { display: "35–44", value: "35-44", url: "", moveToStep: "" },
+          { display: "45+", value: "45+", url: "", moveToStep: "" },
+        ],
+      }),
+      makeStepTreeNode({
+        ...shared,
+        title: "What are you looking for?",
+        stepType: "interests",
+        isFirst: false,
+        isActive: false,
+        options: [
+          { display: "Casual dating", value: "casual", url: "", moveToStep: "" },
+          {
+            display: "Serious relationship",
+            value: "serious",
+            url: "",
+            moveToStep: "",
+          },
+          { display: "Chat & friends", value: "chat", url: "", moveToStep: "" },
+        ],
+      }),
+      makeSubmitStepTreeNode({
+        title: "Almost done!",
+        emailPlaceholder: "Enter your email",
+        consentText: DEFAULT_CONSENT_TEXT,
+        ctaText: "Continue",
         buttonColor: DEFAULT_BUTTON_COLOR,
         textColor: DEFAULT_TEXT_COLOR,
         buttonPadding: DEFAULT_BUTTON_PADDING,
         buttonRadius: DEFAULT_BUTTON_RADIUS,
-        buttonSpacing: DEFAULT_BUTTON_SPACING,
-        totalSteps,
-        isFirst: true,
-        isActive: true,
-        options: [
-          { display: "Option A", value: "a", url: "", moveToStep: "" },
-          { display: "Option B", value: "b", url: "", moveToStep: "" },
-        ],
+        isActive: false,
       }),
     ],
   };
@@ -373,6 +550,10 @@ function findAncestor(
     cur = asLike(cur).parent();
   }
   return null;
+}
+
+function findStepAncestor(c: Component | undefined): Component | null {
+  return findAncestor(c, STEP_TYPE) ?? findAncestor(c, SUBMIT_STEP_TYPE);
 }
 
 function findFirstByClass(
@@ -524,6 +705,130 @@ function applyOptionFields(opt: Component): void {
   refreshOptionValueAttrs(step, totalSteps, getStepType(step));
 }
 
+/**
+ * Sync the submission step's text content + text data attrs from its props.
+ * Data attrs make HTML round-trips hydrate fully (same pattern as the
+ * answer steps' isComponent readers). Styling is deliberately NOT touched
+ * here — custom Style Manager designs must survive editor loads.
+ */
+export function applySubmitStepFields(step: Component): void {
+  const stepLike = asLike(step);
+  const placeholder = String(stepLike.get("email-placeholder") ?? "");
+  const consentText = String(
+    stepLike.get("consent-text") ?? DEFAULT_CONSENT_TEXT,
+  );
+  const ctaText = String(stepLike.get("cta-text") ?? "Continue");
+
+  const emailInput = findFirstByClass(step, EMAIL_INPUT_CLASS);
+  if (emailInput) {
+    asLike(emailInput).addAttributes({ placeholder });
+  }
+  const consentSpan = findFirstByClass(step, CONSENT_TEXT_CLASS);
+  if (consentSpan) {
+    asLike(consentSpan).components(consentText);
+  }
+  const cta = findFirstByClass(step, SUBMIT_CTA_CLASS);
+  if (cta) {
+    asLike(cta).components(ctaText);
+  }
+
+  stepLike.addAttributes({
+    "data-oxy-step-title": String(stepLike.get("step-title") ?? ""),
+    "data-oxy-email-placeholder": placeholder,
+    "data-oxy-consent-text": consentText,
+    "data-oxy-cta-text": ctaText,
+  });
+}
+
+/**
+ * Stamp the 4 style-trait data attrs (hydration) and return the resolved
+ * values. Split from the CTA setStyle so init() can stamp attrs without
+ * overwriting custom styles.
+ */
+function stampSubmitStepStyleAttrs(step: Component): {
+  buttonColor: string;
+  textColor: string;
+  buttonPadding: number;
+  buttonRadius: number;
+} {
+  const stepLike = asLike(step);
+  const buttonColor = String(
+    stepLike.get("button-color") ?? DEFAULT_BUTTON_COLOR,
+  );
+  const textColor = String(stepLike.get("text-color") ?? DEFAULT_TEXT_COLOR);
+  const paddingRaw = Number(
+    stepLike.get("button-padding") ?? DEFAULT_BUTTON_PADDING,
+  );
+  const radiusRaw = Number(
+    stepLike.get("button-radius") ?? DEFAULT_BUTTON_RADIUS,
+  );
+  const buttonPadding = Number.isFinite(paddingRaw)
+    ? paddingRaw
+    : DEFAULT_BUTTON_PADDING;
+  const buttonRadius = Number.isFinite(radiusRaw)
+    ? radiusRaw
+    : DEFAULT_BUTTON_RADIUS;
+
+  stepLike.addAttributes({
+    "data-oxy-button-color": buttonColor,
+    "data-oxy-text-color": textColor,
+    "data-oxy-button-padding": String(buttonPadding),
+    "data-oxy-button-radius": String(buttonRadius),
+  });
+  return { buttonColor, textColor, buttonPadding, buttonRadius };
+}
+
+/**
+ * Apply the 4 style traits to the CTA. Bound ONLY to style-trait changes —
+ * never called on load — mirroring the answer steps' change-only
+ * applyStepButtonStyling. Overwrites the CTA's styled props by design.
+ */
+export function applySubmitStepButtonStyling(step: Component): void {
+  const styleProps = stampSubmitStepStyleAttrs(step);
+  const cta = findFirstByClass(step, SUBMIT_CTA_CLASS);
+  if (cta) {
+    asLike(cta).setStyle(buttonStyleObject(styleProps));
+  }
+}
+
+const SUBMIT_TRAIT_TEXT_CLASSES: ReadonlyArray<string> = [
+  TITLE_CLASS,
+  CONSENT_TEXT_CLASS,
+  SUBMIT_CTA_CLASS,
+];
+
+const SUBMIT_CHILD_CLASSES: ReadonlyArray<string> = [
+  TITLE_CLASS,
+  DIVIDER_CLASS,
+  EMAIL_INPUT_CLASS,
+  CONSENT_ROW_CLASS,
+  CONSENT_CHECKBOX_CLASS,
+  CONSENT_TEXT_CLASS,
+  SUBMIT_CTA_CLASS,
+];
+
+/**
+ * Pages saved before the submit step was unlocked persist
+ * `selectable:false` / `hoverable:false` on its children in the stored
+ * project JSON. Re-enable selection (Style Manager access) while
+ * re-asserting the structural locks. Idempotent — runs on every load.
+ */
+export function normalizeSubmitStepChildren(step: Component): void {
+  for (const cls of SUBMIT_CHILD_CLASSES) {
+    const el = findFirstByClass(step, cls);
+    if (!el) continue;
+    const like = asLike(el);
+    like.set("selectable", true);
+    like.set("hoverable", true);
+    like.set("draggable", false);
+    like.set("copyable", false);
+    like.set("removable", false);
+    if (SUBMIT_TRAIT_TEXT_CLASSES.includes(cls)) {
+      like.set("editable", false);
+    }
+  }
+}
+
 function applyRootLink(root: Component): void {
   const link = String(asLike(root).get("form-link") ?? "");
   asLike(root).addAttributes({ "data-oxy-form-link": link });
@@ -567,10 +872,16 @@ function defineCommands(editor: GrapesEditor): void {
         (selected && asLike(selected).is(ROOT_TYPE) ? selected : null);
       if (!root) return;
       const steps = getStepsOf(root);
+      if (steps.length >= MAX_STEPS) return; // hard cap, incl. submit step
+      const submitSteps = asLike(root).find(`.${SUBMIT_STEP_CLASS}`);
+      const answerCount = steps.length - submitSteps.length;
       const totalAfter = steps.length + 1;
+      const answerSteps = steps.filter(
+        (s) => !asLike(s).is(SUBMIT_STEP_TYPE),
+      );
       const newStep = makeStepTreeNode({
-        title: `Step ${totalAfter}`,
-        stepType: getStepType(steps[0] ?? root),
+        title: `Step ${answerCount + 1}`,
+        stepType: getStepType(answerSteps[0] ?? root),
         buttonColor: DEFAULT_BUTTON_COLOR,
         textColor: DEFAULT_TEXT_COLOR,
         buttonPadding: DEFAULT_BUTTON_PADDING,
@@ -581,9 +892,10 @@ function defineCommands(editor: GrapesEditor): void {
         isActive: false,
         options: [{ display: "Option A", value: "a", url: "", moveToStep: "" }],
       });
-      asLike(root).append(newStep);
+      // New answer steps always go BEFORE the submission step.
+      asLike(root).append(newStep, { at: answerCount });
       renumberSteps(root);
-      asLike(root).set("active-step", totalAfter);
+      asLike(root).set("active-step", answerCount + 1);
       applyActiveStep(root);
     },
   });
@@ -591,12 +903,16 @@ function defineCommands(editor: GrapesEditor): void {
   editor.Commands.add(CMD_REMOVE_STEP, {
     run(ed) {
       const selected = ed.getSelected();
-      const step = findAncestor(selected, STEP_TYPE);
+      const step = findStepAncestor(selected);
       if (!step) return;
+      if (asLike(step).is(SUBMIT_STEP_TYPE)) return; // submit step is fixed
       const root = findRoot(step);
       if (!root) return;
-      if (getStepsOf(root).length <= 1) {
-        // Keep at least one step.
+      const answerStepCount = getStepsOf(root).filter(
+        (s) => !asLike(s).is(SUBMIT_STEP_TYPE),
+      ).length;
+      if (answerStepCount <= 1) {
+        // Keep at least one answer step.
         return;
       }
       const removedIdx = stepIndexInRoot(root, step);
@@ -701,13 +1017,6 @@ function defineComponentTypes(editor: GrapesEditor): void {
         attributes: { class: MULTIPLE_FORM_MARKER_CLASS },
         traits: [
           {
-            type: "text",
-            name: "form-link",
-            label: "Final redirect URL",
-            placeholder: "https://example.com/thank-you",
-            changeProp: 1,
-          },
-          {
             type: STEP_LIST_TRAIT_TYPE,
             name: "step-list",
             label: "Steps",
@@ -737,6 +1046,7 @@ function defineComponentTypes(editor: GrapesEditor): void {
   dom.addType(STEP_TYPE, {
     isComponent: (el: HTMLElement) => {
       if (typeof el.classList === "undefined") return undefined;
+      if (el.classList.contains(SUBMIT_STEP_CLASS)) return undefined;
       if (!el.classList.contains(STEP_CLASS)) return undefined;
       // Recover step props from data attrs so fixtures hydrate fully.
       const num = (key: string, fallback: number): number => {
@@ -861,6 +1171,124 @@ function defineComponentTypes(editor: GrapesEditor): void {
           const total = root ? getStepsOf(root).length : 1;
           refreshOptionValueAttrs(comp, total, getStepType(comp));
         });
+      },
+    },
+  });
+
+  dom.addType(SUBMIT_STEP_TYPE, {
+    isComponent: (el: HTMLElement) => {
+      if (typeof el.classList === "undefined") return undefined;
+      if (!el.classList.contains(SUBMIT_STEP_CLASS)) return undefined;
+      const str = (key: string, fallback: string): string => {
+        const raw = el.getAttribute(key);
+        return raw === null ? fallback : raw;
+      };
+      const num = (key: string, fallback: number): number => {
+        const raw = el.getAttribute(key);
+        if (raw === null || raw === "") return fallback;
+        const parsed = Number(raw);
+        return Number.isFinite(parsed) ? parsed : fallback;
+      };
+      return {
+        type: SUBMIT_STEP_TYPE,
+        "step-title": str("data-oxy-step-title", ""),
+        "email-placeholder": str("data-oxy-email-placeholder", ""),
+        "consent-text": str("data-oxy-consent-text", DEFAULT_CONSENT_TEXT),
+        "cta-text": str("data-oxy-cta-text", "Continue"),
+        "button-color": str("data-oxy-button-color", DEFAULT_BUTTON_COLOR),
+        "text-color": str("data-oxy-text-color", DEFAULT_TEXT_COLOR),
+        "button-padding": num(
+          "data-oxy-button-padding",
+          DEFAULT_BUTTON_PADDING,
+        ),
+        "button-radius": num("data-oxy-button-radius", DEFAULT_BUTTON_RADIUS),
+      };
+    },
+    model: {
+      defaults: {
+        name: "Submission Step",
+        droppable: false,
+        copyable: false,
+        draggable: false,
+        removable: false,
+        "step-title": "Almost done!",
+        "email-placeholder": "Enter your email",
+        "consent-text": DEFAULT_CONSENT_TEXT,
+        "cta-text": "Continue",
+        "button-color": DEFAULT_BUTTON_COLOR,
+        "text-color": DEFAULT_TEXT_COLOR,
+        "button-padding": DEFAULT_BUTTON_PADDING,
+        "button-radius": DEFAULT_BUTTON_RADIUS,
+        attributes: { class: `${STEP_CLASS} ${SUBMIT_STEP_CLASS}` },
+        traits: [
+          {
+            type: "text",
+            name: "step-title",
+            label: "Title",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "email-placeholder",
+            label: "Email placeholder",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "consent-text",
+            label: "Consent text",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "cta-text",
+            label: "CTA button text",
+            changeProp: 1,
+          },
+          {
+            type: "oxy-color",
+            name: "button-color",
+            label: "Button color",
+            changeProp: 1,
+          },
+          {
+            type: "oxy-color",
+            name: "text-color",
+            label: "Text color",
+            changeProp: 1,
+          },
+          {
+            type: "number",
+            name: "button-padding",
+            label: "Button padding (px)",
+            min: 0,
+            max: 80,
+            changeProp: 1,
+          },
+          {
+            type: "number",
+            name: "button-radius",
+            label: "Button radius (px)",
+            min: 0,
+            max: 80,
+            changeProp: 1,
+          },
+        ],
+      } as Record<string, unknown>,
+      init() {
+        const comp = this as unknown as Component;
+        comp.on("change:step-title", () => applyStepTitle(comp));
+        comp.on(
+          "change:email-placeholder change:consent-text change:cta-text",
+          () => applySubmitStepFields(comp),
+        );
+        comp.on(
+          "change:button-color change:text-color change:button-padding change:button-radius",
+          () => applySubmitStepButtonStyling(comp),
+        );
+        applySubmitStepFields(comp);
+        stampSubmitStepStyleAttrs(comp);
+        normalizeSubmitStepChildren(comp);
       },
     },
   });
@@ -1071,7 +1499,7 @@ function wireActiveStepFollowsSelection(editor: GrapesEditor): void {
   ).on("component:selected", (...args: unknown[]) => {
     const selected = args[0] as Component | undefined;
     if (!selected) return;
-    const step = findAncestor(selected, STEP_TYPE);
+    const step = findStepAncestor(selected);
     if (!step) return;
     const root = findRoot(step);
     if (!root) return;
