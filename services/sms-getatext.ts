@@ -103,6 +103,29 @@ export const completeSmsGetatextNumber = async (id: string): Promise<any> => {
   return response.data;
 };
 
+export const reRentSmsGetatextNumber = async (dto: {
+  id: string;
+}): Promise<SmsGetatext> => {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/v1/sms-getatext/re-rent`,
+      dto,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error re-renting number from SmsGetatext", error);
+    throw error.response.data;
+  }
+};
+
 export const getSmsGetatextBalance = async (): Promise<{ balance: number }> => {
   const cookies = parseCookies();
   const access_token = cookies.access_token;

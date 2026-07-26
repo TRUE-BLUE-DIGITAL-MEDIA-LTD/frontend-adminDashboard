@@ -1,8 +1,12 @@
-import { UseQueryResult } from "@tanstack/react-query";
+import { UseQueryResult, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
-import { FormEvent, useState } from "react";
-import { SmsGetatext, SmsGetatextMessage } from "../../models";
-import { useGetHistorySmsGetatext } from "../../react-query/sms-getatext";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import Swal from "sweetalert2";
+import { ErrorMessages, SmsGetatext, SmsGetatextMessage } from "../../models";
+import {
+  useGetHistorySmsGetatext,
+  useReRentSmsGetatext,
+} from "../../react-query/sms-getatext";
 import { Box, Button, Pagination, TextField } from "@mui/material";
 
 type Props = {
@@ -17,6 +21,64 @@ function SmsGetatextHistory({ activeNumbers }: Props) {
   });
   const [jumpToPageInput, setJumpToPageInput] = useState("");
   const totalPage = history.data?.totalPage ?? 1;
+
+  const queryClient = useQueryClient();
+  const reRent = useReRentSmsGetatext();
+
+  const handleReRent = async (id: string) => {
+    try {
+      Swal.fire({
+        title: "Loading",
+        html: "Please wait.",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const result = await reRent.mutateAsync({ id });
+      await queryClient.invalidateQueries({
+        queryKey: ["sms-getatext-active-numbers"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["sms-getatext-balance"],
+      });
+      Swal.fire({
+        title: "Success",
+        html: `Number <b>+${result.phoneNumber}</b> rented again.<br/>Expires at ${moment(
+          result.expireAt,
+        ).format("DD MMMM YYYY HH:mm")}`,
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      const result = error as ErrorMessages;
+      Swal.fire({
+        title: result.error ? result.error : "Something went wrong!",
+        text: result.message?.toString(),
+        footer: result.statusCode
+          ? "Error code: " + result.statusCode?.toString()
+          : "",
+        icon: "error",
+      });
+    }
+  };
+
+  const prevActiveIds = useRef<string[] | null>(null);
+
+  useEffect(() => {
+    if (!activeNumbers.data) return;
+    const currentIds = activeNumbers.data.map((n: SmsGetatext) => n.id);
+    if (prevActiveIds.current !== null) {
+      const removed = prevActiveIds.current.some(
+        (id) => !currentIds.includes(id),
+      );
+      if (removed) {
+        queryClient.invalidateQueries({ queryKey: ["sms-getatext-history"] });
+      }
+    }
+    prevActiveIds.current = currentIds;
+  }, [activeNumbers.data, queryClient]);
 
   const handleJumpToPage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,12 +108,20 @@ function SmsGetatextHistory({ activeNumbers }: Props) {
               <th className="px-2 py-1">SMS</th>
               <th className="px-2 py-1">Delay</th>
               <th className="px-2 py-1">Service</th>
+              <th className="px-2 py-1">Action</th>
             </tr>
           </thead>
           <tbody>
             {history.data?.data?.map(
               (sms: SmsGetatext & { messages: SmsGetatextMessage[] }) => {
-                return <ItemHistory key={sms.id} sms={sms} />;
+                return (
+                  <ItemHistory
+                    key={sms.id}
+                    sms={sms}
+                    onReRent={handleReRent}
+                    disabled={reRent.isPending}
+                  />
+                );
               },
             )}
           </tbody>
@@ -95,6 +165,8 @@ export default SmsGetatextHistory;
 
 type PropsItemHistory = {
   sms: SmsGetatext & { messages: SmsGetatextMessage[] };
+  onReRent: (id: string) => void;
+  disabled: boolean;
 };
 
 function formatDelay(seconds: number) {
@@ -109,7 +181,7 @@ function formatDelay(seconds: number) {
   return `${mins}m ${secs}s`;
 }
 
-function ItemHistory({ sms }: PropsItemHistory) {
+function ItemHistory({ sms, onReRent, disabled }: PropsItemHistory) {
   return (
     <tr key={sms.id} className="h-16 border-b">
       <td>
@@ -170,6 +242,18 @@ function ItemHistory({ sms }: PropsItemHistory) {
       <td>
         <div className="flex items-center justify-center gap-2 px-2">
           {sms.serviceCode}
+        </div>
+      </td>
+      <td>
+        <div className="flex items-center justify-center px-2">
+          <Button
+            size="small"
+            variant="outlined"
+            disabled={disabled}
+            onClick={() => onReRent(sms.id)}
+          >
+            Re-rent
+          </Button>
         </div>
       </td>
     </tr>

@@ -10,6 +10,7 @@ import {
   getSmsGetatextBalance,
   getHistorySmsGetatext,
   getSmsGetatextPrices,
+  reRentSmsGetatextNumber,
   setActiveSmsGetatextAccount,
 } from "../services/sms-getatext";
 
@@ -61,6 +62,12 @@ export const useCancelSmsGetatext = () => {
 export const useCompleteSmsGetatext = () => {
   return useMutation({
     mutationFn: (id: string) => completeSmsGetatextNumber(id),
+  });
+};
+
+export const useReRentSmsGetatext = () => {
+  return useMutation({
+    mutationFn: (dto: { id: string }) => reRentSmsGetatextNumber(dto),
   });
 };
 
