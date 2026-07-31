@@ -184,6 +184,35 @@
       }
     });
 
+    // Input steps: Continue validates required fields, records every filled
+    // field into `answers` keyed by data-oxy-answer-key, then advances one
+    // step in DOM order. Strictly additive — legacy pages have no
+    // .oxy-form-input-step elements.
+    steps.forEach((step, idx) => {
+      if (!step.classList.contains("oxy-form-input-step")) return;
+      const continueBtns = Array.from(
+        step.getElementsByClassName("oxy-form-input-continue"),
+      ) as HTMLButtonElement[];
+      continueBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const fields = Array.from(
+            step.getElementsByClassName("oxy-form-input-field"),
+          ) as HTMLInputElement[];
+          for (const field of fields) {
+            if (!field.reportValidity()) return;
+          }
+          const payload: Record<string, string> = {};
+          for (const field of fields) {
+            const key = field.getAttribute("data-oxy-answer-key") ?? "";
+            const value = field.value.trim();
+            if (key && value) payload[key] = value;
+          }
+          answers = recordAnswer(answers, payload);
+          if (idx + 1 < steps.length) showStep(idx + 1);
+        });
+      });
+    });
+
     const ctas = Array.from(
       scope.getElementsByClassName("oxy-form-submit-cta"),
     ) as HTMLButtonElement[];

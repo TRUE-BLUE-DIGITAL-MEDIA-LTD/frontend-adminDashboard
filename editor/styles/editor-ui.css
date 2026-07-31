@@ -1357,6 +1357,94 @@
   white-space: nowrap;
 }
 
+.oxy-properties-panel .oxy-mf-step-list__count {
+  font-size: 12px;
+  color: #6b7280;
+  padding: 4px 10px;
+  text-align: center;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__count.is-limit {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__btn {
+  width: 100%;
+  padding: 8px 10px;
+  background: #f8f5f0;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #b91c1c;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__btn:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #b91c1c;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__hint {
+  font-size: 12px;
+  color: #b91c1c;
+  padding: 0 2px;
+  text-align: center;
+}
+
+.oxy-properties-panel .oxy-mf-add-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.oxy-properties-panel .oxy-mf-add-field__btn {
+  width: 100%;
+  padding: 8px 10px;
+  background: #f8f5f0;
+  border: 1px solid #d2c1b6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #1b3c53;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.oxy-properties-panel .oxy-mf-add-field__btn:hover:not(:disabled) {
+  background: #f4eee6;
+  border-color: #456882;
+}
+
+.oxy-properties-panel .oxy-mf-add-field__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.oxy-properties-panel .oxy-mf-add-field__hint {
+  font-size: 12px;
+  color: #b91c1c;
+  padding: 0 2px;
+  text-align: center;
+}
+
 /* ============================================================================
  *
  *  DARK THEME OVERRIDES — modern minimalist editor chrome
@@ -1834,6 +1922,53 @@
   font-family: var(--oxy-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__count {
+  color: var(--oxy-text-muted);
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__count.is-limit {
+  color: #f87171;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__btn {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+  color: #f87171;
+  font-family: var(--oxy-font);
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__btn:hover:not(:disabled) {
+  background: var(--oxy-bg-hover);
+  border-color: #f87171;
+}
+
+.oxy-properties-panel .oxy-mf-remove-step__hint {
+  color: #f87171;
+  font-family: var(--oxy-mono);
+  font-size: 11px;
+}
+
+.oxy-properties-panel .oxy-mf-add-field__btn {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text);
+  font-family: var(--oxy-font);
+}
+
+.oxy-properties-panel .oxy-mf-add-field__btn:hover:not(:disabled) {
+  background: var(--oxy-bg-hover);
+  border-color: var(--oxy-accent);
+}
+
+.oxy-properties-panel .oxy-mf-add-field__hint {
+  color: #f87171;
+  font-family: var(--oxy-mono);
+  font-size: 11px;
 }
 
 /* ───────────────── Layers panel ───────────────── */

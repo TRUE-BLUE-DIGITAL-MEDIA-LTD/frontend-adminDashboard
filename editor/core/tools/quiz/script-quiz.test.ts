@@ -24,6 +24,9 @@ type OxyQuizApi = {
 let api: OxyQuizApi;
 
 beforeAll(async () => {
+  // @ts-expect-error TS2306 — the runtime is deliberately a global (non-module)
+  // script so published pages can load it via a classic <script> tag; this
+  // side-effect import only runs its IIFE.
   await import("../../../../public/unlayer-custom/script-quiz");
   api = (globalThis as unknown as { __oxyQuiz: OxyQuizApi }).__oxyQuiz;
 });

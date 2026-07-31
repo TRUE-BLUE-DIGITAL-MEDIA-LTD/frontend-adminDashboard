@@ -18,11 +18,26 @@ import {
   GetCustomerByPageService,
 } from "../../services/customer";
 
-/** Render a customer's multi-step form answers as "key: value" pairs. */
-function formatAnswers(answers: Record<string, string> | null | undefined) {
+/** Render a customer's multi-step form answers as compact key:value chips. */
+function AnswersCell({
+  answers,
+}: {
+  answers: Record<string, string> | null | undefined;
+}) {
   const entries = Object.entries(answers ?? {});
-  if (entries.length === 0) return "-";
-  return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+  if (entries.length === 0) return <span>-</span>;
+  return (
+    <div className="flex max-w-64 flex-wrap justify-center gap-1">
+      {entries.map(([key, value]) => (
+        <span
+          key={key}
+          className="whitespace-nowrap rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+        >
+          {key}: {value}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function Index({ user }: { user: User }) {
@@ -70,12 +85,6 @@ function Index({ user }: { user: User }) {
       // "Email") gets a suffixed header so it can't overwrite real data.
       const RESERVED_HEADERS = [
         "Email",
-        "Name",
-        "Phone Number",
-        "Birthday",
-        "Company",
-        "Website",
-        "Zip Code",
         "IP Address",
         "Country",
         "Landing Page",
@@ -95,12 +104,6 @@ function Index({ user }: { user: User }) {
       const excelData = all.map((customer) => {
         const row: Record<string, string> = {
           Email: customer.email ?? "-",
-          Name: customer.name ?? "-",
-          "Phone Number": customer.phone_number ?? "-",
-          Birthday: customer.birthday ?? "-",
-          Company: customer.company ?? "-",
-          Website: customer.website ?? "-",
-          "Zip Code": customer.zip_code ?? "-",
           "IP Address": customer.ip ?? "-",
           Country: customer.country ?? "-",
         };
@@ -115,12 +118,6 @@ function Index({ user }: { user: User }) {
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       worksheet["!cols"] = [
         { wch: 30 }, // Email
-        { wch: 20 }, // Name
-        { wch: 16 }, // Phone Number
-        { wch: 12 }, // Birthday
-        { wch: 16 }, // Company
-        { wch: 20 }, // Website
-        { wch: 10 }, // Zip Code
         { wch: 16 }, // IP Address
         { wch: 16 }, // Country
         ...answerKeys.map(() => ({ wch: 16 })),
@@ -222,12 +219,6 @@ function Index({ user }: { user: User }) {
                     <span>Email</span>
                     <div className={`flex items-center `}></div>
                   </th>
-                  <th>Name</th>
-                  <th>Phone Number</th>
-                  <th>Birthday</th>
-                  <th>Company</th>
-                  <th>Website</th>
-                  <th>Zip Code</th>
                   <th>IP Address</th>
                   <th>Country</th>
                   <th>Answers</th>
@@ -244,24 +235,6 @@ function Index({ user }: { user: User }) {
                   ? loadingNumber.map((list, index) => {
                       return (
                         <tr key={index}>
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
-                          <td>
-                            <Skeleton animation="wave" />
-                          </td>
                           <td>
                             <Skeleton />
                           </td>
@@ -311,43 +284,6 @@ function Index({ user }: { user: User }) {
                           ) : (
                             <td>{list?.email}</td>
                           )}
-                          {customers.isFetching ? (
-                            <td>
-                              <Skeleton />
-                            </td>
-                          ) : (
-                            <td>
-                              <div className="min-w-28 text-center">
-                                {list?.name}
-                              </div>
-                            </td>
-                          )}
-
-                          <td>
-                            <div className="min-w-28 text-center">
-                              {list?.phone_number ? list?.phone_number : "-"}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="min-w-28 text-center">
-                              {list?.birthday ? list?.birthday : "-"}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="min-w-28 text-center">
-                              {list?.company ? list?.company : "-"}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="min-w-28 text-center">
-                              {list?.website ? list?.website : "-"}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="min-w-28 text-center">
-                              {list?.zip_code ? list?.zip_code : "-"}
-                            </div>
-                          </td>
                           <td>
                             <div className="min-w-28 text-center">
                               {list?.ip ? list?.ip : "-"}
@@ -360,7 +296,7 @@ function Index({ user }: { user: User }) {
                           </td>
                           <td>
                             <div className="min-w-40 max-w-64 px-2 text-center text-sm">
-                              {formatAnswers(list?.formAnswers)}
+                              <AnswersCell answers={list?.formAnswers} />
                             </div>
                           </td>
 

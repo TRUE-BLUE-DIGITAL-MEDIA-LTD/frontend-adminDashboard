@@ -26,6 +26,10 @@ function mount(bodyHtml: string): { dom: JSDOM; open: ReturnType<typeof vi.fn> }
 
 async function importRuntime(): Promise<void> {
   vi.resetModules();
+  // @ts-expect-error TS2306/TS5097 — the runtime is deliberately a global
+  // (non-module) script loaded via a classic <script> tag on published pages,
+  // and the .ts extension is required so vite picks the source over the
+  // compiled .js sibling. Side-effect import only.
   await import("../../../public/unlayer-custom/script-multiple-form.ts");
 }
 
@@ -235,6 +239,89 @@ function fillAndSubmit(dom: JSDOM): void {
   consent.reportValidity = () => true;
   clickButton(dom, "Continue");
 }
+
+/** GrapesJS-shaped export containing an input step between options and submit. */
+const INPUT_STEP_FIXTURE = `
+<div class="oxy-multiple-form" data-oxy-lp-id="lp1" data-oxy-fallback-link="https://fallback.example">
+  <div class="form_step" id="iaaa">
+    <div class="button-containers">
+      <button type="button" value='{"gender":"male"}'>Male</button>
+    </div>
+  </div>
+  <div class="form_step oxy-form-input-step" id="ibbb">
+    <input class="oxy-form-input-field" type="text" required data-oxy-answer-key="name" />
+    <input class="oxy-form-input-field" type="tel" data-oxy-answer-key="phone" />
+    <button type="button" class="oxy-form-input-continue">Continue</button>
+  </div>
+  <div class="form_step oxy-form-submit-step" id="iccc">
+    <input type="email" required class="oxy-form-email-input" />
+    <input type="checkbox" required class="oxy-form-consent-checkbox" />
+    <button type="button" class="oxy-form-submit-cta">Submit</button>
+  </div>
+</div>`;
+
+describe("input steps", () => {
+  it("blocks advance while a required field is empty", async () => {
+    const { dom } = mount(INPUT_STEP_FIXTURE);
+    await importRuntime();
+    const doc = dom.window.document;
+    const steps = Array.from(
+      doc.getElementsByClassName("form_step"),
+    ) as HTMLElement[];
+    // Advance past the option step.
+    (doc.querySelector("button[value]") as HTMLButtonElement).click();
+    expect(steps[1].style.display).toBe("flex");
+    // Required "name" is empty — Continue must not advance.
+    (
+      doc.querySelector(".oxy-form-input-continue") as HTMLButtonElement
+    ).click();
+    expect(steps[1].style.display).toBe("flex");
+    expect(steps[2].style.display).toBe("none");
+  });
+
+  it("records filled fields into the POST payload, skipping empty optionals", async () => {
+    const { dom } = mount(INPUT_STEP_FIXTURE);
+    const fetchMock = vi.fn(async () => ({ ok: true }));
+    (globalThis as Record<string, unknown>).fetch = fetchMock;
+    await importRuntime();
+    const doc = dom.window.document;
+
+    (doc.querySelector("button[value]") as HTMLButtonElement).click();
+    const [nameInput, phoneInput] = Array.from(
+      doc.getElementsByClassName("oxy-form-input-field"),
+    ) as HTMLInputElement[];
+    nameInput.value = "  Ada  ";
+    void phoneInput; // phone left empty on purpose (optional → omitted)
+    (
+      doc.querySelector(".oxy-form-input-continue") as HTMLButtonElement
+    ).click();
+    const steps = Array.from(
+      doc.getElementsByClassName("form_step"),
+    ) as HTMLElement[];
+    expect(steps[2].style.display).toBe("flex");
+
+    const email = doc.querySelector(
+      ".oxy-form-email-input",
+    ) as HTMLInputElement;
+    const consent = doc.querySelector(
+      ".oxy-form-consent-checkbox",
+    ) as HTMLInputElement;
+    email.value = "a@b.co";
+    consent.checked = true;
+    // Pin like fillAndSubmit — exercise payload logic, not native validation.
+    email.reportValidity = () => true;
+    consent.reportValidity = () => true;
+    (doc.querySelector(".oxy-form-submit-cta") as HTMLButtonElement).click();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+
+    const init = (fetchMock.mock.calls[0] as unknown[])[1] as { body: string };
+    const body = JSON.parse(init.body) as {
+      formAnswers: Record<string, string>;
+    };
+    expect(body.formAnswers).toEqual({ gender: "male", name: "Ada" });
+    expect(body.formAnswers.phone).toBeUndefined();
+  });
+});
 
 describe("submission redirect uses the final answer's url", () => {
   it("redirects to the last-clicked option's url with sub3 appended", async () => {

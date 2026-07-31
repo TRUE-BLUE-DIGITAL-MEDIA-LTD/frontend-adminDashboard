@@ -49,16 +49,80 @@ const CONSENT_CHECKBOX_CLASS = "oxy-form-consent-checkbox";
 const CONSENT_TEXT_CLASS = "oxy-form-consent-text";
 const SUBMIT_CTA_CLASS = "oxy-form-submit-cta";
 
-export const MAX_STEPS = 5;
+const INPUT_STEP_TYPE = "oxy-form-input-step";
+export const INPUT_STEP_CLASS = "oxy-form-input-step";
+const INPUT_FIELD_TYPE = "oxy-form-input-field";
+const INPUT_FIELD_CLASS = "oxy-form-input-field";
+const INPUT_CONTINUE_CLASS = "oxy-form-input-continue";
+
+/** Author-facing field types → HTML input types. */
+const INPUT_FIELD_HTML_TYPES: Record<string, string> = {
+  text: "text",
+  number: "number",
+  phone: "tel",
+  date: "date",
+};
+
+function htmlInputType(fieldType: string): string {
+  return INPUT_FIELD_HTML_TYPES[fieldType] ?? "text";
+}
+
+/**
+ * Server-side sanitizeFormAnswers rejects the ENTIRE submit when any value
+ * exceeds 200 chars — cap at the browser so a long paste can't silently
+ * drop the lead.
+ */
+const INPUT_VALUE_MAXLENGTH = "200";
+
+/**
+ * sanitizeFormAnswers also rejects submits carrying more than 20 keys.
+ * Every option step records one key (its answer key) and every input field
+ * records one, so the editor blocks adding sources past this budget —
+ * otherwise EVERY submit on the published page would 400 silently.
+ */
+export const MAX_ANSWER_KEYS = 20;
+
+export function isAnswerKeyCapReached(sourceCount: number): boolean {
+  return sourceCount >= MAX_ANSWER_KEYS;
+}
+
+/** Maximum ANSWER steps per form — the submission step is always extra. */
+export const MAX_STEPS = 10;
+
+export function isAnswerStepCapReached(answerStepCount: number): boolean {
+  return answerStepCount >= MAX_STEPS;
+}
+
+export function stepListCounterText(answerStepCount: number): string {
+  const base = `Answer steps: ${answerStepCount} / ${MAX_STEPS}`;
+  return isAnswerStepCapReached(answerStepCount)
+    ? `${base} — limit reached`
+    : base;
+}
+
 export const DEFAULT_CONSENT_TEXT =
   "I agree to receive marketing communications and accept the privacy policy.";
 
 const STEP_LIST_TRAIT_TYPE = "oxy-step-list";
+const REMOVE_STEP_TRAIT_TYPE = "oxy-remove-step";
+const REMOVE_FIELD_TRAIT_TYPE = "oxy-remove-field";
+const ADD_FIELD_TRAIT_TYPE = "oxy-add-field";
+
+export const LAST_STEP_HINT =
+  "A form needs at least one answer step, so the last one can't be removed.";
+
+export const LAST_FIELD_HINT =
+  "An input step needs at least one field, so the last one can't be removed.";
+
+export const FIELD_CAP_HINT = `This form already collects ${MAX_ANSWER_KEYS} answers — the server accepts at most ${MAX_ANSWER_KEYS} per submit. Remove a field or an answer step first.`;
 
 const CMD_ADD_STEP = "oxy-mf:add-step";
 const CMD_REMOVE_STEP = "oxy-mf:remove-step";
 const CMD_ADD_OPTION = "oxy-mf:add-option";
 const CMD_REMOVE_OPTION = "oxy-mf:remove-option";
+const CMD_ADD_INPUT_STEP = "oxy-mf:add-input-step";
+const CMD_ADD_INPUT_FIELD = "oxy-mf:add-input-field";
+const CMD_REMOVE_INPUT_FIELD = "oxy-mf:remove-input-field";
 
 const DEFAULT_BUTTON_COLOR = "#dc2626";
 const DEFAULT_TEXT_COLOR = "#ffffff";
@@ -439,6 +503,106 @@ export function makeSubmitStepTreeNode(args: {
   };
 }
 
+export function makeInputFieldTreeNode(args: {
+  label: string;
+  answerKey: string;
+  fieldType: string;
+  placeholder: string;
+  required: boolean;
+}) {
+  const attrs: Record<string, string> = {
+    type: htmlInputType(args.fieldType),
+    class: INPUT_FIELD_CLASS,
+    placeholder: args.placeholder,
+    maxlength: INPUT_VALUE_MAXLENGTH,
+    "aria-label": args.label,
+    "data-oxy-answer-key": args.answerKey,
+    "data-oxy-field-label": args.label,
+    "data-oxy-field-type": args.fieldType,
+  };
+  if (args.required) attrs.required = "required";
+  return {
+    type: INPUT_FIELD_TYPE,
+    tagName: "input",
+    void: true,
+    "field-label": args.label,
+    "answer-key": args.answerKey,
+    "field-type": args.fieldType,
+    "field-placeholder": args.placeholder,
+    "field-required": args.required,
+    attributes: attrs,
+    style: EMAIL_INPUT_STYLE,
+    draggable: false,
+    copyable: false,
+  };
+}
+
+export function makeInputStepTreeNode(args: {
+  title: string;
+  ctaText: string;
+  buttonColor: string;
+  textColor: string;
+  buttonPadding: number;
+  buttonRadius: number;
+  isActive: boolean;
+  fields: ReadonlyArray<{
+    label: string;
+    answerKey: string;
+    fieldType: string;
+    placeholder: string;
+    required: boolean;
+  }>;
+}) {
+  const ctaStyle = buttonStyleObject({
+    buttonColor: args.buttonColor,
+    textColor: args.textColor,
+    buttonPadding: args.buttonPadding,
+    buttonRadius: args.buttonRadius,
+  });
+  const classes = [STEP_CLASS, INPUT_STEP_CLASS];
+  if (args.isActive) classes.push(ACTIVE_STEP_CLASS);
+  const structural = {
+    draggable: false,
+    copyable: false,
+    removable: false,
+  };
+  const traitText = { ...structural, editable: false };
+  return {
+    type: INPUT_STEP_TYPE,
+    "step-title": args.title,
+    "cta-text": args.ctaText,
+    "button-color": args.buttonColor,
+    "text-color": args.textColor,
+    "button-padding": args.buttonPadding,
+    "button-radius": args.buttonRadius,
+    attributes: { class: classes.join(" ") },
+    style: stepStyleFor(args.isActive),
+    components: [
+      {
+        tagName: "div",
+        attributes: { class: TITLE_CLASS },
+        components: args.title,
+        style: { ...TITLE_STYLE, display: args.title ? "block" : "none" },
+        ...traitText,
+      },
+      {
+        tagName: "div",
+        attributes: { class: DIVIDER_CLASS },
+        style: DIVIDER_STYLE,
+        ...structural,
+      },
+      ...args.fields.map((f) => makeInputFieldTreeNode(f)),
+      {
+        tagName: "button",
+        attributes: { type: "button", class: INPUT_CONTINUE_CLASS },
+        components: args.ctaText,
+        style: ctaStyle,
+        ...traitText,
+      },
+    ],
+  };
+}
+
 export function makeDefaultRootTree() {
   const totalSteps = 4;
   const shared = {
@@ -521,6 +685,7 @@ type ComponentLike = Component & {
   append: (def: unknown, opts?: unknown) => Component[];
   remove: () => Component;
   addAttributes: (attrs: Record<string, string>) => Component;
+  removeAttributes: (attrs: string[]) => Component;
   getAttributes: () => Record<string, string>;
   setStyle: (style: Record<string, string>) => Component;
   is: (type: string) => boolean;
@@ -553,7 +718,11 @@ function findAncestor(
 }
 
 function findStepAncestor(c: Component | undefined): Component | null {
-  return findAncestor(c, STEP_TYPE) ?? findAncestor(c, SUBMIT_STEP_TYPE);
+  return (
+    findAncestor(c, STEP_TYPE) ??
+    findAncestor(c, INPUT_STEP_TYPE) ??
+    findAncestor(c, SUBMIT_STEP_TYPE)
+  );
 }
 
 function findFirstByClass(
@@ -566,6 +735,30 @@ function findFirstByClass(
 
 function getStepsOf(root: Component): Component[] {
   return asLike(root).find(`.${STEP_CLASS}`);
+}
+
+function countAnswerSteps(root: Component): number {
+  return getStepsOf(root).filter(
+    (s) => !classListOf(s).includes(SUBMIT_STEP_CLASS),
+  ).length;
+}
+
+/**
+ * How many formAnswers keys this form can produce at submit time: one per
+ * option (answer-button) step + one per input field. Conservative — two
+ * fields sharing an answer key collapse into one submitted key, but
+ * overcounting only makes the editor stricter, never the submit invalid.
+ */
+export function countAnswerKeySources(root: Component): number {
+  const optionSteps = getStepsOf(root).filter((s) => {
+    const classes = classListOf(s);
+    return (
+      !classes.includes(SUBMIT_STEP_CLASS) &&
+      !classes.includes(INPUT_STEP_CLASS)
+    );
+  }).length;
+  const inputFields = asLike(root).find(`.${INPUT_FIELD_CLASS}`).length;
+  return optionSteps + inputFields;
 }
 
 function getButtonsContainer(step: Component): Component | null {
@@ -791,6 +984,53 @@ export function applySubmitStepButtonStyling(step: Component): void {
   }
 }
 
+/**
+ * Sync an input field's element attributes from its trait props. `required`
+ * must be REMOVED (not set falsy) when toggled off — browsers treat any
+ * present `required` attribute as true.
+ */
+export function applyInputFieldAttrs(field: Component): void {
+  const f = asLike(field);
+  const label = String(f.get("field-label") ?? "");
+  const answerKey = String(f.get("answer-key") ?? "");
+  const fieldType = String(f.get("field-type") ?? "text");
+  const placeholder = String(f.get("field-placeholder") ?? "");
+  const required = Boolean(f.get("field-required"));
+  f.addAttributes({
+    type: htmlInputType(fieldType),
+    placeholder,
+    maxlength: INPUT_VALUE_MAXLENGTH,
+    "aria-label": label,
+    "data-oxy-answer-key": answerKey,
+    "data-oxy-field-label": label,
+    "data-oxy-field-type": fieldType,
+  });
+  if (required) {
+    f.addAttributes({ required: "required" });
+  } else {
+    f.removeAttributes(["required"]);
+  }
+}
+
+/** Sync the input step's Continue text + hydration data attrs. */
+export function applyInputStepCta(step: Component): void {
+  const s = asLike(step);
+  const ctaText = String(s.get("cta-text") ?? "Continue");
+  const cta = findFirstByClass(step, INPUT_CONTINUE_CLASS);
+  if (cta) asLike(cta).components(ctaText);
+  s.addAttributes({
+    "data-oxy-step-title": String(s.get("step-title") ?? ""),
+    "data-oxy-cta-text": ctaText,
+  });
+}
+
+/** Style the Continue button from the step's 4 style traits (change-only). */
+function applyInputStepButtonStyling(step: Component): void {
+  const styleProps = stampSubmitStepStyleAttrs(step);
+  const cta = findFirstByClass(step, INPUT_CONTINUE_CLASS);
+  if (cta) asLike(cta).setStyle(buttonStyleObject(styleProps));
+}
+
 const SUBMIT_TRAIT_TEXT_CLASSES: ReadonlyArray<string> = [
   TITLE_CLASS,
   CONSENT_TEXT_CLASS,
@@ -872,9 +1112,11 @@ function defineCommands(editor: GrapesEditor): void {
         (selected && asLike(selected).is(ROOT_TYPE) ? selected : null);
       if (!root) return;
       const steps = getStepsOf(root);
-      if (steps.length >= MAX_STEPS) return; // hard cap, incl. submit step
       const submitSteps = asLike(root).find(`.${SUBMIT_STEP_CLASS}`);
       const answerCount = steps.length - submitSteps.length;
+      if (isAnswerStepCapReached(answerCount)) return; // submit step is extra
+      // A new option step records one more formAnswers key at submit time.
+      if (isAnswerKeyCapReached(countAnswerKeySources(root))) return;
       const totalAfter = steps.length + 1;
       const answerSteps = steps.filter(
         (s) => !asLike(s).is(SUBMIT_STEP_TYPE),
@@ -897,6 +1139,81 @@ function defineCommands(editor: GrapesEditor): void {
       renumberSteps(root);
       asLike(root).set("active-step", answerCount + 1);
       applyActiveStep(root);
+    },
+  });
+
+  editor.Commands.add(CMD_ADD_INPUT_STEP, {
+    run(ed) {
+      const selected = ed.getSelected();
+      const root =
+        findRoot(selected) ||
+        (selected && asLike(selected).is(ROOT_TYPE) ? selected : null);
+      if (!root) return;
+      const steps = getStepsOf(root);
+      const submitSteps = asLike(root).find(`.${SUBMIT_STEP_CLASS}`);
+      const answerCount = steps.length - submitSteps.length;
+      if (isAnswerStepCapReached(answerCount)) return; // submit step is extra
+      // The new step's default field records one more formAnswers key.
+      if (isAnswerKeyCapReached(countAnswerKeySources(root))) return;
+      const newStep = makeInputStepTreeNode({
+        title: `Step ${answerCount + 1}`,
+        ctaText: "Continue",
+        buttonColor: DEFAULT_BUTTON_COLOR,
+        textColor: DEFAULT_TEXT_COLOR,
+        buttonPadding: DEFAULT_BUTTON_PADDING,
+        buttonRadius: DEFAULT_BUTTON_RADIUS,
+        isActive: false,
+        fields: [
+          {
+            label: "Answer",
+            answerKey: "",
+            fieldType: "text",
+            placeholder: "Type here…",
+            required: true,
+          },
+        ],
+      });
+      // Input steps go BEFORE the submission step, like answer steps.
+      asLike(root).append(newStep, { at: answerCount });
+      renumberSteps(root);
+      asLike(root).set("active-step", answerCount + 1);
+      applyActiveStep(root);
+    },
+  });
+
+  editor.Commands.add(CMD_ADD_INPUT_FIELD, {
+    run(ed) {
+      const selected = ed.getSelected();
+      const step = findAncestor(selected, INPUT_STEP_TYPE);
+      if (!step) return;
+      const root = findRoot(step);
+      if (root && isAnswerKeyCapReached(countAnswerKeySources(root))) return;
+      const children = asLike(step).components() as unknown as Component[];
+      // Keep the Continue button last: insert new fields just before it.
+      const at = Math.max(0, children.length - 1);
+      asLike(step).append(
+        makeInputFieldTreeNode({
+          label: "Answer",
+          answerKey: "",
+          fieldType: "text",
+          placeholder: "Type here…",
+          required: false,
+        }),
+        { at },
+      );
+    },
+  });
+
+  editor.Commands.add(CMD_REMOVE_INPUT_FIELD, {
+    run(ed) {
+      const selected = ed.getSelected();
+      const field = findAncestor(selected, INPUT_FIELD_TYPE);
+      if (!field) return;
+      const step = findAncestor(field, INPUT_STEP_TYPE);
+      if (!step) return;
+      if (asLike(step).find(`.${INPUT_FIELD_CLASS}`).length <= 1) return;
+      asLike(field).remove();
+      ed.select(step);
     },
   });
 
@@ -1030,6 +1347,14 @@ function defineComponentTypes(editor: GrapesEditor): void {
             full: true,
             command: CMD_ADD_STEP,
           },
+          {
+            type: "button",
+            name: "add-input-step",
+            labelButton: "+ Add Input Step",
+            label: false,
+            full: true,
+            command: CMD_ADD_INPUT_STEP,
+          },
         ],
       } as Record<string, unknown>,
       init() {
@@ -1047,6 +1372,7 @@ function defineComponentTypes(editor: GrapesEditor): void {
     isComponent: (el: HTMLElement) => {
       if (typeof el.classList === "undefined") return undefined;
       if (el.classList.contains(SUBMIT_STEP_CLASS)) return undefined;
+      if (el.classList.contains(INPUT_STEP_CLASS)) return undefined;
       if (!el.classList.contains(STEP_CLASS)) return undefined;
       // Recover step props from data attrs so fixtures hydrate fully.
       const num = (key: string, fallback: number): number => {
@@ -1149,12 +1475,10 @@ function defineComponentTypes(editor: GrapesEditor): void {
             command: CMD_ADD_OPTION,
           },
           {
-            type: "button",
+            type: REMOVE_STEP_TRAIT_TYPE,
             name: "remove-step",
-            labelButton: "× Remove Step",
             label: false,
             full: true,
-            command: CMD_REMOVE_STEP,
           },
         ],
       } as Record<string, unknown>,
@@ -1289,6 +1613,196 @@ function defineComponentTypes(editor: GrapesEditor): void {
         applySubmitStepFields(comp);
         stampSubmitStepStyleAttrs(comp);
         normalizeSubmitStepChildren(comp);
+      },
+    },
+  });
+
+  dom.addType(INPUT_STEP_TYPE, {
+    isComponent: (el: HTMLElement) => {
+      if (typeof el.classList === "undefined") return undefined;
+      if (!el.classList.contains(INPUT_STEP_CLASS)) return undefined;
+      const str = (key: string, fallback: string): string => {
+        const raw = el.getAttribute(key);
+        return raw === null ? fallback : raw;
+      };
+      const num = (key: string, fallback: number): number => {
+        const raw = el.getAttribute(key);
+        if (raw === null || raw === "") return fallback;
+        const parsed = Number(raw);
+        return Number.isFinite(parsed) ? parsed : fallback;
+      };
+      return {
+        type: INPUT_STEP_TYPE,
+        "step-title": str("data-oxy-step-title", ""),
+        "cta-text": str("data-oxy-cta-text", "Continue"),
+        "button-color": str("data-oxy-button-color", DEFAULT_BUTTON_COLOR),
+        "text-color": str("data-oxy-text-color", DEFAULT_TEXT_COLOR),
+        "button-padding": num(
+          "data-oxy-button-padding",
+          DEFAULT_BUTTON_PADDING,
+        ),
+        "button-radius": num("data-oxy-button-radius", DEFAULT_BUTTON_RADIUS),
+      };
+    },
+    model: {
+      defaults: {
+        name: "Input Step",
+        droppable: false,
+        copyable: false,
+        "step-title": "",
+        "cta-text": "Continue",
+        "button-color": DEFAULT_BUTTON_COLOR,
+        "text-color": DEFAULT_TEXT_COLOR,
+        "button-padding": DEFAULT_BUTTON_PADDING,
+        "button-radius": DEFAULT_BUTTON_RADIUS,
+        attributes: { class: `${STEP_CLASS} ${INPUT_STEP_CLASS}` },
+        traits: [
+          { type: "text", name: "step-title", label: "Title", changeProp: 1 },
+          {
+            type: "text",
+            name: "cta-text",
+            label: "Continue button text",
+            changeProp: 1,
+          },
+          {
+            type: "oxy-color",
+            name: "button-color",
+            label: "Button color",
+            changeProp: 1,
+          },
+          {
+            type: "oxy-color",
+            name: "text-color",
+            label: "Text color",
+            changeProp: 1,
+          },
+          {
+            type: "number",
+            name: "button-padding",
+            label: "Button padding (px)",
+            min: 0,
+            max: 80,
+            changeProp: 1,
+          },
+          {
+            type: "number",
+            name: "button-radius",
+            label: "Button radius (px)",
+            min: 0,
+            max: 80,
+            changeProp: 1,
+          },
+          {
+            type: ADD_FIELD_TRAIT_TYPE,
+            name: "add-field",
+            label: false,
+            full: true,
+          },
+          {
+            type: REMOVE_STEP_TRAIT_TYPE,
+            name: "remove-step",
+            label: false,
+            full: true,
+          },
+        ],
+      } as Record<string, unknown>,
+      init() {
+        const comp = this as unknown as Component;
+        comp.on("change:step-title", () => {
+          applyStepTitle(comp);
+          applyInputStepCta(comp);
+        });
+        comp.on("change:cta-text", () => applyInputStepCta(comp));
+        comp.on(
+          "change:button-color change:text-color change:button-padding change:button-radius",
+          () => applyInputStepButtonStyling(comp),
+        );
+        applyInputStepCta(comp);
+        stampSubmitStepStyleAttrs(comp);
+      },
+    },
+  });
+
+  dom.addType(INPUT_FIELD_TYPE, {
+    isComponent: (el: HTMLElement) => {
+      if (typeof el.classList === "undefined") return undefined;
+      if (!el.classList.contains(INPUT_FIELD_CLASS)) return undefined;
+      const get = (key: string): string => el.getAttribute(key) ?? "";
+      return {
+        type: INPUT_FIELD_TYPE,
+        "field-label": get("data-oxy-field-label"),
+        "answer-key": get("data-oxy-answer-key"),
+        "field-type": get("data-oxy-field-type") || "text",
+        "field-placeholder": el.getAttribute("placeholder") ?? "",
+        "field-required": el.hasAttribute("required"),
+      };
+    },
+    model: {
+      defaults: {
+        name: "Input Field",
+        tagName: "input",
+        void: true,
+        droppable: false,
+        copyable: false,
+        draggable: false,
+        "field-label": "Answer",
+        "answer-key": "",
+        "field-type": "text",
+        "field-placeholder": "",
+        "field-required": false,
+        attributes: { type: "text", class: INPUT_FIELD_CLASS },
+        traits: [
+          {
+            type: "text",
+            name: "field-label",
+            label: "Label",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "answer-key",
+            label: "Answer key",
+            placeholder: "e.g. name, phone",
+            changeProp: 1,
+          },
+          {
+            type: "select",
+            name: "field-type",
+            label: "Input type",
+            options: [
+              { id: "text", label: "Text" },
+              { id: "number", label: "Number" },
+              { id: "phone", label: "Phone" },
+              { id: "date", label: "Date" },
+            ],
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "field-placeholder",
+            label: "Placeholder",
+            changeProp: 1,
+          },
+          {
+            type: "checkbox",
+            name: "field-required",
+            label: "Required",
+            changeProp: 1,
+          },
+          {
+            type: REMOVE_FIELD_TRAIT_TYPE,
+            name: "remove-field",
+            label: false,
+            full: true,
+          },
+        ],
+      } as Record<string, unknown>,
+      init() {
+        const comp = this as unknown as Component;
+        comp.on(
+          "change:field-label change:answer-key change:field-type change:field-placeholder change:field-required",
+          () => applyInputFieldAttrs(comp),
+        );
       },
     },
   });
@@ -1428,6 +1942,16 @@ function defineStepListTrait(editor: GrapesEditor): void {
           });
           wrapper.appendChild(item);
         });
+
+        // Always show how close the form is to the answer-step cap so the
+        // author knows why "+ Add Step" stops working at the limit.
+        const answerCount = countAnswerSteps(component);
+        const counter = document.createElement("div");
+        counter.className =
+          "oxy-mf-step-list__count" +
+          (isAnswerStepCapReached(answerCount) ? " is-limit" : "");
+        counter.textContent = stepListCounterText(answerCount);
+        wrapper.appendChild(counter);
       };
 
       render();
@@ -1446,8 +1970,11 @@ function defineStepListTrait(editor: GrapesEditor): void {
         }
         if (findRoot(c) === component) render();
       };
+      // A removed component is already detached, so findRoot can't attribute
+      // it to this form — always re-render (the list is tiny, this is cheap).
+      const onRemove = () => render();
       editorAny.on("component:add", onChild);
-      editorAny.on("component:remove", onChild);
+      editorAny.on("component:remove", onRemove);
       editorAny.on("component:update:step-title", onChild);
       editorAny.on("component:update:active-step", onChild);
 
@@ -1461,6 +1988,181 @@ function defineStepListTrait(editor: GrapesEditor): void {
     addType: (name: string, def: unknown) => void;
   };
   tm.addType(STEP_LIST_TRAIT_TYPE, def);
+}
+
+/**
+ * Custom trait for the "× Remove Step" action. Unlike the stock button
+ * trait, it disables itself and explains WHY when removal is blocked (only
+ * one answer step left), instead of silently doing nothing.
+ */
+function defineRemoveStepTrait(editor: GrapesEditor): void {
+  type CreateInputArgs = {
+    trait: unknown;
+    component: Component;
+  };
+
+  const def = {
+    noLabel: true,
+    createInput(args: CreateInputArgs) {
+      const component = args.component;
+      const wrapper = document.createElement("div");
+      wrapper.className = "oxy-mf-remove-step";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "oxy-mf-remove-step__btn";
+      btn.textContent = "× Remove Step";
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        editor.runCommand(CMD_REMOVE_STEP);
+      });
+
+      const hint = document.createElement("div");
+      hint.className = "oxy-mf-remove-step__hint";
+      hint.textContent = LAST_STEP_HINT;
+
+      const render = () => {
+        const root = findRoot(component);
+        const blocked = !root || countAnswerSteps(root) <= 1;
+        btn.disabled = blocked;
+        hint.style.display = blocked ? "" : "none";
+      };
+      render();
+
+      const editorAny = editor as unknown as {
+        on: (event: string, cb: (...args: unknown[]) => void) => void;
+      };
+      // Step count can change while this panel stays mounted (e.g. "+ Add
+      // Step" on the root, or deleting steps from the layers panel).
+      editorAny.on("component:add", render);
+      editorAny.on("component:remove", render);
+
+      wrapper.appendChild(btn);
+      wrapper.appendChild(hint);
+      return wrapper;
+    },
+  };
+
+  const tm = editor.TraitManager as unknown as {
+    addType: (name: string, def: unknown) => void;
+  };
+  tm.addType(REMOVE_STEP_TRAIT_TYPE, def);
+}
+
+/**
+ * "+ Add Field" trait for input steps — disables itself with an explanation
+ * when the form has hit the server's answer-key budget (MAX_ANSWER_KEYS),
+ * instead of silently doing nothing.
+ */
+function defineAddFieldTrait(editor: GrapesEditor): void {
+  type CreateInputArgs = {
+    trait: unknown;
+    component: Component;
+  };
+
+  const def = {
+    noLabel: true,
+    createInput(args: CreateInputArgs) {
+      const component = args.component;
+      const wrapper = document.createElement("div");
+      wrapper.className = "oxy-mf-add-field";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "oxy-mf-add-field__btn";
+      btn.textContent = "+ Add Field";
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        editor.runCommand(CMD_ADD_INPUT_FIELD);
+      });
+
+      const hint = document.createElement("div");
+      hint.className = "oxy-mf-add-field__hint";
+      hint.textContent = FIELD_CAP_HINT;
+
+      const render = () => {
+        const root = findRoot(component);
+        const blocked =
+          !root || isAnswerKeyCapReached(countAnswerKeySources(root));
+        btn.disabled = blocked;
+        hint.style.display = blocked ? "" : "none";
+      };
+      render();
+
+      const editorAny = editor as unknown as {
+        on: (event: string, cb: (...args: unknown[]) => void) => void;
+      };
+      editorAny.on("component:add", render);
+      editorAny.on("component:remove", render);
+
+      wrapper.appendChild(btn);
+      wrapper.appendChild(hint);
+      return wrapper;
+    },
+  };
+
+  const tm = editor.TraitManager as unknown as {
+    addType: (name: string, def: unknown) => void;
+  };
+  tm.addType(ADD_FIELD_TRAIT_TYPE, def);
+}
+
+/**
+ * "× Remove Field" trait for input fields — disables itself with an
+ * explanation when the field is the step's last one. Mirrors
+ * defineRemoveStepTrait, including its CSS classes.
+ */
+function defineRemoveFieldTrait(editor: GrapesEditor): void {
+  type CreateInputArgs = {
+    trait: unknown;
+    component: Component;
+  };
+
+  const def = {
+    noLabel: true,
+    createInput(args: CreateInputArgs) {
+      const component = args.component;
+      const wrapper = document.createElement("div");
+      wrapper.className = "oxy-mf-remove-step";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "oxy-mf-remove-step__btn";
+      btn.textContent = "× Remove Field";
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        editor.runCommand(CMD_REMOVE_INPUT_FIELD);
+      });
+
+      const hint = document.createElement("div");
+      hint.className = "oxy-mf-remove-step__hint";
+      hint.textContent = LAST_FIELD_HINT;
+
+      const render = () => {
+        const step = findAncestor(component, INPUT_STEP_TYPE);
+        const blocked =
+          !step || asLike(step).find(`.${INPUT_FIELD_CLASS}`).length <= 1;
+        btn.disabled = blocked;
+        hint.style.display = blocked ? "" : "none";
+      };
+      render();
+
+      const editorAny = editor as unknown as {
+        on: (event: string, cb: (...args: unknown[]) => void) => void;
+      };
+      editorAny.on("component:add", render);
+      editorAny.on("component:remove", render);
+
+      wrapper.appendChild(btn);
+      wrapper.appendChild(hint);
+      return wrapper;
+    },
+  };
+
+  const tm = editor.TraitManager as unknown as {
+    addType: (name: string, def: unknown) => void;
+  };
+  tm.addType(REMOVE_FIELD_TRAIT_TYPE, def);
 }
 
 /**
@@ -1484,6 +2186,42 @@ function injectCanvasStyles(editor: GrapesEditor): void {
   // Canvas may already be ready (re-mount) or load later.
   inject();
   editor.on("load", inject);
+}
+
+/**
+ * Keep every multi-form consistent when a step is removed through ANY path —
+ * the "× Remove Step" trait button, the layers panel, or the Delete key.
+ * The removed component is already detached when `component:remove` fires,
+ * so its root can't be reached from it; instead resync every form root in
+ * the document (renumber ids, restore the display invariant, clamp the
+ * active step). Idempotent, so double-running after CMD_REMOVE_STEP is fine.
+ */
+function wireStepRemovalSync(editor: GrapesEditor): void {
+  (
+    editor as unknown as {
+      on: (event: string, cb: (...args: unknown[]) => void) => void;
+    }
+  ).on("component:remove", (...args: unknown[]) => {
+    const removed = args[0] as Component | undefined;
+    if (!removed || !classListOf(removed).includes(STEP_CLASS)) return;
+    const wrapper = editor.getWrapper();
+    if (!wrapper) return;
+    const roots = asLike(wrapper as unknown as Component).find(
+      `.${MULTIPLE_FORM_MARKER_CLASS}`,
+    );
+    roots.forEach((root) => {
+      renumberSteps(root);
+      const steps = getStepsOf(root);
+      const raw = Math.floor(
+        Number(asLike(root).get("active-step") ?? 1) || 1,
+      );
+      const clamped = Math.max(1, Math.min(steps.length || 1, raw));
+      if (clamped !== raw) {
+        asLike(root).set("active-step", clamped);
+      }
+      applyActiveStep(root);
+    });
+  });
 }
 
 /**
@@ -1524,8 +2262,12 @@ export function registerMultipleFormBlock(
   defineCommands(grapes);
   defineComponentTypes(grapes);
   defineStepListTrait(grapes);
+  defineRemoveStepTrait(grapes);
+  defineRemoveFieldTrait(grapes);
+  defineAddFieldTrait(grapes);
   injectCanvasStyles(grapes);
   wireActiveStepFollowsSelection(grapes);
+  wireStepRemovalSync(grapes);
 
   grapes.BlockManager.add("oxy-multiple-form", {
     label: "Multiple Form",
