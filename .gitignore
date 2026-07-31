@@ -40,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI agent artifacts (Claude Code / claude-flow) — never commit
+.claude/
+.claude-flow/
+.swarm/
+.hive-mind/
+.agents/
+CLAUDE.md
+CLAUDE.local.md
+.mcp.json
