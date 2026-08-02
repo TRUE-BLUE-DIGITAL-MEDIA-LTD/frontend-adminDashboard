@@ -48,6 +48,7 @@ const CONSENT_ROW_CLASS = "oxy-form-consent-row";
 const CONSENT_CHECKBOX_CLASS = "oxy-form-consent-checkbox";
 const CONSENT_TEXT_CLASS = "oxy-form-consent-text";
 const SUBMIT_CTA_CLASS = "oxy-form-submit-cta";
+export const CONSENT_LINK_CLASS = "oxy-form-consent-link";
 
 const INPUT_STEP_TYPE = "oxy-form-input-step";
 export const INPUT_STEP_CLASS = "oxy-form-input-step";
@@ -102,6 +103,8 @@ export function stepListCounterText(answerStepCount: number): string {
 
 export const DEFAULT_CONSENT_TEXT =
   "I agree to receive marketing communications and accept the privacy policy.";
+
+export const DEFAULT_PRIVACY_LINK_TEXT = "Privacy Policy";
 
 const STEP_LIST_TRAIT_TYPE = "oxy-step-list";
 const REMOVE_STEP_TRAIT_TYPE = "oxy-remove-step";
@@ -275,6 +278,30 @@ const CONSENT_ROW_STYLE: Record<string, string> = {
   cursor: "pointer",
 };
 
+const CONSENT_LINK_STYLE: Record<string, string> = {
+  color: "#2563eb",
+  "text-decoration": "underline",
+};
+
+/**
+ * Visibility is driven by the `hidden` ATTRIBUTE (empty URL → hidden), never
+ * inline display — custom Style Manager styles must survive trait syncs.
+ */
+function consentLinkAttrs(url: string): Record<string, string> {
+  const base: Record<string, string> = {
+    class: CONSENT_LINK_CLASS,
+    target: "_blank",
+    rel: "noopener noreferrer",
+  };
+  const trimmed = url.trim();
+  if (trimmed) {
+    base.href = trimmed;
+  } else {
+    base.hidden = "hidden";
+  }
+  return base;
+}
+
 const ROOT_STYLE: Record<string, string> = {
   width: "100%",
   display: "flex",
@@ -404,6 +431,8 @@ export function makeSubmitStepTreeNode(args: {
   emailPlaceholder: string;
   consentText: string;
   ctaText: string;
+  privacyLinkText: string;
+  privacyLinkUrl: string;
   buttonColor: string;
   textColor: string;
   buttonPadding: number;
@@ -433,6 +462,8 @@ export function makeSubmitStepTreeNode(args: {
     "step-title": args.title,
     "email-placeholder": args.emailPlaceholder,
     "consent-text": args.consentText,
+    "privacy-link-text": args.privacyLinkText,
+    "privacy-link-url": args.privacyLinkUrl,
     "cta-text": args.ctaText,
     "button-color": args.buttonColor,
     "text-color": args.textColor,
@@ -488,6 +519,13 @@ export function makeSubmitStepTreeNode(args: {
             tagName: "span",
             attributes: { class: CONSENT_TEXT_CLASS },
             components: args.consentText,
+            ...traitText,
+          },
+          {
+            tagName: "a",
+            attributes: consentLinkAttrs(args.privacyLinkUrl),
+            components: args.privacyLinkText,
+            style: CONSENT_LINK_STYLE,
             ...traitText,
           },
         ],
@@ -666,6 +704,8 @@ export function makeDefaultRootTree() {
         emailPlaceholder: "Enter your email",
         consentText: DEFAULT_CONSENT_TEXT,
         ctaText: "Continue",
+        privacyLinkText: DEFAULT_PRIVACY_LINK_TEXT,
+        privacyLinkUrl: "",
         buttonColor: DEFAULT_BUTTON_COLOR,
         textColor: DEFAULT_TEXT_COLOR,
         buttonPadding: DEFAULT_BUTTON_PADDING,
@@ -911,6 +951,10 @@ export function applySubmitStepFields(step: Component): void {
     stepLike.get("consent-text") ?? DEFAULT_CONSENT_TEXT,
   );
   const ctaText = String(stepLike.get("cta-text") ?? "Continue");
+  const privacyText = String(
+    stepLike.get("privacy-link-text") ?? DEFAULT_PRIVACY_LINK_TEXT,
+  );
+  const privacyUrl = String(stepLike.get("privacy-link-url") ?? "").trim();
 
   const emailInput = findFirstByClass(step, EMAIL_INPUT_CLASS);
   if (emailInput) {
@@ -924,12 +968,26 @@ export function applySubmitStepFields(step: Component): void {
   if (cta) {
     asLike(cta).components(ctaText);
   }
+  const consentLink = findFirstByClass(step, CONSENT_LINK_CLASS);
+  if (consentLink) {
+    const linkLike = asLike(consentLink);
+    linkLike.components(privacyText || DEFAULT_PRIVACY_LINK_TEXT);
+    if (privacyUrl) {
+      linkLike.addAttributes({ href: privacyUrl });
+      linkLike.removeAttributes(["hidden"]);
+    } else {
+      linkLike.addAttributes({ hidden: "hidden" });
+      linkLike.removeAttributes(["href"]);
+    }
+  }
 
   stepLike.addAttributes({
     "data-oxy-step-title": String(stepLike.get("step-title") ?? ""),
     "data-oxy-email-placeholder": placeholder,
     "data-oxy-consent-text": consentText,
     "data-oxy-cta-text": ctaText,
+    "data-oxy-privacy-link-text": privacyText,
+    "data-oxy-privacy-link-url": privacyUrl,
   });
 }
 
@@ -1034,6 +1092,7 @@ function applyInputStepButtonStyling(step: Component): void {
 const SUBMIT_TRAIT_TEXT_CLASSES: ReadonlyArray<string> = [
   TITLE_CLASS,
   CONSENT_TEXT_CLASS,
+  CONSENT_LINK_CLASS,
   SUBMIT_CTA_CLASS,
 ];
 
@@ -1044,6 +1103,7 @@ const SUBMIT_CHILD_CLASSES: ReadonlyArray<string> = [
   CONSENT_ROW_CLASS,
   CONSENT_CHECKBOX_CLASS,
   CONSENT_TEXT_CLASS,
+  CONSENT_LINK_CLASS,
   SUBMIT_CTA_CLASS,
 ];
 
@@ -1054,6 +1114,21 @@ const SUBMIT_CHILD_CLASSES: ReadonlyArray<string> = [
  * re-asserting the structural locks. Idempotent — runs on every load.
  */
 export function normalizeSubmitStepChildren(step: Component): void {
+  // Designs saved before the privacy link existed have no anchor in their
+  // stored JSON — append it (hidden) so the traits have a target to sync.
+  const consentRow = findFirstByClass(step, CONSENT_ROW_CLASS);
+  if (consentRow && !findFirstByClass(step, CONSENT_LINK_CLASS)) {
+    asLike(consentRow).append({
+      tagName: "a",
+      attributes: consentLinkAttrs(""),
+      components: DEFAULT_PRIVACY_LINK_TEXT,
+      style: CONSENT_LINK_STYLE,
+      draggable: false,
+      copyable: false,
+      removable: false,
+      editable: false,
+    });
+  }
   for (const cls of SUBMIT_CHILD_CLASSES) {
     const el = findFirstByClass(step, cls);
     if (!el) continue;
@@ -1518,6 +1593,11 @@ function defineComponentTypes(editor: GrapesEditor): void {
         "step-title": str("data-oxy-step-title", ""),
         "email-placeholder": str("data-oxy-email-placeholder", ""),
         "consent-text": str("data-oxy-consent-text", DEFAULT_CONSENT_TEXT),
+        "privacy-link-text": str(
+          "data-oxy-privacy-link-text",
+          DEFAULT_PRIVACY_LINK_TEXT,
+        ),
+        "privacy-link-url": str("data-oxy-privacy-link-url", ""),
         "cta-text": str("data-oxy-cta-text", "Continue"),
         "button-color": str("data-oxy-button-color", DEFAULT_BUTTON_COLOR),
         "text-color": str("data-oxy-text-color", DEFAULT_TEXT_COLOR),
@@ -1538,6 +1618,8 @@ function defineComponentTypes(editor: GrapesEditor): void {
         "step-title": "Almost done!",
         "email-placeholder": "Enter your email",
         "consent-text": DEFAULT_CONSENT_TEXT,
+        "privacy-link-text": DEFAULT_PRIVACY_LINK_TEXT,
+        "privacy-link-url": "",
         "cta-text": "Continue",
         "button-color": DEFAULT_BUTTON_COLOR,
         "text-color": DEFAULT_TEXT_COLOR,
@@ -1561,6 +1643,19 @@ function defineComponentTypes(editor: GrapesEditor): void {
             type: "text",
             name: "consent-text",
             label: "Consent text",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "privacy-link-text",
+            label: "Privacy link text",
+            changeProp: 1,
+          },
+          {
+            type: "text",
+            name: "privacy-link-url",
+            label: "Privacy policy URL",
+            placeholder: "https://... (empty = no link)",
             changeProp: 1,
           },
           {
@@ -1603,16 +1698,16 @@ function defineComponentTypes(editor: GrapesEditor): void {
         const comp = this as unknown as Component;
         comp.on("change:step-title", () => applyStepTitle(comp));
         comp.on(
-          "change:email-placeholder change:consent-text change:cta-text",
+          "change:email-placeholder change:consent-text change:cta-text change:privacy-link-text change:privacy-link-url",
           () => applySubmitStepFields(comp),
         );
         comp.on(
           "change:button-color change:text-color change:button-padding change:button-radius",
           () => applySubmitStepButtonStyling(comp),
         );
+        normalizeSubmitStepChildren(comp);
         applySubmitStepFields(comp);
         stampSubmitStepStyleAttrs(comp);
-        normalizeSubmitStepChildren(comp);
       },
     },
   });
