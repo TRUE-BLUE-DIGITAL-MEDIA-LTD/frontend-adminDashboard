@@ -411,6 +411,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
           style={{
             position: "relative",
             display: "flex",
+            flexDirection: "column",
             width: "100%",
             height: height ?? "100%",
             ...style,
@@ -451,49 +452,12 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
               />
             </div>
           )}
-          {showBlocksPanel && (
-            <div
-              ref={blocksPanelRef}
-              className="oxy-blocks-panel"
-              style={{
-                width: blocksPanelWidth ?? "280px",
-                flexShrink: 0,
-                height: "100%",
-                overflow: "auto",
-                display: blocksOpen ? "block" : "none",
-              }}
-            />
-          )}
-          {showLayersPanel && (
-            <div
-              className="oxy-layers-panel"
-              style={{
-                width: layersPanelWidth ?? "260px",
-                flexShrink: 0,
-                height: "100%",
-                overflow: "auto",
-                display: layersOpen ? "flex" : "none",
-                flexDirection: "column",
-              }}
-            >
-              <div className="oxy-layers-panel__header">Layers</div>
-              <div ref={layersPanelRef} style={{ flex: 1, overflow: "auto" }} />
-            </div>
-          )}
-          <div
-            style={{
-              flex: 1,
-              minWidth: 0,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {showDeviceToolbar && (
+          {showDeviceToolbar && (
               <div
                 className="oxy-device-toolbar"
                 role="toolbar"
                 aria-label="Editor chrome"
+                style={{ flexShrink: 0 }}
               >
                 <button
                   type="button"
@@ -647,23 +611,76 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                 </button>
               </div>
             )}
+          {/*
+            The canvas owns the full editor area; the side panels float above
+            it (absolute + z-index) so toggling them never changes the frame
+            width. zIndex: 0 on the canvas creates a stacking context that
+            caps GrapesJS's internal z-indexes below the panels.
+          */}
+          <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
             <div
               ref={containerRef}
-              style={{ flex: 1, minHeight: 0, position: "relative" }}
+              style={{ position: "absolute", inset: 0, zIndex: 0 }}
             />
-          </div>
-          {showPropertiesPanel && (
-            <div
-              className="oxy-properties-panel"
-              style={{
-                width: propertiesPanelWidth ?? "300px",
-                flexShrink: 0,
-                height: "100%",
-                overflow: "auto",
-                display: propertiesOpen ? "flex" : "none",
-                flexDirection: "column",
-              }}
-            >
+            {showBlocksPanel && (
+              <div
+                ref={blocksPanelRef}
+                className="oxy-blocks-panel"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  width: blocksPanelWidth ?? "280px",
+                  zIndex: 10,
+                  overflow: "auto",
+                  display: blocksOpen ? "block" : "none",
+                  boxShadow: "2px 0 10px rgba(27, 60, 83, 0.15)",
+                }}
+              />
+            )}
+            {showLayersPanel && (
+              <div
+                className="oxy-layers-panel"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left:
+                    showBlocksPanel && blocksOpen
+                      ? blocksPanelWidth ?? "280px"
+                      : 0,
+                  width: layersPanelWidth ?? "260px",
+                  zIndex: 10,
+                  overflow: "auto",
+                  display: layersOpen ? "flex" : "none",
+                  flexDirection: "column",
+                  boxShadow: "2px 0 10px rgba(27, 60, 83, 0.15)",
+                }}
+              >
+                <div className="oxy-layers-panel__header">Layers</div>
+                <div
+                  ref={layersPanelRef}
+                  style={{ flex: 1, overflow: "auto" }}
+                />
+              </div>
+            )}
+            {showPropertiesPanel && (
+              <div
+                className="oxy-properties-panel"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  width: propertiesPanelWidth ?? "300px",
+                  zIndex: 10,
+                  overflow: "auto",
+                  display: propertiesOpen ? "flex" : "none",
+                  flexDirection: "column",
+                  boxShadow: "-2px 0 10px rgba(27, 60, 83, 0.15)",
+                }}
+              >
               <div className="oxy-properties-panel__header">
                 {quizSelected
                   ? "Quiz"
@@ -725,8 +742,9 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
                   }}
                 />
               )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       );
     }
