@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  CONSENT_LINK_CLASS,
   DEFAULT_CONSENT_TEXT,
-  DEFAULT_PRIVACY_LINK_TEXT,
   MAX_STEPS,
   SUBMIT_STEP_CLASS,
   MAX_ANSWER_KEYS,
@@ -98,24 +96,7 @@ function asFakeComponent(stub: StubNode): any {
     is: () => false,
     parent: () => undefined,
     on: () => {},
-    append: (def: any) => {
-      const child = makeStubNode(String(def?.attributes?.class ?? ""));
-      Object.assign(child.attrs, def?.attributes ?? {});
-      if (typeof def?.components === "string") child.text = def.components;
-      if (def?.style) child.style = def.style;
-      for (const key of [
-        "draggable",
-        "copyable",
-        "removable",
-        "editable",
-        "selectable",
-        "hoverable",
-      ]) {
-        if (def?.[key] !== undefined) child.props[key] = def[key];
-      }
-      stub.children.push(child);
-      return [asFakeComponent(child)];
-    },
+    append: () => [],
     remove: () => ({}),
   };
 }
@@ -126,11 +107,9 @@ function makeStubSubmitStep() {
   const emailInput = makeStubNode("oxy-form-email-input");
   const checkbox = makeStubNode("oxy-form-consent-checkbox");
   const consentSpan = makeStubNode("oxy-form-consent-text");
-  const consentLink = makeStubNode("oxy-form-consent-link");
   const consentRow = makeStubNode("oxy-form-consent-row", [
     checkbox,
     consentSpan,
-    consentLink,
   ]);
   const cta = makeStubNode("oxy-form-submit-cta");
   const root = makeStubNode("form_step oxy-form-submit-step", [
@@ -149,30 +128,8 @@ function makeStubSubmitStep() {
     checkbox,
     consentRow,
     consentSpan,
-    consentLink,
     cta,
   };
-}
-
-function makeLegacyStubSubmitStep() {
-  const title = makeStubNode("oxy-form-step-title");
-  const divider = makeStubNode("oxy-form-step-divider");
-  const emailInput = makeStubNode("oxy-form-email-input");
-  const checkbox = makeStubNode("oxy-form-consent-checkbox");
-  const consentSpan = makeStubNode("oxy-form-consent-text");
-  const consentRow = makeStubNode("oxy-form-consent-row", [
-    checkbox,
-    consentSpan,
-  ]);
-  const cta = makeStubNode("oxy-form-submit-cta");
-  const root = makeStubNode("form_step oxy-form-submit-step", [
-    title,
-    divider,
-    emailInput,
-    consentRow,
-    cta,
-  ]);
-  return { step: asFakeComponent(root), root, consentRow };
 }
 
 describe("makeDefaultRootTree", () => {
@@ -261,8 +218,6 @@ describe("makeSubmitStepTreeNode", () => {
     emailPlaceholder: "Enter your email",
     consentText: DEFAULT_CONSENT_TEXT,
     ctaText: "Continue",
-    privacyLinkText: "Privacy Policy",
-    privacyLinkUrl: "",
     buttonColor: "#dc2626",
     textColor: "#ffffff",
     buttonPadding: 10,
@@ -366,82 +321,6 @@ describe("makeSubmitStepTreeNode", () => {
   });
 });
 
-describe("submit step privacy link markup", () => {
-  const flatten = (n: any, acc: any[] = []): any[] => {
-    acc.push(n);
-    const children = Array.isArray(n?.components) ? n.components : [];
-    for (const c of children) {
-      if (typeof c === "object" && c !== null) flatten(c, acc);
-    }
-    return acc;
-  };
-  const findLink = (node: any) =>
-    flatten(node).find((n) =>
-      String(n?.attributes?.class ?? "").includes(CONSENT_LINK_CLASS),
-    );
-
-  it("renders a locked, non-editable anchor inside the consent row", () => {
-    const node = makeSubmitStepTreeNode({
-      title: "Almost done!",
-      emailPlaceholder: "Enter your email",
-      consentText: DEFAULT_CONSENT_TEXT,
-      ctaText: "Continue",
-      privacyLinkText: "Privacy Policy",
-      privacyLinkUrl: "https://example.com/privacy",
-      buttonColor: "#dc2626",
-      textColor: "#ffffff",
-      buttonPadding: 10,
-      buttonRadius: 8,
-      isActive: false,
-    }) as any;
-    const link = findLink(node);
-    expect(link).toBeTruthy();
-    expect(link.tagName).toBe("a");
-    expect(link.attributes.target).toBe("_blank");
-    expect(link.attributes.rel).toBe("noopener noreferrer");
-    expect(link.attributes.href).toBe("https://example.com/privacy");
-    expect(link.attributes.hidden).toBeUndefined();
-    expect(link.components).toBe("Privacy Policy");
-    expect(link.editable).toBe(false);
-    expect(link.draggable).toBe(false);
-    expect(link.copyable).toBe(false);
-    expect(link.removable).toBe(false);
-    // Blue + underlined so visitors recognize it as clickable.
-    expect(link.style.color).toBe("#2563eb");
-    expect(link.style["text-decoration"]).toBe("underline");
-  });
-
-  it("is hidden (attribute, not display) when the URL is empty", () => {
-    const node = makeSubmitStepTreeNode({
-      title: "Almost done!",
-      emailPlaceholder: "Enter your email",
-      consentText: DEFAULT_CONSENT_TEXT,
-      ctaText: "Continue",
-      privacyLinkText: "Privacy Policy",
-      privacyLinkUrl: "",
-      buttonColor: "#dc2626",
-      textColor: "#ffffff",
-      buttonPadding: 10,
-      buttonRadius: 8,
-      isActive: false,
-    }) as any;
-    const link = findLink(node);
-    expect(link.attributes.hidden).toBe("hidden");
-    expect(link.attributes.href).toBeUndefined();
-    expect(link.style.display).toBeUndefined();
-  });
-
-  it("default block drop ships the link hidden with default text", () => {
-    const tree = makeDefaultRootTree() as any;
-    const submit = tree.components[3];
-    const link = findLink(submit);
-    expect(link).toBeTruthy();
-    expect(link.attributes.hidden).toBe("hidden");
-    expect(link.components).toBe(DEFAULT_PRIVACY_LINK_TEXT);
-    expect(DEFAULT_PRIVACY_LINK_TEXT).toBe("Privacy Policy");
-  });
-});
-
 describe("submit step trait application", () => {
   it("applySubmitStepFields syncs text + text data attrs and never styles the CTA", () => {
     const { step, root, emailInput, consentSpan, cta } = makeStubSubmitStep();
@@ -461,39 +340,6 @@ describe("submit step trait application", () => {
     expect(root.attrs["data-oxy-cta-text"]).toBe("Go");
     // The critical fix: loading/syncing text must not clobber custom styles.
     expect(cta.styleCalls).toBe(0);
-  });
-
-  it("applySubmitStepFields syncs the privacy link text, href, and data attrs", () => {
-    const { step, root, consentLink } = makeStubSubmitStep();
-    step.set("privacy-link-text", "Our Privacy Policy");
-    step.set("privacy-link-url", "https://example.com/privacy");
-
-    applySubmitStepFields(step);
-
-    expect(consentLink.text).toBe("Our Privacy Policy");
-    expect(consentLink.attrs.href).toBe("https://example.com/privacy");
-    expect(consentLink.attrs.hidden).toBeUndefined();
-    expect(root.attrs["data-oxy-privacy-link-text"]).toBe(
-      "Our Privacy Policy",
-    );
-    expect(root.attrs["data-oxy-privacy-link-url"]).toBe(
-      "https://example.com/privacy",
-    );
-    // Style survival: syncing text must never restyle the link.
-    expect(consentLink.styleCalls).toBe(0);
-  });
-
-  it("applySubmitStepFields hides the link via the hidden attribute when the URL is emptied", () => {
-    const { step, consentLink } = makeStubSubmitStep();
-    // Simulate a previously-set URL now cleared to whitespace.
-    consentLink.attrs.href = "https://old.example.com/privacy";
-    step.set("privacy-link-url", "   ");
-
-    applySubmitStepFields(step);
-
-    expect(consentLink.attrs.hidden).toBe("hidden");
-    expect(consentLink.attrs.href).toBeUndefined();
-    expect(consentLink.text).toBe(DEFAULT_PRIVACY_LINK_TEXT);
   });
 
   it("applySubmitStepButtonStyling styles the CTA from traits and stamps style data attrs", () => {
@@ -561,40 +407,6 @@ describe("normalizeSubmitStepChildren", () => {
     // Non-text children keep editable untouched.
     expect(stubs.emailInput.props.editable).toBeUndefined();
     expect(stubs.divider.props.editable).toBeUndefined();
-  });
-
-  it("appends a hidden privacy link to legacy submit steps missing one", () => {
-    const { step, consentRow } = makeLegacyStubSubmitStep();
-
-    normalizeSubmitStepChildren(step);
-
-    const link = consentRow.children.find((c) =>
-      c.attrs.class.includes(CONSENT_LINK_CLASS),
-    );
-    expect(link).toBeTruthy();
-    expect(link!.attrs.hidden).toBe("hidden");
-    expect(link!.attrs.target).toBe("_blank");
-    expect(link!.attrs.rel).toBe("noopener noreferrer");
-    expect(link!.text).toBe(DEFAULT_PRIVACY_LINK_TEXT);
-    // The lock pass must cover the appended child too.
-    expect(link!.props.selectable).toBe(true);
-    expect(link!.props.hoverable).toBe(true);
-    expect(link!.props.draggable).toBe(false);
-    expect(link!.props.copyable).toBe(false);
-    expect(link!.props.removable).toBe(false);
-    expect(link!.props.editable).toBe(false);
-  });
-
-  it("does not duplicate the link when one already exists", () => {
-    const { step, consentRow } = makeStubSubmitStep();
-
-    normalizeSubmitStepChildren(step);
-    normalizeSubmitStepChildren(step);
-
-    const links = consentRow.children.filter((c) =>
-      c.attrs.class.includes("oxy-form-consent-link"),
-    );
-    expect(links).toHaveLength(1);
   });
 });
 
