@@ -48,7 +48,7 @@ const PRESET_OPTIONS: { label: string; value: RangePreset | "custom" }[] = [
 const PAGE_SIZE = 50;
 
 function Index({ user }: { user: User }) {
-  const [preset, setPreset] = useState<RangePreset | "custom">("30d");
+  const [preset, setPreset] = useState<RangePreset | "custom">("today");
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -89,9 +89,7 @@ function Index({ user }: { user: User }) {
     queryKey: ["lander-analytics", preset, range?.from, range?.to],
     queryFn: () =>
       ListLanderAnalyticsService(
-        isLive
-          ? { from: range!.from }
-          : { from: range!.from, to: range!.to },
+        isLive ? { from: range!.from } : { from: range!.from, to: range!.to },
       ),
     enabled: !!range,
     refetchInterval: isLive ? 5000 : false,
@@ -113,7 +111,9 @@ function Index({ user }: { user: User }) {
   const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const allRows = analytics.data?.rows ?? [];
-  const compareRows = allRows.filter((r) => compareIds.includes(r.landingPageId));
+  const compareRows = allRows.filter((r) =>
+    compareIds.includes(r.landingPageId),
+  );
   const compareCrossDomain =
     new Set(compareRows.map((r) => r.domainId ?? r.landingPageId)).size > 1;
 
@@ -168,8 +168,8 @@ function Index({ user }: { user: User }) {
       <div className="min-h-screen w-full p-5 pt-24 font-Poppins">
         <h1 className="text-2xl font-bold">Lander Analytics</h1>
         <p className="text-sm text-gray-500">
-          Views, clicks, and bounce rate per landing page. Bounce = visitors
-          who never clicked the main button.
+          Views, clicks, and bounce rate per landing page. Bounce = visitors who
+          never clicked the main button.
         </p>
 
         <div className="my-4 flex flex-wrap items-center gap-3">
@@ -274,7 +274,10 @@ function Index({ user }: { user: User }) {
                 ))}
                 {domainGroups.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-gray-500">
+                    <TableCell
+                      colSpan={3}
+                      className="text-center text-gray-500"
+                    >
                       No visits recorded in this period.
                     </TableCell>
                   </TableRow>
@@ -288,7 +291,10 @@ function Index({ user }: { user: User }) {
         ) : (
           <>
             {compareRows.length >= 2 && (
-              <CompareTable rows={compareRows} crossDomain={compareCrossDomain} />
+              <CompareTable
+                rows={compareRows}
+                crossDomain={compareCrossDomain}
+              />
             )}
             {compareIds.length > 0 && (
               <Button size="small" onClick={() => setCompareIds([])}>
@@ -323,31 +329,46 @@ function Index({ user }: { user: User }) {
                       )
                     }
                   >
-                    <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
+                    <TableCell
+                      padding="checkbox"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Checkbox
                         size="small"
                         checked={compareIds.includes(row.landingPageId)}
                         onChange={() => toggleCompare(row.landingPageId)}
                       />
                     </TableCell>
-                    <TableCell>{row.landingPageName ?? row.landingPageId}</TableCell>
+                    <TableCell>
+                      {row.landingPageName ?? row.landingPageId}
+                    </TableCell>
                     <TableCell>{row.domainName ?? "—"}</TableCell>
                     <TableCell>{row.views}</TableCell>
                     <TableCell>{row.clicks}</TableCell>
                     <TableCell>{formatPct(row.ctr)}</TableCell>
                     <TableCell>{formatPct(row.bounceRate)}</TableCell>
                     <TableCell>
-                      {formatReturningPct(row.returningViews, row.identifiedViews)}
+                      {formatReturningPct(
+                        row.returningViews,
+                        row.identifiedViews,
+                      )}
                     </TableCell>
-                    <TableCell>{formatDurationMs(row.avgTimeOnPageMs)}</TableCell>
                     <TableCell>
-                      {row.avgMaxScrollPct === null ? "—" : `${row.avgMaxScrollPct}%`}
+                      {formatDurationMs(row.avgTimeOnPageMs)}
+                    </TableCell>
+                    <TableCell>
+                      {row.avgMaxScrollPct === null
+                        ? "—"
+                        : `${row.avgMaxScrollPct}%`}
                     </TableCell>
                   </TableRow>
                 ))}
                 {pageRows.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center text-gray-500">
+                    <TableCell
+                      colSpan={10}
+                      className="text-center text-gray-500"
+                    >
                       No visits recorded in this period.
                     </TableCell>
                   </TableRow>
