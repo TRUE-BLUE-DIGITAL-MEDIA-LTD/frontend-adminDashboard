@@ -14,7 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import CompareTable from "../../components/analytics/CompareTable";
@@ -69,6 +69,22 @@ function Index({ user }: { user: User }) {
   // its own "now" — a pinned `to` would exclude sessions newer than the moment
   // the preset was picked.
   const isLive = preset === "today";
+
+  // Modal behavior for the detail popup: Esc closes, and the page behind
+  // must not scroll while it is open.
+  useEffect(() => {
+    if (!selected) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [selected]);
+
   const analytics = useQuery({
     queryKey: ["lander-analytics", preset, range?.from, range?.to],
     queryFn: () =>
@@ -348,12 +364,30 @@ function Index({ user }: { user: User }) {
               </div>
             )}
             {selected && range && (
-              <LanderDetailPanel
-                landingPageId={selected}
-                from={range.from}
-                to={isLive ? undefined : range.to}
-                live={isLive}
-              />
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                onClick={() => setSelected(null)}
+              >
+                <div
+                  className="relative max-h-[85vh] w-full max-w-5xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    className="absolute right-4 top-4 text-xl leading-none text-gray-400 hover:text-gray-600"
+                    onClick={() => setSelected(null)}
+                  >
+                    ✕
+                  </button>
+                  <LanderDetailPanel
+                    landingPageId={selected}
+                    from={range.from}
+                    to={isLive ? undefined : range.to}
+                    live={isLive}
+                  />
+                </div>
+              </div>
             )}
           </>
         )}
