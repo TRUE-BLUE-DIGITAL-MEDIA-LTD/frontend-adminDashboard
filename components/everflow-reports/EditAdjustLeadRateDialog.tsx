@@ -43,6 +43,60 @@ export const wallDateToUtcIso = (d: Date, tz: string): string =>
     )
     .toISOString();
 
+// The wall-clock shell Date cannot represent every instant: a time inside the
+// browser's spring-forward gap gets normalised forward an hour, and an
+// ambiguous fall-back hour in the selected zone always resolves to the earlier
+// offset. So the stored ISO is kept alongside the shell Date and a field is
+// only ever re-derived from the Calendar once the admin actually edits it.
+export type DateFieldState = {
+  value: Date | null;
+  originalIso: string | null;
+  dirty: boolean;
+};
+
+export const initDateField = (
+  iso: string | null | undefined,
+  tz: string,
+): DateFieldState => ({
+  value: iso ? utcToWallDate(iso, tz) : null,
+  originalIso: iso ?? null,
+  dirty: false,
+});
+
+export const markDateField = (
+  field: DateFieldState,
+  value: Date | null,
+): DateFieldState => ({ ...field, value, dirty: true });
+
+// An untouched field sends its stored instant back verbatim, so opening the
+// dialog to change only the rate can never shift a schedule by an hour.
+export const outgoingIso = (
+  field: DateFieldState,
+  tz: string,
+): string | null =>
+  field.dirty
+    ? field.value
+      ? wallDateToUtcIso(field.value, tz)
+      : null
+    : field.originalIso;
+
+// Switching timezone is display-only: an untouched field re-derives from the
+// stored instant (exact), an edited one round-trips through the previous zone.
+export const retimeDateField = (
+  field: DateFieldState,
+  fromTz: string,
+  toTz: string,
+): DateFieldState => ({
+  ...field,
+  value: field.dirty
+    ? field.value
+      ? utcToWallDate(wallDateToUtcIso(field.value, fromTz), toTz)
+      : null
+    : field.originalIso
+      ? utcToWallDate(field.originalIso, toTz)
+      : null,
+});
+
 type Props = {
   rate: AdjustLeadRate | null;
   smartLinks: ResponseCampaign[] | undefined;
@@ -70,8 +124,12 @@ function EditAdjustLeadRateDialog({
   const [campaignId, setCampaignId] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [timezone, setTimezone] = useState<string>(moment.tz.guess());
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<DateFieldState>(
+    initDateField(null, timezone),
+  );
+  const [endDate, setEndDate] = useState<DateFieldState>(
+    initDateField(null, timezone),
+  );
 
   const timezoneOptions = moment.tz
     .names()
@@ -95,14 +153,14 @@ function EditAdjustLeadRateDialog({
     setCampaignId(rate.campaignId);
     setCountry(rate.country);
     setTimezone(tz);
-    setStartDate(rate.startDate ? utcToWallDate(rate.startDate, tz) : null);
-    setEndDate(rate.endDate ? utcToWallDate(rate.endDate, tz) : null);
+    setStartDate(initDateField(rate.startDate, tz));
+    setEndDate(initDateField(rate.endDate, tz));
   }, [rate]);
 
   // Re-display the same instants as wall-clock in the new zone.
   const handleTimezoneChange = (newTz: string) => {
-    setStartDate((d) => (d ? utcToWallDate(wallDateToUtcIso(d, timezone), newTz) : d));
-    setEndDate((d) => (d ? utcToWallDate(wallDateToUtcIso(d, timezone), newTz) : d));
+    setStartDate((f) => retimeDateField(f, timezone, newTz));
+    setEndDate((f) => retimeDateField(f, timezone, newTz));
     setTimezone(newTz);
   };
 
@@ -125,8 +183,8 @@ function EditAdjustLeadRateDialog({
         convertedCurrency,
         campaignId,
         country,
-        startDate: startDate ? wallDateToUtcIso(startDate, timezone) : null,
-        endDate: endDate ? wallDateToUtcIso(endDate, timezone) : null,
+        startDate: outgoingIso(startDate, timezone),
+        endDate: outgoingIso(endDate, timezone),
       });
       onClose();
       Swal.fire("Updated!", "Rate has been updated.", "success");
@@ -276,17 +334,21 @@ function EditAdjustLeadRateDialog({
             <label className="font-semibold text-gray-700">Start Date</label>
             <div className="flex items-center gap-2">
               <Calendar
-                value={startDate}
-                onChange={(e) => setStartDate((e.value as Date) ?? null)}
+                value={startDate.value}
+                onChange={(e) =>
+                  setStartDate((f) =>
+                    markDateField(f, (e.value as Date) ?? null),
+                  )
+                }
                 showTime
                 hourFormat="24"
                 className="w-full border"
                 placeholder="No start date"
               />
-              {startDate && (
+              {startDate.value && (
                 <Button
                   icon="pi pi-times"
-                  onClick={() => setStartDate(null)}
+                  onClick={() => setStartDate((f) => markDateField(f, null))}
                   className="p-button-text p-button-rounded text-gray-500"
                   tooltip="Clear (rule starts immediately)"
                   type="button"
@@ -298,17 +360,19 @@ function EditAdjustLeadRateDialog({
             <label className="font-semibold text-gray-700">End Date</label>
             <div className="flex items-center gap-2">
               <Calendar
-                value={endDate}
-                onChange={(e) => setEndDate((e.value as Date) ?? null)}
+                value={endDate.value}
+                onChange={(e) =>
+                  setEndDate((f) => markDateField(f, (e.value as Date) ?? null))
+                }
                 showTime
                 hourFormat="24"
                 className="w-full border"
                 placeholder="No end date"
               />
-              {endDate && (
+              {endDate.value && (
                 <Button
                   icon="pi pi-times"
-                  onClick={() => setEndDate(null)}
+                  onClick={() => setEndDate((f) => markDateField(f, null))}
                   className="p-button-text p-button-rounded text-gray-500"
                   tooltip="Clear (rule never expires)"
                   type="button"
@@ -317,7 +381,7 @@ function EditAdjustLeadRateDialog({
             </div>
           </div>
         </div>
-        {!startDate && !endDate && (
+        {!startDate.value && !endDate.value && (
           <small className="italic text-gray-500">
             No dates = rule is always active.
           </small>
