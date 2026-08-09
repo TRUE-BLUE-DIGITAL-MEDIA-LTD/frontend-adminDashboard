@@ -74,12 +74,13 @@ export async function CreateAdjustLeadRateService(
 export type UpdateAdjustLeadRateDto = {
   id: string;
   rate?: number;
+  type?: "fixed" | "exchange";
   targetCurrency?: string;
   convertedCurrency?: string;
   campaignId?: string;
   country?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
 };
 
 export type ResponseUpdateAdjustLeadRateService = AdjustLeadRate;
