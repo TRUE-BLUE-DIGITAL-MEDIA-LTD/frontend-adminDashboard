@@ -9,7 +9,7 @@ export type AiAnalysisResponse = {
   headline: string;
   leaders: { name: string; payout: number; note: string }[];
   countries: { country: string; note: string }[];
-  bestHours: { range: string; note: string }[];
+  bestHours: { range: string; country?: string; note: string }[];
   insights: string[];
 };
 

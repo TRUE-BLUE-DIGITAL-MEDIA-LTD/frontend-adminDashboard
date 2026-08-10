@@ -194,7 +194,9 @@ function AiAnalysisPanel({
                   {data.bestHours.map((hour, i) => (
                     <li key={i} className="text-sm text-gray-700">
                       <span className="font-semibold text-black">
-                        {hour.range}
+                        {hour.country
+                          ? `${hour.country} · ${hour.range}`
+                          : hour.range}
                       </span>
                       <p className="text-gray-500">{hour.note}</p>
                     </li>
