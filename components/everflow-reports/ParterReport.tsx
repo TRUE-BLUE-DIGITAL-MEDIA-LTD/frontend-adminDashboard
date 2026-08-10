@@ -538,125 +538,126 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
             partnerPerformanceDayByDay={partnerPerformanceDayByDay}
           />
         )}
-        <div className="flex w-10/12 flex-col items-end  justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100 md:flex-row">
-          <div
-            className=" md:w-70 flex w-full flex-col items-start  justify-center  gap-1 
+        <div className="flex w-10/12 flex-col items-end  justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100 ">
+          <div className="flex w-full flex-col items-start justify-center gap-5 md:flex-row">
+            <div
+              className=" md:w-70 flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
-          >
-            <label className="flex  items-center justify-center gap-1 text-base text-black">
-              Parent
-            </label>
-            <Dropdown
-              showClear
-              value={selectColumns.parent}
-              onChange={(e) =>
-                setSelectColumns((prev) => {
-                  if (!e.value) {
-                    return { ...prev, parent: undefined };
-                  }
-                  if (e.value.code === "hour") {
+            >
+              <label className="flex  items-center justify-center gap-1 text-base text-black">
+                Parent
+              </label>
+              <Dropdown
+                showClear
+                value={selectColumns.parent}
+                onChange={(e) =>
+                  setSelectColumns((prev) => {
+                    if (!e.value) {
+                      return { ...prev, parent: undefined };
+                    }
+                    if (e.value.code === "hour") {
+                      return {
+                        parent: e.value,
+                        child: undefined,
+                        grandchild: undefined,
+                      };
+                    }
                     return {
+                      ...prev,
                       parent: e.value,
-                      child: undefined,
-                      grandchild: undefined,
                     };
-                  }
-                  return {
-                    ...prev,
-                    parent: e.value,
-                  };
-                })
-              }
-              options={columns.filter(
-                (c) =>
-                  c.code !== selectColumns.child?.code &&
-                  c.code !== selectColumns.grandchild?.code,
-              )}
-              optionLabel="name"
-              placeholder="Select a Parent"
-              className="w-full "
-            />
-          </div>
-          <div
-            className=" flex w-full flex-col items-start  justify-center  gap-1 
+                  })
+                }
+                options={columns.filter(
+                  (c) =>
+                    c.code !== selectColumns.child?.code &&
+                    c.code !== selectColumns.grandchild?.code,
+                )}
+                optionLabel="name"
+                placeholder="Select a Parent"
+                className="w-full "
+              />
+            </div>
+            <div
+              className=" flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
-          >
-            <label className="flex  items-center justify-center gap-1 text-base text-black">
-              Child
-            </label>
-            <Dropdown
-              value={selectColumns.child}
-              showClear
-              onChange={(e) =>
-                setSelectColumns((prev) => {
-                  if (!e.value) {
-                    return { ...prev, child: undefined };
-                  }
-                  return {
-                    ...prev,
-                    child: e.value,
-                  };
-                })
-              }
-              options={columns.filter(
-                (f) =>
-                  f.code !== "hour" &&
-                  f.code !== selectColumns.parent?.code &&
-                  f.code !== selectColumns.grandchild?.code,
-              )}
-              optionLabel="name"
-              placeholder="Select a Child"
-              className="w-full"
-            />
-          </div>
-          <div
-            className=" flex w-full flex-col items-start  justify-center  gap-1 
+            >
+              <label className="flex  items-center justify-center gap-1 text-base text-black">
+                Child
+              </label>
+              <Dropdown
+                value={selectColumns.child}
+                showClear
+                onChange={(e) =>
+                  setSelectColumns((prev) => {
+                    if (!e.value) {
+                      return { ...prev, child: undefined };
+                    }
+                    return {
+                      ...prev,
+                      child: e.value,
+                    };
+                  })
+                }
+                options={columns.filter(
+                  (f) =>
+                    f.code !== "hour" &&
+                    f.code !== selectColumns.parent?.code &&
+                    f.code !== selectColumns.grandchild?.code,
+                )}
+                optionLabel="name"
+                placeholder="Select a Child"
+                className="w-full"
+              />
+            </div>
+            <div
+              className=" flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
-          >
-            <label className="flex  items-center justify-center gap-1 text-base text-black">
-              Grandchild
-            </label>
-            <Dropdown
-              value={selectColumns.grandchild}
-              showClear
-              onChange={(e) =>
-                setSelectColumns((prev) => {
-                  if (!e.value) {
-                    return { ...prev, grandchild: undefined };
-                  }
-                  return {
-                    ...prev,
-                    grandchild: e.value,
-                  };
-                })
-              }
-              options={columns.filter(
-                (f) =>
-                  f.code !== "hour" &&
-                  f.code !== selectColumns.parent?.code &&
-                  f.code !== selectColumns.child?.code,
-              )}
-              optionLabel="name"
-              placeholder="Select a Grandchild"
-              className="w-full"
-            />
-          </div>
-          <div
-            className=" flex w-full flex-col items-start  justify-center  gap-1 
+            >
+              <label className="flex  items-center justify-center gap-1 text-base text-black">
+                Grandchild
+              </label>
+              <Dropdown
+                value={selectColumns.grandchild}
+                showClear
+                onChange={(e) =>
+                  setSelectColumns((prev) => {
+                    if (!e.value) {
+                      return { ...prev, grandchild: undefined };
+                    }
+                    return {
+                      ...prev,
+                      grandchild: e.value,
+                    };
+                  })
+                }
+                options={columns.filter(
+                  (f) =>
+                    f.code !== "hour" &&
+                    f.code !== selectColumns.parent?.code &&
+                    f.code !== selectColumns.child?.code,
+                )}
+                optionLabel="name"
+                placeholder="Select a Grandchild"
+                className="w-full"
+              />
+            </div>
+            <div
+              className=" flex w-full flex-col items-start  justify-center  gap-1 
          text-base font-semibold "
-          >
-            <label className="flex  items-center justify-center gap-1 text-base text-black">
-              Pick Up Date <CiCalendarDate />
-            </label>
-            <Calendar
-              value={dates}
-              onChange={(e) => {
-                setDates(e.value);
-              }}
-              selectionMode="range"
-            />
+            >
+              <label className="flex  items-center justify-center gap-1 text-base text-black">
+                Pick Up Date <CiCalendarDate />
+              </label>
+              <Calendar
+                value={dates}
+                onChange={(e) => {
+                  setDates(e.value);
+                }}
+                selectionMode="range"
+              />
+            </div>
           </div>
-
           <div className="flex w-full flex-col items-start justify-center gap-1 text-base font-semibold">
             <label className="flex items-center justify-center gap-1 text-base text-black">
               Action
@@ -686,18 +687,14 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         {user.role === "admin" && (
           <SummaryReport user={user} summary={summary} />
         )}
-        {showAiAnalysis &&
-          dates &&
-          dates.length === 2 &&
-          dates[0] &&
-          dates[1] && (
-            <AiAnalysisPanel
-              dates={dates}
-              timezone={timezone}
-              user={user}
-              onClose={() => setShowAiAnalysis(false)}
-            />
-          )}
+        {showAiAnalysis && dates && dates.length === 2 && (
+          <AiAnalysisPanel
+            dates={dates}
+            timezone={timezone}
+            user={user}
+            onClose={() => setShowAiAnalysis(false)}
+          />
+        )}
         {paterPerfomaces.error && (
           <h2 className="font-semibold text-red-600">
             {paterPerfomaces.error?.message}
