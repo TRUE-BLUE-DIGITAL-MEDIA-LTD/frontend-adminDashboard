@@ -29,6 +29,7 @@ import Conversion from "./Conversion";
 import PartnerSummaryStats from "./PartnerSummaryStats";
 import BulkUpdateExchangeRate from "./BulkUpdateExchangeRate";
 import AdjustLeadRatesTable from "./AdjustLeadRatesTable";
+import AiAnalysisPanel from "./AiAnalysisPanel";
 import { useGetTimezone } from "@/react-query";
 
 const menuTables = [
@@ -182,6 +183,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
   >(null);
   const [showBulkUpdate, setShowBulkUpdate] = useState(false);
   const [showAdjustRates, setShowAdjustRates] = useState(false);
+  const [showAiAnalysis, setShowAiAnalysis] = useState(false);
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
     const today = moment().format("YYYY-MM-DD");
@@ -673,10 +675,24 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
             >
               View Rates
             </button>
+            <button
+              onClick={() => setShowAiAnalysis(true)}
+              className="h-10 w-full rounded bg-purple-600 px-4 font-bold text-white hover:bg-purple-700 xl:w-60"
+            >
+              Analyze with AI
+            </button>
           </div>
         </div>
         {user.role === "admin" && (
           <SummaryReport user={user} summary={summary} />
+        )}
+        {showAiAnalysis && dates && dates.length === 2 && (
+          <AiAnalysisPanel
+            dates={dates}
+            timezone={timezone}
+            user={user}
+            onClose={() => setShowAiAnalysis(false)}
+          />
         )}
         {paterPerfomaces.error && (
           <h2 className="font-semibold text-red-600">

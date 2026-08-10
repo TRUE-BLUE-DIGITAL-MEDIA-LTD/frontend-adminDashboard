@@ -1,0 +1,205 @@
+import moment from "moment";
+import { Nullable } from "primereact/ts-helpers";
+import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { IoMdClose } from "react-icons/io";
+import { BsStars } from "react-icons/bs";
+import {
+  AiAnalysisLanguage,
+  AiAnalysisResponse,
+  GetAiAnalysisService,
+} from "../../services/everflow/aiAnalysis";
+import { Partner, User } from "../../models";
+
+const LANGUAGE_STORAGE_KEY = "aiAnalysisLanguage";
+
+function getStoredLanguage(): AiAnalysisLanguage {
+  if (typeof window === "undefined") return "en";
+  return window.localStorage.getItem(LANGUAGE_STORAGE_KEY) === "th"
+    ? "th"
+    : "en";
+}
+
+const formatPayout = (payout: number) =>
+  "$" +
+  payout.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+function AiAnalysisPanel({
+  dates,
+  timezone,
+  user,
+  onClose,
+}: {
+  dates: Nullable<(Date | null)[]>;
+  timezone: string | undefined;
+  user: User & { partner: Partner | null };
+  onClose: () => void;
+}) {
+  const [language, setLanguage] = useState<AiAnalysisLanguage>(getStoredLanguage);
+
+  const analysis = useMutation<
+    AiAnalysisResponse,
+    { message?: string },
+    AiAnalysisLanguage
+  >({
+    mutationFn: (lang) =>
+      GetAiAnalysisService({
+        startDate: moment(dates?.[0]).toDate(),
+        endDate: moment(dates?.[1]).toDate(),
+        timezone: timezone,
+        language: lang,
+      }),
+  });
+
+  // one automatic run when the panel opens; afterwards only via buttons
+  useEffect(() => {
+    analysis.mutate(language);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLanguageChange = (lang: AiAnalysisLanguage) => {
+    setLanguage(lang);
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+    analysis.mutate(lang);
+  };
+
+  const data = analysis.data;
+
+  return (
+    <div className="w-10/12 rounded-lg bg-white p-5 ring-1 ring-gray-200">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-lg font-bold text-black">
+          <BsStars className="text-purple-600" />
+          AI Analysis
+          <span className="text-sm font-normal text-gray-500">
+            {moment(dates?.[0]).format("YYYY-MM-DD")} →{" "}
+            {moment(dates?.[1]).format("YYYY-MM-DD")}
+          </span>
+        </h2>
+        <div className="flex items-center gap-2">
+          <div className="flex overflow-hidden rounded border border-gray-300 text-sm">
+            {(["en", "th"] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => handleLanguageChange(lang)}
+                disabled={analysis.isPending}
+                className={`px-3 py-1 font-semibold uppercase ${
+                  language === lang
+                    ? "bg-purple-600 text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => analysis.mutate(language)}
+            disabled={analysis.isPending}
+            className="rounded bg-purple-600 px-3 py-1 text-sm font-bold text-white hover:bg-purple-700 disabled:opacity-50"
+          >
+            Re-analyze
+          </button>
+          <button
+            onClick={onClose}
+            className="rounded p-1 text-gray-500 hover:bg-gray-100"
+          >
+            <IoMdClose size={20} />
+          </button>
+        </div>
+      </div>
+
+      {analysis.isPending && (
+        <div className="mt-4 flex flex-col gap-2">
+          <div className="h-6 w-2/3 animate-pulse rounded-lg bg-gray-200"></div>
+          <div className="h-4 w-full animate-pulse rounded-lg bg-gray-100"></div>
+          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-gray-200"></div>
+          <div className="h-4 w-4/6 animate-pulse rounded-lg bg-gray-100"></div>
+        </div>
+      )}
+
+      {analysis.isError && (
+        <h3 className="mt-4 font-semibold text-red-600">
+          {analysis.error?.message ?? "Analysis failed. Please try again."}
+        </h3>
+      )}
+
+      {!analysis.isPending && data?.noData && (
+        <p className="mt-4 text-gray-600">No data for this date range.</p>
+      )}
+
+      {!analysis.isPending && data && !data.noData && (
+        <div className="mt-4 flex flex-col gap-4">
+          {data.headline && (
+            <p className="text-base font-semibold text-black">
+              {data.headline}
+            </p>
+          )}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {data.leaders.length > 0 && (
+              <div className="rounded-lg bg-gray-50 p-4">
+                <h3 className="mb-2 font-bold text-black">🏆 Top performers</h3>
+                <ul className="flex flex-col gap-2">
+                  {data.leaders.map((leader, i) => (
+                    <li key={i} className="text-sm text-gray-700">
+                      <span className="font-semibold text-black">
+                        {leader.name}
+                      </span>{" "}
+                      — {formatPayout(leader.payout)}
+                      <p className="text-gray-500">{leader.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {data.countries.length > 0 && (
+              <div className="rounded-lg bg-gray-50 p-4">
+                <h3 className="mb-2 font-bold text-black">🌍 Hot countries</h3>
+                <ul className="flex flex-col gap-2">
+                  {data.countries.map((country, i) => (
+                    <li key={i} className="text-sm text-gray-700">
+                      <span className="font-semibold text-black">
+                        {country.country}
+                      </span>
+                      <p className="text-gray-500">{country.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {data.bestHours.length > 0 && (
+              <div className="rounded-lg bg-gray-50 p-4">
+                <h3 className="mb-2 font-bold text-black">⏰ Best hours</h3>
+                <ul className="flex flex-col gap-2">
+                  {data.bestHours.map((hour, i) => (
+                    <li key={i} className="text-sm text-gray-700">
+                      <span className="font-semibold text-black">
+                        {hour.range}
+                      </span>
+                      <p className="text-gray-500">{hour.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          {data.insights.length > 0 && (
+            <div>
+              <h3 className="mb-2 font-bold text-black">💡 Insights</h3>
+              <ul className="list-inside list-disc text-sm text-gray-700">
+                {data.insights.map((insight, i) => (
+                  <li key={i}>{insight}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default AiAnalysisPanel;
