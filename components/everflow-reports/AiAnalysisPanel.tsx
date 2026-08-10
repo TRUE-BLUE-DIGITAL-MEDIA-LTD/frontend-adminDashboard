@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Nullable } from "primereact/ts-helpers";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { IoMdClose } from "react-icons/io";
 import { BsStars } from "react-icons/bs";
@@ -38,7 +38,15 @@ function AiAnalysisPanel({
   user: User & { partner: Partner | null };
   onClose: () => void;
 }) {
-  const [language, setLanguage] = useState<AiAnalysisLanguage>(getStoredLanguage);
+  const [language, setLanguage] =
+    useState<AiAnalysisLanguage>(getStoredLanguage);
+
+  const formatRange = () => ({
+    start: moment(dates?.[0]).format("YYYY-MM-DD"),
+    end: moment(dates?.[1]).format("YYYY-MM-DD"),
+  });
+
+  const [analyzedRange, setAnalyzedRange] = useState(formatRange);
 
   const analysis = useMutation<
     AiAnalysisResponse,
@@ -54,16 +62,27 @@ function AiAnalysisPanel({
       }),
   });
 
-  // one automatic run when the panel opens; afterwards only via buttons
+  // the header must name the range the result was computed from: `dates` can
+  // change afterwards without re-running the analysis
+  const runAnalysis = (lang: AiAnalysisLanguage) => {
+    setAnalyzedRange(formatRange());
+    analysis.mutate(lang);
+  };
+
+  // one automatic run when the panel opens; afterwards only via buttons.
+  // The ref keeps StrictMode's double effect invocation to a single AI call.
+  const hasAutoRun = useRef(false);
   useEffect(() => {
-    analysis.mutate(language);
+    if (hasAutoRun.current) return;
+    hasAutoRun.current = true;
+    runAnalysis(language);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLanguageChange = (lang: AiAnalysisLanguage) => {
     setLanguage(lang);
     window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
-    analysis.mutate(lang);
+    runAnalysis(lang);
   };
 
   const data = analysis.data;
@@ -75,8 +94,7 @@ function AiAnalysisPanel({
           <BsStars className="text-purple-600" />
           AI Analysis
           <span className="text-sm font-normal text-gray-500">
-            {moment(dates?.[0]).format("YYYY-MM-DD")} →{" "}
-            {moment(dates?.[1]).format("YYYY-MM-DD")}
+            {analyzedRange.start} → {analyzedRange.end}
           </span>
         </h2>
         <div className="flex items-center gap-2">
@@ -97,7 +115,7 @@ function AiAnalysisPanel({
             ))}
           </div>
           <button
-            onClick={() => analysis.mutate(language)}
+            onClick={() => runAnalysis(language)}
             disabled={analysis.isPending}
             className="rounded bg-purple-600 px-3 py-1 text-sm font-bold text-white hover:bg-purple-700 disabled:opacity-50"
           >

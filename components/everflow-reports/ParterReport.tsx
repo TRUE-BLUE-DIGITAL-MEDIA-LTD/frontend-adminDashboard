@@ -686,14 +686,18 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         {user.role === "admin" && (
           <SummaryReport user={user} summary={summary} />
         )}
-        {showAiAnalysis && dates && dates.length === 2 && (
-          <AiAnalysisPanel
-            dates={dates}
-            timezone={timezone}
-            user={user}
-            onClose={() => setShowAiAnalysis(false)}
-          />
-        )}
+        {showAiAnalysis &&
+          dates &&
+          dates.length === 2 &&
+          dates[0] &&
+          dates[1] && (
+            <AiAnalysisPanel
+              dates={dates}
+              timezone={timezone}
+              user={user}
+              onClose={() => setShowAiAnalysis(false)}
+            />
+          )}
         {paterPerfomaces.error && (
           <h2 className="font-semibold text-red-600">
             {paterPerfomaces.error?.message}
