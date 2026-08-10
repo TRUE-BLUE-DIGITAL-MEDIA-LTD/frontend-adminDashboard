@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Nullable } from "primereact/ts-helpers";
-import { useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { IoMdClose } from "react-icons/io";
 import { BsStars } from "react-icons/bs";
 import {
@@ -48,44 +48,43 @@ function AiAnalysisPanel({
 
   const [analyzedRange, setAnalyzedRange] = useState(formatRange);
 
-  const analysis = useMutation<
-    AiAnalysisResponse,
-    { message?: string },
-    AiAnalysisLanguage
-  >({
-    mutationFn: (lang) =>
+  // A query, not a mutation: the panel auto-runs on open, and a mutation
+  // fired from a mount effect never delivers its result under StrictMode
+  // (the MutationObserver detaches from the in-flight mutation when the
+  // simulated unmount drops its last listener, and cannot re-attach).
+  // Queries dedupe through the cache and are StrictMode-safe. The query
+  // reads the captured `analyzedRange`, not live `dates`: changing dates
+  // must never silently re-run the analysis or mislabel the header.
+  const analysis = useQuery<AiAnalysisResponse, { message?: string }>({
+    queryKey: ["aiAnalysis", analyzedRange, language, timezone],
+    queryFn: () =>
       GetAiAnalysisService({
-        startDate: moment(dates?.[0]).toDate(),
-        endDate: moment(dates?.[1]).toDate(),
+        startDate: moment(analyzedRange.start).toDate(),
+        endDate: moment(analyzedRange.end).toDate(),
         timezone: timezone,
-        language: lang,
+        language: language,
       }),
+    enabled: !!timezone,
+    staleTime: Infinity,
+    retry: false,
   });
 
-  // the header must name the range the result was computed from: `dates` can
-  // change afterwards without re-running the analysis
-  const runAnalysis = (lang: AiAnalysisLanguage) => {
-    setAnalyzedRange(formatRange());
-    analysis.mutate(lang);
+  const handleReanalyze = () => {
+    const next = formatRange();
+    if (next.start === analyzedRange.start && next.end === analyzedRange.end) {
+      analysis.refetch();
+    } else {
+      setAnalyzedRange(next);
+    }
   };
-
-  // one automatic run when the panel opens; afterwards only via buttons.
-  // The ref keeps StrictMode's double effect invocation to a single AI call.
-  const hasAutoRun = useRef(false);
-  useEffect(() => {
-    if (hasAutoRun.current) return;
-    hasAutoRun.current = true;
-    runAnalysis(language);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleLanguageChange = (lang: AiAnalysisLanguage) => {
     setLanguage(lang);
     window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
-    runAnalysis(lang);
   };
 
   const data = analysis.data;
+  const showLoading = analysis.isPending || analysis.isFetching;
 
   return (
     <div className="w-10/12 rounded-lg bg-white p-5 ring-1 ring-gray-200">
@@ -103,7 +102,7 @@ function AiAnalysisPanel({
               <button
                 key={lang}
                 onClick={() => handleLanguageChange(lang)}
-                disabled={analysis.isPending}
+                disabled={showLoading}
                 className={`px-3 py-1 font-semibold uppercase ${
                   language === lang
                     ? "bg-purple-600 text-white"
@@ -115,8 +114,8 @@ function AiAnalysisPanel({
             ))}
           </div>
           <button
-            onClick={() => runAnalysis(language)}
-            disabled={analysis.isPending}
+            onClick={handleReanalyze}
+            disabled={showLoading}
             className="rounded bg-purple-600 px-3 py-1 text-sm font-bold text-white hover:bg-purple-700 disabled:opacity-50"
           >
             Re-analyze
@@ -130,7 +129,7 @@ function AiAnalysisPanel({
         </div>
       </div>
 
-      {analysis.isPending && (
+      {showLoading && (
         <div className="mt-4 flex flex-col gap-2">
           <div className="h-6 w-2/3 animate-pulse rounded-lg bg-gray-200"></div>
           <div className="h-4 w-full animate-pulse rounded-lg bg-gray-100"></div>
@@ -139,17 +138,17 @@ function AiAnalysisPanel({
         </div>
       )}
 
-      {analysis.isError && (
+      {!showLoading && analysis.isError && (
         <h3 className="mt-4 font-semibold text-red-600">
           {analysis.error?.message ?? "Analysis failed. Please try again."}
         </h3>
       )}
 
-      {!analysis.isPending && data?.noData && (
+      {!showLoading && data?.noData && (
         <p className="mt-4 text-gray-600">No data for this date range.</p>
       )}
 
-      {!analysis.isPending && data && !data.noData && (
+      {!showLoading && data && !data.noData && (
         <div className="mt-4 flex flex-col gap-4">
           {data.headline && (
             <p className="text-base font-semibold text-black">
