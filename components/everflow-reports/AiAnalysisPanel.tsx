@@ -10,6 +10,7 @@ import {
   GetAiAnalysisService,
 } from "../../services/everflow/aiAnalysis";
 import { Partner, User } from "../../models";
+import { formatPayout } from "./formatPayout";
 
 const LANGUAGE_STORAGE_KEY = "aiAnalysisLanguage";
 
@@ -19,13 +20,6 @@ function getStoredLanguage(): AiAnalysisLanguage {
     ? "th"
     : "en";
 }
-
-const formatPayout = (payout: number) =>
-  "$" +
-  payout.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 
 function AiAnalysisPanel({
   dates,
@@ -165,7 +159,7 @@ function AiAnalysisPanel({
                       <span className="font-semibold text-black">
                         {leader.name}
                       </span>{" "}
-                      — {formatPayout(leader.payout)}
+                      — {formatPayout(leader.payout, data.currency)}
                       <p className="text-gray-500">{leader.note}</p>
                     </li>
                   ))}

@@ -6,6 +6,8 @@ export type AiAnalysisLanguage = "en" | "th";
 
 export type AiAnalysisResponse = {
   noData?: boolean;
+  /** ISO 4217 code the payout figures are in; absent from older backends. */
+  currency?: string;
   headline: string;
   leaders: { name: string; payout: number; note: string }[];
   countries: { country: string; note: string }[];
