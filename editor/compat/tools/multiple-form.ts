@@ -1,4 +1,9 @@
 import type { Editor as GrapesEditor, Component } from "grapesjs";
+import {
+  computeStepMove,
+  remapMoveToStep,
+  type StepMoveDirection,
+} from "./multiple-form-reorder";
 
 /**
  * Multi-step form block — port of the legacy Unlayer custom tool at
@@ -123,6 +128,7 @@ const CMD_REMOVE_OPTION = "oxy-mf:remove-option";
 const CMD_ADD_INPUT_STEP = "oxy-mf:add-input-step";
 const CMD_ADD_INPUT_FIELD = "oxy-mf:add-input-field";
 const CMD_REMOVE_INPUT_FIELD = "oxy-mf:remove-input-field";
+const CMD_MOVE_STEP = "oxy-mf:move-step";
 
 const DEFAULT_BUTTON_COLOR = "#dc2626";
 const DEFAULT_TEXT_COLOR = "#ffffff";
@@ -836,6 +842,34 @@ function refreshOptionValueAttrs(
   });
 }
 
+/**
+ * Rewrite every option's "Go to step #" prop through the old→new position
+ * map produced by a step move. Setting `opt-move-to-step` fires the
+ * option's change handler, which rebuilds its JSON `value` attribute —
+ * unchanged refs are skipped so their attrs (already refreshed by
+ * renumberSteps) stay as-is.
+ */
+function remapMoveToStepRefs(
+  root: Component,
+  oldToNew: ReadonlyMap<number, number>,
+): void {
+  asLike(root)
+    .find(`.${OPTION_CLASS}`)
+    .forEach((opt) => {
+      const optLike = asLike(opt);
+      const raw = optLike.get("opt-move-to-step");
+      const current =
+        typeof raw === "number"
+          ? raw
+          : raw === "" || raw == null
+            ? ""
+            : Number(raw);
+      if (typeof current !== "number" || Number.isNaN(current)) return;
+      const next = remapMoveToStep(current, oldToNew);
+      if (next !== current) optLike.set("opt-move-to-step", next);
+    });
+}
+
 function applyStepButtonStyling(step: Component): void {
   const stepLike = asLike(step);
   const buttonColor = String(
@@ -1240,6 +1274,39 @@ function defineCommands(editor: GrapesEditor): void {
       asLike(root).set("active-step", nextActive);
       applyActiveStep(root);
       ed.select(root);
+    },
+  });
+
+  editor.Commands.add(CMD_MOVE_STEP, {
+    run(_ed, _sender, opts) {
+      const o = (opts ?? {}) as {
+        root?: Component;
+        stepIndex?: number;
+        direction?: StepMoveDirection;
+      };
+      const root = o.root && asLike(o.root).is(ROOT_TYPE) ? o.root : null;
+      if (!root || (o.direction !== "up" && o.direction !== "down")) return;
+      const steps = getStepsOf(root);
+      const submitPos = steps.findIndex((s) =>
+        classListOf(s).includes(SUBMIT_STEP_CLASS),
+      );
+      const move = computeStepMove({
+        totalSteps: steps.length,
+        submitIndex: submitPos === -1 ? null : submitPos + 1,
+        fromIndex: Number(o.stepIndex),
+        direction: o.direction,
+      });
+      if (!move) return;
+      const step = steps[Number(o.stepIndex) - 1];
+      // append() re-parents an existing child — this MOVES the step.
+      asLike(root).append(step, { at: move.toIndex - 1 });
+      renumberSteps(root);
+      // Must run after renumberSteps: renumber refreshes value attrs from
+      // the OLD props; the remap then updates props, re-refreshing only the
+      // options whose target actually moved.
+      remapMoveToStepRefs(root, move.oldToNew);
+      asLike(root).set("active-step", move.toIndex);
+      applyActiveStep(root);
     },
   });
 
@@ -1921,6 +1988,9 @@ function defineStepListTrait(editor: GrapesEditor): void {
           wrapper.appendChild(empty);
           return;
         }
+        // Always show how close the form is to the answer-step cap so the
+        // author knows why "+ Add Step" stops working at the limit.
+        const answerCount = countAnswerSteps(component);
         steps.forEach((step, idx) => {
           const i = idx + 1;
           const titleRaw = asLike(step).get("step-title");
@@ -1940,12 +2010,48 @@ function defineStepListTrait(editor: GrapesEditor): void {
             asLike(component).set("active-step", i);
             editor.select(step);
           });
-          wrapper.appendChild(item);
+
+          const row = document.createElement("div");
+          row.className = "oxy-mf-step-list__row";
+          row.appendChild(item);
+
+          // Submission step is pinned last: no arrows at all. Boundary arrows
+          // are kept in the layout (visibility:hidden) so rows stay aligned.
+          if (!classListOf(step).includes(SUBMIT_STEP_CLASS)) {
+            const arrows = document.createElement("div");
+            arrows.className = "oxy-mf-step-list__arrows";
+            const makeArrow = (dir: "up" | "down", enabled: boolean) => {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "oxy-mf-step-list__arrow";
+              btn.textContent = dir === "up" ? "↑" : "↓";
+              btn.setAttribute(
+                "aria-label",
+                dir === "up" ? "Move step up" : "Move step down",
+              );
+              if (!enabled) btn.style.visibility = "hidden";
+              btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                editor.runCommand(CMD_MOVE_STEP, {
+                  root: component,
+                  stepIndex: i,
+                  direction: dir,
+                });
+                // active-step usually changes and re-renders the list, but not
+                // when the moved step lands on the already-active index —
+                // re-render explicitly so the new order always shows.
+                render();
+              });
+              return btn;
+            };
+            arrows.appendChild(makeArrow("up", i > 1));
+            arrows.appendChild(makeArrow("down", i < answerCount));
+            row.appendChild(arrows);
+          }
+          wrapper.appendChild(row);
         });
 
-        // Always show how close the form is to the answer-step cap so the
-        // author knows why "+ Add Step" stops working at the limit.
-        const answerCount = countAnswerSteps(component);
         const counter = document.createElement("div");
         counter.className =
           "oxy-mf-step-list__count" +

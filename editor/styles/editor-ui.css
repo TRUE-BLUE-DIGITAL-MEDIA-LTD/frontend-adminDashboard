@@ -1369,6 +1369,43 @@
   font-weight: 600;
 }
 
+.oxy-properties-panel .oxy-mf-step-list__row {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__row .oxy-mf-step-list__item {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__arrow {
+  width: 20px;
+  flex: 1 1 auto;
+  padding: 0;
+  background: #f8f5f0;
+  border: 1px solid #d2c1b6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  color: #1b3c53;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__arrow:hover {
+  background: #f4eee6;
+  border-color: #456882;
+}
+
 .oxy-properties-panel .oxy-mf-remove-step {
   display: flex;
   flex-direction: column;
@@ -1933,6 +1970,17 @@
 
 .oxy-properties-panel .oxy-mf-step-list__count.is-limit {
   color: #f87171;
+}
+
+.oxy-properties-panel .oxy-mf-step-list__arrow {
+  background: var(--oxy-bg-elev);
+  border: 1px solid var(--oxy-border-strong);
+  color: var(--oxy-text);
+}
+
+.oxy-properties-panel .oxy-mf-step-list__arrow:hover {
+  background: var(--oxy-bg-hover);
+  border-color: var(--oxy-accent);
 }
 
 .oxy-properties-panel .oxy-mf-remove-step__btn {
