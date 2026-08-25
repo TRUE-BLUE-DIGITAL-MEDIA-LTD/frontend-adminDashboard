@@ -7,22 +7,16 @@ import {
   SiteBuild,
   User,
 } from "../../models";
-import {
-  DeleteDomainNameService,
-  ResponseGetAllDomainsByPage,
-} from "../../services/admin/domain";
+import { ResponseGetAllDomainsByPage } from "../../services/admin/domain";
 import { UseQueryResult } from "@tanstack/react-query";
 import moment from "moment";
 import { FaCheckCircle } from "react-icons/fa";
 import VerifyDomain from "./verifyDomain";
-import { MdDelete, MdViewTimeline } from "react-icons/md";
 import Link from "next/link";
-import { BiSolidMessageSquareEdit } from "react-icons/bi";
 import {
   MdContentCopy,
   MdDns,
   MdDomainVerification,
-  MdEdit,
   MdLanguage,
   MdNightsStay,
   MdPeople,
@@ -43,18 +37,8 @@ type Props = {
   };
   domains: UseQueryResult<ResponseGetAllDomainsByPage, Error>;
   user: User;
-  setTriggerUpdateDomain: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentUpdateDomain: React.Dispatch<
-    React.SetStateAction<Domain | undefined>
-  >;
 };
-function ListDomain({
-  list,
-  domains,
-  user,
-  setTriggerUpdateDomain,
-  setCurrentUpdateDomain,
-}: Props) {
+function ListDomain({ list, domains, user }: Props) {
   const verifyGoogle = useVerifyDomain();
   const summitSitemap = useUpdateSitemap();
   const averageSEOMobile: number =
@@ -95,65 +79,16 @@ function ListDomain({
     }
   };
 
-  // handle delete domain
-
-  const handleDeleteDomain = async ({
-    domainNameId,
-    name,
-  }: {
-    domainNameId: string;
-    name: string;
-  }) => {
-    const replacedText = name.replace(/ /g, "_");
-    let content = document.createElement("div");
-    content.innerHTML =
-      "<div>Please type this</div> <strong>" +
-      replacedText +
-      "</strong> <div>to confirm deleting</div>";
-    const { value } = await Swal.fire({
-      title: "Delete Domain",
-      input: "text",
-      footer:
-        "Please keep it mind if you delete domain, the landing pages that is connected to this domain also be deleted",
-      html: content,
-      showCancelButton: true,
-      inputValidator: (value) => {
-        if (value !== replacedText) {
-          return "Please Type Correctly";
-        }
-      },
-    });
-    if (value) {
-      try {
-        Swal.fire({
-          title: "Trying To Delete",
-          html: "Loading....",
-          allowEscapeKey: false,
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        await DeleteDomainNameService({
-          domainNameId: domainNameId,
-        });
-        await domains.refetch();
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-      } catch (err: any) {
-        console.log(err);
-        Swal.fire("error!", err.message?.toString(), "error");
-      }
-    }
-  };
-
   return (
     <tr className="h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200">
       <td className="px-2">
-        <div className="flex items-center gap-2">
+        <Link
+          href={`/domain/${list.id}`}
+          className="flex items-center gap-2 font-medium text-blue-600 hover:underline"
+        >
           <MdLanguage />
           {list?.name}
-        </div>
+        </Link>
       </td>
       <td className="px-2">
         {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
@@ -348,31 +283,6 @@ function ListDomain({
             {averageSEOMobile}
           </div>
         </div>
-      </td>
-      <td className="flex h-14 w-20 items-center gap-2">
-        <button
-          onClick={() => {
-            setTriggerUpdateDomain(() => true);
-            setCurrentUpdateDomain(() => list as Domain);
-            document.body.style.overflow = "hidden";
-          }}
-          className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
-        >
-          <MdEdit />
-        </button>
-        {user.role === "admin" && (
-          <button
-            onClick={() =>
-              handleDeleteDomain({
-                domainNameId: list.id,
-                name: list.name,
-              })
-            }
-            className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-          >
-            <MdDelete />
-          </button>
-        )}
       </td>
     </tr>
   );

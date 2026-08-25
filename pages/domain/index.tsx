@@ -7,16 +7,13 @@ import { useEffect, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
-import { MdSettings } from "react-icons/md";
 import { useRouter } from "next/router";
 import ListDomain from "../../components/domain/listDomain";
 import DomainLinkAudit from "../../components/domain/domainLinkAudit";
 import DomainCreate from "../../components/forms/domains/domainCreate";
-import DomainUpdate from "../../components/forms/domains/domainUpdate";
 import { loadingNumber } from "../../data/loadingNumber";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import {
-  Domain,
   Partner,
   ResponsibilityOnPartner,
   SimCardOnPartner,
@@ -45,11 +42,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
   const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
-  const [triggerUpdateDomain, setTriggerUpdateDomain] =
-    useState<boolean>(false);
-  const [currentUpdateDomain, setCurrentUpdateDomain] = useState<
-    Domain | undefined
-  >();
 
   const domains = useGetDomainsByPage({
     page: page,
@@ -203,13 +195,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         />
       )}
 
-      {triggerUpdateDomain && (
-        <DomainUpdate
-          domain={currentUpdateDomain as Domain}
-          setTriggerUpdateDomain={setTriggerUpdateDomain}
-          domains={domains}
-        />
-      )}
       <div className="w-full">
         <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
           <h1 className="font-Poppins text-4xl font-semibold md:text-5xl">
@@ -302,10 +287,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   <td>Partners</td>
                   <td>Landing Pages</td>
                   <td>Average SEO Score</td>
-                  <td className="flex items-center gap-2">
-                    <MdSettings />
-                    Options
-                  </td>
                 </tr>
               </thead>
               <tbody className="">
@@ -316,8 +297,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                       key={index}
                       list={list}
                       domains={domains}
-                      setCurrentUpdateDomain={setCurrentUpdateDomain}
-                      setTriggerUpdateDomain={setTriggerUpdateDomain}
                       user={user}
                     />
                   );
