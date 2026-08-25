@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { MdArrowBack, MdDelete, MdSave } from "react-icons/md";
 import Swal from "sweetalert2";
 import DomainSettingsSection from "../../components/domain/domainSettingsSection";
+import GscTabs from "../../components/domain/gsc/gscTabs";
 import LandingPagesSection from "../../components/domain/landingPagesSection";
 import SeoPerformanceSection from "../../components/domain/seoPerformanceSection";
 import VerifyDomain from "../../components/domain/verifyDomain";
@@ -241,7 +242,9 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           distributionValid={distributionValid}
         />
 
-        {/* GSC tabs mount here in Task 8 */}
+        {domainId && domainName && (
+          <GscTabs domainId={domainId} domainName={domainName} user={user} />
+        )}
 
         {user.role === "admin" && (
           <section className="rounded-xl border border-red-200 bg-red-50 p-6">
