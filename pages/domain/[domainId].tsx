@@ -250,7 +250,12 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
         />
 
         {domainId && domainName && (
-          <GscTabs domainId={domainId} domainName={domainName} user={user} />
+          <GscTabs
+            domainId={domainId}
+            domainName={domainName}
+            user={user}
+            googleDomainId={getDomain.data?.domain.google_domain_id}
+          />
         )}
 
         {user.role === "admin" && (
