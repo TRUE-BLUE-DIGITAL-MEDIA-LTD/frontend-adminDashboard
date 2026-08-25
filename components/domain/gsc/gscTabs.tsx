@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa6";
 import { User } from "../../../models";
 import GscPerformanceTab from "./gscPerformanceTab";
+import GscSitemapsTab from "./gscSitemapsTab";
 import GscUrlInspectionTab from "./gscUrlInspectionTab";
 
 export type GscTabsProps = {
@@ -43,7 +44,7 @@ function GscTabs({ domainId, domainName, user }: GscTabsProps) {
         <GscUrlInspectionTab domainId={domainId} domainName={domainName} />
       )}
       {activeTab === "Sitemaps" && (
-        <div className="text-sm text-gray-500">Coming soon</div>
+        <GscSitemapsTab domainId={domainId} isAdmin={user.role === "admin"} />
       )}
     </section>
   );
