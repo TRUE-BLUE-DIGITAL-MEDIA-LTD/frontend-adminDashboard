@@ -280,7 +280,7 @@ function ListDomain({ list, domains, user }: Props) {
                   : "border-red-500 bg-red-50 text-red-500"
             }`}
           >
-            {averageSEOMobile}
+            {averageSEOMobile.toFixed(1)}
           </div>
         </div>
       </td>
