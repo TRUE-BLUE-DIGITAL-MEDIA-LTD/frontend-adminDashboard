@@ -5,7 +5,7 @@ import { MdList, MdOutlineArtTrack, MdRemoveCircle } from "react-icons/md";
 import { InputUpdateDomainService } from "../../services/admin/domain";
 
 type LandingPagesSectionProps = {
-  landingPages: { name: string; id: string; percent: number }[];
+  landingPages: { name?: string; id: string; percent: number }[];
   setDomainData: React.Dispatch<React.SetStateAction<InputUpdateDomainService>>;
   onRemoveLandingPage: (input: { landingPageId: string }) => void;
   totalPercent: number;
