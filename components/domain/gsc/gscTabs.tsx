@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa6";
 import { User } from "../../../models";
 import GscPerformanceTab from "./gscPerformanceTab";
+import GscUrlInspectionTab from "./gscUrlInspectionTab";
 
 export type GscTabsProps = {
   domainId: string;
@@ -39,7 +40,7 @@ function GscTabs({ domainId, domainName, user }: GscTabsProps) {
         <GscPerformanceTab domainId={domainId} />
       )}
       {activeTab === "URL Inspection" && (
-        <div className="text-sm text-gray-500">Coming soon</div>
+        <GscUrlInspectionTab domainId={domainId} domainName={domainName} />
       )}
       {activeTab === "Sitemaps" && (
         <div className="text-sm text-gray-500">Coming soon</div>
