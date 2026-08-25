@@ -36,8 +36,20 @@ function Index({ user }: { user: User & { partner: Partner } }) {
     typeof router.query.domainName === "string"
       ? router.query.domainName
       : "";
-  const [searchField, setSearchField] = useState<string>(focusDomainName);
-  const [page, setPage] = useState<number>(1);
+  // List state lives in the URL (?search=&page=&partnerId=) so coming back
+  // from a /domain/[domainId] page restores the same view. router.query is
+  // populated on first render because this page uses getServerSideProps.
+  const initialSearch =
+    typeof router.query.search === "string"
+      ? router.query.search
+      : focusDomainName;
+  const initialPage = Math.max(1, Number(router.query.page) || 1);
+  const restorePartnerId =
+    typeof router.query.partnerId === "string"
+      ? router.query.partnerId
+      : undefined;
+  const [searchField, setSearchField] = useState<string>(initialSearch);
+  const [page, setPage] = useState<number>(initialPage);
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
@@ -62,6 +74,20 @@ function Index({ user }: { user: User & { partner: Partner } }) {
       setTotalPage(() => domains.data.totalPages);
     }
   }, [domains.data]);
+
+  // Mirror list state into the URL (shallow: no reload, no gSSP re-run) so
+  // browser back from a domain page lands on the same search/page/partner.
+  useEffect(() => {
+    const query: Record<string, string> = {};
+    if (focusDomainId) query.domainId = focusDomainId;
+    if (searchField) query.search = searchField;
+    if (page > 1) query.page = String(page);
+    if (selectPartner?.id) query.partnerId = selectPartner.id;
+    router.replace({ pathname: "/domain", query }, undefined, {
+      shallow: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchField, page, selectPartner?.id, focusDomainId]);
 
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
@@ -180,7 +206,12 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           isAllowOxySms: true,
         });
 
-        setSelectPartner(() => addSeeAll[0] as Partner);
+        // Restore the partner picked before navigating away (?partnerId=),
+        // covering the pseudo entries (all / no-partner / no-landing-page).
+        const restored = restorePartnerId
+          ? addSeeAll.find((partner) => partner.id === restorePartnerId)
+          : undefined;
+        setSelectPartner(() => (restored ?? addSeeAll[0]) as Partner);
         return addSeeAll;
       }),
     enabled: domains.isSuccess,

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import React, { useEffect, useState } from "react";
@@ -195,12 +194,20 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     <DashboardLayout user={user}>
       <div className="mx-auto mt-24 max-w-5xl space-y-8 px-4 pb-20 font-Poppins">
         <header className="flex flex-col gap-3">
-          <Link
-            href="/domain"
+          <button
+            onClick={() => {
+              // Prefer history back so the list's ?search=&page=&partnerId=
+              // state is restored; fall back for direct/deep links.
+              if (window.history.length > 1) {
+                router.back();
+              } else {
+                router.push("/domain");
+              }
+            }}
             className="flex w-max items-center gap-2 text-sm text-gray-500 hover:text-blue-600"
           >
             <MdArrowBack /> Back to Domains
-          </Link>
+          </button>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold text-gray-800">
