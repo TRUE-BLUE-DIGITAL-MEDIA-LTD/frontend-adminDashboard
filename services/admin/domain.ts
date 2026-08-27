@@ -246,6 +246,31 @@ export async function VerifyDomainOnGoogleService(
   }
 }
 
+export type ResponseResetGoogleVerificationService = Domain;
+export interface InputResetGoogleVerificationService {
+  domainId: string;
+}
+export async function ResetGoogleVerificationService(
+  input: InputResetGoogleVerificationService,
+): Promise<ResponseResetGoogleVerificationService> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const domain = await axios.delete(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/google-verification`,
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      },
+    );
+    return domain.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
 export type ResponseSummitSitemapDomainService = {
   verified: siteVerification_v1.Schema$SiteVerificationWebResourceResource;
   site: webmasters_v3.Schema$WmxSite;

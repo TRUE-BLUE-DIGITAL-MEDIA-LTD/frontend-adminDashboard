@@ -3,7 +3,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import React, { useEffect, useState } from "react";
-import { MdArrowBack, MdDelete, MdSave } from "react-icons/md";
+import { MdArrowBack, MdDelete, MdRefresh, MdSave } from "react-icons/md";
 import Swal from "sweetalert2";
 import DomainSettingsSection from "../../components/domain/domainSettingsSection";
 import GscTabs from "../../components/domain/gsc/gscTabs";
@@ -22,6 +22,7 @@ import {
   DeleteDomainNameService,
   GetDomainService,
   InputUpdateDomainService,
+  ResetGoogleVerificationService,
   UpdateDomainService,
 } from "../../services/admin/domain";
 import { RemoveDomainNameFromLandingPageService } from "../../services/admin/landingPage";
@@ -190,6 +191,40 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     }
   };
 
+  const handleResetGoogleVerification = async () => {
+    const result = await Swal.fire({
+      title: "Reset Google Verification?",
+      text: "This removes the domain's Google Search Console verification. You will need to run Verify again afterwards.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, reset it",
+    });
+    if (!result.isConfirmed) return;
+    try {
+      Swal.fire({
+        title: "Resetting Google Verification",
+        html: "Loading....",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      await ResetGoogleVerificationService({ domainId });
+      await getDomain.refetch();
+      Swal.fire(
+        "Reset complete",
+        "Google verification removed. Run Verify again to re-verify this domain.",
+        "success",
+      );
+    } catch (err: any) {
+      console.log(err);
+      Swal.fire("Error!", err.message?.toString(), "error");
+    }
+  };
+
   return (
     <DashboardLayout user={user}>
       <div className="mx-auto mt-24 max-w-5xl space-y-8 px-4 pb-20 font-Poppins">
@@ -267,12 +302,20 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
               Deleting this domain also deletes the landing pages connected to
               it.
             </p>
-            <button
-              onClick={handleDeleteDomain}
-              className="flex items-center gap-2 rounded-lg bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700 active:scale-95"
-            >
-              <MdDelete /> Delete Domain
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={handleResetGoogleVerification}
+                className="flex items-center gap-2 rounded-lg border border-red-600 bg-white px-6 py-2 font-medium text-red-600 transition hover:bg-red-100 active:scale-95"
+              >
+                <MdRefresh /> Reset Google Verification
+              </button>
+              <button
+                onClick={handleDeleteDomain}
+                className="flex items-center gap-2 rounded-lg bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700 active:scale-95"
+              >
+                <MdDelete /> Delete Domain
+              </button>
+            </div>
           </section>
         )}
       </div>
