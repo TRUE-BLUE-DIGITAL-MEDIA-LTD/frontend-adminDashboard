@@ -25,6 +25,8 @@ const SidebarDashboard = forwardRef<
       setCurrentMenuIndex(() => 4);
     } else if (lastRoute === "tools") {
       setCurrentMenuIndex(() => 6);
+    } else if (lastRoute === "inbox") {
+      setCurrentMenuIndex(() => 8);
     }
   }, [lastRoute]);
 
