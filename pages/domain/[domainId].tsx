@@ -307,7 +307,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           setDomainData={setDomainData}
           getDomain={getDomain}
           onEnableMail={handleEnableMail}
-          canEnableMail={user.role === "admin"}
+          canEnableMail={["admin", "manager", "partner"].includes(user.role)}
         />
         <SeoPerformanceSection
           domain={getDomain.data?.domain}
