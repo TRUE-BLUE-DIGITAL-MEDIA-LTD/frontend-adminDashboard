@@ -21,6 +21,7 @@ export const menusSidebar = [
   },
   { title: "Link Audit", url: "/link-audit", icon: MdLinkOff },
   { title: "Analytics", url: "/analytics", icon: MdInsights },
+  { title: "Inbox", url: "/inbox", icon: MdEmail },
   {
     title: "Oxy Tools",
     url: "/tools",
@@ -48,7 +49,6 @@ export const menusSidebar = [
       { title: "Payslip Generator", params: "payslip" },
     ] as const,
   },
-  { title: "Inbox", url: "/inbox", icon: MdEmail },
 ] as const;
 
 export type MenuSidebar = (typeof menusSidebar)[number] & {
