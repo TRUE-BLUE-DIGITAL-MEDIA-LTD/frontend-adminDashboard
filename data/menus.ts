@@ -52,7 +52,7 @@ export const menusSidebar = [
 ] as const;
 
 export type MenuSidebar = (typeof menusSidebar)[number] & {
-  childs?: (typeof menusSidebar)[6]["childs"];
+  childs?: (typeof menusSidebar)[7]["childs"];
 };
 export type OxyClickTools =
-  (typeof menusSidebar)[6]["childs"][number]["params"];
+  (typeof menusSidebar)[7]["childs"][number]["params"];
