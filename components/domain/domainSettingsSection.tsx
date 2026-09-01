@@ -11,12 +11,16 @@ type DomainSettingsSectionProps = {
   domainData: InputUpdateDomainService;
   setDomainData: React.Dispatch<React.SetStateAction<InputUpdateDomainService>>;
   getDomain: UseQueryResult<ResponseGetDomainService, Error>;
+  onEnableMail: () => void;
+  canEnableMail: boolean;
 };
 
 function DomainSettingsSection({
   domainData,
   setDomainData,
   getDomain,
+  onEnableMail,
+  canEnableMail,
 }: DomainSettingsSectionProps) {
   return (
     <section className="rounded-xl border bg-white p-6 shadow-sm">
@@ -91,6 +95,33 @@ function DomainSettingsSection({
               name="note"
               placeholder="Add notes about this domain..."
             />
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4 md:col-span-2">
+            <div>
+              <p className="font-medium text-gray-800">Inbound Mail</p>
+              <p className="text-sm text-gray-500">
+                {getDomain.data?.domain.mailEnabled
+                  ? "Enabled — mail to any address on this domain appears in the Inbox."
+                  : "Disabled — this domain cannot receive mail."}
+              </p>
+            </div>
+            {getDomain.data?.domain.mailEnabled ? (
+              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+                Enabled
+              </span>
+            ) : canEnableMail ? (
+              <button
+                onClick={onEnableMail}
+                className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 active:scale-95"
+              >
+                Enable mail
+              </button>
+            ) : (
+              <span className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-600">
+                Disabled
+              </span>
+            )}
           </div>
         </div>
       )}

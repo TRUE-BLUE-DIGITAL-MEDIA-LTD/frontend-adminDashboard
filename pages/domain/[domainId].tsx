@@ -17,6 +17,7 @@ import {
 import SpinLoading from "../../components/loadings/spinLoading";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
+import { useEnableMail } from "../../react-query";
 import { useUpdateSeoScore } from "../../react-query/domain";
 import {
   DeleteDomainNameService,
@@ -47,6 +48,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     enabled: domainId !== "",
   });
   const updateSeoScore = useUpdateSeoScore();
+  const enableMail = useEnableMail();
 
   const domainName = getDomain.data?.domain.name ?? "";
   const landingPagesList = domainData?.landingPages ?? [];
@@ -225,6 +227,40 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     }
   };
 
+  const handleEnableMail = async () => {
+    const result = await Swal.fire({
+      title: "Enable inbound mail?",
+      text: "This adds MX, SPF and DMARC records to the domain's DNS. Any address at this domain (hello@, support@, ...) will start receiving mail into the dashboard Inbox.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, enable mail",
+    });
+    if (!result.isConfirmed) return;
+    try {
+      Swal.fire({
+        title: "Enabling mail",
+        html: "Loading....",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      await enableMail.mutateAsync({ domainId });
+      await getDomain.refetch();
+      Swal.fire(
+        "Success",
+        "Mail enabled. DNS changes take a few minutes to propagate before mail starts arriving.",
+        "success",
+      );
+    } catch (err: any) {
+      console.log(err);
+      Swal.fire("Error!", err.message?.toString(), "error");
+    }
+  };
+
   return (
     <DashboardLayout user={user}>
       <div className="mx-auto mt-24 max-w-5xl space-y-8 px-4 pb-20 font-Poppins">
@@ -270,6 +306,8 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           domainData={domainData}
           setDomainData={setDomainData}
           getDomain={getDomain}
+          onEnableMail={handleEnableMail}
+          canEnableMail={user.role === "admin"}
         />
         <SeoPerformanceSection
           domain={getDomain.data?.domain}

@@ -10,6 +10,7 @@ export interface Domain {
   dns_servers: string[];
   google_domain_id: string | null;
   sitemap_status: "NOT_FOUND" | "PEDDING" | "COMPLETED";
+  mailEnabled: boolean;
   seoScoreDesktop?: number;
   accessibilityScoreDesktop?: number;
   bestPracticesScoreDesktop?: number;

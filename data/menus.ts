@@ -48,6 +48,7 @@ export const menusSidebar = [
       { title: "Payslip Generator", params: "payslip" },
     ] as const,
   },
+  { title: "Inbox", url: "/inbox", icon: MdEmail },
 ] as const;
 
 export type MenuSidebar = (typeof menusSidebar)[number] & {

@@ -14,3 +14,4 @@ export * from "./sms-report";
 export * from "./adjust-lead-rate";
 export * from "./timezone";
 export * from "./sms-berry";
+export * from "./inbox";
