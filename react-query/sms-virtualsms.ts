@@ -85,10 +85,11 @@ export function useGetHistorySmsVirtualsms(
   });
 }
 
-export function useGetSmsVirtualsmsAccounts() {
+export function useGetSmsVirtualsmsAccounts(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [itemKeys.item[0], "accounts"],
     queryFn: () => GetSmsVirtualsmsAccountsService(),
+    enabled: options?.enabled ?? true,
   });
 }
 

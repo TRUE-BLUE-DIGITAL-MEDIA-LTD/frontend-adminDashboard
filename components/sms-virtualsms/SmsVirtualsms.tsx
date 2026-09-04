@@ -28,13 +28,13 @@ function showError(error: unknown) {
 }
 
 function SmsVirtualsms({ user }: Props) {
-  const activeNumbers = useGetSmsVirtualsms({ userId: user.id });
-  const cancelSms = useCancelSmsVirtualsms();
   const canManageAccounts =
     user.role === "manager" ||
     user.role === "admin" ||
     user.partner?.isAllowSMS_VirtualsmsAccount === true;
-  const accounts = useGetSmsVirtualsmsAccounts();
+  const activeNumbers = useGetSmsVirtualsms({ userId: user.id });
+  const cancelSms = useCancelSmsVirtualsms();
+  const accounts = useGetSmsVirtualsmsAccounts({ enabled: canManageAccounts });
 
   const handleCancel = async (id: string) => {
     try {
