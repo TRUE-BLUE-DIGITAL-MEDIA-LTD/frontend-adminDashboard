@@ -73,8 +73,8 @@ function SmsVirtualsms({ user }: Props) {
         )}
         <h1 className="text-4xl font-semibold text-gray-800">Oxy Virtual</h1>
         <span className="text-sm text-gray-500">
-          Oxy Virtual provides short-term temp phone numbers from many
-          countries for receiving verification SMS.
+          Oxy V provides short-term temp phone numbers from many countries for
+          receiving verification SMS.
         </span>
         {(user.role === "admin" || user.role === "manager") && (
           <h1 className="mt-5 flex items-center justify-center gap-2 text-3xl">
