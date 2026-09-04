@@ -29,8 +29,15 @@ async function call<T>(config: {
     });
     return res.data as T;
   } catch (err: any) {
-    console.log(err);
-    throw err.response.data;
+    const data = err?.response?.data;
+    console.log(err?.response?.status, data);
+    throw (
+      data ?? {
+        message: "Network error, please try again.",
+        error: "Network error",
+        statusCode: 0,
+      }
+    );
   }
 }
 

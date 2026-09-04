@@ -97,6 +97,7 @@ function SelectService({ activeNumbers }: Props) {
         options={services.data ?? []}
         loading={services.isLoading}
         optionLabel="service_name"
+        dataKey="service_id"
         placeholder="Select a Service"
         className="w-96 border"
         itemTemplate={serviceTemplate}
@@ -109,6 +110,7 @@ function SelectService({ activeNumbers }: Props) {
         options={countries.data ?? []}
         loading={countries.isLoading}
         optionLabel="country_name"
+        dataKey="country_id"
         placeholder={service ? "Select a Country" : "Select a service first"}
         className="w-96 border"
         itemTemplate={countryTemplate}
