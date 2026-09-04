@@ -3,7 +3,9 @@ export type TypeSmsReport =
   | "SMSPOOL"
   | "SMSTEXTVERIFIED"
   | "SMSPINVERIFY"
-  | "SMSDAISY";
+  | "SMSDAISY"
+  | "SMSGETATEXT"
+  | "SMSVIRTUALSMS";
 
 export interface SmsReport {
   id: string;
