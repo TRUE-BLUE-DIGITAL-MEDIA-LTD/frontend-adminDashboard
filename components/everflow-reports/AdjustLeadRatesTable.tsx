@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   useFindAllAdjustLeadRate,
   useDeleteAdjustLeadRate,
-  useUpdateAdjustLeadRate,
 } from "../../react-query/adjust-lead-rate";
 import { AdjustLeadRate } from "../../services/adjust-lead-rate";
 import { computeDisplayRates } from "./computeDisplayRates";
@@ -19,9 +18,7 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { Dropdown } from "primereact/dropdown";
-import { Dialog } from "primereact/dialog";
-import { InputNumber } from "primereact/inputnumber";
-import { Button } from "primereact/button";
+import EditAdjustLeadRateDialog from "./EditAdjustLeadRateDialog";
 import { useGetCampaigns } from "../../react-query";
 import { User } from "@/models";
 
@@ -36,12 +33,10 @@ const groupByOptions = [
 const AdjustLeadRatesTable = ({ user }: { user: User }) => {
   const { data: rates, isLoading, refetch } = useFindAllAdjustLeadRate();
   const deleteMutation = useDeleteAdjustLeadRate();
-  const updateMutation = useUpdateAdjustLeadRate();
   const smartLinks = useGetCampaigns({ campaign_name: "TH" });
 
   const [groupBy, setGroupBy] = useState<GroupByOption>("country");
   const [editingRate, setEditingRate] = useState<AdjustLeadRate | null>(null);
-  const [newRateValue, setNewRateValue] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"active" | "history">("active");
 
   // Role capabilities: admins/managers see all rates + history; partners/users
@@ -72,27 +67,11 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
 
   const openEditModal = (rate: AdjustLeadRate) => {
     setEditingRate(rate);
-    setNewRateValue(rate.rate);
   };
 
   useEffect(() => {
     refetch();
   }, []);
-
-  const handleUpdate = async () => {
-    if (editingRate && newRateValue !== null) {
-      try {
-        await updateMutation.mutateAsync({
-          id: editingRate.id,
-          rate: newRateValue,
-        });
-        setEditingRate(null);
-        Swal.fire("Updated!", "Rate has been updated.", "success");
-      } catch (error) {
-        Swal.fire("Error!", "Failed to update.", "error");
-      }
-    }
-  };
 
   const displayRates = useMemo(
     () =>
@@ -420,55 +399,12 @@ const AdjustLeadRatesTable = ({ user }: { user: User }) => {
         </div>
       )}
 
-      <Dialog
-        header="Update Rate"
-        visible={!!editingRate}
-        style={{ width: "30vw", minWidth: "300px" }}
-        onHide={() => setEditingRate(null)}
-        footer={
-          <div className="flex  justify-end gap-3">
-            <Button
-              label="Cancel"
-              onClick={() => setEditingRate(null)}
-              className="p-button-text h-9 w-32 rounded-md border text-gray-600"
-            />
-            <Button
-              disabled={updateMutation.isPending}
-              label={updateMutation.isPending ? "Updating..." : "Update"}
-              onClick={handleUpdate}
-              autoFocus
-              className="p-button-text h-9 w-32 rounded-md border bg-blue-500 text-white"
-            />
-          </div>
-        }
-      >
-        <div className="flex flex-col gap-4 py-4">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="rate" className="font-semibold text-gray-700">
-              New Rate
-            </label>
-            <InputNumber
-              id="rate"
-              value={newRateValue}
-              onValueChange={(e) => setNewRateValue(e.value ?? null)}
-              mode="decimal"
-              minFractionDigits={1}
-              maxFractionDigits={10}
-              className="w-full"
-              inputClassName="w-full p-2 border rounded"
-            />
-          </div>
-          {editingRate && (
-            <div className="text-sm text-gray-500">
-              <p>Country: {editingRate.country}</p>
-              <p>Campaign: {editingRate.campaignId}</p>
-              <p>
-                {editingRate.targetCurrency} ➔ {editingRate.convertedCurrency}
-              </p>
-            </div>
-          )}
-        </div>
-      </Dialog>
+      <EditAdjustLeadRateDialog
+        rate={editingRate}
+        smartLinks={smartLinks.data}
+        smartLinksLoading={smartLinks.isLoading}
+        onClose={() => setEditingRate(null)}
+      />
     </div>
   );
 };

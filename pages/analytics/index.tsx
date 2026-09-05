@@ -14,7 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import CompareTable from "../../components/analytics/CompareTable";
@@ -48,7 +48,7 @@ const PRESET_OPTIONS: { label: string; value: RangePreset | "custom" }[] = [
 const PAGE_SIZE = 50;
 
 function Index({ user }: { user: User }) {
-  const [preset, setPreset] = useState<RangePreset | "custom">("30d");
+  const [preset, setPreset] = useState<RangePreset | "custom">("today");
   const [customFrom, setCustomFrom] = useState<string>("");
   const [customTo, setCustomTo] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -69,13 +69,27 @@ function Index({ user }: { user: User }) {
   // its own "now" — a pinned `to` would exclude sessions newer than the moment
   // the preset was picked.
   const isLive = preset === "today";
+
+  // Modal behavior for the detail popup: Esc closes, and the page behind
+  // must not scroll while it is open.
+  useEffect(() => {
+    if (!selected) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [selected]);
+
   const analytics = useQuery({
     queryKey: ["lander-analytics", preset, range?.from, range?.to],
     queryFn: () =>
       ListLanderAnalyticsService(
-        isLive
-          ? { from: range!.from }
-          : { from: range!.from, to: range!.to },
+        isLive ? { from: range!.from } : { from: range!.from, to: range!.to },
       ),
     enabled: !!range,
     refetchInterval: isLive ? 5000 : false,
@@ -97,7 +111,9 @@ function Index({ user }: { user: User }) {
   const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const allRows = analytics.data?.rows ?? [];
-  const compareRows = allRows.filter((r) => compareIds.includes(r.landingPageId));
+  const compareRows = allRows.filter((r) =>
+    compareIds.includes(r.landingPageId),
+  );
   const compareCrossDomain =
     new Set(compareRows.map((r) => r.domainId ?? r.landingPageId)).size > 1;
 
@@ -152,8 +168,8 @@ function Index({ user }: { user: User }) {
       <div className="min-h-screen w-full p-5 pt-24 font-Poppins">
         <h1 className="text-2xl font-bold">Lander Analytics</h1>
         <p className="text-sm text-gray-500">
-          Views, clicks, and bounce rate per landing page. Bounce = visitors
-          who never clicked the main button.
+          Views, clicks, and bounce rate per landing page. Bounce = visitors who
+          never clicked the main button.
         </p>
 
         <div className="my-4 flex flex-wrap items-center gap-3">
@@ -258,7 +274,10 @@ function Index({ user }: { user: User }) {
                 ))}
                 {domainGroups.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-gray-500">
+                    <TableCell
+                      colSpan={3}
+                      className="text-center text-gray-500"
+                    >
                       No visits recorded in this period.
                     </TableCell>
                   </TableRow>
@@ -272,7 +291,10 @@ function Index({ user }: { user: User }) {
         ) : (
           <>
             {compareRows.length >= 2 && (
-              <CompareTable rows={compareRows} crossDomain={compareCrossDomain} />
+              <CompareTable
+                rows={compareRows}
+                crossDomain={compareCrossDomain}
+              />
             )}
             {compareIds.length > 0 && (
               <Button size="small" onClick={() => setCompareIds([])}>
@@ -307,31 +329,46 @@ function Index({ user }: { user: User }) {
                       )
                     }
                   >
-                    <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
+                    <TableCell
+                      padding="checkbox"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Checkbox
                         size="small"
                         checked={compareIds.includes(row.landingPageId)}
                         onChange={() => toggleCompare(row.landingPageId)}
                       />
                     </TableCell>
-                    <TableCell>{row.landingPageName ?? row.landingPageId}</TableCell>
+                    <TableCell>
+                      {row.landingPageName ?? row.landingPageId}
+                    </TableCell>
                     <TableCell>{row.domainName ?? "—"}</TableCell>
                     <TableCell>{row.views}</TableCell>
                     <TableCell>{row.clicks}</TableCell>
                     <TableCell>{formatPct(row.ctr)}</TableCell>
                     <TableCell>{formatPct(row.bounceRate)}</TableCell>
                     <TableCell>
-                      {formatReturningPct(row.returningViews, row.identifiedViews)}
+                      {formatReturningPct(
+                        row.returningViews,
+                        row.identifiedViews,
+                      )}
                     </TableCell>
-                    <TableCell>{formatDurationMs(row.avgTimeOnPageMs)}</TableCell>
                     <TableCell>
-                      {row.avgMaxScrollPct === null ? "—" : `${row.avgMaxScrollPct}%`}
+                      {formatDurationMs(row.avgTimeOnPageMs)}
+                    </TableCell>
+                    <TableCell>
+                      {row.avgMaxScrollPct === null
+                        ? "—"
+                        : `${row.avgMaxScrollPct}%`}
                     </TableCell>
                   </TableRow>
                 ))}
                 {pageRows.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center text-gray-500">
+                    <TableCell
+                      colSpan={10}
+                      className="text-center text-gray-500"
+                    >
                       No visits recorded in this period.
                     </TableCell>
                   </TableRow>
@@ -348,12 +385,30 @@ function Index({ user }: { user: User }) {
               </div>
             )}
             {selected && range && (
-              <LanderDetailPanel
-                landingPageId={selected}
-                from={range.from}
-                to={isLive ? undefined : range.to}
-                live={isLive}
-              />
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                onClick={() => setSelected(null)}
+              >
+                <div
+                  className="relative max-h-[85vh] w-full max-w-5xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    className="absolute right-4 top-4 text-xl leading-none text-gray-400 hover:text-gray-600"
+                    onClick={() => setSelected(null)}
+                  >
+                    ✕
+                  </button>
+                  <LanderDetailPanel
+                    landingPageId={selected}
+                    from={range.from}
+                    to={isLive ? undefined : range.to}
+                    live={isLive}
+                  />
+                </div>
+              </div>
             )}
           </>
         )}

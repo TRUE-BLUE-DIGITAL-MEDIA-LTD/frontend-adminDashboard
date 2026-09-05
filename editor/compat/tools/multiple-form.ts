@@ -108,6 +108,7 @@ export function stepListCounterText(answerStepCount: number): string {
 export const DEFAULT_CONSENT_TEXT =
   "I agree to receive marketing communications and accept the privacy policy.";
 
+
 const STEP_LIST_TRAIT_TYPE = "oxy-step-list";
 const REMOVE_STEP_TRAIT_TYPE = "oxy-remove-step";
 const REMOVE_FIELD_TRAIT_TYPE = "oxy-remove-field";
@@ -958,7 +959,6 @@ export function applySubmitStepFields(step: Component): void {
   if (cta) {
     asLike(cta).components(ctaText);
   }
-
   stepLike.addAttributes({
     "data-oxy-step-title": String(stepLike.get("step-title") ?? ""),
     "data-oxy-email-placeholder": placeholder,
@@ -1598,7 +1598,10 @@ function defineComponentTypes(editor: GrapesEditor): void {
     model: {
       defaults: {
         name: "Submission Step",
-        droppable: false,
+        // Authors may drop extra content here (e.g. a privacy-policy Link),
+        // but never another form or a step: nested .form_step elements would
+        // corrupt getStepsOf() renumbering and the runtime's step navigation.
+        droppable: `:not(.${MULTIPLE_FORM_MARKER_CLASS}):not(.${STEP_CLASS})`,
         copyable: false,
         draggable: false,
         removable: false,

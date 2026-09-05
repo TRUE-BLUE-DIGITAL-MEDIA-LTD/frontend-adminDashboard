@@ -7,16 +7,13 @@ import { useEffect, useState } from "react";
 import { Input, SearchField } from "react-aria-components";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
-import { MdSettings } from "react-icons/md";
 import { useRouter } from "next/router";
 import ListDomain from "../../components/domain/listDomain";
 import DomainLinkAudit from "../../components/domain/domainLinkAudit";
 import DomainCreate from "../../components/forms/domains/domainCreate";
-import DomainUpdate from "../../components/forms/domains/domainUpdate";
 import { loadingNumber } from "../../data/loadingNumber";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import {
-  Domain,
   Partner,
   ResponsibilityOnPartner,
   SimCardOnPartner,
@@ -39,17 +36,24 @@ function Index({ user }: { user: User & { partner: Partner } }) {
     typeof router.query.domainName === "string"
       ? router.query.domainName
       : "";
-  const [searchField, setSearchField] = useState<string>(focusDomainName);
-  const [page, setPage] = useState<number>(1);
+  // List state lives in the URL (?search=&page=&partnerId=) so coming back
+  // from a /domain/[domainId] page restores the same view. router.query is
+  // populated on first render because this page uses getServerSideProps.
+  const initialSearch =
+    typeof router.query.search === "string"
+      ? router.query.search
+      : focusDomainName;
+  const initialPage = Math.max(1, Number(router.query.page) || 1);
+  const restorePartnerId =
+    typeof router.query.partnerId === "string"
+      ? router.query.partnerId
+      : undefined;
+  const [searchField, setSearchField] = useState<string>(initialSearch);
+  const [page, setPage] = useState<number>(initialPage);
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
-  const [triggerUpdateDomain, setTriggerUpdateDomain] =
-    useState<boolean>(false);
-  const [currentUpdateDomain, setCurrentUpdateDomain] = useState<
-    Domain | undefined
-  >();
 
   const domains = useGetDomainsByPage({
     page: page,
@@ -70,6 +74,20 @@ function Index({ user }: { user: User & { partner: Partner } }) {
       setTotalPage(() => domains.data.totalPages);
     }
   }, [domains.data]);
+
+  // Mirror list state into the URL (shallow: no reload, no gSSP re-run) so
+  // browser back from a domain page lands on the same search/page/partner.
+  useEffect(() => {
+    const query: Record<string, string> = {};
+    if (focusDomainId) query.domainId = focusDomainId;
+    if (searchField) query.search = searchField;
+    if (page > 1) query.page = String(page);
+    if (selectPartner?.id) query.partnerId = selectPartner.id;
+    router.replace({ pathname: "/domain", query }, undefined, {
+      shallow: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchField, page, selectPartner?.id, focusDomainId]);
 
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
@@ -188,7 +206,12 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           isAllowOxySms: true,
         });
 
-        setSelectPartner(() => addSeeAll[0] as Partner);
+        // Restore the partner picked before navigating away (?partnerId=),
+        // covering the pseudo entries (all / no-partner / no-landing-page).
+        const restored = restorePartnerId
+          ? addSeeAll.find((partner) => partner.id === restorePartnerId)
+          : undefined;
+        setSelectPartner(() => (restored ?? addSeeAll[0]) as Partner);
         return addSeeAll;
       }),
     enabled: domains.isSuccess,
@@ -203,13 +226,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         />
       )}
 
-      {triggerUpdateDomain && (
-        <DomainUpdate
-          domain={currentUpdateDomain as Domain}
-          setTriggerUpdateDomain={setTriggerUpdateDomain}
-          domains={domains}
-        />
-      )}
       <div className="w-full">
         <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
           <h1 className="font-Poppins text-4xl font-semibold md:text-5xl">
@@ -302,10 +318,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   <td>Partners</td>
                   <td>Landing Pages</td>
                   <td>Average SEO Score</td>
-                  <td className="flex items-center gap-2">
-                    <MdSettings />
-                    Options
-                  </td>
                 </tr>
               </thead>
               <tbody className="">
@@ -316,8 +328,6 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                       key={index}
                       list={list}
                       domains={domains}
-                      setCurrentUpdateDomain={setCurrentUpdateDomain}
-                      setTriggerUpdateDomain={setTriggerUpdateDomain}
                       user={user}
                     />
                   );

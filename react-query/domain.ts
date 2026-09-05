@@ -5,11 +5,18 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  DeleteGscSitemapService,
   GetAllDomainsByPage,
+  GetDomainGscSitemapsService,
+  GetDomainSearchAnalyticsService,
+  InputDeleteGscSitemapService,
   InputGetAllDomainsByPage,
+  InputGetDomainSearchAnalyticsService,
+  InputInspectDomainUrlService,
   InputSummitSitemapDomainService,
   InputUpdateSeoScoreService,
   InputVerifyDomainOnGoogleService,
+  InspectDomainUrlService,
   SummitSitemapDomainService,
   UpdateSeoScoreService,
   VerifyDomainOnGoogleService,
@@ -91,5 +98,62 @@ export function useUpdateSeoScore() {
     mutationKey: ["domain", "seo"],
     mutationFn: (request: InputUpdateSeoScoreService) =>
       UpdateSeoScoreService(request),
+  });
+}
+
+export function useGetSearchAnalytics(
+  request: InputGetDomainSearchAnalyticsService & { enabled?: boolean },
+) {
+  return useQuery({
+    queryKey: [
+      "domain-gsc-analytics",
+      request.domainId,
+      request.startDate,
+      request.endDate,
+      request.dimension,
+    ],
+    queryFn: () =>
+      GetDomainSearchAnalyticsService({
+        domainId: request.domainId,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        dimension: request.dimension,
+      }),
+    staleTime: 1000 * 60 * 5,
+    enabled: request.enabled ?? true,
+  });
+}
+
+export function useGetGscSitemaps(request: {
+  domainId: string;
+  enabled?: boolean;
+}) {
+  return useQuery({
+    queryKey: ["domain-gsc-sitemaps", request.domainId],
+    queryFn: () => GetDomainGscSitemapsService({ domainId: request.domainId }),
+    staleTime: 1000 * 60 * 5,
+    enabled: request.enabled ?? true,
+  });
+}
+
+export function useInspectUrl() {
+  return useMutation({
+    mutationKey: ["domain-url-inspection"],
+    mutationFn: (request: InputInspectDomainUrlService) =>
+      InspectDomainUrlService(request),
+  });
+}
+
+export function useDeleteGscSitemap() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["domain-gsc-sitemap-delete"],
+    mutationFn: (request: InputDeleteGscSitemapService) =>
+      DeleteGscSitemapService(request),
+    onSuccess(data, variables) {
+      queryClient.refetchQueries({
+        queryKey: ["domain-gsc-sitemaps", variables.domainId],
+      });
+    },
   });
 }

@@ -21,6 +21,7 @@ export const menusSidebar = [
   },
   { title: "Link Audit", url: "/link-audit", icon: MdLinkOff },
   { title: "Analytics", url: "/analytics", icon: MdInsights },
+  { title: "Inbox", url: "/inbox", icon: MdEmail },
   {
     title: "Oxy Tools",
     url: "/tools",
@@ -37,6 +38,7 @@ export const menusSidebar = [
       { title: "Oxy Text", params: "sms-textverified" },
       { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy Bow", params: "sms-bower" },
+      { title: "Oxy V", params: "sms-virtualsms" },
       { title: "Oxy SMS", params: "sms-etms" },
       { title: "IntimateInfo Content", params: "intimate-info-content" },
 
@@ -51,7 +53,7 @@ export const menusSidebar = [
 ] as const;
 
 export type MenuSidebar = (typeof menusSidebar)[number] & {
-  childs?: (typeof menusSidebar)[6]["childs"];
+  childs?: (typeof menusSidebar)[7]["childs"];
 };
 export type OxyClickTools =
-  (typeof menusSidebar)[6]["childs"][number]["params"];
+  (typeof menusSidebar)[7]["childs"][number]["params"];

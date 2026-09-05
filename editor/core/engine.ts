@@ -20,6 +20,7 @@ import { appendMultipleFormRuntime } from "../compat/tools/multiple-form";
 import { appendQuizRuntime } from "./tools/quiz/runtime-inject";
 import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
 import { uploadAndIndexImage } from "./upload-image";
+import { attachFitZoom } from "./fit-zoom";
 
 export interface EngineMountOptions {
   container: HTMLElement;
@@ -263,7 +264,10 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       : undefined,
     deviceManager: {
       devices: [
-        { id: "desktop", name: "Desktop", width: "" },
+        // widthMedia MUST stay explicitly "" — GrapesJS otherwise reuses
+        // `width` for CSS @media, and desktop-edited styles would export
+        // wrapped in `@media (max-width: 1200px)`, breaking published pages.
+        { id: "desktop", name: "Desktop", width: "1200px", widthMedia: "" },
         { id: "tablet", name: "Tablet", width: "768px", widthMedia: "992px" },
         { id: "mobile", name: "Mobile", width: "320px", widthMedia: "480px" },
       ],
@@ -429,11 +433,13 @@ export function mountEngine(opts: EngineMountOptions): Engine {
   };
 
   const teardownI18n = registerI18nKeysPlugin(grapes);
+  const teardownFitZoom = attachFitZoom(grapes, opts.container);
 
   return {
     instance,
     grapes,
     destroy() {
+      teardownFitZoom();
       teardownI18n();
       grapes.destroy();
     },
