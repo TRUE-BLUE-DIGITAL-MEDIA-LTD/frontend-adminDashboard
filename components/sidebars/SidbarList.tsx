@@ -99,7 +99,7 @@ function SidbarList({ isSelect, list }: Props) {
 
               if (
                 user.partner.isAllowUsingSMS_Virtualsms !== true &&
-                menu.title === "Oxy Virtual"
+                menu.title === "Oxy V"
               ) {
                 return false;
               }
