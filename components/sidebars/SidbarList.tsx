@@ -98,6 +98,13 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
+                user.partner.isAllowUsingSMS_Virtualsms !== true &&
+                menu.title === "Oxy V"
+              ) {
+                return false;
+              }
+
+              if (
                 user.partner.isAllowUsingSMS_TEXTVERIFIED === false &&
                 menu.title === "Oxy Text"
               ) {

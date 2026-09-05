@@ -62,6 +62,16 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowSmsPinverifyAccount",
     },
     {
+      title: "Allow Using Oxy Virtual",
+      allow: selectPartner.isAllowUsingSMS_Virtualsms,
+      slug: "isAllowUsingSMS_Virtualsms",
+    },
+    {
+      title: "Allow Manage Oxy Virtual Account",
+      allow: selectPartner.isAllowSMS_VirtualsmsAccount,
+      slug: "isAllowSMS_VirtualsmsAccount",
+    },
+    {
       title: "Allow Manage Oxy Berry Account",
       allow: selectPartner.isAllowSmsDaisyAccount,
       slug: "isAllowSmsDaisyAccount",

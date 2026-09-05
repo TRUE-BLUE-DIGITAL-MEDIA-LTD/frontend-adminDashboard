@@ -38,6 +38,7 @@ export const menusSidebar = [
       { title: "Oxy Text", params: "sms-textverified" },
       { title: "Oxy Pin", params: "sms-pinverify" },
       { title: "Oxy Bow", params: "sms-bower" },
+      { title: "Oxy V", params: "sms-virtualsms" },
       { title: "Oxy SMS", params: "sms-etms" },
       { title: "IntimateInfo Content", params: "intimate-info-content" },
 
