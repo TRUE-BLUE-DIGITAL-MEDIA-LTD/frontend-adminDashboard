@@ -98,6 +98,16 @@ export function CancelSmsVirtualsmsService(
   });
 }
 
+export type RequestCompleteSmsVirtualsmsService = { smsVirtualsmsId: string };
+export function CompleteSmsVirtualsmsService(
+  request: RequestCompleteSmsVirtualsmsService,
+): Promise<SmsVirtualsms> {
+  return call({
+    method: "PATCH",
+    url: `${BASE}/${request.smsVirtualsmsId}/complete`,
+  });
+}
+
 export function GetSmsVirtualsmsAccountsService(): Promise<
   SmsVirtualsmsAccount[]
 > {

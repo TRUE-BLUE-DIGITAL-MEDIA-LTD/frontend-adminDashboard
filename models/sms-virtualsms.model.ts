@@ -1,3 +1,9 @@
+export type SmsVirtualsmsMessage = {
+  sender: string | null;
+  content: string;
+  receivedAt: string;
+};
+
 export type SmsVirtualsms = {
   id: string;
   createAt: string;
@@ -12,6 +18,7 @@ export type SmsVirtualsms = {
   country: string;
   serviceCode: string;
   message: string | null;
+  messages: SmsVirtualsmsMessage[];
   smsVirtualsmsAccountId: string;
 };
 

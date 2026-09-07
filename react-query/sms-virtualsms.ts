@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CancelSmsVirtualsmsService,
+  CompleteSmsVirtualsmsService,
   CreateSmsVirtualsmsAccountService,
   CreateSmsVirtualsmsService,
   GetCountryListSmsVirtualsmsService,
@@ -9,6 +10,7 @@ import {
   GetSmsVirtualsmsAccountsService,
   GetSmsVirtualsmsService,
   RequestCancelSmsVirtualsmsService,
+  RequestCompleteSmsVirtualsmsService,
   RequestCreateSmsVirtualsmsAccountService,
   RequestCreateSmsVirtualsmsService,
   RequestGetHistorySmsVirtualsmsService,
@@ -50,6 +52,14 @@ export function useCancelSmsVirtualsms() {
     mutationKey: itemKeys.item,
     mutationFn: (request: RequestCancelSmsVirtualsmsService) =>
       CancelSmsVirtualsmsService(request),
+  });
+}
+
+export function useCompleteSmsVirtualsms() {
+  return useMutation({
+    mutationKey: [itemKeys.item[0], "complete"],
+    mutationFn: (request: RequestCompleteSmsVirtualsmsService) =>
+      CompleteSmsVirtualsmsService(request),
   });
 }
 
