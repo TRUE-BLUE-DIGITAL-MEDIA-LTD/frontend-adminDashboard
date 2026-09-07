@@ -4,6 +4,7 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { ErrorMessages, Partner, User } from "../../models";
 import {
   useCancelSmsVirtualsms,
+  useCompleteSmsVirtualsms,
   useGetSmsVirtualsms,
   useGetSmsVirtualsmsAccounts,
 } from "../../react-query";
@@ -34,6 +35,7 @@ function SmsVirtualsms({ user }: Props) {
     user.partner?.isAllowSMS_VirtualsmsAccount === true;
   const activeNumbers = useGetSmsVirtualsms({ userId: user.id });
   const cancelSms = useCancelSmsVirtualsms();
+  const completeSms = useCompleteSmsVirtualsms();
   const accounts = useGetSmsVirtualsmsAccounts({ enabled: canManageAccounts });
 
   const handleCancel = async (id: string) => {
@@ -55,6 +57,37 @@ function SmsVirtualsms({ user }: Props) {
     } catch (error) {
       console.log(error);
       showError(error);
+    }
+  };
+
+  const handleDone = async (id: string) => {
+    const confirm = await Swal.fire({
+      title: "Mark as done?",
+      text: "The number moves to History and new SMS are no longer tracked.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Done",
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      Swal.fire({
+        title: "Loading",
+        html: "Please wait.",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+      await completeSms.mutateAsync({ smsVirtualsmsId: id });
+      await activeNumbers.refetch();
+      Swal.fire({
+        title: "Success",
+        text: "Number marked as done.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      showError(error);
+      activeNumbers.refetch();
     }
   };
 
@@ -104,6 +137,7 @@ function SmsVirtualsms({ user }: Props) {
                 key={number.id}
                 sms={number}
                 onCancel={handleCancel}
+                onDone={handleDone}
               />
             ))}
           </ul>
