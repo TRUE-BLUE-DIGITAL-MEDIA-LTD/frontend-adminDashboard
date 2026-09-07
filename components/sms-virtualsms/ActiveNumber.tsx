@@ -14,23 +14,13 @@ type Props = {
   onDone: (id: string) => void;
 };
 
-// Old records only carry `message`; render it as a one-item list so the
-// card looks the same either way.
-function messagesOf(sms: SmsVirtualsms): SmsVirtualsmsMessage[] {
-  if (sms.messages && sms.messages.length > 0) return sms.messages;
-  if (sms.message) {
-    return [{ sender: null, content: sms.message, receivedAt: sms.updateAt }];
-  }
-  return [];
-}
-
 function ActiveNumber({ sms, onCancel, onDone }: Props) {
   const [hidden, setHidden] = useState(false);
   const cancelAt = new Date(sms.createAt).getTime() + CANCEL_HOLD_MS;
   const [holdLeft, setHoldLeft] = useState(
     Math.max(0, Math.ceil((cancelAt - Date.now()) / 1000)),
   );
-  const messages = messagesOf(sms);
+  const messages: SmsVirtualsmsMessage[] = sms.messages ?? [];
 
   useEffect(() => {
     if (holdLeft <= 0) return;

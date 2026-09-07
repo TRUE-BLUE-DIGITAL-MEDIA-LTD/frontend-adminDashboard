@@ -64,7 +64,8 @@ function SmsVirtualsmsHistory() {
                     {sms.isGetSms ? (
                       <div className="flex w-48 flex-col items-center gap-1 rounded-md bg-green-200 px-2 py-1 text-sm text-green-600">
                         <span className="break-words">
-                          SMS ${sms.price.toFixed(2)} - {sms.message}
+                          SMS ${sms.price.toFixed(2)} -{" "}
+                          {sms.messages?.[sms.messages.length - 1]?.content}
                         </span>
                         {sms.messages && sms.messages.length > 1 && (
                           <span
