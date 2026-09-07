@@ -52,24 +52,29 @@ function SmsVirtualsmsAccount({ account }: Props) {
   };
 
   return (
-    <li className="relative flex h-max w-80 flex-col gap-2 rounded-lg border p-3 font-Poppins">
-      <h1 className="w-max border-b pr-20 text-lg font-bold">
-        <span className="text-base text-gray-400">Username: </span>
-        {account.username}
-      </h1>
-      {account.isActive ? (
-        <div className="absolute right-2 top-2 bg-green-100 px-3 text-green-600">
-          Active
-        </div>
-      ) : (
-        <div className="absolute right-2 top-2 bg-gray-100 px-3 text-gray-600">
-          Disable
-        </div>
-      )}
-      <span className="text-sm text-gray-500">
+    <li className="flex h-max w-80 flex-col gap-2 overflow-hidden rounded-lg border p-3 font-Poppins">
+      <div className="flex items-center justify-between gap-2 border-b pb-1">
+        <h1
+          title={account.username}
+          className="min-w-0 flex-1 truncate text-lg font-bold"
+        >
+          <span className="text-base text-gray-400">Username: </span>
+          {account.username}
+        </h1>
+        {account.isActive ? (
+          <div className="shrink-0 rounded-sm bg-green-100 px-3 text-sm text-green-600">
+            Active
+          </div>
+        ) : (
+          <div className="shrink-0 rounded-sm bg-gray-100 px-3 text-sm text-gray-600">
+            Disable
+          </div>
+        )}
+      </div>
+      <span className="break-all text-sm text-gray-500">
         Key: {maskKey(account.apiKey)}
       </span>
-      <span className="text-sm text-gray-500">
+      <span className="break-all text-sm text-gray-500">
         Webhook secret: {account.webhookSecret ? "set" : "not set"}
       </span>
       <span className="text-xs text-gray-400">
@@ -80,13 +85,13 @@ function SmsVirtualsmsAccount({ account }: Props) {
         value={apiKey}
         onChange={(e) => setApiKey(e.target.value)}
         placeholder="New API key (vsms_...)"
-        className="h-8 rounded border px-2 text-sm"
+        className="h-8 min-w-0 rounded border px-2 text-sm"
       />
       <input
         value={webhookSecret}
         onChange={(e) => setWebhookSecret(e.target.value)}
         placeholder="New webhook secret"
-        className="h-8 rounded border px-2 text-sm"
+        className="h-8 min-w-0 rounded border px-2 text-sm"
       />
       <div className="flex gap-2">
         <button

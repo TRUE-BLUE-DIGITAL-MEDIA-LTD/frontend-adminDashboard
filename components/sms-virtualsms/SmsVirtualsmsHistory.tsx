@@ -62,8 +62,18 @@ function SmsVirtualsmsHistory() {
                 <td>
                   <div className="flex w-48 items-center justify-center text-center">
                     {sms.isGetSms ? (
-                      <div className="w-48 rounded-md bg-green-200 px-2 text-sm text-green-600">
-                        SMS ${sms.price.toFixed(2)} - {sms.message}
+                      <div className="flex w-48 flex-col items-center gap-1 rounded-md bg-green-200 px-2 py-1 text-sm text-green-600">
+                        <span className="break-words">
+                          SMS ${sms.price.toFixed(2)} - {sms.message}
+                        </span>
+                        {sms.messages && sms.messages.length > 1 && (
+                          <span
+                            title={sms.messages.map((m) => m.content).join("\n")}
+                            className="rounded-full bg-green-600 px-2 text-xs font-semibold text-white"
+                          >
+                            ×{sms.messages.length}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">
