@@ -72,6 +72,16 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
       slug: "isAllowSMS_VirtualsmsAccount",
     },
     {
+      title: "Allow Using Oxy Bulk",
+      allow: selectPartner.isAllowUsingSmsBulk,
+      slug: "isAllowUsingSmsBulk",
+    },
+    {
+      title: "Allow Manage Oxy Bulk Account",
+      allow: selectPartner.isAllowManageSmsBulkAccount,
+      slug: "isAllowManageSmsBulkAccount",
+    },
+    {
       title: "Allow Manage Oxy Berry Account",
       allow: selectPartner.isAllowSmsDaisyAccount,
       slug: "isAllowSmsDaisyAccount",

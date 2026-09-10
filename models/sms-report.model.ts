@@ -5,7 +5,8 @@ export type TypeSmsReport =
   | "SMSPINVERIFY"
   | "SMSDAISY"
   | "SMSGETATEXT"
-  | "SMSVIRTUALSMS";
+  | "SMSVIRTUALSMS"
+  | "SMSBULK";
 
 export interface SmsReport {
   id: string;

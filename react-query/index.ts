@@ -16,3 +16,5 @@ export * from "./adjust-lead-rate";
 export * from "./timezone";
 export * from "./sms-berry";
 export * from "./inbox";
+export * from "./sms-bulk";
+export * from "./sms-bulk-email";

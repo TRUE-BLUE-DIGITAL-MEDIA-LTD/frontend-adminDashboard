@@ -7,6 +7,7 @@ import SimCard from "../../components/simCard/simCard";
 import SmsDaisy from "../../components/sms-daisy/SmsDaisy";
 import SmsPinverify from "../../components/sms-pinverify/SmsPinverify";
 import SmsVirtualsms from "../../components/sms-virtualsms/SmsVirtualsms";
+import SmsBulk from "../../components/sms-bulk/SmsBulk";
 import SmsPool from "../../components/sms-pool/SmsPool";
 import SmsPvas from "../../components/sms-pva/SmsPvas";
 import SmsTextVerified from "../../components/sms-textverified/SmsTextVerified";
@@ -44,6 +45,7 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
         {menu === "league-table" && <PartnerLeague user={user} />}
         {menu === "sms-pinverify" && <SmsPinverify user={user} />}
         {menu === "sms-virtualsms" && <SmsVirtualsms user={user} />}
+        {menu === "sms-bulk" && <SmsBulk user={user} />}
         {menu === "sms-report" && <SmsReport />}
         {menu === "sms-berry" && <SmsBerry user={user} />}
         {menu === "cloud-phone" && <CloudPhone />}
