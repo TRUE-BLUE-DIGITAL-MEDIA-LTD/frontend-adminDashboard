@@ -18,6 +18,8 @@ export type Partner = {
   isAllowSmsPinverifyAccount: boolean;
   isAllowUsingSMS_Virtualsms?: boolean;
   isAllowSMS_VirtualsmsAccount?: boolean;
+  isAllowUsingSmsBulk?: boolean;
+  isAllowManageSmsBulkAccount?: boolean;
   isAllowUsingSMS_Daisy?: boolean;
   isAllowSmsDaisyAccount?: boolean;
   isAllowManagePartner: boolean;

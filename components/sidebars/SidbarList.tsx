@@ -105,6 +105,13 @@ function SidbarList({ isSelect, list }: Props) {
               }
 
               if (
+                user.partner.isAllowUsingSmsBulk !== true &&
+                menu.title === "Oxy Bulk"
+              ) {
+                return false;
+              }
+
+              if (
                 user.partner.isAllowUsingSMS_TEXTVERIFIED === false &&
                 menu.title === "Oxy Text"
               ) {
