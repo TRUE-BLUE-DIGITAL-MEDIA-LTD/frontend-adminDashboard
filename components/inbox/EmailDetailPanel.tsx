@@ -1,6 +1,7 @@
 import { Skeleton } from "@mui/material";
 import { useEffect } from "react";
 import { useInboxEmail, useMarkEmailRead } from "../../react-query";
+import { sanitizeEmailHtml } from "../../utils/sanitizeEmailHtml";
 import { formatBytes, formatSender } from "./format";
 
 export default function EmailDetailPanel({ emailId }: { emailId: string }) {
@@ -33,11 +34,9 @@ export default function EmailDetailPanel({ emailId }: { emailId: string }) {
       </div>
 
       {d.htmlBody ? (
-        <iframe
-          sandbox=""
-          srcDoc={d.htmlBody}
-          title="Email body"
-          className="h-[50vh] w-full rounded-lg border bg-white"
+        <div
+          className="max-h-[50vh] overflow-y-auto rounded-lg border bg-white p-4 text-sm"
+          dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(d.htmlBody) }}
         />
       ) : (
         <pre className="max-h-[50vh] overflow-y-auto whitespace-pre-wrap rounded-lg border bg-white p-4 text-sm">

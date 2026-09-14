@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { MdEmail, MdMarkEmailUnread } from "react-icons/md";
 import EmailDetailPanel from "../../components/inbox/EmailDetailPanel";
 import { formatSender } from "../../components/inbox/format";
+import MailboxSidebar from "../../components/inbox/MailboxSidebar";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { User } from "../../models";
 import { useInboxEmails, useInboxMailboxes } from "../../react-query";
@@ -43,47 +44,15 @@ function Inbox({ user }: { user: User }) {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
           {/* Mailbox folders, grouped by domain */}
-          <aside className="rounded-xl border bg-white p-4 shadow-sm">
-            {mailboxes.isLoading ? (
-              <Skeleton variant="rectangular" height={200} />
-            ) : (mailboxes.data?.domains.length ?? 0) === 0 ? (
-              <p className="text-sm text-gray-500">
-                No mail yet. Enable mail on a domain and share an address like
-                hello@your-domain.com.
-              </p>
-            ) : (
-              mailboxes.data?.domains.map((group) => (
-                <div key={group.domainId} className="mb-4">
-                  <h2 className="mb-1 text-xs font-semibold uppercase text-gray-400">
-                    {group.domainName}
-                  </h2>
-                  {group.mailboxes.map((mailbox) => (
-                    <button
-                      key={mailbox.id}
-                      onClick={() => {
-                        setSelectedMailboxId(mailbox.id);
-                        setPage(1);
-                      }}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-gray-50 ${
-                        selectedMailboxId === mailbox.id
-                          ? "bg-blue-50 font-medium text-blue-700"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      <span>
-                        {mailbox.localPart}@{group.domainName}
-                      </span>
-                      {mailbox.unreadCount > 0 && (
-                        <span className="ml-2 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">
-                          {mailbox.unreadCount}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              ))
-            )}
-          </aside>
+          <MailboxSidebar
+            domains={mailboxes.data?.domains}
+            isLoading={mailboxes.isLoading}
+            selectedMailboxId={selectedMailboxId}
+            onSelectMailbox={(mailboxId) => {
+              setSelectedMailboxId(mailboxId);
+              setPage(1);
+            }}
+          />
 
           {/* Message list for the selected mailbox */}
           <section className="rounded-xl border bg-white p-4 shadow-sm">

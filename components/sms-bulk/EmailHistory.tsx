@@ -1,10 +1,11 @@
 import moment from "moment";
 import { useState } from "react";
 import { useGetHistorySmsBulkEmail } from "../../react-query";
-import { openEmailHtml } from "./ActiveEmail";
+import EmailHtmlModal from "./EmailHtmlModal";
 
 function EmailHistory() {
   const [page, setPage] = useState(1);
+  const [viewHtml, setViewHtml] = useState<string | null>(null);
   const history = useGetHistorySmsBulkEmail({ page, limit: 50 });
   const totalPage = history.data?.totalPage ?? 0;
 
@@ -47,7 +48,7 @@ function EmailHistory() {
                         </div>
                         {email.htmlMessage && (
                           <button
-                            onClick={() => openEmailHtml(email.htmlMessage as string)}
+                            onClick={() => setViewHtml(email.htmlMessage as string)}
                             className="rounded border px-2 text-xs hover:bg-gray-800 hover:text-white"
                           >
                             view
@@ -76,6 +77,9 @@ function EmailHistory() {
             Next
           </button>
         </div>
+      )}
+      {viewHtml && (
+        <EmailHtmlModal html={viewHtml} onClose={() => setViewHtml(null)} />
       )}
     </>
   );
