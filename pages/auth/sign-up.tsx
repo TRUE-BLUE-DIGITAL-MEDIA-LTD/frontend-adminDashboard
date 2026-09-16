@@ -252,7 +252,7 @@ function SignUp() {
           <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
             <Image
               alt="logo"
-              src="/faviconOxy.png"
+              src="/favicon.ico"
               fill
               className="object-contain"
             />
