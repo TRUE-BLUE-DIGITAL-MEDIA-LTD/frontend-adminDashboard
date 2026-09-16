@@ -61,6 +61,11 @@ function SignIn() {
       }
     } catch (err: any) {
       console.log(err);
+      if (err.message === "ACCOUNT_PENDING_APPROVAL") {
+        setIsLoading(() => false);
+        router.push("/auth/pending");
+        return;
+      }
       if (err.message === "MULTI-FACTOR AUTHENTICATION REQUIRED") {
         audio?.play();
         setTriggerSetupTotp(() => true);
