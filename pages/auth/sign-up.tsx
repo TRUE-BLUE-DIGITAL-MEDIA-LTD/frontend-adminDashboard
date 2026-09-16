@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { MouseEvent, useState } from "react";
-import { SignUpService } from "../../services/auth/sign-up";
+import { requestSignUpCode } from "../../services/auth/sign-up";
 import Swal from "sweetalert2";
 import {
   Box,
@@ -38,11 +38,12 @@ function SignUp() {
     event.preventDefault();
     try {
       setIsLoading(() => true);
-      const signUp = await SignUpService({
+      await requestSignUpCode({
         email: signUpData.email,
         name: signUpData.name,
         password: signUpData.password,
         confirmPassword: signUpData.confirmPassword,
+        turnstileToken: "",
       });
 
       Swal.fire("success", "sing up successfully", "success");
