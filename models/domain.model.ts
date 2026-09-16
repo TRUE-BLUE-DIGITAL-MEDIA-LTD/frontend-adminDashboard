@@ -20,6 +20,34 @@ export interface Domain {
   accessibilityScoreMobile?: number;
   bestPracticesScoreMobile?: number;
   performanceScoreMobile?: number;
+
+  worstLoadMs?: number | null;
+  speedFailedRegions?: number | null;
+  speedProbedAt?: string | null;
+}
+
+export type DomainListSort = "name" | "load-desc" | "load-asc";
+
+export type SpeedProbeStatus = "OK" | "FAILED";
+
+export interface RegionLatest {
+  region: string;
+  status: SpeedProbeStatus | null;
+  httpStatus: number | null;
+  ttfbMs: number | null;
+  domContentLoadedMs: number | null;
+  loadMs: number | null;
+  lcpMs: number | null;
+  error: string | null;
+  probedAt: string | null;
+}
+
+export interface ResponseGetDomainSpeed {
+  latest: RegionLatest[];
+  history: { region: string; points: { probedAt: string; loadMs: number | null }[] }[];
+  worstLoadMs: number | null;
+  speedFailedRegions: number | null;
+  speedProbedAt: string | null;
 }
 
 export type SiteBuild = {

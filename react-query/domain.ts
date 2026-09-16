@@ -9,14 +9,17 @@ import {
   GetAllDomainsByPage,
   GetDomainGscSitemapsService,
   GetDomainSearchAnalyticsService,
+  GetDomainSpeedService,
   InputDeleteGscSitemapService,
   InputGetAllDomainsByPage,
   InputGetDomainSearchAnalyticsService,
   InputInspectDomainUrlService,
+  InputProbeDomainSpeedService,
   InputSummitSitemapDomainService,
   InputUpdateSeoScoreService,
   InputVerifyDomainOnGoogleService,
   InspectDomainUrlService,
+  ProbeDomainSpeedService,
   SummitSitemapDomainService,
   UpdateSeoScoreService,
   VerifyDomainOnGoogleService,
@@ -30,6 +33,7 @@ const keyDomains = {
     page: number;
     searchField: string;
     selectPartnerId: string | undefined;
+    sort?: string;
   }) => [
     keyDomains.domains[0],
     {
@@ -44,6 +48,7 @@ const keyDomains = {
             : input.selectPartnerId === "all"
               ? "all"
               : undefined,
+      sort: input.sort,
     },
   ],
 } as const;
@@ -54,6 +59,7 @@ export function useGetDomainsByPage(request: InputGetAllDomainsByPage) {
       page: request.page,
       searchField: request.searchField ?? "",
       selectPartnerId: request.partnerId,
+      sort: request.sort,
     }),
     queryFn: () => GetAllDomainsByPage(request),
     staleTime: 1000 * 60,
@@ -155,5 +161,21 @@ export function useDeleteGscSitemap() {
         queryKey: ["domain-gsc-sitemaps", variables.domainId],
       });
     },
+  });
+}
+
+export function useGetDomainSpeed(domainId: string, refetchIntervalMs?: number) {
+  return useQuery({
+    queryKey: ["domain", "speed", domainId],
+    queryFn: () => GetDomainSpeedService({ domainId }),
+    enabled: domainId !== "",
+    refetchInterval: refetchIntervalMs,
+  });
+}
+
+export function useProbeDomainSpeed() {
+  return useMutation({
+    mutationKey: ["domain", "speed", "probe"],
+    mutationFn: (request: InputProbeDomainSpeedService) => ProbeDomainSpeedService(request),
   });
 }
