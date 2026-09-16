@@ -9,6 +9,7 @@ import DomainSettingsSection from "../../components/domain/domainSettingsSection
 import GscTabs from "../../components/domain/gsc/gscTabs";
 import LandingPagesSection from "../../components/domain/landingPagesSection";
 import SeoPerformanceSection from "../../components/domain/seoPerformanceSection";
+import SpeedByRegionSection from "../../components/domain/speedByRegionSection";
 import VerifyDomain from "../../components/domain/verifyDomain";
 import {
   isLandingPageDistributionValid,
@@ -17,7 +18,11 @@ import {
 import SpinLoading from "../../components/loadings/spinLoading";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import { Partner, User } from "../../models";
-import { useEnableMail } from "../../react-query";
+import {
+  useEnableMail,
+  useGetDomainSpeed,
+  useProbeDomainSpeed,
+} from "../../react-query";
 import { useUpdateSeoScore } from "../../react-query/domain";
 import {
   DeleteDomainNameService,
@@ -49,6 +54,34 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
   });
   const updateSeoScore = useUpdateSeoScore();
   const enableMail = useEnableMail();
+
+  const [probeStartedAt, setProbeStartedAt] = useState<number | null>(null);
+  const domainSpeed = useGetDomainSpeed(
+    domainId,
+    probeStartedAt ? 10_000 : undefined,
+  );
+  const probeSpeed = useProbeDomainSpeed();
+
+  // Poll every 10 s after "Probe now" until fresh results land or 3 min pass.
+  useEffect(() => {
+    if (!probeStartedAt) return;
+    const probedAt = domainSpeed.data?.speedProbedAt
+      ? new Date(domainSpeed.data.speedProbedAt).getTime()
+      : 0;
+    if (probedAt > probeStartedAt || Date.now() - probeStartedAt > 180_000)
+      setProbeStartedAt(null);
+  }, [domainSpeed.data?.speedProbedAt, probeStartedAt]);
+
+  const handleProbeNow = async () => {
+    try {
+      const { queued } = await probeSpeed.mutateAsync({ domainId });
+      if (queued === 0)
+        throw new Error("Nothing was queued — is SPEED_PROBE_REGIONS set?");
+      setProbeStartedAt(Date.now());
+    } catch (err: any) {
+      Swal.fire("Error!", err.message?.toString(), "error");
+    }
+  };
 
   const domainName = getDomain.data?.domain.name ?? "";
   const landingPagesList = domainData?.landingPages ?? [];
@@ -313,6 +346,12 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           domain={getDomain.data?.domain}
           isLoading={isLoading}
           onUpdateSeoScore={handleUpdateSeoScore}
+        />
+        <SpeedByRegionSection
+          latest={domainSpeed.data?.latest ?? []}
+          isLoading={domainSpeed.isLoading}
+          isProbing={probeSpeed.isPending || probeStartedAt !== null}
+          onProbeNow={handleProbeNow}
         />
         <LandingPagesSection
           landingPages={landingPagesList}
