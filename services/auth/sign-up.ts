@@ -1,45 +1,45 @@
 import axios from "axios";
-import Error from "next/error";
 
-interface ResponseSignUpService {
-  access_token: string;
-  user: {
-    id: string;
-    createAt: string;
-    updateAt: string;
-    email: string;
-    name: string;
-    image: string; // Assuming this is a base64-encoded image string
-    provider: string;
-    role: string;
-    isDeleted: boolean;
-    resetToken: string | null;
-    resetTokenExpiresAt: string | null;
-    IsResetPassword: boolean;
-  };
-}
-interface InputSignUpService {
+export interface RequestSignUpCodeInput {
+  name: string;
   email: string;
   password: string;
-  name: string;
   confirmPassword: string;
+  turnstileToken: string;
 }
-export async function SignUpService(
-  input: InputSignUpService,
-): Promise<ResponseSignUpService> {
+
+export interface VerifySignUpCodeInput {
+  email: string;
+  code: string;
+}
+
+const headers = { "Content-Type": "application/json" };
+
+export async function requestSignUpCode(
+  input: RequestSignUpCodeInput,
+): Promise<void> {
   try {
-    const signUp = await axios.post(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/sign-up`,
-      {
-        ...input,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/sign-up/request-code`,
+      input,
+      { headers },
     );
-    return signUp.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function verifySignUpCode(
+  input: VerifySignUpCodeInput,
+): Promise<{ ok: true }> {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/sign-up/verify-code`,
+      input,
+      { headers },
+    );
+    return res.data;
   } catch (err: any) {
     console.log(err);
     throw err.response.data;
