@@ -88,7 +88,7 @@ vi.mock("../../services/auth/sign-up", () => ({
   verifySignUpCode: mocks.verifySignUpCode,
 }));
 
-import SignUp from "./sign-up";
+import SignUp from "../../pages/auth/sign-up";
 
 const act = (
   React as unknown as {
