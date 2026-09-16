@@ -2,8 +2,10 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 import {
   Domain,
+  DomainListSort,
   LandingPage,
   Partner,
+  ResponseGetDomainSpeed,
   ResponsibilityOnPartner,
   SiteBuild,
 } from "../../models";
@@ -53,6 +55,7 @@ export interface InputGetAllDomainsByPage {
   searchField?: string;
   partnerId?: string;
   filter?: "all" | "no-partner" | "no-landing-page";
+  sort?: DomainListSort;
 }
 
 export async function GetAllDomainsByPage(
@@ -438,6 +441,47 @@ export async function DeleteGscSitemapService(
           Authorization: "Bearer " + access_token,
         },
       },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export interface InputGetDomainSpeedService {
+  domainId: string;
+}
+export async function GetDomainSpeedService(
+  input: InputGetDomainSpeedService,
+): Promise<ResponseGetDomainSpeed> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/speed`,
+      { headers: { Authorization: "Bearer " + access_token } },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export interface InputProbeDomainSpeedService {
+  domainId: string;
+}
+export async function ProbeDomainSpeedService(
+  input: InputProbeDomainSpeedService,
+): Promise<{ queued: number }> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.patch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/speed`,
+      {},
+      { headers: { Authorization: "Bearer " + access_token } },
     );
     return response.data;
   } catch (err: any) {

@@ -14,11 +14,16 @@ import DomainCreate from "../../components/forms/domains/domainCreate";
 import { loadingNumber } from "../../data/loadingNumber";
 import DashboardLayout from "../../layouts/dashboardLayout";
 import {
+  DomainListSort,
   Partner,
   ResponsibilityOnPartner,
   SimCardOnPartner,
   User,
 } from "../../models";
+import {
+  nextDomainListSort,
+  parseDomainListSort,
+} from "../../components/domain/domainListSort";
 import { useGetDomainsByPage } from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { GetUser } from "../../services/admin/user";
@@ -50,6 +55,9 @@ function Index({ user }: { user: User & { partner: Partner } }) {
       : undefined;
   const [searchField, setSearchField] = useState<string>(initialSearch);
   const [page, setPage] = useState<number>(initialPage);
+  const [sort, setSort] = useState<DomainListSort | undefined>(
+    parseDomainListSort(router.query.sort),
+  );
   const [selectPartner, setSelectPartner] = useState<Partner>();
   const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
@@ -67,7 +75,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           : selectPartner?.id === "all"
             ? "all"
             : undefined,
+    sort: sort,
   });
+
+  const handleToggleLoadSort = () => {
+    setSort((current) => nextDomainListSort(current));
+    setPage(1);
+  };
 
   useEffect(() => {
     if (domains.data) {
@@ -82,12 +96,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
     if (focusDomainId) query.domainId = focusDomainId;
     if (searchField) query.search = searchField;
     if (page > 1) query.page = String(page);
+    if (sort) query.sort = sort;
     if (selectPartner?.id) query.partnerId = selectPartner.id;
     router.replace({ pathname: "/domain", query }, undefined, {
       shallow: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchField, page, selectPartner?.id, focusDomainId]);
+  }, [searchField, page, sort, selectPartner?.id, focusDomainId]);
 
   const partners = useQuery({
     queryKey: ["partners-by-manager"],
@@ -318,6 +333,22 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   <td>Partners</td>
                   <td>Landing Pages</td>
                   <td>Average SEO Score</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={handleToggleLoadSort}
+                      className="flex items-center gap-1 hover:underline"
+                      title="Sort by worst load time across regions"
+                    >
+                      Worst load
+                      {sort === "load-desc" && (
+                        <span aria-label="slowest first">▼</span>
+                      )}
+                      {sort === "load-asc" && (
+                        <span aria-label="fastest first">▲</span>
+                      )}
+                    </button>
+                  </td>
                 </tr>
               </thead>
               <tbody className="">

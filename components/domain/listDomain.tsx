@@ -27,6 +27,7 @@ import {
 import { SiGooglemaps } from "react-icons/si";
 import Swal from "sweetalert2";
 import { useUpdateSitemap, useVerifyDomain } from "../../react-query";
+import { formatSeconds, loadColorClass } from "./speedFormat";
 
 type Props = {
   list: Domain & {
@@ -282,6 +283,21 @@ function ListDomain({ list, domains, user }: Props) {
           >
             {averageSEOMobile.toFixed(1)}
           </div>
+        </div>
+      </td>
+      <td className="px-2">
+        <div className="flex items-center gap-2">
+          <span className={`inline-block min-w-16 rounded border px-2 py-1 text-center text-sm font-bold shadow-sm ${loadColorClass(list.worstLoadMs)}`}>
+            {formatSeconds(list.worstLoadMs)}
+          </span>
+          {(list.speedFailedRegions ?? 0) > 0 && (
+            <span
+              title={`${list.speedFailedRegions} region(s) failed`}
+              className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white"
+            >
+              {list.speedFailedRegions}
+            </span>
+          )}
         </div>
       </td>
     </tr>
