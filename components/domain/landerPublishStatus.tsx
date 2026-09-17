@@ -47,12 +47,16 @@ export default function LanderPublishStatus({
 
   const requestedAt = data?.requestedAt ? new Date(data.requestedAt).getTime() : 0;
   const publishedAt = data?.publishedAt ? new Date(data.publishedAt).getTime() : 0;
-  // A terminal status from an older run is still "in progress" for a newer request.
-  const inProgress = !!data && (!TERMINAL.includes(data.status) || requestedAt > publishedAt);
+  // A successful status from an older run is still "in progress" for a newer request.
+  // Failures never write publishedAt, so they are always shown as-is.
+  const staleSuccess =
+    (data?.status === "live" || data?.status === "published_unverified") && requestedAt > publishedAt;
+  const inProgress = !!data && (!TERMINAL.includes(data.status) || staleSuccess);
 
   useEffect(() => {
     if (!watchSince) return;
-    const settled = !!data && TERMINAL.includes(data.status) && publishedAt >= watchSince;
+    const settled =
+      !!data && TERMINAL.includes(data.status) && (data.status === "failed" || publishedAt >= watchSince);
     if (settled || Date.now() - watchSince > WATCH_LIMIT_MS) onSettled();
   }, [data, publishedAt, watchSince, onSettled]);
 
