@@ -20,6 +20,7 @@ import {
   InputVerifyDomainOnGoogleService,
   InspectDomainUrlService,
   ProbeDomainSpeedService,
+  RunSpeedSweepService,
   SummitSitemapDomainService,
   UpdateSeoScoreService,
   VerifyDomainOnGoogleService,
@@ -177,5 +178,12 @@ export function useProbeDomainSpeed() {
   return useMutation({
     mutationKey: ["domain", "speed", "probe"],
     mutationFn: (request: InputProbeDomainSpeedService) => ProbeDomainSpeedService(request),
+  });
+}
+
+export function useRunSpeedSweep() {
+  return useMutation({
+    mutationKey: ["domain", "speed", "sweep"],
+    mutationFn: () => RunSpeedSweepService(),
   });
 }

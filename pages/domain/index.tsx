@@ -8,6 +8,7 @@ import { Input, SearchField } from "react-aria-components";
 import { IoMdPerson } from "react-icons/io";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 import ListDomain from "../../components/domain/listDomain";
 import DomainLinkAudit from "../../components/domain/domainLinkAudit";
 import DomainCreate from "../../components/forms/domains/domainCreate";
@@ -24,7 +25,7 @@ import {
   nextDomainListSort,
   parseDomainListSort,
 } from "../../components/domain/domainListSort";
-import { useGetDomainsByPage } from "../../react-query";
+import { useGetDomainsByPage, useRunSpeedSweep } from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { GetUser } from "../../services/admin/user";
 import SpinLoading from "../../components/loadings/spinLoading";
@@ -62,6 +63,31 @@ function Index({ user }: { user: User & { partner: Partner } }) {
   const [totalPage, setTotalPage] = useState(1);
   const [triggerCreateDomain, setTriggerCreateDomain] =
     useState<boolean>(false);
+
+  const runSpeedSweep = useRunSpeedSweep();
+
+  // Same job the 3AM cron enqueues: every landing-page domain in every
+  // region. Keyed by UTC date, so clicking during a running sweep adds nothing.
+  const handleRunSpeedSweep = async () => {
+    const confirm = await Swal.fire({
+      title: "Probe all domains?",
+      text: "Queues a full speed sweep (every domain × every region). Results arrive over the next hour or so.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Run sweep",
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      const { enqueued, sweep } = await runSpeedSweep.mutateAsync();
+      Swal.fire(
+        "Sweep queued",
+        `${enqueued.toLocaleString()} probes queued for sweep ${sweep}.`,
+        "success",
+      );
+    } catch (err: any) {
+      Swal.fire("Error!", err.message?.toString(), "error");
+    }
+  };
 
   const domains = useGetDomainsByPage({
     page: page,
@@ -260,6 +286,16 @@ function Index({ user }: { user: User & { partner: Partner } }) {
     active:scale-105"
             >
               Create
+            </button>
+          )}
+          {user.role === "admin" && (
+            <button
+              type="button"
+              disabled={runSpeedSweep.isPending}
+              onClick={handleRunSpeedSweep}
+              className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
+            >
+              {runSpeedSweep.isPending ? "Queuing…" : "Probe all domains"}
             </button>
           )}
           <div className="flex w-full flex-wrap justify-center gap-5">
