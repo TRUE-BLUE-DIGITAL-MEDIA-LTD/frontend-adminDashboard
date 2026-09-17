@@ -42,6 +42,13 @@ export interface RegionLatest {
   probedAt: string | null;
 }
 
+/** POST /admin/domain/speed/sweep — same as the 3AM cron, on demand. */
+export interface ResponseRunSpeedSweep {
+  sweep: string;
+  enqueued: number;
+  deleted: number;
+}
+
 export interface ResponseGetDomainSpeed {
   latest: RegionLatest[];
   history: { region: string; points: { probedAt: string; loadMs: number | null }[] }[];

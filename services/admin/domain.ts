@@ -6,6 +6,7 @@ import {
   LandingPage,
   Partner,
   ResponseGetDomainSpeed,
+  ResponseRunSpeedSweep,
   ResponsibilityOnPartner,
   SiteBuild,
 } from "../../models";
@@ -460,6 +461,23 @@ export async function GetDomainSpeedService(
     const access_token = cookies.access_token;
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/speed`,
+      { headers: { Authorization: "Bearer " + access_token } },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+/** Admin only: enqueue the full daily speed sweep (every domain, every region) now. */
+export async function RunSpeedSweepService(): Promise<ResponseRunSpeedSweep> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/speed/sweep`,
+      {},
       { headers: { Authorization: "Bearer " + access_token } },
     );
     return response.data;
