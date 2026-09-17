@@ -6,6 +6,7 @@ import {
   LandingPage,
   Partner,
   ResponseGetDomainSpeed,
+  ResponseLanderPublish,
   ResponseRunSpeedSweep,
   ResponsibilityOnPartner,
   SiteBuild,
@@ -477,6 +478,61 @@ export async function RunSpeedSweepService(): Promise<ResponseRunSpeedSweep> {
     const access_token = cookies.access_token;
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/speed/sweep`,
+      {},
+      { headers: { Authorization: "Bearer " + access_token } },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export interface InputLanderPublishService {
+  domainId: string;
+}
+export async function GetLanderPublishService(
+  input: InputLanderPublishService,
+): Promise<ResponseLanderPublish> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/lander-publish`,
+      { headers: { Authorization: "Bearer " + access_token } },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+export async function RequestLanderPublishService(
+  input: InputLanderPublishService,
+): Promise<{ queued: true }> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/${input.domainId}/lander-publish`,
+      {},
+      { headers: { Authorization: "Bearer " + access_token } },
+    );
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    throw err.response.data;
+  }
+}
+
+/** Admin only: republish every domain's landers (backfill / recovery). */
+export async function RepublishAllLandersService(): Promise<{ enqueued: number }> {
+  try {
+    const cookies = parseCookies();
+    const access_token = cookies.access_token;
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/lander-publish/all`,
       {},
       { headers: { Authorization: "Bearer " + access_token } },
     );
