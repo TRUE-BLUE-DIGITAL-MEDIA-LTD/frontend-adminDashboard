@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import DomainSettingsSection from "../../components/domain/domainSettingsSection";
 import GscTabs from "../../components/domain/gsc/gscTabs";
 import LandingPagesSection from "../../components/domain/landingPagesSection";
+import LanderPublishStatus from "../../components/domain/landerPublishStatus";
 import SeoPerformanceSection from "../../components/domain/seoPerformanceSection";
 import SpeedByRegionSection from "../../components/domain/speedByRegionSection";
 import VerifyDomain from "../../components/domain/verifyDomain";
@@ -56,6 +57,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
   const enableMail = useEnableMail();
 
   const [probeStartedAt, setProbeStartedAt] = useState<number | null>(null);
+  const [publishWatchSince, setPublishWatchSince] = useState<number | null>(null);
   const domainSpeed = useGetDomainSpeed(
     domainId,
     probeStartedAt ? 10_000 : undefined,
@@ -121,6 +123,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           googleAnalyticsId: domainData?.googleAnalyticsId,
         }),
       });
+      setPublishWatchSince(Date.now());
       await getDomain.refetch();
       Swal.fire("Success", "Domain updated successfully", "success");
       setIsLoading(() => false);
@@ -168,6 +171,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           await RemoveDomainNameFromLandingPageService({
             landingPageId: landingPageId,
           });
+          setPublishWatchSince(Date.now());
           await getDomain.refetch();
           Swal.fire(
             "Deleted!",
@@ -360,6 +364,13 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           totalPercent={totalPercent}
           distributionValid={distributionValid}
         />
+        {domainId && (
+          <LanderPublishStatus
+            domainId={domainId}
+            watchSince={publishWatchSince}
+            onSettled={() => setPublishWatchSince(null)}
+          />
+        )}
 
         {domainId && domainName && (
           <GscTabs
