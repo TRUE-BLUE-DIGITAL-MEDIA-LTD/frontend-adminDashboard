@@ -53,12 +53,17 @@ export default function LanderPublishStatus({
     (data?.status === "live" || data?.status === "published_unverified") && requestedAt > publishedAt;
   const inProgress = !!data && (!TERMINAL.includes(data.status) || staleSuccess);
 
+  // Failures never write publishedAt, so a `failed` row only counts once it was
+  // fetched after the save (a stale, cached failure must not end the watch).
+  const fetchedAt = publish.dataUpdatedAt;
   useEffect(() => {
     if (!watchSince) return;
     const settled =
-      !!data && TERMINAL.includes(data.status) && (data.status === "failed" || publishedAt >= watchSince);
+      !!data &&
+      TERMINAL.includes(data.status) &&
+      (data.status === "failed" ? fetchedAt >= watchSince : publishedAt >= watchSince);
     if (settled || Date.now() - watchSince > WATCH_LIMIT_MS) onSettled();
-  }, [data, publishedAt, watchSince, onSettled]);
+  }, [data, publishedAt, fetchedAt, watchSince, onSettled]);
 
   if (!data || !data.status) return null;
   const shown = inProgress && data.status !== "queued" && data.status !== "publishing"
