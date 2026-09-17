@@ -49,6 +49,22 @@ export interface ResponseRunSpeedSweep {
   deleted: number;
 }
 
+export type LanderPublishStatus =
+  | "queued"
+  | "publishing"
+  | "live"
+  | "published_unverified"
+  | "failed";
+
+/** GET /admin/domain/:id/lander-publish */
+export interface ResponseLanderPublish {
+  status: LanderPublishStatus | null;
+  version: string | null;
+  publishedAt: string | null;
+  requestedAt: string | null;
+  error: string | null;
+}
+
 export interface ResponseGetDomainSpeed {
   latest: RegionLatest[];
   history: { region: string; points: { probedAt: string; loadMs: number | null }[] }[];

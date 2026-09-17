@@ -10,16 +10,20 @@ import {
   GetDomainGscSitemapsService,
   GetDomainSearchAnalyticsService,
   GetDomainSpeedService,
+  GetLanderPublishService,
   InputDeleteGscSitemapService,
   InputGetAllDomainsByPage,
   InputGetDomainSearchAnalyticsService,
   InputInspectDomainUrlService,
+  InputLanderPublishService,
   InputProbeDomainSpeedService,
   InputSummitSitemapDomainService,
   InputUpdateSeoScoreService,
   InputVerifyDomainOnGoogleService,
   InspectDomainUrlService,
   ProbeDomainSpeedService,
+  RepublishAllLandersService,
+  RequestLanderPublishService,
   RunSpeedSweepService,
   SummitSitemapDomainService,
   UpdateSeoScoreService,
@@ -185,5 +189,28 @@ export function useRunSpeedSweep() {
   return useMutation({
     mutationKey: ["domain", "speed", "sweep"],
     mutationFn: () => RunSpeedSweepService(),
+  });
+}
+
+export function useLanderPublish(domainId: string, refetchIntervalMs?: number) {
+  return useQuery({
+    queryKey: ["domain", "lander-publish", domainId],
+    queryFn: () => GetLanderPublishService({ domainId }),
+    enabled: domainId !== "",
+    refetchInterval: refetchIntervalMs,
+  });
+}
+
+export function useRequestLanderPublish() {
+  return useMutation({
+    mutationKey: ["domain", "lander-publish", "request"],
+    mutationFn: (request: InputLanderPublishService) => RequestLanderPublishService(request),
+  });
+}
+
+export function useRepublishAllLanders() {
+  return useMutation({
+    mutationKey: ["domain", "lander-publish", "all"],
+    mutationFn: () => RepublishAllLandersService(),
   });
 }

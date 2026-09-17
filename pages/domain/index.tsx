@@ -25,7 +25,11 @@ import {
   nextDomainListSort,
   parseDomainListSort,
 } from "../../components/domain/domainListSort";
-import { useGetDomainsByPage, useRunSpeedSweep } from "../../react-query";
+import {
+  useGetDomainsByPage,
+  useRepublishAllLanders,
+  useRunSpeedSweep,
+} from "../../react-query";
 import { GetPartnerByMangegerService } from "../../services/admin/partner";
 import { GetUser } from "../../services/admin/user";
 import SpinLoading from "../../components/loadings/spinLoading";
@@ -82,6 +86,30 @@ function Index({ user }: { user: User & { partner: Partner } }) {
       Swal.fire(
         "Sweep queued",
         `${enqueued.toLocaleString()} probes queued for sweep ${sweep}.`,
+        "success",
+      );
+    } catch (err: any) {
+      Swal.fire("Error!", err.message?.toString(), "error");
+    }
+  };
+
+  const republishAll = useRepublishAllLanders();
+
+  // Backfill / recovery: rebuild every domain's lander blob on Netlify.
+  const handleRepublishAll = async () => {
+    const confirm = await Swal.fire({
+      title: "Republish all landers?",
+      text: "Rebuilds every domain's lander blob on Netlify. Sites keep serving while this runs.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Republish",
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      const { enqueued } = await republishAll.mutateAsync();
+      Swal.fire(
+        "Republish queued",
+        `${enqueued.toLocaleString()} domains queued.`,
         "success",
       );
     } catch (err: any) {
@@ -289,14 +317,24 @@ function Index({ user }: { user: User & { partner: Partner } }) {
             </button>
           )}
           {user.role === "admin" && (
-            <button
-              type="button"
-              disabled={runSpeedSweep.isPending}
-              onClick={handleRunSpeedSweep}
-              className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
-            >
-              {runSpeedSweep.isPending ? "Queuing…" : "Probe all domains"}
-            </button>
+            <>
+              <button
+                type="button"
+                disabled={runSpeedSweep.isPending}
+                onClick={handleRunSpeedSweep}
+                className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
+              >
+                {runSpeedSweep.isPending ? "Queuing…" : "Probe all domains"}
+              </button>
+              <button
+                type="button"
+                disabled={republishAll.isPending}
+                onClick={handleRepublishAll}
+                className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
+              >
+                {republishAll.isPending ? "Queuing…" : "Republish all landers"}
+              </button>
+            </>
           )}
           <div className="flex w-full flex-wrap justify-center gap-5">
             <div className="flex flex-col items-start gap-1">

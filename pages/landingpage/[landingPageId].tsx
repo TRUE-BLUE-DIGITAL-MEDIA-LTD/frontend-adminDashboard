@@ -40,6 +40,7 @@ import { Dropdown } from "primereact/dropdown";
 import { OxyEditor, type OxyEditorRef } from "@/editor";
 import { MdDomainVerification } from "react-icons/md";
 import SpinLoading from "../../components/loadings/spinLoading";
+import LanderPublishStatus from "../../components/domain/landerPublishStatus";
 import { GetAllCategories } from "../../services/admin/categories";
 import AiDesign from "../../components/common/AiDesign";
 import { TranslateAllDialog } from "@/editor/react/TranslateAllDialog";
@@ -115,6 +116,7 @@ function Index({ user }: { user: User }) {
   // saved data — lets the user verify what landed in the DB without reloading
   // the whole page.
   const [editorReloadKey, setEditorReloadKey] = useState(0);
+  const [publishWatchSince, setPublishWatchSince] = useState<number | null>(null);
   const [landingPageData, setLandingPageData] = useState<UpdateLandingPageData>(
     {
       name: "",
@@ -237,6 +239,7 @@ function Index({ user }: { user: User }) {
           translations: landingPageData.translations,
         },
       });
+      setPublishWatchSince(Date.now());
       setMessage(() => {
         return {
           status: "success",
@@ -831,6 +834,15 @@ function Index({ user }: { user: User }) {
             </div>
           </div>
         </div>
+        {landingPageData.domainId && (
+          <div className="flex w-full justify-center pb-4">
+            <LanderPublishStatus
+              domainId={landingPageData.domainId}
+              watchSince={publishWatchSince}
+              onSettled={() => setPublishWatchSince(null)}
+            />
+          </div>
+        )}
         <div className="flex w-full justify-center pb-10">
           <button
             disabled={isLoading}
