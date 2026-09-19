@@ -1,9 +1,14 @@
+import React, { useState } from "react";
 import moment from "moment";
-import { useState } from "react";
 import { useGetHistorySmsBulkEmail } from "../../react-query";
 import EmailHtmlModal from "./EmailHtmlModal";
 
-function EmailHistory() {
+type Props = {
+  /** Re-open a finished address for another OTP; only rows that got an OTP qualify. */
+  onReorder: (id: string) => void;
+};
+
+function EmailHistory({ onReorder }: Props) {
   const [page, setPage] = useState(1);
   const [viewHtml, setViewHtml] = useState<string | null>(null);
   const history = useGetHistorySmsBulkEmail({ page, limit: 50 });
@@ -40,7 +45,7 @@ function EmailHistory() {
                   <div className="flex items-center justify-center px-2 text-xs">{email.site}</div>
                 </td>
                 <td>
-                  <div className="flex w-48 items-center justify-center gap-2 text-center">
+                  <div className="flex w-64 items-center justify-center gap-2 text-center">
                     {email.isGetSms ? (
                       <>
                         <div className="rounded-md bg-green-200 px-2 py-1 text-sm text-green-600">
@@ -54,6 +59,13 @@ function EmailHistory() {
                             view
                           </button>
                         )}
+                        <button
+                          onClick={() => onReorder(email.id)}
+                          title="Re-open this address for another OTP (charged again)"
+                          className="rounded bg-blue-100 px-2 text-xs font-semibold text-blue-700 hover:bg-blue-200"
+                        >
+                          Reorder
+                        </button>
                       </>
                     ) : (
                       <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">NO OTP</div>

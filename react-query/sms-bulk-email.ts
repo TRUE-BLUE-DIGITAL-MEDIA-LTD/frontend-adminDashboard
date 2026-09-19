@@ -59,6 +59,8 @@ export function useReorderSmsBulkEmail() {
       ReorderSmsBulkEmailService(request),
     onSuccess() {
       queryClient.refetchQueries({ queryKey: userKeys.get });
+      // A reorder from History moves the address back to Active.
+      queryClient.refetchQueries({ queryKey: [keys.item[0], "history"] });
     },
   });
 }
