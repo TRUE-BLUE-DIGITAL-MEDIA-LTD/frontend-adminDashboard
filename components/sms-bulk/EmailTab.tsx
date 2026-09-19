@@ -93,7 +93,7 @@ function EmailTab({ user }: SmsBulkProps) {
       </section>
       <section className="flex w-full flex-col items-center justify-center gap-5">
         <SelectEmailDomain activeEmails={activeEmails} />
-        <EmailHistory />
+        <EmailHistory onReorder={handleReorder} />
       </section>
     </>
   );
