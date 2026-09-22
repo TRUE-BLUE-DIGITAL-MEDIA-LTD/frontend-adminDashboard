@@ -112,25 +112,28 @@ function Index({ user }: Props) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="min-h-screen bg-gray-100 p-8 font-sans">
+      <div className="min-h-screen bg-black p-6 font-Poppins text-white sm:p-8">
         <div className="mx-auto max-w-4xl">
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+                Billing
+              </p>
+              <h1 className="mt-1 text-3xl font-bold text-white">
                 Add Money to Wallet
               </h1>
-              <p className="mt-1 text-gray-600">
+              <p className="mt-1 text-white/60">
                 Choose your preferred amount and payment method
               </p>
             </div>
-            <div className="flex items-center space-x-3 rounded-xl bg-white p-4 shadow-md">
-              <div className="rounded-full bg-blue-100 p-2">
-                <FaWallet className="text-xl text-blue-600" />
+            <div className="flex items-center space-x-3 rounded-2xl border border-white/10 bg-zinc-900/5 p-4">
+              <div className="rounded-full border border-white/20 bg-black p-2">
+                <FaWallet className="text-xl text-main-color" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Current Balance</p>
-                <p className="text-lg font-bold text-gray-800">
+                <p className="text-sm text-white/50">Current Balance</p>
+                <p className="text-lg font-bold text-white">
                   {current_money}
                 </p>
               </div>
@@ -138,8 +141,8 @@ function Index({ user }: Props) {
           </div>
 
           {/* Quick Amount Selection */}
-          <div className="mb-2 rounded-xl bg-white p-6 shadow-md">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <div className="mb-2 rounded-2xl border border-white/10 bg-zinc-900 p-6 text-zinc-100 shadow-none">
+            <h2 className="mb-4 text-xl font-semibold text-zinc-100">
               Quick Amount Selection
             </h2>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
@@ -147,18 +150,18 @@ function Index({ user }: Props) {
                 <button
                   key={item.amount}
                   className={`flex flex-col items-center justify-center rounded-lg border-2 p-4 transition-all duration-200
-                  ${selectedAmount === item.amount ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-200 bg-white hover:border-blue-300"}`}
+                  ${selectedAmount === item.amount ? "border-main-color bg-white/10 text-main-color" : "border-white/10 bg-white hover:border-main-color/50"}`}
                   onClick={() => setSelectedAmount(item.amount)}
                 >
                   <span className="text-lg font-bold">${item.amount}</span>
-                  <span className="mt-1 text-xs text-gray-500">
+                  <span className="mt-1 text-xs text-zinc-400">
                     {item.label}
                   </span>
                 </button>
               ))}
               <button
                 className={`flex flex-col items-center justify-center rounded-lg border-2 p-4 transition-all duration-200
-                ${selectedAmount === "custom" ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-200 bg-white hover:border-blue-300"}`}
+                ${selectedAmount === "custom" ? "border-main-color bg-white/10 text-main-color" : "border-white/10 bg-white hover:border-main-color/50"}`}
                 onClick={() => setSelectedAmount("custom")}
               >
                 <FaEdit className="mb-1 text-xl" />
@@ -169,12 +172,12 @@ function Index({ user }: Props) {
 
           {/* Enter Custom Amount */}
           {selectedAmount === "custom" && (
-            <div className="mb-2 rounded-xl bg-white  p-6 shadow-md">
-              <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            <div className="mb-2 rounded-2xl border border-white/10 bg-zinc-900 p-6 text-zinc-100 shadow-none">
+              <h2 className="mb-4 text-xl font-semibold text-zinc-100">
                 Enter Custom Amount
               </h2>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-medium text-gray-500">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-medium text-zinc-400">
                   $
                 </span>
                 <input
@@ -184,10 +187,10 @@ function Index({ user }: Props) {
                   min="1"
                   max="10000"
                   placeholder="0.00"
-                  className="w-full rounded-lg border border-gray-300 py-3 pl-8 pr-4 text-lg font-medium focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-full border border-slate-300 py-3 pl-8 pr-4 text-lg font-medium focus:border-transparent focus:outline-none focus:ring-2 focus:ring-main-color"
                 />
               </div>
-              <div className="mt-2 flex justify-between text-sm text-gray-500">
+              <div className="mt-2 flex justify-between text-sm text-zinc-400">
                 <span>Minimum: $1.00</span>
                 <span>Maximum: $10,000.00</span>
               </div>
@@ -198,7 +201,7 @@ function Index({ user }: Props) {
             <button
               disabled={checkout.isPending}
               onClick={handleTopup}
-              className="mb-8 flex w-60 items-center justify-center gap-2 rounded-xl bg-white p-2 px-4 font-semibold text-icon-color shadow-md hover:bg-icon-color hover:text-white active:scale-105"
+              className="mb-8 flex w-60 items-center justify-center gap-2 rounded-full border border-white bg-white p-2 px-4 font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-105"
             >
               <BsPlusCircleFill className="text-xl" />
               {checkout.isPending ? "..Loading" : "Topup Money"}
@@ -206,7 +209,7 @@ function Index({ user }: Props) {
             <button
               disabled={refund.isPending}
               onClick={handleRefund}
-              className="mb-8 flex w-60 items-center justify-center gap-2 rounded-xl bg-red-400 p-2 px-4 font-semibold text-white shadow-md hover:bg-red-600 hover:text-white active:scale-105"
+              className="mb-8 flex w-60 items-center justify-center gap-2 rounded-full border border-rose-400 bg-rose-500/90 p-2 px-4 font-semibold text-white transition hover:bg-rose-600 active:scale-105"
             >
               <RiRefundFill className="text-xl" />
               {refund.isPending ? "..Loading" : "Refund Money"}

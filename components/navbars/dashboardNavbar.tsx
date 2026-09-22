@@ -44,25 +44,22 @@ function DashboardNavbar({
     });
   };
   return (
-    <nav
-      className=" sticky top-0  z-50 flex  h-16 w-full items-center justify-between bg-gray-800
-    pl-5 font-Poppins drop-shadow-md "
-    >
-      <div className="  flex items-center justify-center gap-2 ">
+    <nav className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-white/10 bg-black pl-4 font-Poppins md:h-16 md:pl-5">
+      <div className="flex items-center justify-center gap-2">
         <button
           onClick={() => {
             setTriggerSidebar((prev) => {
               return !prev;
             });
           }}
-          className=" flex items-center justify-center text-4xl text-white"
+          className="flex items-center justify-center text-3xl text-white transition hover:text-main-color md:text-4xl"
         >
           <IoMenu invaild-click-outside="true" />
         </button>
 
         <Link
           href="/"
-          className="relative ml-2 hidden h-10 w-20 overflow-hidden rounded-lg bg-white md:block md:w-40 "
+          className="relative ml-2 hidden h-9 w-20 overflow-hidden rounded-full bg-white md:block md:h-10 md:w-40"
         >
           <Image
             src="/faviconFull.png"
@@ -76,56 +73,15 @@ function DashboardNavbar({
         <ImpersonateNavBar impersonateUser={impersonateUser} />
       )}
 
-      <ul className="relative flex h-16 w-max items-center justify-end gap-2 pr-2 text-sm font-semibold md:gap-5 lg:gap-10">
-        <select
-          value={timezone}
-          onChange={(e) => setTimezone(e.target.value)}
-          className="h-10 w-40 rounded-lg border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
-        >
-          {timezones.map((tz) => (
-            <option key={tz} value={tz}>
-              {tz}
-            </option>
-          ))}
-        </select>
-        {user.data?.partner.isShowWallet && (
-          <Link
-            href={"/account-billing"}
-            className="group flex h-10 w-max items-center justify-center gap-3 rounded-lg bg-white px-4 py-1 text-icon-color transition-all hover:bg-icon-color hover:text-white  active:scale-105"
-          >
-            <div className="rounded-full bg-blue-100 p-2">
-              <FaWallet className="text-lg text-blue-600" />
-            </div>
-            <div className="relative hidden flex-col md:flex">
-              <span className="text relative -bottom-1 text-[1.2rem] font-semibold text-black group-hover:text-white">
-                {holdingPoints !== 0 && (
-                  <>
-                    <span className="text-sm text-gray-500 group-hover:text-white">
-                      {(holdingPoints / 100).toFixed(2)}
-                    </span>{" "}
-                    <span className="text-sm">/</span>{" "}
-                  </>
-                )}
-                {(points / 100).toFixed(2)} $
-              </span>
-              <span className="text-[10px]  font-normal">
-                Available Balance
-              </span>
-            </div>
-            <BsPlusCircleFill className="hidden text-xl md:block" />
-          </Link>
-        )}
-
+      <ul className="relative flex h-full w-max items-center justify-end gap-2 pr-2 text-sm font-semibold">
         <li
           onMouseEnter={() => setTriggerAccountMenu(() => true)}
           onMouseLeave={() => setTriggerAccountMenu(() => false)}
-          className={`
-          relative flex cursor-pointer select-none flex-col
-      items-center justify-center gap-2 rounded-lg bg-gray-800 p-2 transition duration-100 `}
+          className="relative flex cursor-pointer select-none flex-col items-center justify-center gap-2 rounded-full bg-black p-1.5 transition duration-100 hover:bg-white/5 md:p-2"
         >
           {user && (
             <div className="flex w-max items-center justify-center gap-2">
-              <div className="relative h-10 w-10 overflow-hidden rounded-full bg-slate-300">
+              <div className="relative h-9 w-9 overflow-hidden rounded-full border border-white/20 bg-slate-300 md:h-10 md:w-10">
                 <Image
                   src={user.data?.image ?? ""}
                   fill
@@ -144,32 +100,83 @@ function DashboardNavbar({
           )}
 
           {triggerAccountMenu && (
-            <ul className="absolute right-0 top-14 z-50 flex w-40 flex-col items-start justify-center gap-2 rounded-b-lg bg-gray-800 p-2 text-white ">
-              <Link
-                href={"/account-history"}
-                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
-              >
-                account history
-              </Link>
-              <Link
-                href={"/account-setting"}
-                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
-              >
-                account settings
-              </Link>
-              <Link
-                href={"/account/devices"}
-                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
-              >
-                Trusted Devices
-              </Link>
-              <li
-                onClick={signOut}
-                className="w-full rounded-md p-2 hover:bg-gray-700 hover:font-bold"
-              >
-                Sign Out
-              </li>
-            </ul>
+            <div className="absolute right-0 top-12 z-50 flex w-64 flex-col gap-2 rounded-xl border border-white/10 bg-black p-3 text-white shadow-xl md:top-14 md:w-72">
+              {user.data?.partner.isShowWallet && (
+                <Link
+                  href={"/account-billing"}
+                  className="group flex w-full items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-3 py-2.5 transition hover:border-main-color hover:bg-main-color/10"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="rounded-full border border-white/20 bg-black p-2">
+                    <FaWallet className="text-base text-main-color" />
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="text-[10px] font-medium uppercase tracking-wide text-white/50">
+                      Wallet
+                    </span>
+                    <span className="truncate text-sm font-semibold text-white">
+                      {holdingPoints !== 0 && (
+                        <>
+                          <span className="text-white/50">
+                            {(holdingPoints / 100).toFixed(2)}
+                          </span>{" "}
+                          /{" "}
+                        </>
+                      )}
+                      {(points / 100).toFixed(2)} $
+                    </span>
+                  </div>
+                  <BsPlusCircleFill className="shrink-0 text-lg text-main-color" />
+                </Link>
+              )}
+
+              <label className="flex w-full flex-col gap-1.5 px-0.5">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-white/50">
+                  Timezone
+                </span>
+                <select
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="h-9 w-full rounded-lg border border-white/20 bg-black px-2.5 text-xs text-white focus:border-main-color focus:outline-none focus:ring-1 focus:ring-main-color"
+                >
+                  {timezones.map((tz) => (
+                    <option key={tz} value={tz} className="bg-black text-white">
+                      {tz}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="my-0.5 h-px w-full bg-white/10" />
+
+              <ul className="flex w-full flex-col gap-0.5 text-sm font-medium">
+                <Link
+                  href={"/account-history"}
+                  className="w-full rounded-lg px-2.5 py-2 capitalize transition hover:bg-white/10 hover:text-main-color"
+                >
+                  Account history
+                </Link>
+                <Link
+                  href={"/account-setting"}
+                  className="w-full rounded-lg px-2.5 py-2 capitalize transition hover:bg-white/10 hover:text-main-color"
+                >
+                  Account settings
+                </Link>
+                <Link
+                  href={"/account/devices"}
+                  className="w-full rounded-lg px-2.5 py-2 transition hover:bg-white/10 hover:text-main-color"
+                >
+                  Trusted Devices
+                </Link>
+                <li
+                  onClick={signOut}
+                  className="w-full rounded-lg px-2.5 py-2 transition hover:bg-white/10 hover:text-main-color"
+                >
+                  Sign Out
+                </li>
+              </ul>
+            </div>
           )}
         </li>
       </ul>

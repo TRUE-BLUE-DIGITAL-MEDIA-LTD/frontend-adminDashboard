@@ -81,19 +81,23 @@ function Index({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
       <Form
         onSubmit={handleUpdateUser}
-        className="mt-10 flex w-full flex-col items-center justify-start py-5"
+        className="mx-auto flex w-full max-w-7xl flex-col items-center justify-start px-4 py-10 sm:px-6 lg:px-8"
       >
-        <div className="flex w-80 flex-col items-start justify-start gap-5 rounded-md bg-gray-200 p-5 md:w-5/12">
-          <h1 className="text-4xl font-bold">Account Setting</h1>
-          <Label className="text-lg font-normal">
+        <div className="flex w-full max-w-lg flex-col items-start justify-start gap-5 rounded-2xl border border-white/10 bg-zinc-900 p-6 text-zinc-100 shadow-none sm:p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+            Profile
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-100">Account Setting</h1>
+          <Label className="text-base font-normal text-zinc-400">
             Update your account information
           </Label>
 
           <TextField
             isRequired
-            className="flex w-full flex-col items-start text-lg font-normal"
+            className="flex w-full flex-col items-start text-sm font-medium text-zinc-300"
           >
             Email
             <Input
@@ -102,13 +106,13 @@ function Index({ user }: { user: User }) {
               name="email"
               placeholder="type email"
               type="email"
-              className="w-full p-2"
+              className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 p-2.5 text-sm text-zinc-100 outline-none focus:border-main-color focus:ring-2 focus:ring-main-color/30"
             />
             <FieldError className="text-xs text-red-700" />
           </TextField>
           <TextField
             isRequired
-            className="flex w-full flex-col items-start text-lg font-normal"
+            className="flex w-full flex-col items-start text-sm font-medium text-zinc-300"
           >
             Name
             <Input
@@ -117,11 +121,11 @@ function Index({ user }: { user: User }) {
               name="name"
               placeholder="type name"
               type="text"
-              className="w-full p-2"
+              className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 p-2.5 text-sm text-zinc-100 outline-none focus:border-main-color focus:ring-2 focus:ring-main-color/30"
             />
             <FieldError className="text-xs text-red-700" />
           </TextField>
-          <TextField className="flex w-full flex-col items-start text-lg font-normal">
+          <TextField className="flex w-full flex-col items-start text-sm font-medium text-zinc-300">
             Old Password
             <Input
               value={updateUserData?.oldPassword}
@@ -129,11 +133,11 @@ function Index({ user }: { user: User }) {
               name="oldPassword"
               placeholder="type old password"
               type="password"
-              className="w-full p-2"
+              className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 p-2.5 text-sm text-zinc-100 outline-none focus:border-main-color focus:ring-2 focus:ring-main-color/30"
             />
             <FieldError className="text-xs text-red-700" />
           </TextField>
-          <TextField className="flex w-full flex-col items-start text-lg font-normal">
+          <TextField className="flex w-full flex-col items-start text-sm font-medium text-zinc-300">
             New Password
             <Input
               value={updateUserData?.newPassword}
@@ -141,12 +145,12 @@ function Index({ user }: { user: User }) {
               name="newPassword"
               placeholder="type new password"
               type="password"
-              className="w-full p-2"
+              className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 p-2.5 text-sm text-zinc-100 outline-none focus:border-main-color focus:ring-2 focus:ring-main-color/30"
             />
             <FieldError className="text-xs text-red-700" />
           </TextField>
           {updateUserData?.newPassword && (
-            <TextField className="flex w-full flex-col items-start text-lg font-normal">
+            <TextField className="flex w-full flex-col items-start text-sm font-medium text-zinc-300">
               Confirm Password
               <Input
                 value={updateUserData?.confirmPassword}
@@ -154,19 +158,20 @@ function Index({ user }: { user: User }) {
                 name="confirmPassword"
                 placeholder="type confirm password"
                 type="password"
-                className="w-full p-2"
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 p-2.5 text-sm text-zinc-100 outline-none focus:border-main-color focus:ring-2 focus:ring-main-color/30"
               />
               <FieldError className="text-xs text-red-700" />
             </TextField>
           )}
           <Button
-            className="w-full rounded-md bg-blue-400 p-2 font-semibold text-white transition duration-150 hover:bg-blue-600"
+            className="mt-2 w-full rounded-full bg-main-color p-2.5 font-semibold text-white transition hover:bg-[#0096c7]"
             type="submit"
           >
             Update
           </Button>
         </div>
       </Form>
+      </div>
     </DashboardLayout>
   );
 }

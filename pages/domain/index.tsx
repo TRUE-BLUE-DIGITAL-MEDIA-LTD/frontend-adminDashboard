@@ -295,11 +295,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         />
       )}
 
-      <div className="w-full">
-        <header className="mt-20 flex w-full flex-col items-center  justify-center gap-7 text-center">
-          <h1 className="font-Poppins text-4xl font-semibold md:text-5xl">
-            <span className="text-icon-color">D</span>
-            <span>omains</span>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+        <header className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 px-4 py-10 text-center sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+            Infrastructure
+          </p>
+          <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            <span className="text-main-color">D</span>omains
           </h1>
           {(user.role === "admin" ||
             (user.role === "manager" &&
@@ -309,9 +311,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 document.body.style.overflow = "hidden";
                 setTriggerCreateDomain(() => true);
               }}
-              className="rounded-full bg-main-color px-20 py-2 
-    text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 
-    active:scale-105"
+              className="rounded-full border border-white bg-white px-12 py-2.5 text-base font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-105"
             >
               Create
             </button>
@@ -322,7 +322,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 type="button"
                 disabled={runSpeedSweep.isPending}
                 onClick={handleRunSpeedSweep}
-                className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
+                className="rounded-full border border-white/40 bg-transparent px-8 py-2 text-sm font-semibold text-white transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
               >
                 {runSpeedSweep.isPending ? "Queuing…" : "Probe all domains"}
               </button>
@@ -330,7 +330,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 type="button"
                 disabled={republishAll.isPending}
                 onClick={handleRepublishAll}
-                className="rounded-full border-2 border-main-color px-8 py-2 text-base font-semibold text-main-color transition duration-150 hover:bg-main-color hover:text-white active:scale-105 disabled:opacity-50"
+                className="rounded-full border border-white/40 bg-transparent px-8 py-2 text-sm font-semibold text-white transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
               >
                 {republishAll.isPending ? "Queuing…" : "Republish all landers"}
               </button>
@@ -338,7 +338,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           )}
           <div className="flex w-full flex-wrap justify-center gap-5">
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal">Search Domain</label>
+              <label className="text-sm font-normal text-white/70">Search Domain</label>
               <SearchField
                 value={searchField}
                 onChange={(e) => {
@@ -349,13 +349,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
               >
                 <Input
                   placeholder="Search Domain Name Or Note"
-                  className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+                  className="h-10 w-full appearance-none rounded-full border border-white/15 bg-black/40 p-5 pl-10 text-sm text-zinc-100 outline-0 ring-2 ring-main-color/30 lg:w-full"
                 />
                 <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
               </SearchField>
             </div>
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal">Select Partner</label>
+              <label className="text-sm font-normal text-white/70">Select Partner</label>
               <Dropdown
                 value={selectPartner}
                 onChange={(e) => {
@@ -380,38 +380,39 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 loading={partners.isLoading}
                 options={partners.data ?? []}
                 placeholder="Select Partner"
-                className="h-10 w-96  rounded-lg text-left outline-0 ring-2 ring-icon-color "
+                className="h-10 w-96 rounded-full border border-white/15 bg-black/40 text-left text-sm text-zinc-100 outline-0 ring-2 ring-main-color/30"
               />
             </div>
           </div>
         </header>
 
-        <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
+        <main className="mx-auto mt-2 flex w-full max-w-7xl flex-col items-center justify-center gap-5 px-4 pb-20 sm:px-6 lg:px-8">
           {focusDomainId && (
-            <div className="w-80 rounded border bg-white md:w-11/12">
+            <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-none">
               <DomainLinkAudit domainId={focusDomainId} />
             </div>
           )}
           {domains.isFetching && <SpinLoading />}
-          <div className="h-96 w-80 justify-center overflow-auto md:h-5/6 md:w-11/12">
-            <table className="w-max min-w-full border-collapse">
-              <thead className="h-14 border-b-2 border-black font-bold text-blue-700 drop-shadow-md">
-                <tr className="sticky top-0 z-40 bg-white">
-                  <td className="px-5">Domain Name</td>
-                  <td className="">Updated At</td>
-                  <td>Site Status</td>
-                  <td>Verify On Google</td>
-                  <td>Sitemap Status</td>
-                  <td>DNS Status</td>
-                  <td>Nameserver</td>
-                  <td>Partners</td>
-                  <td>Landing Pages</td>
-                  <td>Average SEO Score</td>
-                  <td>
+          <div className="h-96 w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 md:h-[36rem]">
+            <div className="h-full w-full overflow-auto">
+            <table className="w-max min-w-full border-collapse text-left text-sm">
+              <thead className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                <tr className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur">
+                  <th className="px-4 py-3.5 font-semibold">Domain Name</th>
+                  <th className="px-3 py-3.5 font-semibold">Updated At</th>
+                  <th className="px-3 py-3.5 font-semibold">Site Status</th>
+                  <th className="px-3 py-3.5 font-semibold">Verify On Google</th>
+                  <th className="px-3 py-3.5 font-semibold">Sitemap Status</th>
+                  <th className="px-3 py-3.5 font-semibold">DNS Status</th>
+                  <th className="px-3 py-3.5 font-semibold">Nameserver</th>
+                  <th className="px-3 py-3.5 font-semibold">Partners</th>
+                  <th className="px-3 py-3.5 font-semibold">Landing Pages</th>
+                  <th className="px-3 py-3.5 font-semibold">Average SEO Score</th>
+                  <th className="px-3 py-3.5 font-semibold">
                     <button
                       type="button"
                       onClick={handleToggleLoadSort}
-                      className="flex items-center gap-1 hover:underline"
+                      className="flex items-center gap-1 text-zinc-400 transition hover:text-main-color"
                       title="Sort by worst load time across regions"
                     >
                       Worst load
@@ -422,11 +423,17 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                         <span aria-label="fastest first">▲</span>
                       )}
                     </button>
-                  </td>
+                  </th>
                 </tr>
               </thead>
-              <tbody className="">
-                {domains.isError && <tr>NO domain Found</tr>}
+              <tbody className="divide-y divide-white/5">
+                {domains.isError && (
+                  <tr>
+                    <td colSpan={11} className="px-4 py-8 text-center text-zinc-500">
+                      No domain found
+                    </td>
+                  </tr>
+                )}
                 {domains.data?.domains.map((list, index) => {
                   return (
                     <ListDomain
@@ -439,14 +446,33 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
           <div className="flex w-full justify-center">
+            <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
             <Pagination
               onChange={(e, page) => setPage(page)}
               page={page}
               count={totalPage}
               color="primary"
-            />
+            
+              sx={{
+                                "& .MuiPaginationItem-root": {
+                                  color: "#ffffff",
+                                  borderColor: "rgba(255,255,255,0.35)",
+                                },
+                                "& .MuiPaginationItem-root.Mui-selected": {
+                                  backgroundColor: "#00ABE4",
+                                  color: "#ffffff",
+                                  "&:hover": { backgroundColor: "#0096c7" },
+                                },
+                                "& .MuiPaginationItem-root:hover": {
+                                  backgroundColor: "rgba(0, 171, 228, 0.2)",
+                                },
+                                "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                              }}
+              />
+            </div>
           </div>
         </main>
       </div>

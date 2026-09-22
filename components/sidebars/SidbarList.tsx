@@ -15,13 +15,17 @@ function SidbarList({ isSelect, list }: Props) {
   return (
     <li
       onClick={() => setTrigger(!trigger)}
-      className={`hover:text-main-color ${
-        isSelect ? "text-main-color" : "text-white"
-      } text-sm  transition duration-150   xl:text-lg`}
+      className={`mx-1.5 text-xs transition duration-150 ${
+        isSelect ? "text-main-color" : "text-white/80"
+      }`}
     >
       <Link
         style={{ pointerEvents: list?.childs ? "none" : "auto" }}
-        className="relative z-20 flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
+        className={`relative z-20 flex w-full items-center justify-start gap-2 rounded-r-md border-l-2 px-2.5 py-1.5 text-xs transition ${
+          isSelect
+            ? "border-main-color bg-main-color/10 text-main-color"
+            : "border-transparent text-white/80 hover:border-white/20 hover:bg-white/5 hover:text-main-color"
+        }`}
         href={list.url}
       >
         <span className="flex w-full items-center justify-start gap-2">
@@ -37,7 +41,7 @@ function SidbarList({ isSelect, list }: Props) {
       </Link>
       {list.childs && (
         <ul
-          className={`ml-5 flex max-h-72 flex-col gap-2 overflow-auto bg-gray-600 transition duration-100  lg:max-h-52 2xl:max-h-60 ${trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
+          className={`ml-3 flex max-h-56 flex-col gap-0.5 overflow-auto border-l-2 border-main-color/60 bg-zinc-950 transition duration-100 lg:max-h-48 ${trigger ? " visible translate-y-0 " : " invisible -translate-y-14"}`}
         >
           {list.childs
             .filter((menu) => {
@@ -135,12 +139,10 @@ function SidbarList({ isSelect, list }: Props) {
               return (
                 <li
                   key={index}
-                  className={`hover:text-main-color ${
-                    isSelect ? "text-main-color" : "text-white"
-                  } text-sm  transition duration-150 active:scale-105 xl:text-lg`}
+                  className="text-xs text-white/80 transition duration-150 hover:text-main-color active:scale-105"
                 >
                   <Link
-                    className="flex w-full items-center justify-start gap-2 p-3 text-sm text-white hover:bg-gray-800 xl:text-lg"
+                    className="flex w-full items-center justify-start gap-2 rounded-r-md border-l-2 border-transparent px-2.5 py-1.5 text-xs text-white/80 transition hover:border-main-color/50 hover:bg-main-color/5 hover:text-main-color"
                     href={
                       child.title === "Website Builder"
                         ? child.url

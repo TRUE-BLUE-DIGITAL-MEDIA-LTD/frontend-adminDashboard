@@ -54,13 +54,15 @@ function Index({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="w-full">
-        <header className="mt-20  flex  h-max w-full flex-col items-start justify-center gap-4 p-10">
-          <h1 className="font-Poppins text-5xl font-semibold md:text-7xl">
-            <span className="text-icon-color">C</span>
-            <span>ategories</span>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+        <header className="mx-auto flex h-max w-full max-w-7xl flex-col items-start justify-center gap-4 px-4 py-10 sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+            Campaign assets
+          </p>
+          <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
+            <span className="text-main-color">C</span>ategories
           </h1>
-          <section className="grid  h-full w-full grid-cols-2 items-end justify-start gap-5 border-b-2   pb-5 md:flex ">
+          <section className="grid h-full w-full grid-cols-2 items-end justify-start gap-5 border-b border-white/10 pb-5 md:flex">
             {categories.isLoading ? (
               <Skeleton width={200} height={60} animation="wave" />
             ) : (
@@ -91,13 +93,13 @@ function Index({ user }: { user: User }) {
                   ...queryFilterLandingPages,
                 },
               }}
-              className="main-button px-10 py-2"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white bg-white px-8 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white"
             >
               Enter
             </Link>
           </section>
         </header>
-        <main className="grid grid-cols-1 gap-10 p-10 md:grid-cols-2 2xl:grid-cols-3">
+        <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 pb-16 sm:px-6 md:grid-cols-2 lg:px-8 2xl:grid-cols-3">
           {categories.data?.map((category) => {
             return (
               <Link
@@ -108,7 +110,7 @@ function Index({ user }: { user: User }) {
                   },
                 }}
                 key={category.id}
-                className="group relative flex h-40 cursor-pointer items-center justify-center overflow-hidden bg-white font-Poppins font-semibold no-underline drop-shadow-md "
+                className="group relative flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 font-semibold no-underline  transition hover:border-main-color/40"
               >
                 <h3
                   className={` relative z-20 bg-white bg-clip-text text-center text-5xl text-white   drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]`}

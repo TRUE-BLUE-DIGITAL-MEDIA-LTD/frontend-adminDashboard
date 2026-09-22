@@ -7,7 +7,6 @@ import {
   DeleteLandingPageService,
   DuplicateLandingPageService,
   GetAllLandingPageService,
-  RemoveDomainNameFromLandingPageService,
 } from "../../services/admin/landingPage";
 import Swal from "sweetalert2";
 import DashboardLayout from "../../layouts/dashboardLayout";
@@ -28,10 +27,9 @@ import Searchbar from "../../components/category/searchbar";
 import { GetAllDomains } from "../../services/admin/domain";
 import { GetAllCategoriesByPartnerService } from "../../services/admin/categories";
 import { QueryFilterLandingPages } from "../index";
+import { HiPlus } from "react-icons/hi";
+import { FiGlobe, FiTag } from "react-icons/fi";
 
-interface handleRemoveDomainNameParams {
-  landingPageId: string;
-}
 interface handleDuplicateLandingPageParam {
   landingPageId: string;
 }
@@ -99,7 +97,7 @@ export default function Home({ user }: { user: User }) {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#00ABE4",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
@@ -111,41 +109,6 @@ export default function Home({ user }: { user: User }) {
           });
           Swal.fire("Deleted!", deleteLandingPage.message, "success");
           await landingPages.refetch();
-          setIsLoading(() => false);
-        } catch (err: any) {
-          setIsLoading(() => false);
-          console.log(err);
-          Swal.fire("error!", err.message?.toString(), "error");
-        }
-      }
-    });
-  };
-
-  //handle remove domain name from landing page
-  const handleRemoveDomainName = ({
-    landingPageId,
-  }: handleRemoveDomainNameParams) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "To Delete This Domain Name From This Landing Page",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          setIsLoading(() => true);
-          await RemoveDomainNameFromLandingPageService({
-            landingPageId: landingPageId,
-          });
-          Swal.fire(
-            "Deleted!",
-            "Domain has been unlinked to this landing page",
-            "success",
-          );
-          landingPages.refetch();
           setIsLoading(() => false);
         } catch (err: any) {
           setIsLoading(() => false);
@@ -177,196 +140,319 @@ export default function Home({ user }: { user: User }) {
       Swal.fire("error!", err.message?.toString(), "error");
     }
   };
+
+  const resolveLanguage = (value?: string) =>
+    languages.find((language) => language.value === value)?.name ?? value ?? "—";
+
+  const renderActions = (landingPageId: string) =>
+    isLoading ? (
+      <div className="flex items-center justify-center gap-2">
+        <SpinLoading />
+      </div>
+    ) : (
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() =>
+            handleDuplicateLandingPage({
+              landingPageId,
+            })
+          }
+          aria-label="Duplicate landing page"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-500/20 active:scale-[0.98]"
+        >
+          <BiCopyAlt className="text-lg" />
+          <span className="hidden sm:inline">Duplicate</span>
+        </button>
+        <Link
+          href={`/landingpage/${landingPageId}`}
+          aria-label="Edit landing page"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-main-color bg-main-color px-3.5 py-2 text-sm font-medium text-white transition hover:bg-[#0096c7] active:scale-[0.98]"
+        >
+          <BiSolidMessageSquareEdit className="text-lg" />
+          <span className="hidden sm:inline">Edit</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() =>
+            handleDeleteLandingPage({
+              landingPageId,
+            })
+          }
+          aria-label="Delete landing page"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-rose-500/40 bg-rose-500/10 px-3.5 py-2 text-sm font-medium text-rose-300 transition hover:bg-rose-500/20 active:scale-[0.98]"
+        >
+          <MdDelete className="text-lg" />
+          <span className="hidden sm:inline">Delete</span>
+        </button>
+      </div>
+    );
+
   return (
     <DashboardLayout user={user}>
-      <header className="flex w-full shrink-0 flex-col items-center justify-center gap-4 pt-6 text-center">
-        <h1 className="font-Poppins text-3xl font-semibold md:text-5xl">
-          <span className="text-icon-color">L</span>
-          <span>anding Pages</span>
-        </h1>
-        <Link
-          href={"/create-landingpage"}
-          className="rounded-full bg-main-color px-20 py-2 text-xl font-semibold text-white transition duration-150 hover:bg-blue-700 active:scale-105"
-        >
-          Create
-        </Link>
-        <SearchField
-          value={searchField}
-          onChange={(e) => {
-            setSearchField(() => e);
-          }}
-          className="relative mt-4 flex w-80 flex-col"
-        >
-          <Input
-            placeholder="Search Landing Page Name"
-            className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
-          />
-          <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
-        </SearchField>
-        <div className="flex shrink-0 flex-wrap items-end justify-center gap-4">
-          {domains.isLoading ? (
-            <Skeleton width={180} height={48} animation="wave" />
-          ) : (
-            <Searchbar
-              items={domains.data || []}
-              title="Domains"
-              setQueryFilterLandingPages={setFilter}
-            />
-          )}
-          {categories.isLoading ? (
-            <Skeleton width={180} height={48} animation="wave" />
-          ) : (
-            <Searchbar
-              items={categories.data || []}
-              title="Categories"
-              setQueryFilterLandingPages={setFilter}
-            />
-          )}
-        </div>
-      </header>
-      <main className=" flex   w-full flex-col items-center gap-4">
-        <div className=" h-screen w-80 overflow-auto md:w-[30rem] lg:w-[45rem] xl:w-[60rem] 2xl:w-[60rem]">
-          <table className="h-max  w-max min-w-full border-collapse ">
-            <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-              <tr className="sticky top-0 z-40 bg-white ">
-                <td className="">Name</td>
-                <td>Domain</td>
-                <td>Language</td>
-                <td>Category</td>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          {/* Page header */}
+          <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-1.5">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+                Campaign assets
+              </p>
+              <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
+                Landing{" "}
+                <span className="text-main-color">Pages</span>
+              </h1>
+              <p className="max-w-xl text-sm text-white/60 sm:text-base">
+                Create, filter, and manage high-performing landers for every
+                offer and domain.
+              </p>
+            </div>
+            <Link
+              href={"/create-landingpage"}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-white bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-[0.98] sm:text-base"
+            >
+              <HiPlus className="text-lg" />
+              Create landing page
+            </Link>
+          </header>
 
-                <td>Options</td>
-              </tr>
-            </thead>
-            <tbody className="">
+          {/* Toolbar */}
+          <section className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm sm:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <SearchField
+                value={searchField}
+                onChange={(e) => {
+                  setSearchField(() => e);
+                }}
+                className="relative flex w-full max-w-md flex-col"
+              >
+                <Input
+                  placeholder="Search landing page name"
+                  className="h-11 w-full appearance-none rounded-xl border border-white/10 bg-zinc-900/5 py-2 pl-11 pr-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-main-color focus:bg-black/60 focus:ring-2 focus:ring-main-color/30"
+                />
+                <IoSearchCircleSharp className="absolute bottom-0 left-2.5 top-0 m-auto text-3xl text-main-color" />
+              </SearchField>
+
+              <div className="flex flex-wrap items-end gap-3">
+                {domains.isLoading ? (
+                  <Skeleton width={180} height={48} animation="wave" />
+                ) : (
+                  <Searchbar
+                    items={domains.data || []}
+                    title="Domains"
+                    setQueryFilterLandingPages={setFilter}
+                  />
+                )}
+                {categories.isLoading ? (
+                  <Skeleton width={180} height={48} animation="wave" />
+                ) : (
+                  <Searchbar
+                    items={categories.data || []}
+                    title="Categories"
+                    setQueryFilterLandingPages={setFilter}
+                  />
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* Content */}
+          <main className="flex w-full flex-col gap-4">
+            {/* Mobile / tablet cards */}
+            <div className="grid gap-3 md:hidden">
               {landingPages.isLoading
-                ? loadingNumber.map((list, index) => {
+                ? loadingNumber.map((list, index) => (
+                    <div
+                      key={index}
+                      className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm"
+                    >
+                      <Skeleton height={28} />
+                      <Skeleton className="mt-2" />
+                      <Skeleton className="mt-2" width="60%" />
+                    </div>
+                  ))
+                : landingPages?.data?.landingPages?.map((landingPage, index) => {
+                    const languageName = resolveLanguage(landingPage.language);
                     return (
-                      <tr key={index}>
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
-                        <td>
-                          <Skeleton animation="wave" />
-                        </td>
-                        <td>
-                          <Skeleton />
-                        </td>
-                      </tr>
-                    );
-                  })
-                : landingPages?.data?.landingPages?.map(
-                    (landingPage, index) => {
-                      const createAt = new Date(landingPage?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        },
-                      );
-
-                      const language = languages.find(
-                        (language) => language.value === landingPage.language,
-                      );
-                      return (
-                        <tr
-                          className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
-                          key={index}
-                        >
-                          <td className="px-2">
+                      <article
+                        key={landingPage.id ?? index}
+                        className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm transition hover:border-main-color/30 hover:shadow-md"
+                      >
+                        <div className="mb-3 space-y-1">
+                          <h2 className="text-base font-semibold text-zinc-100">
                             {landingPages.isFetching ? (
                               <Skeleton animation="wave" />
                             ) : (
                               landingPage?.name
                             )}
-                          </td>
-                          {landingPage?.domain?.name ? (
-                            <td
-                              onClick={() => {
-                                handleRemoveDomainName({
-                                  landingPageId: landingPage.id,
-                                });
-                              }}
-                              className="cursor-pointer hover:line-through"
-                            >
-                              {landingPages.isFetching ? (
-                                <Skeleton />
-                              ) : (
-                                landingPage?.domain?.name
-                              )}
-                            </td>
-                          ) : (
-                            <td className="cursor-pointer hover:line-through">
-                              -
-                            </td>
-                          )}
-                          <td className="px-2">{language?.name}</td>
-                          <td className="px-2">
-                            {landingPage?.category?.title}
-                          </td>
-
-                          {isLoading ? (
-                            <td className="flex  items-center justify-center gap-2">
-                              <SpinLoading />
-                            </td>
-                          ) : (
-                            <td className="">
-                              <div className="flex  items-center justify-center gap-2">
-                                <button
-                                  onClick={() =>
-                                    handleDuplicateLandingPage({
-                                      landingPageId: landingPage.id,
-                                    })
-                                  }
-                                  className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
-                                >
-                                  <BiCopyAlt />
-                                </button>
+                          </h2>
+                          <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/10 px-2.5 py-1 text-zinc-300">
+                              <FiGlobe className="text-main-color" />
+                              {landingPage?.domain?.id ? (
                                 <Link
-                                  href={`/landingpage/${landingPage.id}`}
-                                  className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                                  href={`/domain/${landingPage.domain.id}`}
+                                  title="Open domain"
+                                  className="font-medium text-main-color underline-offset-2 hover:underline"
                                 >
-                                  <BiSolidMessageSquareEdit />
+                                  {landingPage.domain.name}
                                 </Link>
+                              ) : landingPage?.domain?.name ? (
+                                <span className="font-medium text-main-color">
+                                  {landingPage.domain.name}
+                                </span>
+                              ) : (
+                                "No domain"
+                              )}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                              {languageName}
+                            </span>
+                            {landingPage?.category?.title && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                                <FiTag className="text-icon-color" />
+                                {landingPage.category.title}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {renderActions(landingPage.id)}
+                      </article>
+                    );
+                  })}
+            </div>
 
-                                <button
-                                  onClick={() =>
-                                    handleDeleteLandingPage({
-                                      landingPageId: landingPage.id,
-                                    })
-                                  }
-                                  className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
-                                >
-                                  <MdDelete />
-                                </button>
-                              </div>
+            {/* Desktop table */}
+            <div className="hidden overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-sm md:block">
+              <div className="w-full overflow-x-auto">
+                <table className="min-w-full border-collapse text-left text-sm">
+                  <thead className="border-b border-white/10 bg-zinc-900/5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                    <tr>
+                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                        Name
+                      </th>
+                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                        Domain
+                      </th>
+                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                        Language
+                      </th>
+                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                        Category
+                      </th>
+                      <th className="sticky top-0 z-10 bg-zinc-900 px-4 py-3.5 text-right">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {landingPages.isLoading
+                      ? loadingNumber.map((list, index) => (
+                          <tr key={index}>
+                            <td className="px-4 py-3">
+                              <Skeleton />
                             </td>
-                          )}
-                        </tr>
-                      );
+                            <td className="px-4 py-3">
+                              <Skeleton animation="wave" />
+                            </td>
+                            <td className="px-4 py-3">
+                              <Skeleton />
+                            </td>
+                            <td className="px-4 py-3">
+                              <Skeleton animation="wave" />
+                            </td>
+                            <td className="px-4 py-3">
+                              <Skeleton />
+                            </td>
+                          </tr>
+                        ))
+                      : landingPages?.data?.landingPages?.map(
+                          (landingPage, index) => {
+                            const languageName = resolveLanguage(
+                              landingPage.language,
+                            );
+                            return (
+                              <tr
+                                className="transition hover:bg-zinc-900/5"
+                                key={landingPage.id ?? index}
+                              >
+                                <td className="px-4 py-3.5 font-medium text-zinc-100">
+                                  {landingPages.isFetching ? (
+                                    <Skeleton animation="wave" />
+                                  ) : (
+                                    landingPage?.name
+                                  )}
+                                </td>
+                                <td className="px-4 py-3.5">
+                                  {landingPage?.domain?.id ? (
+                                    <Link
+                                      href={`/domain/${landingPage.domain.id}`}
+                                      title="Open domain"
+                                      className="inline-flex items-center gap-1.5 rounded-full bg-main-color/15 px-2.5 py-1 text-xs font-medium text-main-color transition hover:bg-main-color/15"
+                                    >
+                                      <FiGlobe />
+                                      {landingPages.isFetching ? (
+                                        <Skeleton width={80} />
+                                      ) : (
+                                        landingPage.domain.name
+                                      )}
+                                    </Link>
+                                  ) : landingPage?.domain?.name ? (
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-main-color/15 px-2.5 py-1 text-xs font-medium text-main-color">
+                                      <FiGlobe />
+                                      {landingPage.domain.name}
+                                    </span>
+                                  ) : (
+                                    <span className="text-zinc-500">—</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3.5 text-zinc-400">
+                                  {languageName}
+                                </td>
+                                <td className="px-4 py-3.5 text-zinc-400">
+                                  {landingPage?.category?.title || "—"}
+                                </td>
+                                <td className="px-4 py-3.5">
+                                  <div className="flex justify-end">
+                                    {renderActions(landingPage.id)}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          },
+                        )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 justify-center pb-16 pt-2">
+              <div className="rounded-full border border-white/15 bg-zinc-900/5 px-3 py-2">
+                <Pagination
+                  onChange={(e, page) => setPage(page)}
+                  count={landingPages?.data?.totalPages}
+                  color="primary"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "#ffffff",
+                      borderColor: "rgba(255,255,255,0.35)",
                     },
-                  )}
-            </tbody>
-          </table>
+                    "& .MuiPaginationItem-root.Mui-selected": {
+                      backgroundColor: "#00ABE4",
+                      color: "#ffffff",
+                      "&:hover": { backgroundColor: "#0096c7" },
+                    },
+                    "& .MuiPaginationItem-root:hover": {
+                      backgroundColor: "rgba(0, 171, 228, 0.2)",
+                    },
+                    "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                  }}
+                />
+              </div>
+            </div>
+          </main>
         </div>
-        <div className="shrink-0 pb-16">
-          <Pagination
-            onChange={(e, page) => setPage(page)}
-            count={landingPages?.data?.totalPages}
-            color="primary"
-          />
-        </div>
-      </main>
+      </div>
     </DashboardLayout>
   );
 }

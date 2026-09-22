@@ -189,15 +189,17 @@ function Index({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
-      <div className="w-full">
-        <header className="mt-28 flex flex-col items-center justify-center">
-          <h1 className="font-Poppins text-4xl font-semibold md:text-7xl">
-            <span className="text-icon-color">C</span>
-            <span>ustomer</span>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+        <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-2 px-4 pt-10 sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+            Leads
+          </p>
+          <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            <span className="text-main-color">C</span>ustomers
           </h1>
         </header>
-        <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
-          <div className="flex w-80 justify-end md:w-11/12">
+        <main className="mx-auto mt-8 flex w-full max-w-7xl flex-col items-center justify-center gap-5 px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="flex w-full justify-end">
             <Button
               variant="contained"
               color="success"
@@ -208,13 +210,11 @@ function Index({ user }: { user: User }) {
               {isExporting ? "Exporting..." : "Download Excel"}
             </Button>
           </div>
-          <div
-            className=" h-96 w-80 justify-center overflow-auto  
-            md:w-11/12 "
-          >
-            <table className="w-max min-w-full table-auto  ">
-              <thead className="h-14 border-b-2 border-black font-bold text-blue-700 ">
-                <tr className="sticky top-0 z-20 bg-white  ">
+          <div className="h-96 w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-none md:h-[36rem]">
+            <div className="h-full w-full overflow-auto">
+            <table className="w-max min-w-full table-auto text-left text-sm">
+              <thead className="h-12 border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <tr className="sticky top-0 z-20 bg-zinc-900/95">
                   <th className="group flex h-14 items-center  gap-2">
                     <span>Email</span>
                     <div className={`flex items-center `}></div>
@@ -274,7 +274,7 @@ function Index({ user }: { user: User }) {
                       );
                       return (
                         <tr
-                          className="h-14 border-4 border-transparent hover:bg-blue-50 "
+                          className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
                           key={index}
                         >
                           {customers.isFetching ? (
@@ -339,6 +339,7 @@ function Index({ user }: { user: User }) {
                     })}
               </tbody>
             </table>
+            </div>
           </div>
           <div className="mt-5 flex w-full justify-center">
             <Box className="mt-5 flex w-full flex-col items-center justify-center gap-4 md:flex-row">
@@ -349,6 +350,21 @@ function Index({ user }: { user: User }) {
                 color="primary"
                 showFirstButton
                 showLastButton
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#ffffff",
+                    borderColor: "rgba(255,255,255,0.35)",
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "#00ABE4",
+                    color: "#ffffff",
+                    "&:hover": { backgroundColor: "#0096c7" },
+                  },
+                  "& .MuiPaginationItem-root:hover": {
+                    backgroundColor: "rgba(0, 171, 228, 0.2)",
+                  },
+                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                }}
               />
               <Box
                 component="form"

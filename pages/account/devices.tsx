@@ -5,6 +5,9 @@ import {
   RevokeTrustedDeviceService,
   TrustedDeviceItem,
 } from '../../services/auth/trusted-devices';
+import DashboardLayout from '../../layouts/dashboardLayout';
+import { useGetUser } from '../../react-query';
+import SpinLoading from '../../components/loadings/spinLoading';
 
 function relativeFromNow(iso: string): string {
   const ms = new Date(iso).getTime() - Date.now();
@@ -19,6 +22,7 @@ function relativeFromNow(iso: string): string {
 }
 
 export default function TrustedDevicesPage() {
+  const user = useGetUser();
   const [devices, setDevices] = useState<TrustedDeviceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,63 +61,80 @@ export default function TrustedDevicesPage() {
     }
   };
 
+  if (!user.data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <SpinLoading />
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-3xl p-6 font-Poppins">
-      <h1 className="mb-4 text-2xl font-semibold">Trusted Devices</h1>
-      <p className="mb-6 text-sm text-slate-600">
-        Devices listed here can sign in without being prompted for a TOTP code.
-        Revoke any device you don&apos;t recognize.
-      </p>
+    <DashboardLayout user={user.data}>
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+        <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+            Security
+          </p>
+          <h1 className="mt-1 mb-2 text-3xl font-semibold tracking-tight text-white">
+            Trusted Devices
+          </h1>
+          <p className="mb-6 text-sm text-white/60">
+            Devices listed here can sign in without being prompted for a TOTP code.
+            Revoke any device you don&apos;t recognize.
+          </p>
 
-      {loading && <div className="text-slate-500">Loading…</div>}
+          {loading && <div className="text-white/50">Loading…</div>}
 
-      {!loading && devices.length === 0 && (
-        <div className="rounded-md bg-slate-50 p-6 text-center text-slate-600">
-          No trusted devices yet.
-        </div>
-      )}
-
-      <ul className="flex flex-col gap-3">
-        {devices.map((d) => (
-          <li
-            key={d.id}
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">
-                    {d.browser ?? 'Unknown browser'}
-                    {d.os ? ` on ${d.os}` : ''}
-                  </span>
-                  {d.isCurrent && (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">
-                      This device
-                    </span>
-                  )}
-                </div>
-                <div className="mt-1 text-sm text-slate-600">
-                  Last seen {relativeFromNow(d.lastSeenAt)}
-                </div>
-                <div className="text-sm text-slate-600">
-                  {d.lastIp ?? '—'}
-                  {(d.city || d.country) && ' · '}
-                  {[d.city, d.country].filter(Boolean).join(', ')}
-                </div>
-                <div className="text-xs text-slate-500">
-                  Expires {relativeFromNow(d.expiresAt)}
-                </div>
-              </div>
-              <button
-                onClick={() => revoke(d)}
-                className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700"
-              >
-                Revoke
-              </button>
+          {!loading && devices.length === 0 && (
+            <div className="rounded-2xl border border-white/10 bg-zinc-900 p-6 text-center text-zinc-400 shadow-sm">
+              No trusted devices yet.
             </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+          )}
+
+          <ul className="flex flex-col gap-3">
+            {devices.map((d) => (
+              <li
+                key={d.id}
+                className="rounded-2xl border border-white/10 bg-zinc-900 p-4 text-zinc-100 shadow-none"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">
+                        {d.browser ?? 'Unknown browser'}
+                        {d.os ? ` on ${d.os}` : ''}
+                      </span>
+                      {d.isCurrent && (
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">
+                          This device
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 text-sm text-zinc-400">
+                      Last seen {relativeFromNow(d.lastSeenAt)}
+                    </div>
+                    <div className="text-sm text-zinc-400">
+                      {d.lastIp ?? '—'}
+                      {(d.city || d.country) && ' · '}
+                      {[d.city, d.country].filter(Boolean).join(', ')}
+                    </div>
+                    <div className="text-xs text-zinc-400">
+                      Expires {relativeFromNow(d.expiresAt)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => revoke(d)}
+                    className="rounded-full bg-rose-600 px-3.5 py-1.5 text-sm text-white transition hover:bg-rose-700"
+                  >
+                    Revoke
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
