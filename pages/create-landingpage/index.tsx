@@ -12,7 +12,7 @@ import {
 } from "../../models";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllDomains } from "../../services/admin/domain";
+import { useGetAllDomains } from "../../react-query/domain";
 import {
   CreateLandingPageService,
   UploadURLSingtureFavorIconService,
@@ -55,10 +55,7 @@ function Index({ user }: { user: User }) {
   const [icon, setIcon] = useState<string | null>();
   const [isLoadingEditor, setIsLoadingEditor] = useState(true);
 
-  const domains = useQuery({
-    queryKey: ["domains"],
-    queryFn: () => GetAllDomains(),
-  });
+  const domains = useGetAllDomains();
 
   const categories = useQuery({
     queryKey: ["categories"],

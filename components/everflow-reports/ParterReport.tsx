@@ -24,7 +24,6 @@ import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { CiCalendarDate } from "react-icons/ci";
 import { GetBonusRateByUserIdService } from "../../services/bonus";
 import { bonusRateDefault } from "../../data/bonusRate";
-import PopupLayout from "../../layouts/PopupLayout";
 import Conversion from "./Conversion";
 import PartnerSummaryStats from "./PartnerSummaryStats";
 import BulkUpdateExchangeRate from "./BulkUpdateExchangeRate";
@@ -510,27 +509,185 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
 
   return (
     <>
-      {user.role !== "admin" && <PartnerSummaryStats user={user} />}
       {targetConversionColumns && dates && dates.length === 2 && (
-        <PopupLayout onClose={() => setTargetConversionColumns(null)}>
-          <Conversion
-            startDate={moment(dates[0]).format("YYYY-MM-DD")}
-            endDate={moment(dates[1]).format("YYYY-MM-DD")}
-            columns={targetConversionColumns}
-          />
-        </PopupLayout>
+        <Conversion
+          startDate={moment(dates[0]).format("YYYY-MM-DD")}
+          endDate={moment(dates[1]).format("YYYY-MM-DD")}
+          columns={targetConversionColumns}
+          onClose={() => setTargetConversionColumns(null)}
+        />
       )}
       {showBulkUpdate && (
-        <PopupLayout onClose={() => setShowBulkUpdate(false)}>
-          <BulkUpdateExchangeRate onClose={() => setShowBulkUpdate(false)} />
-        </PopupLayout>
+        <BulkUpdateExchangeRate onClose={() => setShowBulkUpdate(false)} />
       )}
       {showAdjustRates && (
-        <PopupLayout onClose={() => setShowAdjustRates(false)}>
-          <AdjustLeadRatesTable user={user} />
-        </PopupLayout>
+        <AdjustLeadRatesTable
+          user={user}
+          onClose={() => setShowAdjustRates(false)}
+        />
       )}
-      <div className="flex w-full flex-col items-center gap-5 py-10 pt-5">
+
+      <div className="mx-auto flex w-full  flex-col gap-5 bg-black px-4 py-6 md:px-6">
+        {/* Page header */}
+        <header className="flex flex-col gap-1">
+          <p className="text-xs font-semibold uppercase tracking-wider text-main-color">
+            Reports
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
+            Partners performance
+          </h1>
+          <p className="text-sm text-zinc-500">
+            {dates?.[0] && dates?.[1]
+              ? `${moment(dates[0]).format("MMM D, YYYY")} – ${moment(dates[1]).format("MMM D, YYYY")}`
+              : "Select a date range"}
+            {timezone ? ` · ${timezone}` : ""}
+          </p>
+        </header>
+
+        {/* Toolbar */}
+        <div className="rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div className="grid w-full flex-1 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-zinc-400">
+                  Parent
+                </label>
+                <Dropdown
+                  showClear
+                  value={selectColumns.parent}
+                  onChange={(e) =>
+                    setSelectColumns((prev) => {
+                      if (!e.value) {
+                        return { ...prev, parent: undefined };
+                      }
+                      if (e.value.code === "hour") {
+                        return {
+                          parent: e.value,
+                          child: undefined,
+                          grandchild: undefined,
+                        };
+                      }
+                      return {
+                        ...prev,
+                        parent: e.value,
+                      };
+                    })
+                  }
+                  options={columns.filter(
+                    (c) =>
+                      c.code !== selectColumns.child?.code &&
+                      c.code !== selectColumns.grandchild?.code,
+                  )}
+                  optionLabel="name"
+                  placeholder="Select a Parent"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-zinc-400">
+                  Child
+                </label>
+                <Dropdown
+                  value={selectColumns.child}
+                  showClear
+                  onChange={(e) =>
+                    setSelectColumns((prev) => {
+                      if (!e.value) {
+                        return { ...prev, child: undefined };
+                      }
+                      return {
+                        ...prev,
+                        child: e.value,
+                      };
+                    })
+                  }
+                  options={columns.filter(
+                    (f) =>
+                      f.code !== "hour" &&
+                      f.code !== selectColumns.parent?.code &&
+                      f.code !== selectColumns.grandchild?.code,
+                  )}
+                  optionLabel="name"
+                  placeholder="Select a Child"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-zinc-400">
+                  Grandchild
+                </label>
+                <Dropdown
+                  value={selectColumns.grandchild}
+                  showClear
+                  onChange={(e) =>
+                    setSelectColumns((prev) => {
+                      if (!e.value) {
+                        return { ...prev, grandchild: undefined };
+                      }
+                      return {
+                        ...prev,
+                        grandchild: e.value,
+                      };
+                    })
+                  }
+                  options={columns.filter(
+                    (f) =>
+                      f.code !== "hour" &&
+                      f.code !== selectColumns.parent?.code &&
+                      f.code !== selectColumns.child?.code,
+                  )}
+                  optionLabel="name"
+                  placeholder="Select a Grandchild"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="flex items-center gap-1 text-xs font-medium text-zinc-400">
+                  Date range <CiCalendarDate />
+                </label>
+                <Calendar
+                  value={dates}
+                  onChange={(e) => {
+                    setDates(e.value);
+                  }}
+                  selectionMode="range"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 text-black "
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
+              {user.role === "admin" && (
+                <button
+                  onClick={() => setShowBulkUpdate(true)}
+                  className="h-10 rounded-full bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-100"
+                >
+                  Create Rate
+                </button>
+              )}
+              <button
+                onClick={() => setShowAdjustRates(true)}
+                className="h-10 rounded-full border border-white/15 px-4 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+              >
+                View Rates
+              </button>
+              <button
+                onClick={() => setShowAiAnalysis(true)}
+                className="h-10 rounded-full border border-white/15 px-4 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+              >
+                Analyze with AI
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* KPI strip */}
+        {user.role !== "admin" && <PartnerSummaryStats user={user} />}
+        {user.role === "admin" && (
+          <SummaryReport user={user} summary={summary} />
+        )}
+
+        {/* Bonus */}
         {user.partner?.isAllowBonuSystem && (
           <BonusCaluator
             bonusRate={bonusRate.data ?? bonusRateDefault}
@@ -538,155 +695,8 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
             partnerPerformanceDayByDay={partnerPerformanceDayByDay}
           />
         )}
-        <div className="flex w-10/12 flex-col items-end  justify-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-100 ">
-          <div className="flex w-full flex-col items-start justify-center gap-5 md:flex-row">
-            <div
-              className=" md:w-70 flex w-full flex-col items-start  justify-center  gap-1 
-         text-base font-semibold "
-            >
-              <label className="flex  items-center justify-center gap-1 text-base text-black">
-                Parent
-              </label>
-              <Dropdown
-                showClear
-                value={selectColumns.parent}
-                onChange={(e) =>
-                  setSelectColumns((prev) => {
-                    if (!e.value) {
-                      return { ...prev, parent: undefined };
-                    }
-                    if (e.value.code === "hour") {
-                      return {
-                        parent: e.value,
-                        child: undefined,
-                        grandchild: undefined,
-                      };
-                    }
-                    return {
-                      ...prev,
-                      parent: e.value,
-                    };
-                  })
-                }
-                options={columns.filter(
-                  (c) =>
-                    c.code !== selectColumns.child?.code &&
-                    c.code !== selectColumns.grandchild?.code,
-                )}
-                optionLabel="name"
-                placeholder="Select a Parent"
-                className="w-full "
-              />
-            </div>
-            <div
-              className=" flex w-full flex-col items-start  justify-center  gap-1 
-         text-base font-semibold "
-            >
-              <label className="flex  items-center justify-center gap-1 text-base text-black">
-                Child
-              </label>
-              <Dropdown
-                value={selectColumns.child}
-                showClear
-                onChange={(e) =>
-                  setSelectColumns((prev) => {
-                    if (!e.value) {
-                      return { ...prev, child: undefined };
-                    }
-                    return {
-                      ...prev,
-                      child: e.value,
-                    };
-                  })
-                }
-                options={columns.filter(
-                  (f) =>
-                    f.code !== "hour" &&
-                    f.code !== selectColumns.parent?.code &&
-                    f.code !== selectColumns.grandchild?.code,
-                )}
-                optionLabel="name"
-                placeholder="Select a Child"
-                className="w-full"
-              />
-            </div>
-            <div
-              className=" flex w-full flex-col items-start  justify-center  gap-1 
-         text-base font-semibold "
-            >
-              <label className="flex  items-center justify-center gap-1 text-base text-black">
-                Grandchild
-              </label>
-              <Dropdown
-                value={selectColumns.grandchild}
-                showClear
-                onChange={(e) =>
-                  setSelectColumns((prev) => {
-                    if (!e.value) {
-                      return { ...prev, grandchild: undefined };
-                    }
-                    return {
-                      ...prev,
-                      grandchild: e.value,
-                    };
-                  })
-                }
-                options={columns.filter(
-                  (f) =>
-                    f.code !== "hour" &&
-                    f.code !== selectColumns.parent?.code &&
-                    f.code !== selectColumns.child?.code,
-                )}
-                optionLabel="name"
-                placeholder="Select a Grandchild"
-                className="w-full"
-              />
-            </div>
-            <div
-              className=" flex w-full flex-col items-start  justify-center  gap-1 
-         text-base font-semibold "
-            >
-              <label className="flex  items-center justify-center gap-1 text-base text-black">
-                Pick Up Date <CiCalendarDate />
-              </label>
-              <Calendar
-                value={dates}
-                onChange={(e) => {
-                  setDates(e.value);
-                }}
-                selectionMode="range"
-              />
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-start justify-center gap-1 text-base font-semibold">
-            <label className="flex items-center justify-center gap-1 text-base text-black">
-              Action
-            </label>
-            {user.role === "admin" && (
-              <button
-                onClick={() => setShowBulkUpdate(true)}
-                className="h-10 w-full rounded bg-blue-600 px-4 font-bold text-white hover:bg-blue-700 xl:w-60"
-              >
-                Create Rate
-              </button>
-            )}
-            <button
-              onClick={() => setShowAdjustRates(true)}
-              className="h-10 w-full rounded bg-green-600 px-4 font-bold text-white hover:bg-green-700 xl:w-60"
-            >
-              View Rates
-            </button>
-            <button
-              onClick={() => setShowAiAnalysis(true)}
-              className="h-10 w-full rounded bg-purple-600 px-4 font-bold text-white hover:bg-purple-700 xl:w-60"
-            >
-              Analyze with AI
-            </button>
-          </div>
-        </div>
-        {user.role === "admin" && (
-          <SummaryReport user={user} summary={summary} />
-        )}
+
+        {/* AI panel */}
         {showAiAnalysis && dates && dates.length === 2 && (
           <AiAnalysisPanel
             dates={dates}
@@ -695,147 +705,152 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
             onClose={() => setShowAiAnalysis(false)}
           />
         )}
+
         {paterPerfomaces.error && (
-          <h2 className="font-semibold text-red-600">
+          <h2 className="font-semibold text-rose-400">
             {paterPerfomaces.error?.message}
           </h2>
         )}
-        <div className=" h-screen w-full justify-center  overflow-auto ">
-          <table className="w-max min-w-full border-collapse ">
-            <thead className="sticky top-0 z-30 ">
-              <tr className=" h-16   bg-white drop-shadow-sm">
-                {menuTables
-                  .filter((list) => {
-                    if (user.role === "admin") {
-                      return list;
-                    } else {
-                      return list.admin !== true;
-                    }
-                  })
-                  .map((menu, index) => {
+
+        {/* Data table card */}
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
+          <div className="max-h-[70vh] w-full overflow-auto">
+            <table className="w-max min-w-full border-collapse">
+              <thead className="sticky top-0 z-30">
+                <tr className="h-12 bg-zinc-900">
+                  {menuTables
+                    .filter((list) => {
+                      if (user.role === "admin") {
+                        return list;
+                      } else {
+                        return list.admin !== true;
+                      }
+                    })
+                    .map((menu, index) => {
+                      return (
+                        <th
+                          onClick={() => {
+                            setQuerySort(() => {
+                              return {
+                                title: menu.title,
+                                sort:
+                                  querySort.title === menu.title &&
+                                  querySort.sort === "up"
+                                    ? "down"
+                                    : "up",
+                              };
+                            });
+                          }}
+                          className={`cursor-pointer px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 transition hover:text-white ${
+                            menu.title === "Network Affiliate ID" &&
+                            "left-0 bg-zinc-900 md:sticky"
+                          } ${
+                            menu.title === "Affiliate Name" &&
+                            "sticky left-0 bg-zinc-900"
+                          }`}
+                          key={index}
+                        >
+                          <button className="flex items-center justify-center gap-1">
+                            {menu.title}{" "}
+                            <LuArrowDownUp className="text-main-color" />
+                          </button>
+                        </th>
+                      );
+                    })}
+                  {user.partner?.isAllowBonuSystem && (
+                    <th className="cursor-pointer bg-zinc-900 px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 md:sticky md:left-0">
+                      <button className="flex items-center justify-center gap-1">
+                        bonus
+                      </button>
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              {paterPerfomaces.isLoading && (
+                <tbody>
+                  {[...new Array(10)].map((item, index) => {
                     return (
-                      <th
-                        onClick={() => {
-                          setQuerySort(() => {
-                            return {
-                              title: menu.title,
-                              sort:
-                                querySort.title === menu.title &&
-                                querySort.sort === "up"
-                                  ? "down"
-                                  : "up",
-                            };
-                          });
-                        }}
-                        className={`text-xs ${
-                          menu.title === "Network Affiliate ID" &&
-                          "left-0 bg-white md:sticky "
-                        }  ${
-                          menu.title === "Affiliate Name" &&
-                          "sticky left-0 bg-white   "
-                        }  cursor-pointer p-2 transition
-                       duration-100 hover:scale-105 active:scale-110 `}
-                        key={index}
-                      >
-                        <button className="flex  items-center  justify-center gap-1">
-                          {menu.title} <LuArrowDownUp />
-                        </button>
-                      </th>
+                      <tr key={index} className="border-b border-white/5">
+                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-40 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-20 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-20 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
+                      </tr>
                     );
                   })}
-                {user.partner?.isAllowBonuSystem && (
-                  <th
-                    className={`left-0 
-                cursor-pointer bg-white p-2  
-                text-xs transition duration-100
-                  hover:scale-105 active:scale-110 md:sticky `}
-                  >
-                    <button className="flex  items-center  justify-center gap-1">
-                      bonus
-                    </button>
-                  </th>
-                )}
-              </tr>
-            </thead>
-            {paterPerfomaces.isLoading && (
-              <tbody>
-                {[...new Array(10)].map((item, index) => {
+                </tbody>
+              )}
+
+              {paterPerfomaces.data
+                ?.sort((a, b) =>
+                  compareTableEntries(
+                    a[1].summary,
+                    b[1].summary,
+                    querySort.title,
+                    querySort.sort,
+                  ),
+                )
+                .map((column, index) => {
+                  const odd = index % 2;
+
                   return (
-                    <tr key={index} className="gap-5 border-y-8 border-white">
-                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
-                      <td className="h-8 w-40  animate-pulse rounded-lg bg-gray-100"></td>
-                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-200"></td>
-                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-50"></td>
-                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-200"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-50"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-200"></td>
-                      <td className="h-8 w-20  animate-pulse rounded-lg bg-gray-400"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-100"></td>
-                      <td className="h-8 w-10  animate-pulse rounded-lg bg-gray-300"></td>
-                      <td className="h-8 w-32  animate-pulse rounded-lg bg-gray-400"></td>
-                    </tr>
+                    <tbody key={index}>
+                      {user.role === "admin" && (
+                        <TbodyForAdmin
+                          activeColumnDropdown={activeColumnDropdown ?? []}
+                          partner={column}
+                          setActiveColumnDropdown={setActiveColumnDropdown}
+                          partnerPerformanceDayByDay={
+                            partnerPerformanceDayByDay
+                          }
+                          onTriggerConversion={(column) =>
+                            setTargetConversionColumns(column)
+                          }
+                          key={index}
+                          odd={odd}
+                          item={column[1].summary as TableEntry}
+                        />
+                      )}
+                      {(user.role === "manager" || user.role === "partner") && (
+                        <TbodyForEditor
+                          onTriggerConversion={(columns) => {
+                            setTargetConversionColumns(columns);
+                          }}
+                          user={user}
+                          activeColumnDropdown={activeColumnDropdown ?? []}
+                          partner={column}
+                          setActiveColumnDropdown={setActiveColumnDropdown}
+                          partnerPerformanceDayByDay={
+                            partnerPerformanceDayByDay
+                          }
+                          key={index}
+                          odd={odd}
+                          item={column[1].summary as TableEntry}
+                        />
+                      )}
+
+                      {activeColumnDropdown?.find(
+                        (value) =>
+                          value.key === column[1].summary.columns[0]?.id,
+                      )?.active === true &&
+                        renderChildrenRows(
+                          column[1].entries,
+                          column[1].summary.columns[0]?.id,
+                        )}
+                    </tbody>
                   );
                 })}
-              </tbody>
-            )}
-
-            {paterPerfomaces.data
-              ?.sort((a, b) =>
-                compareTableEntries(
-                  a[1].summary,
-                  b[1].summary,
-                  querySort.title,
-                  querySort.sort,
-                ),
-              )
-              .map((column, index) => {
-                const odd = index % 2;
-
-                return (
-                  <tbody key={index}>
-                    {user.role === "admin" && (
-                      <TbodyForAdmin
-                        activeColumnDropdown={activeColumnDropdown ?? []}
-                        partner={column}
-                        setActiveColumnDropdown={setActiveColumnDropdown}
-                        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
-                        onTriggerConversion={(column) =>
-                          setTargetConversionColumns(column)
-                        }
-                        key={index}
-                        odd={odd}
-                        item={column[1].summary as TableEntry}
-                      />
-                    )}
-                    {(user.role === "manager" || user.role === "partner") && (
-                      <TbodyForEditor
-                        onTriggerConversion={(columns) => {
-                          setTargetConversionColumns(columns);
-                        }}
-                        user={user}
-                        activeColumnDropdown={activeColumnDropdown ?? []}
-                        partner={column}
-                        setActiveColumnDropdown={setActiveColumnDropdown}
-                        partnerPerformanceDayByDay={partnerPerformanceDayByDay}
-                        key={index}
-                        odd={odd}
-                        item={column[1].summary as TableEntry}
-                      />
-                    )}
-
-                    {activeColumnDropdown?.find(
-                      (value) => value.key === column[1].summary.columns[0]?.id,
-                    )?.active === true &&
-                      renderChildrenRows(
-                        column[1].entries,
-                        column[1].summary.columns[0]?.id,
-                      )}
-                  </tbody>
-                );
-              })}
-          </table>
+            </table>
+          </div>
         </div>
       </div>
     </>

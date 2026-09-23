@@ -7,178 +7,54 @@ type SummaryReportProps = {
   summary: UseQueryResult<Reporting, Error>;
   user: User;
 };
+
+const metrics: { label: string; key: keyof Reporting; suffix?: string }[] = [
+  { label: "Media Buying Cost", key: "media_buying_cost" },
+  { label: "Gross Clicks", key: "gross_click" },
+  { label: "Clicks", key: "total_click" },
+  { label: "Total CV", key: "total_cv" },
+  { label: "CTR", key: "ctr", suffix: "%" },
+  { label: "Event", key: "event" },
+  { label: "CVR", key: "cvr", suffix: "%" },
+  { label: "CPC", key: "cpc" },
+  { label: "CPA", key: "cpa" },
+  { label: "RPC", key: "rpc" },
+  { label: "RPA", key: "rpa" },
+  { label: "Payout", key: "payout" },
+  { label: "Revenue", key: "revenue" },
+  { label: "Profit", key: "profit" },
+  { label: "Margin", key: "margin", suffix: "%" },
+  { label: "Avg. Sale Value", key: "avg_sale_value" },
+  { label: "Gross Sales", key: "gross_sales" },
+];
+
 function SummaryReport({ summary }: SummaryReportProps) {
   return (
-    <section className="grid h-max w-10/12 grid-cols-2 gap-5 rounded-lg p-5 ring-1 ring-black md:grid-cols-6 2xl:grid-cols-8">
-      <div>
-        <h2 className="w-max text-xs font-semibold">MEDIA BUYING COST</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.media_buying_cost.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">GROSS CLICKS</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-100 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.gross_click.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">CLICKS</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.total_click.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">TOTAL CV</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-200 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.total_cv.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">CTR</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-400 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.ctr.toLocaleString()}%
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">EVENT</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-200 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.event.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">CVR</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-50 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.cvr.toLocaleString()}%
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">CPC</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-500 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.cpc.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">CPA</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-200 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.cpa.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">RPC</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.rpc.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">RPA</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-600 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.rpa.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">PAYOUT</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.payout.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">REVENUE</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-50 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.revenue.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">PROFIT</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-400 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.profit.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">MARGIN</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-700 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.margin.toLocaleString()}%
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">AVG. SALE VALUE</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.avg_sale_value.toLocaleString()}
-          </p>
-        )}
-      </div>
-      <div>
-        <h2 className="w-max text-xs font-semibold">GROSS SALES</h2>
-        {summary.isLoading ? (
-          <div className="h-5 w-full animate-pulse bg-gray-300 "></div>
-        ) : (
-          <p className="w-max text-base font-semibold text-slate-600">
-            {summary.data?.gross_sales.toLocaleString()}
-          </p>
-        )}
+    <section className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+        {metrics.map((m) => {
+          const raw = summary.data?.[m.key];
+          const value =
+            typeof raw === "number" ? raw.toLocaleString() : undefined;
+          return (
+            <div
+              key={m.label}
+              className="rounded-xl border border-white/5 bg-black/30 px-3 py-3"
+            >
+              <h2 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                {m.label}
+              </h2>
+              {summary.isLoading ? (
+                <div className="mt-2 h-6 w-16 animate-pulse rounded bg-white/10" />
+              ) : (
+                <p className="mt-1 text-lg font-semibold tracking-tight text-white">
+                  {value}
+                  {m.suffix ?? ""}
+                </p>
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

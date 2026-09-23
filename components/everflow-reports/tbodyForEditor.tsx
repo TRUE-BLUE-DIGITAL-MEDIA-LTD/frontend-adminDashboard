@@ -71,22 +71,20 @@ function TbodyForEditor({
       : "";
 
   const bgClass = isParent
-    ? "bg-blue-100"
+    ? "bg-zinc-800"
     : isGroupedChild
-      ? "bg-blue-50"
-      : odd === 0
-        ? "bg-[#F7F6FE]"
-        : "bg-white";
+      ? "bg-zinc-900"
+      : "bg-zinc-900";
 
   const fontClass = isParent
-    ? "font-bold text-black"
+    ? "font-bold text-white"
     : isGroupedChild
-      ? "font-semibold text-gray-800"
-      : "text-gray-600";
+      ? "font-semibold text-zinc-200"
+      : "text-zinc-400";
 
   return (
     <tr
-      className={`h-10 w-full text-sm transition hover:bg-icon-color ${stickyClass} ${bgClass} ${fontClass}`}
+      className={`h-10 w-full text-sm transition hover:bg-white/5 border-b border-white/5 ${stickyClass} ${bgClass} ${fontClass}`}
     >
       <td
         className={`left-0 max-w-60 truncate px-2 text-end md:sticky ${bgClass}`}
@@ -131,7 +129,7 @@ function TbodyForEditor({
                 }),
               );
             }}
-            className="grid cursor-pointer grid-cols-3 p-2 hover:bg-slate-200"
+            className="grid cursor-pointer grid-cols-3 p-2 hover:bg-white/10"
           >
             <div
               className={`flex items-center justify-center ${
@@ -189,7 +187,7 @@ function TbodyForEditor({
             onTriggerConversion(item.columns.slice(0, 2));
           }
         }}
-        className="cursor-pointer px-2 text-blue-600 hover:underline"
+        className="cursor-pointer px-2 text-main-color hover:underline"
       >
         {item.reporting.cv.toLocaleString()}
       </td>
@@ -202,12 +200,12 @@ function TbodyForEditor({
 
       <td className="px-2 ">{item.reporting.payout.toLocaleString()}</td>
       {partnerPerformanceDayByDay.isLoading ? (
-        <td className="animate-pulse px-2 font-bold text-yellow-600">
+        <td className="animate-pulse px-2 font-bold text-amber-300">
           loading..
         </td>
       ) : (
         user.partner?.isAllowBonuSystem && (
-          <td className="px-2 font-bold text-yellow-600 ">
+          <td className="px-2 font-bold text-amber-300 ">
             ${bonos?.bonus.toLocaleString()}
           </td>
         )

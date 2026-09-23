@@ -162,65 +162,63 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
   };
 
   return (
-    <div className="h-96 w-96 overflow-auto rounded-lg border bg-white p-5 md:w-10/12 lg:w-7/12">
-      <h1 className="flex items-center justify-start gap-2 border-b text-lg font-semibold text-gray-800">
-        <MdSettings /> Update Permission
-      </h1>
-      <ul className="mt-5 grid w-full grid-cols-2 gap-3">
-        {permissionLists.map((permission, index) => {
-          if (
-            permission.slug === "isAllowCreateDomain" &&
-            user.data?.role !== "admin"
-          ) {
-            return null;
-          }
+    <ul className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+      {permissionLists.map((permission, index) => {
+        if (
+          permission.slug === "isAllowCreateDomain" &&
+          user.data?.role !== "admin"
+        ) {
+          return null;
+        }
 
-          if (permission.allow === true) {
-            return (
-              <button
-                key={index}
-                onClick={async () => {
-                  setPermissionLists((prev) => {
-                    return prev.map((p) => {
-                      if (p.slug !== permission.slug) {
-                        return p;
-                      }
-                      return { ...p, allow: false };
-                    });
-                  });
-                  await handleUpdatePermission(permission.slug, false);
-                }}
-                className="flex w-full items-center justify-between gap-2  rounded-lg border bg-green-300 p-2 text-green-700 hover:scale-105 active:scale-110"
-              >
-                <span>{permission.title}</span>
-                <MdCheck />
-              </button>
-            );
-          }
+        if (permission.allow === true) {
           return (
             <button
               key={index}
+              type="button"
               onClick={async () => {
                 setPermissionLists((prev) => {
                   return prev.map((p) => {
                     if (p.slug !== permission.slug) {
                       return p;
                     }
-                    return { ...p, allow: true };
+                    return { ...p, allow: false };
                   });
                 });
-                await handleUpdatePermission(permission.slug, true);
+                await handleUpdatePermission(permission.slug, false);
               }}
-              className="flex w-full items-center justify-between gap-2 rounded-lg border bg-gray-200 p-2 text-gray-800 hover:scale-105 active:scale-110"
+              className="flex w-full items-center justify-between gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-left text-sm text-emerald-300 transition hover:bg-emerald-500/20"
             >
               <span>{permission.title}</span>
-              <MdClear />
+              <MdCheck className="shrink-0" />
             </button>
           );
-        })}
-      </ul>
-    </div>
+        }
+        return (
+          <button
+            key={index}
+            type="button"
+            onClick={async () => {
+              setPermissionLists((prev) => {
+                return prev.map((p) => {
+                  if (p.slug !== permission.slug) {
+                    return p;
+                  }
+                  return { ...p, allow: true };
+                });
+              });
+              await handleUpdatePermission(permission.slug, true);
+            }}
+            className="flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-left text-sm text-zinc-300 transition hover:bg-white/10"
+          >
+            <span>{permission.title}</span>
+            <MdClear className="shrink-0" />
+          </button>
+        );
+      })}
+    </ul>
   );
 }
+
 
 export default UpdatePermissionPartner;

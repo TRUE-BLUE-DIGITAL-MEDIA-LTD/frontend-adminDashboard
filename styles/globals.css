@@ -79,3 +79,67 @@ input[type="number"] {
 .gradient-bronze {
   background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%);
 }
+
+/* Dark Prime overlay panels — force light text on dark backgrounds */
+.oxy-dark-overlay-panel.p-dropdown-panel,
+.oxy-dark-overlay-panel.p-multiselect-panel,
+.oxy-dark-overlay-panel.p-datepicker {
+  background: #18181b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-header,
+.oxy-dark-overlay-panel .p-multiselect-header {
+  background: #18181b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f4f4f5 !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-filter,
+.oxy-dark-overlay-panel .p-multiselect-filter,
+.oxy-dark-overlay-panel .p-inputtext {
+  background: #09090b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-filter::placeholder,
+.oxy-dark-overlay-panel .p-multiselect-filter::placeholder {
+  color: #71717a !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-items .p-dropdown-item,
+.oxy-dark-overlay-panel .p-multiselect-items .p-multiselect-item {
+  color: #e4e4e7 !important;
+  background: transparent !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover,
+.oxy-dark-overlay-panel .p-dropdown-item.p-focus,
+.oxy-dark-overlay-panel .p-multiselect-item:not(.p-highlight):not(.p-disabled):hover,
+.oxy-dark-overlay-panel .p-multiselect-item.p-focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-item.p-highlight,
+.oxy-dark-overlay-panel .p-multiselect-item.p-highlight {
+  background: #00abe4 !important;
+  color: #ffffff !important;
+}
+
+.oxy-dark-overlay-panel .p-dropdown-empty-message,
+.oxy-dark-overlay-panel .p-multiselect-empty-message {
+  color: #a1a1aa !important;
+}
+
+.oxy-dark-overlay-panel .p-datepicker-header,
+.oxy-dark-overlay-panel .p-datepicker-calendar td > span {
+  color: #e4e4e7 !important;
+}
+
+.oxy-dark-overlay-panel .p-datepicker-calendar td > span.p-highlight {
+  background: #00abe4 !important;
+  color: #ffffff !important;
+}

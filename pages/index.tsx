@@ -9,8 +9,8 @@ import Searchbar from "../components/category/searchbar";
 import { languages } from "../data/languages";
 import DashboardLayout from "../layouts/dashboardLayout";
 import { Language, User } from "../models";
+import { toDomainOptions, useGetAllDomains } from "../react-query/domain";
 import { GetAllCategoriesByPartnerService } from "../services/admin/categories";
-import { GetAllDomains } from "../services/admin/domain";
 import { GetUser } from "../services/admin/user";
 
 export type QueryFilterLandingPages = {
@@ -22,16 +22,7 @@ function Index({ user }: { user: User }) {
   const [page, setPage] = useState(1);
   const [queryFilterLandingPages, setQueryFilterLandingPages] =
     useState<QueryFilterLandingPages>({});
-  const domains = useQuery({
-    queryKey: ["domains"],
-    queryFn: () =>
-      GetAllDomains().then((res) => {
-        const newFormat = res.map((domain) => {
-          return { option: domain.name, id: domain.id };
-        });
-        return newFormat;
-      }),
-  });
+  const domains = useGetAllDomains({ select: toDomainOptions });
 
   const categories = useQuery({
     queryKey: ["categories"],

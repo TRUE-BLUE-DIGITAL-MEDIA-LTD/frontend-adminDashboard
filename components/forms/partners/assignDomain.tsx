@@ -19,6 +19,19 @@ import {
 import Swal from "sweetalert2";
 import { Dropdown } from "primereact/dropdown";
 
+
+const paginationSx = {
+  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root.Mui-selected": {
+    backgroundColor: "#00ABE4",
+    color: "#ffffff",
+  },
+  "& .MuiPaginationItem-root:hover": {
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+};
+
 type AssignDomainProps = {
   setTriggerAssignDomain: React.Dispatch<React.SetStateAction<boolean>>;
   selectPartner: Partner;
@@ -237,194 +250,185 @@ function AssignDomain({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
-      <ul className="flex h-[30rem] w-96 flex-col items-center justify-between gap-2 rounded-xl bg-white p-7">
-        <label className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          List of {selectPartner.name}&apos;s domains
-        </label>
-        <div className=" flex max-h-full min-h-72 w-full flex-col justify-start overflow-auto   ">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 p-4 font-Poppins lg:flex-row">
+      <ul className="relative z-10 flex max-h-[90vh] w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl lg:h-[32rem]">
+        <header className="shrink-0 border-b border-white/10 px-5 py-4">
+          <h3 className="text-sm font-semibold text-white">
+            {selectPartner.name}&apos;s domains
+          </h3>
+          <p className="text-xs text-zinc-500">Currently assigned</p>
+        </header>
+        <div className="min-h-0 flex-1 space-y-1 overflow-auto px-3 py-3">
           {partnerOnDomain.isLoading ? (
-            <div className="h-full w-full animate-pulse bg-gray-200"></div>
+            <div className="h-full w-full animate-pulse rounded-xl bg-zinc-800" />
           ) : (
             partnerOnDomain.data?.map((partner) => {
               return (
                 <div
                   key={partner.id}
-                  className="flex h-12 w-full items-center justify-between  py-3 hover:bg-gray-200"
+                  className="flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-black/30 px-3 py-2.5"
                 >
-                  <div className="h-10 w-full truncate border-4 border-transparent font-semibold text-black">
+                  <span className="truncate text-sm font-medium text-zinc-200">
                     {partner.domain.name}
-                  </div>
-                  <div className="h-max w-max bg-green-300 px-2 py-1 text-green-700">
+                  </span>
+                  <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
                     OWN
-                  </div>
+                  </span>
                 </div>
               );
             })
           )}
         </div>
-        <footer className="flex w-full justify-center bg-gray-200 py-3 font-bold text-black">
-          Total Domain : {partnerOnDomain.data?.length}
+        <footer className="shrink-0 border-t border-white/10 px-5 py-3 text-center text-xs text-zinc-400">
+          Total: {partnerOnDomain.data?.length ?? 0}
         </footer>
       </ul>
-      <Form className="flex h-max w-6/12 flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
-        <section
-          className="flex h-max w-full flex-col items-center 
-        justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300 "
-        >
-          <header className="flex w-full flex-col items-center justify-center gap-2">
-            <h1 className="rext-xl flex w-full flex-col items-center justify-center font-bold md:text-xl">
-              Assign Domain
-              <div className="text-base font-medium text-gray-600">
-                {" "}
-                {selectPartner.name}
-              </div>
-            </h1>
-            <div className="flex w-full items-end justify-center gap-2">
-              <div className="flex flex-col items-start gap-1">
-                <label className="text-sm font-normal">Filter Partner</label>
-                <Dropdown
-                  value={filterDomain}
-                  onChange={(e) => {
-                    setPage(1);
-                    setFilterDomain(() => e.value);
-                  }}
-                  options={["all", "no-partner"]}
-                  placeholder="Filter Partner"
-                  className="h-10 w-40  rounded-lg text-left outline-0 ring-2 ring-icon-color "
-                />
-              </div>
-              <div className="flex flex-col items-start gap-1">
-                <label className="text-sm font-normal">Search</label>
-                <SearchField
-                  value={searchField}
-                  onChange={(e) => {
-                    setSearchField(() => e);
-                    setPage(1);
-                  }}
-                  className="relative flex w-full flex-col"
-                >
-                  <Input
-                    placeholder="Search Name Or Partner Manager"
-                    className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10 
-                 outline-0 ring-2 ring-icon-color lg:w-full"
-                  />
-                  <IoSearchCircleSharp
-                    className="text-super-main-color
-               absolute bottom-0 left-2 top-0 m-auto text-3xl"
-                  />
-                </SearchField>
-              </div>
-            </div>
-          </header>
-          <div className=" h-60 w-full justify-center overflow-auto  ">
-            <table className=" w-full table-auto ">
-              <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
-                <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-                  <th>Domain Name</th>
-                  <th>Create At</th>
-                  <th>Own By</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {domains.isLoading
-                  ? [...Array(5)].map((_, index) => (
-                      <tr key={index}>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                        <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                      </tr>
-                    ))
-                  : responsibilityOnPartner?.domains.map((domain) => {
-                      const createAt = new Date(domain?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        },
-                      );
-                      return (
-                        <tr
-                          className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
-                          key={domain.id}
-                        >
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
-                            {domain.name}
-                          </td>
-                          <td className="truncate border-4 border-transparent font-semibold text-black">
-                            {formattedDatecreateAt}
-                          </td>
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
-                            {domain.partner?.name ?? "No Partner"}
-                          </td>
-                          <td className="truncate border-4 border-transparent  font-semibold text-black">
-                            <div className="flex items-center justify-center">
-                              {domain.isLoading ? (
-                                <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
-                              ) : domain.partner &&
-                                domain.partner.id !== selectPartner.id ? (
-                                <button
-                                  onClick={() =>
-                                    handleDeleteResponsibility({
-                                      domainId: domain.id,
-                                      partner: domain.partner ?? selectPartner,
-                                      responsibilityPartnerId:
-                                        domain.responsibilityPartners?.id || "",
-                                    })
-                                  }
-                                  type="button"
-                                  className="group  h-10 w-full bg-red-300 px-2 py-1
-                                 text-xs text-red-700 transition hover:bg-red-400"
-                                >
-                                  <span className="block group-hover:hidden">
-                                    already assigned
-                                  </span>
-                                  <span className="hidden group-hover:block">
-                                    unassign
-                                  </span>
-                                </button>
-                              ) : (
-                                <input
-                                  onChange={(e) => {
-                                    if (e.target.checked === true) {
-                                      handleAssignDomain({
-                                        partnerId: selectPartner.id,
-                                        domainId: domain.id,
-                                      });
-                                    } else if (e.target.checked === false) {
-                                      handleDeleteResponsibility({
-                                        domainId: domain.id,
-                                        partner:
-                                          domain.partner ?? selectPartner,
-                                        responsibilityPartnerId:
-                                          domain.responsibilityPartners?.id ||
-                                          "",
-                                      });
-                                    }
-                                  }}
-                                  checked={domain.isChecking}
-                                  type="checkbox"
-                                  className="h-5 w-5"
-                                />
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-              </tbody>
-            </table>
+
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl lg:h-[32rem]">
+        <header className="flex shrink-0 flex-col gap-3 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Assign domain</h2>
+            <p className="text-xs text-zinc-500">{selectPartner.name}</p>
           </div>
-          <Pagination
-            page={page}
-            onChange={(e, page) => setPage(page)}
-            count={responsibilityOnPartner?.totalPages || 1}
-            color="primary"
-          />
-        </section>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-zinc-400">Filter</label>
+              <Dropdown
+                value={filterDomain}
+                onChange={(e) => {
+                  setPage(1);
+                  setFilterDomain(() => e.value);
+                }}
+                options={["all", "no-partner"]}
+                placeholder="Filter Partner"
+                className="h-10 w-36 rounded-lg border border-white/10 bg-black/40 text-left text-sm text-white outline-none"
+              />
+            </div>
+            <SearchField
+              value={searchField}
+              onChange={(e) => {
+                setSearchField(() => e);
+                setPage(1);
+              }}
+              className="relative flex w-48 flex-col"
+            >
+              <Input
+                placeholder="Search domains"
+                className="h-10 appearance-none rounded-full border border-white/10 bg-black/40 py-2 pl-10 pr-3 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color"
+              />
+              <IoSearchCircleSharp className="absolute bottom-0 left-2 top-0 m-auto text-2xl text-main-color" />
+            </SearchField>
+            <button
+              type="button"
+              onClick={() => {
+                setTriggerAssignDomain(() => false);
+                document.body.style.overflow = "auto";
+              }}
+              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+        </header>
+        <div className="min-h-0 flex-1 space-y-2 overflow-auto px-4 py-4">
+          {domains.isLoading
+            ? [...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="h-14 animate-pulse rounded-xl bg-zinc-800/60"
+                />
+              ))
+            : responsibilityOnPartner?.domains.map((domain) => {
+                const createAt = new Date(domain?.createAt);
+                const formattedDatecreateAt = createAt.toLocaleDateString(
+                  "en-US",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  },
+                );
+                return (
+                  <div
+                    key={domain.id}
+                    className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+                      domain.isChecking
+                        ? "border-emerald-500/30 bg-emerald-500/10"
+                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-white">
+                        {domain.name}
+                      </p>
+                      <p className="truncate text-xs text-zinc-500">
+                        {formattedDatecreateAt} ·{" "}
+                        {domain.partner?.name ?? "No partner"}
+                      </p>
+                    </div>
+                    <div className="shrink-0">
+                      {domain.isLoading ? (
+                        <div className="h-5 w-5 animate-pulse rounded bg-zinc-700" />
+                      ) : domain.partner &&
+                        domain.partner.id !== selectPartner.id ? (
+                        <button
+                          onClick={() =>
+                            handleDeleteResponsibility({
+                              domainId: domain.id,
+                              partner: domain.partner ?? selectPartner,
+                              responsibilityPartnerId:
+                                domain.responsibilityPartners?.id || "",
+                            })
+                          }
+                          type="button"
+                          className="group rounded-full border border-rose-500/40 bg-rose-500/20 px-3 py-1 text-xs text-rose-300 transition hover:bg-rose-500/30"
+                        >
+                          <span className="block group-hover:hidden">
+                            Assigned
+                          </span>
+                          <span className="hidden group-hover:block">
+                            Unassign
+                          </span>
+                        </button>
+                      ) : (
+                        <input
+                          onChange={(e) => {
+                            if (e.target.checked === true) {
+                              handleAssignDomain({
+                                partnerId: selectPartner.id,
+                                domainId: domain.id,
+                              });
+                            } else if (e.target.checked === false) {
+                              handleDeleteResponsibility({
+                                domainId: domain.id,
+                                partner: domain.partner ?? selectPartner,
+                                responsibilityPartnerId:
+                                  domain.responsibilityPartners?.id || "",
+                              });
+                            }
+                          }}
+                          checked={domain.isChecking}
+                          type="checkbox"
+                          className="h-4 w-4 accent-main-color"
+                        />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+        </div>
+        <div className="flex shrink-0 justify-center border-t border-white/10 px-5 py-3">
+          <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+            <Pagination
+              page={page}
+              onChange={(e, page) => setPage(page)}
+              count={responsibilityOnPartner?.totalPages || 1}
+              color="primary"
+              sx={paginationSx}
+            />
+          </div>
+        </div>
       </Form>
 
       <footer
@@ -432,10 +436,11 @@ function AssignDomain({
           setTriggerAssignDomain(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-black/50 "
+        className="fixed inset-0 -z-10 bg-black/70"
       ></footer>
     </div>
   );
 }
+
 
 export default AssignDomain;

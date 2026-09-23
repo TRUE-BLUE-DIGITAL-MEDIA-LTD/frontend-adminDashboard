@@ -43,9 +43,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
   // When arriving from the Link Audit page (?domainName=...), prefill the
   // search box so the list is filtered to that domain on first load.
   const focusDomainName =
-    typeof router.query.domainName === "string"
-      ? router.query.domainName
-      : "";
+    typeof router.query.domainName === "string" ? router.query.domainName : "";
   // List state lives in the URL (?search=&page=&partnerId=) so coming back
   // from a /domain/[domainId] page restores the same view. router.query is
   // populated on first render because this page uses getServerSideProps.
@@ -316,7 +314,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
               Create
             </button>
           )}
-          {user.role === "admin" && (
+          {/* {user.role === "admin" && (
             <>
               <button
                 type="button"
@@ -335,10 +333,12 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 {republishAll.isPending ? "Queuing…" : "Republish all landers"}
               </button>
             </>
-          )}
+          )} */}
           <div className="flex w-full flex-wrap justify-center gap-5">
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal text-white/70">Search Domain</label>
+              <label className="text-sm font-normal text-white/70">
+                Search Domain
+              </label>
               <SearchField
                 value={searchField}
                 onChange={(e) => {
@@ -355,7 +355,9 @@ function Index({ user }: { user: User & { partner: Partner } }) {
               </SearchField>
             </div>
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal text-white/70">Select Partner</label>
+              <label className="text-sm font-normal text-white/70">
+                Select Partner
+              </label>
               <Dropdown
                 value={selectPartner}
                 onChange={(e) => {
@@ -395,82 +397,90 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           {domains.isFetching && <SpinLoading />}
           <div className="h-96 w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 md:h-[36rem]">
             <div className="h-full w-full overflow-auto">
-            <table className="w-max min-w-full border-collapse text-left text-sm">
-              <thead className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
-                <tr className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur">
-                  <th className="px-4 py-3.5 font-semibold">Domain Name</th>
-                  <th className="px-3 py-3.5 font-semibold">Updated At</th>
-                  <th className="px-3 py-3.5 font-semibold">Site Status</th>
-                  <th className="px-3 py-3.5 font-semibold">Verify On Google</th>
-                  <th className="px-3 py-3.5 font-semibold">Sitemap Status</th>
-                  <th className="px-3 py-3.5 font-semibold">DNS Status</th>
-                  <th className="px-3 py-3.5 font-semibold">Nameserver</th>
-                  <th className="px-3 py-3.5 font-semibold">Partners</th>
-                  <th className="px-3 py-3.5 font-semibold">Landing Pages</th>
-                  <th className="px-3 py-3.5 font-semibold">Average SEO Score</th>
-                  <th className="px-3 py-3.5 font-semibold">
-                    <button
-                      type="button"
-                      onClick={handleToggleLoadSort}
-                      className="flex items-center gap-1 text-zinc-400 transition hover:text-main-color"
-                      title="Sort by worst load time across regions"
-                    >
-                      Worst load
-                      {sort === "load-desc" && (
-                        <span aria-label="slowest first">▼</span>
-                      )}
-                      {sort === "load-asc" && (
-                        <span aria-label="fastest first">▲</span>
-                      )}
-                    </button>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {domains.isError && (
-                  <tr>
-                    <td colSpan={11} className="px-4 py-8 text-center text-zinc-500">
-                      No domain found
-                    </td>
+              <table className="w-max min-w-full border-collapse text-left text-sm">
+                <thead className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                  <tr className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur">
+                    <th className="px-4 py-3.5 font-semibold">Domain Name</th>
+                    <th className="px-3 py-3.5 font-semibold">Updated At</th>
+                    <th className="px-3 py-3.5 font-semibold">Site Status</th>
+                    <th className="px-3 py-3.5 font-semibold">
+                      Verify On Google
+                    </th>
+                    <th className="px-3 py-3.5 font-semibold">
+                      Sitemap Status
+                    </th>
+                    <th className="px-3 py-3.5 font-semibold">DNS Status</th>
+                    <th className="px-3 py-3.5 font-semibold">Nameserver</th>
+                    <th className="px-3 py-3.5 font-semibold">Partners</th>
+                    <th className="px-3 py-3.5 font-semibold">Landing Pages</th>
+                    <th className="px-3 py-3.5 font-semibold">
+                      Average SEO Score
+                    </th>
+                    <th className="px-3 py-3.5 font-semibold">
+                      <button
+                        type="button"
+                        onClick={handleToggleLoadSort}
+                        className="flex items-center gap-1 text-zinc-400 transition hover:text-main-color"
+                        title="Sort by worst load time across regions"
+                      >
+                        Worst load
+                        {sort === "load-desc" && (
+                          <span aria-label="slowest first">▼</span>
+                        )}
+                        {sort === "load-asc" && (
+                          <span aria-label="fastest first">▲</span>
+                        )}
+                      </button>
+                    </th>
                   </tr>
-                )}
-                {domains.data?.domains.map((list, index) => {
-                  return (
-                    <ListDomain
-                      key={index}
-                      list={list}
-                      domains={domains}
-                      user={user}
-                    />
-                  );
-                })}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {domains.isError && (
+                    <tr>
+                      <td
+                        colSpan={11}
+                        className="px-4 py-8 text-center text-zinc-500"
+                      >
+                        No domain found
+                      </td>
+                    </tr>
+                  )}
+                  {domains.data?.domains.map((list, index) => {
+                    return (
+                      <ListDomain
+                        key={index}
+                        list={list}
+                        domains={domains}
+                        user={user}
+                      />
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
           <div className="flex w-full justify-center">
             <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
-            <Pagination
-              onChange={(e, page) => setPage(page)}
-              page={page}
-              count={totalPage}
-              color="primary"
-            
-              sx={{
-                                "& .MuiPaginationItem-root": {
-                                  color: "#ffffff",
-                                  borderColor: "rgba(255,255,255,0.35)",
-                                },
-                                "& .MuiPaginationItem-root.Mui-selected": {
-                                  backgroundColor: "#00ABE4",
-                                  color: "#ffffff",
-                                  "&:hover": { backgroundColor: "#0096c7" },
-                                },
-                                "& .MuiPaginationItem-root:hover": {
-                                  backgroundColor: "rgba(0, 171, 228, 0.2)",
-                                },
-                                "& .MuiPaginationItem-icon": { color: "#ffffff" },
-                              }}
+              <Pagination
+                onChange={(e, page) => setPage(page)}
+                page={page}
+                count={totalPage}
+                color="primary"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#ffffff",
+                    borderColor: "rgba(255,255,255,0.35)",
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "#00ABE4",
+                    color: "#ffffff",
+                    "&:hover": { backgroundColor: "#0096c7" },
+                  },
+                  "& .MuiPaginationItem-root:hover": {
+                    backgroundColor: "rgba(0, 171, 228, 0.2)",
+                  },
+                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                }}
               />
             </div>
           </div>

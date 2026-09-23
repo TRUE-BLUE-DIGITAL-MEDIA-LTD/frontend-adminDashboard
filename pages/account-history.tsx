@@ -176,7 +176,6 @@ function Index({ user }: { user: User }) {
 
   useEffect(() => {
     hanldeDateChanging("Today");
-    setSelectUsers(() => [user]);
   }, []);
 
   // ✅ 2. Create the handler function for form submission
@@ -203,9 +202,11 @@ function Index({ user }: { user: User }) {
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
               Activity
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-white">Account History</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
+              Account History
+            </h1>
           </div>
-          <header className="flex w-full max-w-7xl flex-wrap justify-start gap-3 rounded-2xl border border-white/10 bg-zinc-900 p-4 text-zinc-100 shadow-none">
+          <header className="flex w-full max-w-7xl flex-wrap justify-start gap-3 rounded-2xl border border-white/10 bg-zinc-900 p-4 text-black shadow-none">
             {(user.role === "admin" || user.role === "manager") && (
               <div className={`flex flex-col`}>
                 <label className="text-xs ">Select Users</label>
@@ -242,7 +243,7 @@ function Index({ user }: { user: User }) {
                       </div>
                     </section>
                   )}
-                  className={`h-10 w-72 rounded  border border-gray-400 text-zinc-100 `}
+                  className={`h-10 w-72 rounded border  border-gray-400 text-black `}
                 />
               </div>
             )}
@@ -267,7 +268,7 @@ function Index({ user }: { user: User }) {
                     <span>{option.title}</span>
                   </div>
                 )}
-                className="h-10 w-72 rounded  border border-gray-400 text-zinc-100 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
               />
             </div>
 
@@ -284,7 +285,7 @@ function Index({ user }: { user: User }) {
                   }}
                   type="text"
                   placeholder="Search Description"
-                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-zinc-100 outline-none  focus:ring-2 active:ring-2"
+                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-black outline-none placeholder:text-black  focus:ring-2 active:ring-2"
                 />
                 <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
               </div>
@@ -301,7 +302,7 @@ function Index({ user }: { user: User }) {
                   setTimePeriod(newTimePeriod);
                   hanldeDateChanging(newTimePeriod);
                 }}
-                className="h-10 w-32 rounded  border border-gray-400 text-zinc-100 "
+                className="h-10 w-32 rounded border border-gray-400 text-black "
               >
                 {timePeriods.map((time) => (
                   <option key={time} value={time}>
@@ -313,7 +314,7 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time Start</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-zinc-100 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
                 value={dateStart?.delay}
                 showTime
                 hourFormat="24"
@@ -343,7 +344,7 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time End</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-zinc-100 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
                 value={dateEnd?.delay}
                 showTime
                 hourFormat="24"
@@ -373,8 +374,8 @@ function Index({ user }: { user: User }) {
 
           <>
             <div
-              className="min-h-60 w-full max-w-7xl overflow-auto rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-none
-           rounded-lg border border-white/10  "
+              className="min-h-60 w-full max-w-7xl overflow-auto rounded-2xl  border border-white/10
+           bg-zinc-900 text-zinc-100 shadow-none  "
             >
               <table className="w-max min-w-full border-collapse ">
                 <thead className="">

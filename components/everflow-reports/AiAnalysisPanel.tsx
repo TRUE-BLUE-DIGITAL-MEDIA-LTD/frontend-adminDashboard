@@ -81,26 +81,26 @@ function AiAnalysisPanel({
   const showLoading = analysis.isPending || analysis.isFetching;
 
   return (
-    <div className="w-10/12 rounded-lg bg-white p-5 ring-1 ring-gray-200">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-black">
-          <BsStars className="text-purple-600" />
+    <div className="w-full rounded-2xl border border-white/10 border-l-violet-500/40 bg-zinc-900 p-4 md:p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold text-white">
+          <BsStars className="text-violet-400" />
           AI Analysis
-          <span className="text-sm font-normal text-gray-500">
+          <span className="text-sm font-normal text-zinc-500">
             {analyzedRange.start} → {analyzedRange.end}
           </span>
         </h2>
-        <div className="flex items-center gap-2">
-          <div className="flex overflow-hidden rounded border border-gray-300 text-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex overflow-hidden rounded-full border border-white/10 bg-black/30 text-sm">
             {(["en", "th"] as const).map((lang) => (
               <button
                 key={lang}
                 onClick={() => handleLanguageChange(lang)}
                 disabled={showLoading}
-                className={`px-3 py-1 font-semibold uppercase ${
+                className={`px-3 py-1.5 font-semibold uppercase transition ${
                   language === lang
-                    ? "bg-purple-600 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100"
+                    ? "bg-white/10 text-white"
+                    : "text-zinc-400 hover:text-white"
                 }`}
               >
                 {lang}
@@ -110,13 +110,13 @@ function AiAnalysisPanel({
           <button
             onClick={handleReanalyze}
             disabled={showLoading}
-            className="rounded bg-purple-600 px-3 py-1 text-sm font-bold text-white hover:bg-purple-700 disabled:opacity-50"
+            className="rounded-full border border-white/15 px-3 py-1.5 text-sm font-medium text-zinc-200 transition hover:bg-white/5 disabled:opacity-50"
           >
             Re-analyze
           </button>
           <button
             onClick={onClose}
-            className="rounded p-1 text-gray-500 hover:bg-gray-100"
+            className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-white/5 hover:text-white"
           >
             <IoMdClose size={20} />
           </button>
@@ -125,74 +125,76 @@ function AiAnalysisPanel({
 
       {showLoading && (
         <div className="mt-4 flex flex-col gap-2">
-          <div className="h-6 w-2/3 animate-pulse rounded-lg bg-gray-200"></div>
-          <div className="h-4 w-full animate-pulse rounded-lg bg-gray-100"></div>
-          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-gray-200"></div>
-          <div className="h-4 w-4/6 animate-pulse rounded-lg bg-gray-100"></div>
+          <div className="h-6 w-2/3 animate-pulse rounded-lg bg-white/10"></div>
+          <div className="h-4 w-full animate-pulse rounded-lg bg-white/5"></div>
+          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-white/10"></div>
+          <div className="h-4 w-4/6 animate-pulse rounded-lg bg-white/5"></div>
         </div>
       )}
 
       {!showLoading && analysis.isError && (
-        <h3 className="mt-4 font-semibold text-red-600">
+        <h3 className="mt-4 font-semibold text-rose-400">
           {analysis.error?.message ?? "Analysis failed. Please try again."}
         </h3>
       )}
 
       {!showLoading && data?.noData && (
-        <p className="mt-4 text-gray-600">No data for this date range.</p>
+        <p className="mt-4 text-zinc-400">No data for this date range.</p>
       )}
 
       {!showLoading && data && !data.noData && (
         <div className="mt-4 flex flex-col gap-4">
           {data.headline && (
-            <p className="text-base font-semibold text-black">
-              {data.headline}
-            </p>
+            <p className="text-base font-semibold text-white">{data.headline}</p>
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {data.leaders.length > 0 && (
-              <div className="rounded-lg bg-gray-50 p-4">
-                <h3 className="mb-2 font-bold text-black">🏆 Top performers</h3>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <h3 className="mb-2 font-semibold text-white">
+                  🏆 Top performers
+                </h3>
                 <ul className="flex flex-col gap-2">
                   {data.leaders.map((leader, i) => (
-                    <li key={i} className="text-sm text-gray-700">
-                      <span className="font-semibold text-black">
+                    <li key={i} className="text-sm text-zinc-300">
+                      <span className="font-semibold text-white">
                         {leader.name}
                       </span>{" "}
                       — {formatPayout(leader.payout, data.currency)}
-                      <p className="text-gray-500">{leader.note}</p>
+                      <p className="text-zinc-500">{leader.note}</p>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             {data.countries.length > 0 && (
-              <div className="rounded-lg bg-gray-50 p-4">
-                <h3 className="mb-2 font-bold text-black">🌍 Hot countries</h3>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <h3 className="mb-2 font-semibold text-white">
+                  🌍 Hot countries
+                </h3>
                 <ul className="flex flex-col gap-2">
                   {data.countries.map((country, i) => (
-                    <li key={i} className="text-sm text-gray-700">
-                      <span className="font-semibold text-black">
+                    <li key={i} className="text-sm text-zinc-300">
+                      <span className="font-semibold text-white">
                         {country.country}
                       </span>
-                      <p className="text-gray-500">{country.note}</p>
+                      <p className="text-zinc-500">{country.note}</p>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             {data.bestHours.length > 0 && (
-              <div className="rounded-lg bg-gray-50 p-4">
-                <h3 className="mb-2 font-bold text-black">⏰ Best hours</h3>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <h3 className="mb-2 font-semibold text-white">⏰ Best hours</h3>
                 <ul className="flex flex-col gap-2">
                   {data.bestHours.map((hour, i) => (
-                    <li key={i} className="text-sm text-gray-700">
-                      <span className="font-semibold text-black">
+                    <li key={i} className="text-sm text-zinc-300">
+                      <span className="font-semibold text-white">
                         {hour.country
                           ? `${hour.country} · ${hour.range}`
                           : hour.range}
                       </span>
-                      <p className="text-gray-500">{hour.note}</p>
+                      <p className="text-zinc-500">{hour.note}</p>
                     </li>
                   ))}
                 </ul>
@@ -200,9 +202,9 @@ function AiAnalysisPanel({
             )}
           </div>
           {data.insights.length > 0 && (
-            <div>
-              <h3 className="mb-2 font-bold text-black">💡 Insights</h3>
-              <ul className="list-inside list-disc text-sm text-gray-700">
+            <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+              <h3 className="mb-2 font-semibold text-white">💡 Insights</h3>
+              <ul className="list-inside list-disc text-sm text-zinc-300">
                 {data.insights.map((insight, i) => (
                   <li key={i}>{insight}</li>
                 ))}

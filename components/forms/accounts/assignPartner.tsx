@@ -18,6 +18,19 @@ import {
   AssignPartnerToUserService,
   UnAssignPartnerToUserService,
 } from "../../../services/admin/user";
+
+const paginationSx = {
+  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root.Mui-selected": {
+    backgroundColor: "#00ABE4",
+    color: "#ffffff",
+  },
+  "& .MuiPaginationItem-root:hover": {
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+};
+
 type AssignPartnerProps = {
   accounts: UseQueryResult<ResponseGetAllAccountByPageService, Error>;
   setTriggerAssignPartner: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,124 +128,116 @@ function AssignPartner({
     }
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen  w-screen items-center justify-center font-Poppins ">
-      <Form className="flex h-max w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
-        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
-          <header className="flex w-full flex-col items-end justify-between gap-2 md:flex-row">
-            <h1 className="rext-xl font-bold md:text-3xl">
-              Assign Partner To User
-            </h1>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
+        <header className="flex shrink-0 flex-col gap-3 border-b border-white/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Assign partner</h2>
+            <p className="text-xs text-zinc-500">
+              Connect a partner to this user account
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
             <SearchField
               value={searchField}
               onChange={(e) => {
                 setSearchField(() => e);
               }}
-              className="relative mt-10 flex w-80 flex-col"
+              className="relative flex w-56 flex-col sm:w-64"
             >
               <Input
-                placeholder="Search Name Or Partner Manager"
-                className=" bg-fourth-color h-10 appearance-none rounded-lg p-5 pl-10  outline-0 ring-2 ring-icon-color lg:w-full"
+                placeholder="Search name or manager"
+                className="h-10 appearance-none rounded-full border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color"
               />
-              <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
+              <IoSearchCircleSharp className="absolute bottom-0 left-2 top-0 m-auto text-2xl text-main-color" />
             </SearchField>
-          </header>
-          <div className=" h-60 w-80 justify-center overflow-auto  md:w-[45rem] 2xl:w-[60rem] ">
-            <table className=" w-full table-auto ">
-              <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
-                <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-                  <th>Affiliate ID</th>
-                  <th>Name</th>
-                  <th>Partner Manager</th>
-                  <th>Assing To User</th>
-                </tr>
-              </thead>
-              <tbody>
-                {partners.isLoading
-                  ? [...Array(5)].map((_, index) => (
-                      <tr key={index}>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                        <td className="h-10 w-60 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-50 "></td>
-                        <td className="h-12 w-96 animate-pulse border-4 border-transparent bg-gray-300 "></td>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-600 "></td>
-                        <td className="h-10 w-40 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                      </tr>
-                    ))
-                  : partners?.data?.data.map((partner) => {
-                      const createAt = new Date(partner?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        },
-                      );
-                      return (
-                        <tr
-                          className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
-                          key={partner.id}
-                        >
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
-                            {partner.affiliateId}
-                          </td>
-                          <td className="truncate border-4 border-transparent font-semibold text-black">
-                            {partner.name}
-                          </td>
-                          <td className="truncate border-4 border-transparent font-semibold text-black">
-                            {partner.manager?.email}
-                          </td>
-                          <td className="truncate border-4 border-transparent  font-semibold text-black">
-                            <div className="flex items-center justify-center">
-                              {partner.id === selectAccount.partner?.id ? (
-                                <Button
-                                  onPress={handleUnassignPartnerToUser}
-                                  className="rounded-md bg-red-300 px-4 py-1 
-                              text-red-800 transition duration-100 hover:bg-red-800 hover:text-red-300 active:scale-105 "
-                                >
-                                  Unassign
-                                </Button>
-                              ) : (
-                                <Button
-                                  onPress={() =>
-                                    handleAssignPartnerToUser({
-                                      partnerId: partner.id,
-                                    })
-                                  }
-                                  className="rounded-md bg-green-300 px-4 py-1 
-                              text-green-800 transition duration-100 hover:bg-green-800 hover:text-green-300 active:scale-105 "
-                                >
-                                  Assign
-                                </Button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-              </tbody>
-            </table>
+            <button
+              type="button"
+              onClick={() => {
+                document.body.style.overflow = "auto";
+                setTriggerAssignPartner(() => false);
+              }}
+              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              aria-label="Close"
+            >
+              ✕
+            </button>
           </div>
-          <Pagination
-            onChange={(e, page) => setPage(page)}
-            count={partners?.data?.meta.total || 1}
-            color="primary"
-          />
-        </section>
+        </header>
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-4 sm:px-6">
+          {partners.isLoading
+            ? [...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="h-16 animate-pulse rounded-xl border border-white/5 bg-zinc-800/60"
+                />
+              ))
+            : partners?.data?.data.map((partner) => {
+                const isAssigned = partner.id === selectAccount.partner?.id;
+                return (
+                  <div
+                    key={partner.id}
+                    className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition ${
+                      isAssigned
+                        ? "border-emerald-500/30 bg-emerald-500/10"
+                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-white">
+                        {partner.name}
+                      </p>
+                      <p className="truncate text-xs text-zinc-500">
+                        ID {partner.affiliateId}
+                        {partner.manager?.email
+                          ? ` · ${partner.manager.email}`
+                          : ""}
+                      </p>
+                    </div>
+                    {isAssigned ? (
+                      <Button
+                        onPress={handleUnassignPartnerToUser}
+                        className="shrink-0 rounded-full border border-rose-500/40 bg-rose-500/20 px-3 py-1.5 text-xs font-medium text-rose-300 transition hover:bg-rose-500/30"
+                      >
+                        Unassign
+                      </Button>
+                    ) : (
+                      <Button
+                        onPress={() =>
+                          handleAssignPartnerToUser({
+                            partnerId: partner.id,
+                          })
+                        }
+                        className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/25"
+                      >
+                        Assign
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+        </div>
+        <div className="flex shrink-0 justify-center border-t border-white/10 px-6 py-3">
+          <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+            <Pagination
+              onChange={(e, page) => setPage(page)}
+              count={partners?.data?.meta.total || 1}
+              color="primary"
+              sx={paginationSx}
+            />
+          </div>
+        </div>
       </Form>
       <footer
         onClick={() => {
           document.body.style.overflow = "auto";
           setTriggerAssignPartner(() => false);
         }}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-black/50 "
+        className="fixed inset-0 -z-10 bg-black/70"
       ></footer>
     </div>
   );
 }
+
 
 export default AssignPartner;

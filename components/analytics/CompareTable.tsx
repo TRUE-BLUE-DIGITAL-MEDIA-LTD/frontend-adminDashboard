@@ -1,4 +1,3 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import type { LanderAnalyticsRow } from "../../models";
 import {
   formatDurationMs,
@@ -8,9 +7,9 @@ import {
 import { crSignificance, Significance } from "./significance";
 
 const BADGE_STYLES: Record<Significance, string> = {
-  significant: "bg-red-100 text-red-700",
-  "not-significant": "bg-gray-100 text-gray-600",
-  insufficient: "bg-amber-50 text-amber-700",
+  significant: "border-rose-500/30 bg-rose-500/10 text-rose-300",
+  "not-significant": "border-white/10 bg-white/5 text-zinc-400",
+  insufficient: "border-amber-500/30 bg-amber-500/10 text-amber-300",
 };
 const BADGE_LABELS: Record<Significance, string> = {
   significant: "significant",
@@ -30,80 +29,110 @@ export default function CompareTable({
   const sorted = [...rows].sort((a, b) => b.ctr - a.ctr);
 
   return (
-    <div className="my-6 rounded-lg border border-gray-200 p-4">
-      <h2 className="text-lg font-bold">Landing page comparison</h2>
+    <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+      <h2 className="text-lg font-semibold tracking-tight text-white">
+        Landing page comparison
+      </h2>
       {crossDomain ? (
-        <p className="mb-2 text-sm text-amber-600">
+        <p className="mb-3 mt-1 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
           Cross-domain comparison — traffic sources differ, this is not a
           controlled A/B test.
         </p>
       ) : (
-        <p className="mb-2 text-sm text-gray-500">
+        <p className="mb-3 mt-1 text-sm text-zinc-500">
           Same domain, same period — traffic is split by weight, so this is a
           true A/B comparison. Significance is tested against the CR leader.
         </p>
       )}
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell className="font-semibold">Lander</TableCell>
-            <TableCell className="font-semibold">Domain</TableCell>
-            <TableCell className="font-semibold">Current split</TableCell>
-            <TableCell className="font-semibold">Views</TableCell>
-            <TableCell className="font-semibold">Clicks</TableCell>
-            <TableCell className="font-semibold">CR</TableCell>
-            <TableCell className="font-semibold">Bounce</TableCell>
-            <TableCell className="font-semibold">Avg time</TableCell>
-            <TableCell className="font-semibold">Avg scroll</TableCell>
-            <TableCell className="font-semibold">Returning</TableCell>
-            <TableCell className="font-semibold">vs leader</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sorted.map((row) => {
-            const isLeader = row.landingPageId === leader.landingPageId;
-            const sig = isLeader ? null : crSignificance(leader, row);
-            return (
-              <TableRow
-                key={row.landingPageId}
-                className={isLeader ? "bg-green-50" : ""}
-              >
-                <TableCell>{row.landingPageName ?? row.landingPageId}</TableCell>
-                <TableCell>{row.domainName ?? "—"}</TableCell>
-                <TableCell>
-                  {row.percent === null ? "—" : `${row.percent}%`}
-                </TableCell>
-                <TableCell>{row.views}</TableCell>
-                <TableCell>{row.clicks}</TableCell>
-                <TableCell className={isLeader ? "font-bold" : ""}>
-                  {formatPct(row.ctr)}
-                </TableCell>
-                <TableCell>{formatPct(row.bounceRate)}</TableCell>
-                <TableCell>{formatDurationMs(row.avgTimeOnPageMs)}</TableCell>
-                <TableCell>
-                  {row.avgMaxScrollPct === null ? "—" : `${row.avgMaxScrollPct}%`}
-                </TableCell>
-                <TableCell>
-                  {formatReturningPct(row.returningViews, row.identifiedViews)}
-                </TableCell>
-                <TableCell>
-                  {isLeader ? (
-                    <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
-                      leader
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[720px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-white/5 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+              <th className="px-3 py-2.5 font-semibold">Lander</th>
+              <th className="px-3 py-2.5 font-semibold">Domain</th>
+              <th className="px-3 py-2.5 text-right font-semibold">
+                Current split
+              </th>
+              <th className="px-3 py-2.5 text-right font-semibold">Views</th>
+              <th className="px-3 py-2.5 text-right font-semibold">Clicks</th>
+              <th className="px-3 py-2.5 text-right font-semibold">CR</th>
+              <th className="px-3 py-2.5 text-right font-semibold">Bounce</th>
+              <th className="px-3 py-2.5 text-right font-semibold">Avg time</th>
+              <th className="px-3 py-2.5 text-right font-semibold">Avg scroll</th>
+              <th className="px-3 py-2.5 text-right font-semibold">Returning</th>
+              <th className="px-3 py-2.5 font-semibold">vs leader</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((row) => {
+              const isLeader = row.landingPageId === leader.landingPageId;
+              const sig = isLeader ? null : crSignificance(leader, row);
+              return (
+                <tr
+                  key={row.landingPageId}
+                  className={`border-b border-white/5 ${
+                    isLeader ? "bg-emerald-500/10" : ""
+                  }`}
+                >
+                  <td className="px-3 py-2.5">
+                    <span className="font-medium text-white">
+                      {row.landingPageName ?? row.landingPageId}
                     </span>
-                  ) : (
-                    <span
-                      className={`rounded px-2 py-0.5 text-xs font-semibold ${BADGE_STYLES[sig!]}`}
-                    >
-                      {BADGE_LABELS[sig!]}
-                    </span>
-                  )}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+                  </td>
+                  <td className="px-3 py-2.5 text-zinc-400">
+                    {row.domainName ?? "—"}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-300">
+                    {row.percent === null ? "—" : `${row.percent}%`}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-300">
+                    {row.views}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-300">
+                    {row.clicks}
+                  </td>
+                  <td
+                    className={`px-3 py-2.5 text-right tabular-nums ${
+                      isLeader
+                        ? "font-semibold text-emerald-300"
+                        : "text-zinc-300"
+                    }`}
+                  >
+                    {formatPct(row.ctr)}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-300">
+                    {formatPct(row.bounceRate)}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-400">
+                    {formatDurationMs(row.avgTimeOnPageMs)}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-400">
+                    {row.avgMaxScrollPct === null
+                      ? "—"
+                      : `${row.avgMaxScrollPct}%`}
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-400">
+                    {formatReturningPct(row.returningViews, row.identifiedViews)}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {isLeader ? (
+                      <span className="inline-flex rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-300">
+                        leader
+                      </span>
+                    ) : (
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${BADGE_STYLES[sig!]}`}
+                      >
+                        {BADGE_LABELS[sig!]}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

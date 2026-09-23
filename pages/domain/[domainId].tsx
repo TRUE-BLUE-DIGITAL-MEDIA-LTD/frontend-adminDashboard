@@ -24,9 +24,8 @@ import {
   useGetDomainSpeed,
   useProbeDomainSpeed,
 } from "../../react-query";
-import { useUpdateSeoScore } from "../../react-query/domain";
+import { useDeleteDomain, useUpdateSeoScore } from "../../react-query/domain";
 import {
-  DeleteDomainNameService,
   GetDomainService,
   InputUpdateDomainService,
   ResetGoogleVerificationService,
@@ -54,6 +53,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     enabled: domainId !== "",
   });
   const updateSeoScore = useUpdateSeoScore();
+  const deleteDomain = useDeleteDomain();
   const enableMail = useEnableMail();
 
   const [probeStartedAt, setProbeStartedAt] = useState<number | null>(null);
@@ -218,7 +218,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           },
         });
 
-        await DeleteDomainNameService({
+        await deleteDomain.mutateAsync({
           domainNameId: domainId,
         });
         Swal.fire("Deleted!", "Your file has been deleted.", "success");

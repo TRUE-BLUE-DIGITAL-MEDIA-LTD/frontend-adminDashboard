@@ -24,7 +24,7 @@ import { languages } from "../../data/languages";
 import { Input, SearchField } from "react-aria-components";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import Searchbar from "../../components/category/searchbar";
-import { GetAllDomains } from "../../services/admin/domain";
+import { toDomainOptions, useGetAllDomains } from "../../react-query/domain";
 import { GetAllCategoriesByPartnerService } from "../../services/admin/categories";
 import { QueryFilterLandingPages } from "../index";
 import { HiPlus } from "react-icons/hi";
@@ -55,13 +55,7 @@ export default function Home({ user }: { user: User }) {
         ? router.query.language
         : undefined,
   });
-  const domains = useQuery({
-    queryKey: ["domains"],
-    queryFn: () =>
-      GetAllDomains().then((res) =>
-        res.map((domain) => ({ option: domain.name, id: domain.id })),
-      ),
-  });
+  const domains = useGetAllDomains({ select: toDomainOptions });
   const categories = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
@@ -142,7 +136,9 @@ export default function Home({ user }: { user: User }) {
   };
 
   const resolveLanguage = (value?: string) =>
-    languages.find((language) => language.value === value)?.name ?? value ?? "—";
+    languages.find((language) => language.value === value)?.name ??
+    value ??
+    "—";
 
   const renderActions = (landingPageId: string) =>
     isLoading ? (
@@ -199,8 +195,7 @@ export default function Home({ user }: { user: User }) {
                 Campaign assets
               </p>
               <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
-                Landing{" "}
-                <span className="text-main-color">Pages</span>
+                Landing <span className="text-main-color">Pages</span>
               </h1>
               <p className="max-w-xl text-sm text-white/60 sm:text-base">
                 Create, filter, and manage high-performing landers for every
@@ -271,59 +266,63 @@ export default function Home({ user }: { user: User }) {
                       <Skeleton className="mt-2" width="60%" />
                     </div>
                   ))
-                : landingPages?.data?.landingPages?.map((landingPage, index) => {
-                    const languageName = resolveLanguage(landingPage.language);
-                    return (
-                      <article
-                        key={landingPage.id ?? index}
-                        className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm transition hover:border-main-color/30 hover:shadow-md"
-                      >
-                        <div className="mb-3 space-y-1">
-                          <h2 className="text-base font-semibold text-zinc-100">
-                            {landingPages.isFetching ? (
-                              <Skeleton animation="wave" />
-                            ) : (
-                              landingPage?.name
-                            )}
-                          </h2>
-                          <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/10 px-2.5 py-1 text-zinc-300">
-                              <FiGlobe className="text-main-color" />
-                              {landingPage?.domain?.id ? (
-                                <Link
-                                  href={`/domain/${landingPage.domain.id}`}
-                                  title="Open domain"
-                                  className="font-medium text-main-color underline-offset-2 hover:underline"
-                                >
-                                  {landingPage.domain.name}
-                                </Link>
-                              ) : landingPage?.domain?.name ? (
-                                <span className="font-medium text-main-color">
-                                  {landingPage.domain.name}
-                                </span>
+                : landingPages?.data?.landingPages?.map(
+                    (landingPage, index) => {
+                      const languageName = resolveLanguage(
+                        landingPage.language,
+                      );
+                      return (
+                        <article
+                          key={landingPage.id ?? index}
+                          className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm transition hover:border-main-color/30 hover:shadow-md"
+                        >
+                          <div className="mb-3 space-y-1">
+                            <h2 className="text-base font-semibold text-zinc-100">
+                              {landingPages.isFetching ? (
+                                <Skeleton animation="wave" />
                               ) : (
-                                "No domain"
+                                landingPage?.name
                               )}
-                            </span>
-                            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
-                              {languageName}
-                            </span>
-                            {landingPage?.category?.title && (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
-                                <FiTag className="text-icon-color" />
-                                {landingPage.category.title}
+                            </h2>
+                            <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/10 px-2.5 py-1 text-zinc-300">
+                                <FiGlobe className="text-main-color" />
+                                {landingPage?.domain?.id ? (
+                                  <Link
+                                    href={`/domain/${landingPage.domain.id}`}
+                                    title="Open domain"
+                                    className="font-medium text-main-color underline-offset-2 hover:underline"
+                                  >
+                                    {landingPage.domain.name}
+                                  </Link>
+                                ) : landingPage?.domain?.name ? (
+                                  <span className="font-medium text-main-color">
+                                    {landingPage.domain.name}
+                                  </span>
+                                ) : (
+                                  "No domain"
+                                )}
                               </span>
-                            )}
+                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                                {languageName}
+                              </span>
+                              {landingPage?.category?.title && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                                  <FiTag className="text-icon-color" />
+                                  {landingPage.category.title}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        {renderActions(landingPage.id)}
-                      </article>
-                    );
-                  })}
+                          {renderActions(landingPage.id)}
+                        </article>
+                      );
+                    },
+                  )}
             </div>
 
             {/* Desktop table */}
-            <div className="hidden overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-sm md:block">
+            <div className="hidden h-96 overflow-auto rounded-2xl border border-white/10 bg-zinc-900 shadow-sm md:block md:h-[36rem]">
               <div className="w-full overflow-x-auto">
                 <table className="min-w-full border-collapse text-left text-sm">
                   <thead className="border-b border-white/10 bg-zinc-900/5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
