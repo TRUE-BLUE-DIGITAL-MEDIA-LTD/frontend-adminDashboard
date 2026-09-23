@@ -35,26 +35,22 @@ function Index({ user }: { user: User & { partner: Partner | null } }) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="w-full">
-        {menu === "partners-performance" && <ParterReport user={user} />}
-        {menu === "payslip" && <PayslipGenerator />}
-        {menu === "sms-etms" && <SimCard user={user} />}
-        {menu === "sms-pva" && <SmsPvas user={user} />}
-        {menu === "sms-pool" && <SmsPool user={user} />}
-        {menu === "sms-textverified" && <SmsTextVerified user={user} />}
-        {menu === "league-table" && <PartnerLeague user={user} />}
-        {menu === "sms-pinverify" && <SmsPinverify user={user} />}
-        {menu === "sms-virtualsms" && <SmsVirtualsms user={user} />}
-        {menu === "sms-bulk" && <SmsBulk user={user} />}
-        {menu === "sms-report" && <SmsReport />}
-        {menu === "sms-berry" && <SmsBerry user={user} />}
-        {menu === "cloud-phone" && <CloudPhone />}
-        {menu === "sms-bower" && <SmsBowers user={user} />}
-        {menu === "sms-getatext" && <SmsGetatexts user={user} />}
-        {menu === "intimate-info-content" && (
-          <IntimateInfoContent user={user} />
-        )}
-      </div>
+      {menu === "partners-performance" && <ParterReport user={user} />}
+      {menu === "payslip" && <PayslipGenerator />}
+      {menu === "sms-etms" && <SimCard user={user} />}
+      {menu === "sms-pva" && <SmsPvas user={user} />}
+      {menu === "sms-pool" && <SmsPool user={user} />}
+      {menu === "sms-textverified" && <SmsTextVerified user={user} />}
+      {menu === "league-table" && <PartnerLeague user={user} />}
+      {menu === "sms-pinverify" && <SmsPinverify user={user} />}
+      {menu === "sms-virtualsms" && <SmsVirtualsms user={user} />}
+      {menu === "sms-bulk" && <SmsBulk user={user} />}
+      {menu === "sms-report" && <SmsReport />}
+      {menu === "sms-berry" && <SmsBerry user={user} />}
+      {menu === "cloud-phone" && <CloudPhone />}
+      {menu === "sms-bower" && <SmsBowers user={user} />}
+      {menu === "sms-getatext" && <SmsGetatexts user={user} />}
+      {menu === "intimate-info-content" && <IntimateInfoContent user={user} />}
     </DashboardLayout>
   );
 }

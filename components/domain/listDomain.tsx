@@ -81,63 +81,63 @@ function ListDomain({ list, domains, user }: Props) {
   };
 
   return (
-    <tr className="h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200">
-      <td className="px-2">
+    <tr className="h-14 border-b border-white/5 text-zinc-200 transition hover:bg-white/5">
+      <td className="px-3 py-2 align-middle">
         <Link
           href={`/domain/${list.id}`}
-          className="flex items-center gap-2 font-medium text-blue-600 hover:underline"
+          className="flex items-center gap-2 font-medium text-main-color hover:underline"
         >
           <MdLanguage />
           {list?.name}
         </Link>
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         {moment(list.updateAt).format("DD/MM/YY hh:mm A")}
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         {list.siteBuild?.deploy_state === "ready" ? (
-          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+          <div className="flex w-max items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-emerald-300">
             <MdPublic />
             READY
           </div>
         ) : list.siteBuild?.deploy_state === "building" ? (
-          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase text-yellow-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-amber-300">
             <MdSettings />
             Building
           </div>
         ) : list.siteBuild?.deploy_state === "error" &&
           list.siteBuild?.error === "Canceled build" ? (
-          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+          <div className="flex w-max items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-emerald-300">
             <MdPublic />
             READY
           </div>
         ) : list.siteBuild?.deploy_state === "error" ? (
-          <div className="flex w-max  items-center gap-2 truncate rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800">
+          <div className="flex w-max  items-center gap-2 truncate rounded-full border border-rose-500/30 bg-rose-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-rose-300">
             <MdPublic />
             <span className="max-w-32 truncate">
               {list.siteBuild?.error ?? "Error"}
             </span>
           </div>
         ) : list.siteBuild?.deploy_state === "enqueued" ? (
-          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-orange-300">
             <MdNightsStay />
             Enqueued
           </div>
         ) : list.siteBuild?.deploy_state === "new" ? (
-          <div className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-orange-300 px-1 text-center font-extrabold uppercase text-orange-800">
+          <div className="flex w-max animate-pulse items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-orange-300">
             <MdNightsStay />
             In Queue
           </div>
         ) : (
-          <div className="flex w-max items-center gap-2 rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase text-gray-800">
+          <div className="flex w-max items-center gap-2 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-center text-xs font-semibold uppercase text-zinc-300">
             <MdPublic />
             Unknow Status
           </div>
         )}
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         {list.google_domain_id ? (
-          <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+          <div className="flex w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-emerald-300">
             <FaCheckCircle />
             Verify
           </div>
@@ -154,16 +154,16 @@ function ListDomain({ list, domains, user }: Props) {
                 Swal.fire("error!", error.message?.toString(), "error");
               }
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-300 px-1 text-center font-extrabold uppercase text-gray-800 active:scale-105"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-center text-xs font-semibold uppercase text-zinc-300 active:scale-105"
           >
             <MdDomainVerification />
             {verifyGoogle.isPending ? "Verifying..." : "Not Verify"}
           </button>
         )}
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         {list.sitemap_status === "COMPLETED" ? (
-          <div className="flex w-max items-center gap-2 rounded-lg bg-green-300 px-1 text-center font-extrabold uppercase text-green-800">
+          <div className="flex w-max items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-emerald-300">
             <SiGooglemaps />
             COMPLETED
           </div>
@@ -180,24 +180,24 @@ function ListDomain({ list, domains, user }: Props) {
                 Swal.fire("error!", error.message?.toString(), "error");
               }
             }}
-            className="flex w-max animate-pulse items-center gap-2 rounded-lg bg-yellow-300 px-1 text-center font-extrabold uppercase text-yellow-800 active:scale-105"
+            className="flex w-max animate-pulse items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-amber-300 active:scale-105"
           >
             <SiGooglemaps />
             {summitSitemap.isPending ? "PEDDING" : "PRESS TO SUMMIT"}
           </button>
         ) : (
           list.sitemap_status === "NOT_FOUND" && (
-            <button className="flex w-max items-center gap-2 rounded-lg bg-red-300 px-1 text-center font-extrabold uppercase text-red-800 active:scale-105">
+            <button className="flex w-max items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/15 px-2 py-0.5 text-center text-xs font-semibold uppercase text-rose-300 active:scale-105">
               <SiGooglemaps />
               NOT FOUND
             </button>
           )
         )}
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <VerifyDomain domainName={list.name} />
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <button
           onClick={() =>
             handleViewNameServer({
@@ -205,16 +205,16 @@ function ListDomain({ list, domains, user }: Props) {
               domain: list.name,
             })
           }
-          className="flex w-max items-center justify-center gap-2 rounded-lg bg-green-300 px-2 py-1 text-center font-extrabold text-green-800 transition duration-100 hover:scale-105"
+          className="flex w-max items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-center text-xs font-semibold text-emerald-300 transition duration-100 hover:scale-105"
         >
           <MdDns />
           View
         </button>
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <div className="flex max-w-40 flex-wrap">
           {list.partner ? (
-            <div className="flex items-center gap-2 rounded-md px-2 py-1 text-xs text-gray-500">
+            <div className="flex items-center gap-2 rounded-md px-2 py-1 text-xs text-zinc-400">
               <MdPeople />
               <div>
                 <div className="w-40 truncate">NAME: {list.partner.name}</div>
@@ -224,14 +224,14 @@ function ListDomain({ list, domains, user }: Props) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-md bg-red-200 px-2 py-1 text-red-500">
+            <div className="flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/15 px-2 py-1 text-xs text-rose-300">
               <MdPeople />
               <span>No Partner</span>
             </div>
           )}
         </div>
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <div className="flex flex-col gap-2">
           {list.landingPages.length > 0 ? (
             list.landingPages.map((landingPage, index) => {
@@ -240,7 +240,7 @@ function ListDomain({ list, domains, user }: Props) {
                   target="_blank"
                   href={`/landingpage/${landingPage.id}`}
                   key={landingPage.id}
-                  className="flex max-w-36 items-start truncate rounded-md px-2 py-1 text-start text-xs text-gray-500 underline"
+                  className="flex max-w-36 items-start truncate rounded-md px-2 py-1 text-start text-xs text-zinc-400 underline"
                 >
                   <div className="flex w-40 items-center gap-2 truncate">
                     <MdContentCopy />
@@ -250,16 +250,16 @@ function ListDomain({ list, domains, user }: Props) {
               );
             })
           ) : (
-            <div className="flex items-center gap-2 rounded-md bg-red-200 px-2 py-1 text-red-500">
+            <div className="flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/15 px-2 py-1 text-xs text-rose-300">
               <MdContentCopy />
               <span>No Landing Page</span>
             </div>
           )}
         </div>
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <div className="flex  items-center gap-5">
-          <div className="text-xs uppercase text-gray-500">Desktop</div>
+          <div className="text-xs uppercase text-zinc-500">Desktop</div>
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEODesktop >= 90
@@ -271,7 +271,7 @@ function ListDomain({ list, domains, user }: Props) {
           >
             {averageSEODesktop.toFixed(1)}
           </div>
-          <div className="mt-1 text-xs uppercase text-gray-500">Mobile</div>
+          <div className="mt-1 text-xs uppercase text-zinc-500">Mobile</div>
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEOMobile >= 90
@@ -285,7 +285,7 @@ function ListDomain({ list, domains, user }: Props) {
           </div>
         </div>
       </td>
-      <td className="px-2">
+      <td className="px-3 py-2 align-middle">
         <div className="flex items-center gap-2">
           <span className={`inline-block min-w-16 rounded border px-2 py-1 text-center text-sm font-bold shadow-sm ${loadColorClass(list.worstLoadMs)}`}>
             {formatSeconds(list.worstLoadMs)}

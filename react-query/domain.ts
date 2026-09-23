@@ -5,7 +5,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  CreateDomainService,
+  DeleteDomainNameService,
   DeleteGscSitemapService,
+  GetAllDomains,
   GetAllDomainsByPage,
   GetDomainGscSitemapsService,
   GetDomainSearchAnalyticsService,
@@ -24,6 +27,7 @@ import {
   ProbeDomainSpeedService,
   RepublishAllLandersService,
   RequestLanderPublishService,
+  ResponseGetAllDomains,
   RunSpeedSweepService,
   SummitSitemapDomainService,
   UpdateSeoScoreService,
@@ -34,6 +38,9 @@ const keyDomains = {
   verify: ["verify-domain"],
   summit_sitemap: ["summit-sitemap"],
   domains: ["domains"],
+  // The unpaginated list behind `GET /admin/domain/get-all`. Lives under the
+  // `domains` prefix so every refetch/invalidate of `domains` covers it too.
+  all: ["domains", "all"],
   domains_page: (input: {
     page: number;
     searchField: string;
@@ -57,6 +64,57 @@ const keyDomains = {
     },
   ],
 } as const;
+
+export type DomainOption = { option: string; id: string };
+
+/** Shape the dropdown/search components expect. Use as `select`. */
+export const toDomainOptions = (domains: ResponseGetAllDomains): DomainOption[] =>
+  domains.map((domain) => ({ option: domain.name, id: domain.id }));
+
+/**
+ * Every domain the current user can see, shared by all pages through one
+ * query key. Pass `select` to derive a view (e.g. `toDomainOptions`) without
+ * changing what is stored in the cache, so pages with different shapes never
+ * clobber each other.
+ */
+export function useGetAllDomains<TData = ResponseGetAllDomains>(options?: {
+  select?: (domains: ResponseGetAllDomains) => TData;
+  enabled?: boolean;
+}) {
+  return useQuery({
+    queryKey: keyDomains.all,
+    queryFn: () => GetAllDomains(),
+    select: options?.select,
+    enabled: options?.enabled ?? true,
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useCreateDomain() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["domain", "create"],
+    mutationFn: (request: Parameters<typeof CreateDomainService>[0]) =>
+      CreateDomainService(request),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: keyDomains.domains });
+    },
+  });
+}
+
+export function useDeleteDomain() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["domain", "delete"],
+    mutationFn: (request: Parameters<typeof DeleteDomainNameService>[0]) =>
+      DeleteDomainNameService(request),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: keyDomains.domains });
+    },
+  });
+}
 
 export function useGetDomainsByPage(request: InputGetAllDomainsByPage) {
   return useQuery({

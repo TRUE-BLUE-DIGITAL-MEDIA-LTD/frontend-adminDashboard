@@ -69,10 +69,14 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
       });
     }
   };
+
+  const fieldClass =
+    "w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40";
+
   return (
-    <div className="h-max w-96 rounded-md border bg-white p-3">
-      <h1 className="text-xl font-semibold">Create Annoucement</h1>
-      <form onSubmit={handleCreate} className="flex flex-col gap-3">
+    <form onSubmit={handleCreate} className="flex flex-col gap-4">
+      <label className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-zinc-400">Title</span>
         <input
           value={data?.title}
           onChange={(e) =>
@@ -80,20 +84,26 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
           }
           type="text"
           required
-          placeholder="Title"
-          className="rounded-md border p-2"
+          placeholder="Announcement title"
+          className={fieldClass}
         />
+      </label>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-zinc-400">Description</span>
         <textarea
           required
-          placeholder="Description"
+          placeholder="What should users know?"
           value={data?.description}
           onChange={(e) =>
             setData((prev) => ({ ...prev, description: e.target.value }))
           }
-          className="resize-none rounded-md border p-2"
+          rows={3}
+          className={`resize-none ${fieldClass}`}
         />
-        <label className="flex flex-col">
-          <span>Begin At</span>
+      </label>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-zinc-400">Begin at</span>
           <input
             required
             type="datetime-local"
@@ -101,11 +111,11 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
             onChange={(e) =>
               setData((prev) => ({ ...prev, beginAt: e.target.value }))
             }
-            className="rounded-md border p-2"
+            className={fieldClass}
           />
         </label>
-        <label className="flex flex-col">
-          <span>Expire At</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-zinc-400">Expire at</span>
           <input
             required
             type="datetime-local"
@@ -114,15 +124,18 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
             onChange={(e) =>
               setData((prev) => ({ ...prev, expireAt: e.target.value }))
             }
-            className="rounded-md border p-2"
+            className={fieldClass}
           />
         </label>
+      </div>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-zinc-400">Status</span>
         <select
           value={data?.status}
           onChange={(e) =>
             setData((prev) => ({ ...prev, status: e.target.value as Status }))
           }
-          className="rounded-md border p-2"
+          className={fieldClass}
         >
           {statusLists.map((status) => (
             <option key={status.name} value={status.name}>
@@ -130,11 +143,24 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
             </option>
           ))}
         </select>
-        <button disabled={create.isPending} className="main-button">
-          {create.isPending ? "Loading.." : "Create"}
+      </label>
+      <div className="mt-2 flex items-center justify-end gap-3 border-t border-white/5 pt-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-white"
+        >
+          Cancel
         </button>
-      </form>
-    </div>
+        <button
+          disabled={create.isPending}
+          type="submit"
+          className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+        >
+          {create.isPending ? "Creating…" : "Create"}
+        </button>
+      </div>
+    </form>
   );
 }
 

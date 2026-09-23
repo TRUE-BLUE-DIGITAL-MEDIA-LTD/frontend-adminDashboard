@@ -24,9 +24,8 @@ import {
   useGetDomainSpeed,
   useProbeDomainSpeed,
 } from "../../react-query";
-import { useUpdateSeoScore } from "../../react-query/domain";
+import { useDeleteDomain, useUpdateSeoScore } from "../../react-query/domain";
 import {
-  DeleteDomainNameService,
   GetDomainService,
   InputUpdateDomainService,
   ResetGoogleVerificationService,
@@ -54,6 +53,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
     enabled: domainId !== "",
   });
   const updateSeoScore = useUpdateSeoScore();
+  const deleteDomain = useDeleteDomain();
   const enableMail = useEnableMail();
 
   const [probeStartedAt, setProbeStartedAt] = useState<number | null>(null);
@@ -218,7 +218,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
           },
         });
 
-        await DeleteDomainNameService({
+        await deleteDomain.mutateAsync({
           domainNameId: domainId,
         });
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
@@ -300,7 +300,8 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="mx-auto mt-24 max-w-5xl space-y-8 px-4 pb-20 font-Poppins">
+      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="mx-auto max-w-5xl space-y-8 px-4 py-10 pb-20 sm:px-6">
         <header className="flex flex-col gap-3">
           <button
             onClick={() => {
@@ -312,13 +313,13 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
                 router.push("/domain");
               }
             }}
-            className="flex w-max items-center gap-2 text-sm text-gray-500 hover:text-blue-600"
+            className="flex w-max items-center gap-2 text-sm text-white/60 transition hover:text-main-color"
           >
             <MdArrowBack /> Back to Domains
           </button>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 className="text-3xl font-bold text-white">
                 {domainName || "Loading..."}
               </h1>
               {domainName && <VerifyDomain domainName={domainName} />}
@@ -326,7 +327,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
             <button
               disabled={isLoading}
               onClick={handleUpdateDomain}
-              className="flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 font-medium text-white shadow-sm transition hover:bg-blue-700 active:scale-95 disabled:opacity-70"
+              className="flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-full border border-white bg-white px-6 font-medium text-black shadow-sm transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95 disabled:opacity-70"
             >
               {isLoading ? (
                 <SpinLoading />
@@ -393,19 +394,20 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleResetGoogleVerification}
-                className="flex items-center gap-2 rounded-lg border border-red-600 bg-white px-6 py-2 font-medium text-red-600 transition hover:bg-red-100 active:scale-95"
+                className="flex items-center gap-2 rounded-full border border-red-600 bg-zinc-900 px-6 py-2 font-medium text-red-600 transition hover:bg-red-100 active:scale-95"
               >
                 <MdRefresh /> Reset Google Verification
               </button>
               <button
                 onClick={handleDeleteDomain}
-                className="flex items-center gap-2 rounded-lg bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700 active:scale-95"
+                className="flex items-center gap-2 rounded-full bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700 active:scale-95"
               >
                 <MdDelete /> Delete Domain
               </button>
             </div>
           </section>
         )}
+      </div>
       </div>
     </DashboardLayout>
   );

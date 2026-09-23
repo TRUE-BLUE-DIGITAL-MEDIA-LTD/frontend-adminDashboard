@@ -19,11 +19,14 @@ export type DomainWithLandingPage = Domain & {
   }[];
 };
 export type ResponseGetAllDomains = DomainWithLandingPage[];
+/**
+ * Prefer `useGetAllDomains()` from `react-query/domain` in components so
+ * every page shares one cached query.
+ */
 export async function GetAllDomains(): Promise<ResponseGetAllDomains> {
   try {
-    const cookies = parseCookies();
-    const access_token = cookies.access_token;
-    const domain = await axios.get(
+    const { access_token } = parseCookies();
+    const domain = await axios.get<ResponseGetAllDomains>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/domain/get-all`,
       {
         headers: {
@@ -35,7 +38,9 @@ export async function GetAllDomains(): Promise<ResponseGetAllDomains> {
     return domain.data;
   } catch (err: any) {
     console.log(err);
-    throw err.response.data;
+    // Network errors and timeouts have no `response`; rethrow something
+    // react-query can still surface instead of a TypeError.
+    throw err.response?.data ?? err;
   }
 }
 

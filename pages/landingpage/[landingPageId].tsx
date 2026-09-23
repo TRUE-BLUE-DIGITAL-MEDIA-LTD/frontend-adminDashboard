@@ -25,10 +25,8 @@ import {
   Translations,
   User,
 } from "../../models";
-import {
-  DomainWithLandingPage,
-  GetAllDomains,
-} from "../../services/admin/domain";
+import { useGetAllDomains } from "../../react-query/domain";
+import { DomainWithLandingPage } from "../../services/admin/domain";
 import {
   GetLandingPageService,
   TranslateLandingPageService,
@@ -77,10 +75,7 @@ function Index({ user }: { user: User }) {
   const [isLoadingUploadIcon, setIsLoadingUploadIcon] = useState(false);
   const [icon, setIcon] = useState<string | null>();
   const [blurEditor, setBlurEditor] = useState(true);
-  const domains = useQuery({
-    queryKey: ["domains-list"],
-    queryFn: () => GetAllDomains(),
-  });
+  const domains = useGetAllDomains();
 
   const categories = useQuery({
     queryKey: ["categories-list"],

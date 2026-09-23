@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Domain } from "../../../models";
 import { UseQueryResult } from "@tanstack/react-query";
-import {
-  CreateDomainService,
-  ResponseGetAllDomainsByPage,
-} from "../../../services/admin/domain";
+import { useCreateDomain } from "../../../react-query/domain";
+import { ResponseGetAllDomainsByPage } from "../../../services/admin/domain";
 import Swal from "sweetalert2";
 import { TextField } from "@mui/material";
 import SpinLoading from "../../loadings/spinLoading";
@@ -17,6 +15,9 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
   const [isVaildDomain, setIsVildDomain] = useState(true);
   const domainPattern = /^(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const [isLoading, setIsLoading] = useState(false);
+  // Invalidates every `domains` query on success, including the shared
+  // get-all list used by the landing page dropdowns.
+  const createDomain = useCreateDomain();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
@@ -36,7 +37,7 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
   const handleCreateDomain = async () => {
     try {
       setIsLoading(() => true);
-      await CreateDomainService({ domainName: domainName as string });
+      await createDomain.mutateAsync({ domainName: domainName as string });
       Swal.fire("success", "create domain successfully", "success");
       domains.refetch();
       setIsLoading(() => false);

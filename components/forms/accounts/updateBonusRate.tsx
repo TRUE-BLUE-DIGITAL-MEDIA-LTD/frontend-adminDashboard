@@ -232,131 +232,167 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
   };
 
   return (
-    <div
-      className="fixed bottom-0 left-0 right-0 top-0 
-    z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins"
-    >
-      <main className="h-max w-max rounded-md bg-white p-5">
-        <Form
-          onSubmit={handelUpdate}
-          className="flex h-full w-full flex-col items-center justify-start 
-        gap-5 rounded-lg  p-2 ring-2 ring-slate-300 "
-        >
-          <button
-            type="button"
-            onClick={handleResetRate}
-            className="flex items-center justify-center gap-1 rounded-md px-3 text-black
-           ring-1 ring-green-500 transition duration-150 hover:bg-green-500 hover:text-white "
-          >
-            <BiReset />
-            Reset Rate
-          </button>
-          <h1 className="text-2xl font-bold">Update Bonus Rate</h1>
-          <select
-            value={bonusStatus}
-            onChange={(e) =>
-              setBonusStatus(e.target.value as BonusCalculatePeriod)
-            }
-            className="w-40 rounded-md border border-slate-300 p-1"
-          >
-            {bonusList.map((bonus) => (
-              <option key={bonus.title} value={bonus.title}>
-                {bonus.title}
-              </option>
-            ))}
-          </select>
-          <div className="flex h-80 w-full flex-col gap-2 overflow-auto p-2">
-            {bonusState.map((rate) => (
-              <div key={rate.id} className="flex w-full gap-2">
-                <label className="flex w-1/3 flex-col  ">
-                  <span className="text-xs">from</span>
-                  <InputNumber
-                    mode="currency"
-                    currency="USD"
-                    locale="en-US"
-                    type="text"
-                    onChange={(e) =>
-                      handleChange({ e, id: rate.id, fakeId: rate.fakeId })
-                    }
-                    name="from"
-                    value={rate.from}
-                    inputMode="numeric"
-                    defaultValue={rate.from}
-                    className="w-20 rounded-md border border-slate-300 p-1"
-                  />
-                </label>
-                <label className="flex w-1/3 flex-col ">
-                  <span className="text-xs">to</span>
-                  <InputNumber
-                    mode="currency"
-                    currency="USD"
-                    locale="en-US"
-                    value={rate.to}
-                    name="to"
-                    onChange={(e) =>
-                      handleChange({ e, id: rate.id, fakeId: rate.fakeId })
-                    }
-                    type="text"
-                    inputMode="numeric"
-                    defaultValue={rate.to}
-                    className="w-20 rounded-md border border-slate-300 p-1"
-                  />
-                </label>
-                <label className="flex w-1/3 flex-col ">
-                  <span className="text-xs">rate</span>
-                  <InputNumber
-                    prefix="% "
-                    max={100}
-                    min={0}
-                    onChange={(e) =>
-                      handleChange({ e, id: rate.id, fakeId: rate.fakeId })
-                    }
-                    name="rate"
-                    inputMode="numeric"
-                    value={rate.rate}
-                    defaultValue={rate.rate}
-                    className="w-20 rounded-md border border-slate-300 p-1"
-                  />
-                </label>
-                <div className="flex w-1/3 flex-col justify-end ">
-                  <span className="text-xs">action</span>
-                  <button
-                    onClick={() => {
-                      handleRemove({ mongodbId: rate.id, fakeId: rate.fakeId });
-                    }}
-                    type="button"
-                    className="w-full rounded-md bg-red-300 px-2 py-1 text-red-700 hover:bg-red-400"
-                  >
-                    delete
-                  </button>
-                </div>
-              </div>
-            ))}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
+      <main className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
+        <header className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Bonus rate</h2>
+            <p className="text-xs text-zinc-500">
+              Configure tiers for this user
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() =>
-                setBonusState((prev) => [
-                  ...prev,
-                  {
-                    from: 0,
-                    to: 0,
-                    rate: 0,
-                    fakeId: crypto.randomBytes(10).toString("hex"),
-                  },
-                ])
-              }
-              className="mt-2 rounded-md border border-green-700 py-2 text-green-700 hover:bg-green-200"
+              onClick={handleResetRate}
+              className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300 transition hover:bg-emerald-500/25"
             >
-              Add More
+              <BiReset />
+              Reset
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setTrigger(() => false);
+                document.body.style.overflow = "auto";
+              }}
+              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              aria-label="Close"
+            >
+              ✕
             </button>
           </div>
-          <button
-            type="submit"
-            className="w-full rounded-md bg-white py-2 text-green-500
-             ring-2 ring-green-500 transition-all duration-300 hover:bg-green-500 hover:text-white"
-          >
-            Update
-          </button>
+        </header>
+        <Form onSubmit={handelUpdate} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-col gap-4 overflow-y-auto px-6 py-5">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-400">
+                Calculate period
+              </span>
+              <select
+                value={bonusStatus}
+                onChange={(e) =>
+                  setBonusStatus(e.target.value as BonusCalculatePeriod)
+                }
+                className="w-full max-w-xs rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
+              >
+                {bonusList.map((bonus) => (
+                  <option key={bonus.title} value={bonus.title}>
+                    {bonus.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="flex max-h-72 flex-col gap-2 overflow-auto">
+              {bonusState.map((rate) => (
+                <div
+                  key={rate.id ?? rate.fakeId}
+                  className="grid grid-cols-4 gap-2 rounded-xl border border-white/10 bg-black/30 p-3"
+                >
+                  <label className="flex flex-col gap-1">
+                    <span className="text-xs text-zinc-400">From</span>
+                    <InputNumber
+                      mode="currency"
+                      currency="USD"
+                      locale="en-US"
+                      type="text"
+                      onChange={(e) =>
+                        handleChange({ e, id: rate.id, fakeId: rate.fakeId })
+                      }
+                      name="from"
+                      value={rate.from}
+                      inputMode="numeric"
+                      defaultValue={rate.from}
+                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-xs text-zinc-400">To</span>
+                    <InputNumber
+                      mode="currency"
+                      currency="USD"
+                      locale="en-US"
+                      value={rate.to}
+                      name="to"
+                      onChange={(e) =>
+                        handleChange({ e, id: rate.id, fakeId: rate.fakeId })
+                      }
+                      type="text"
+                      inputMode="numeric"
+                      defaultValue={rate.to}
+                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-xs text-zinc-400">Rate</span>
+                    <InputNumber
+                      prefix="% "
+                      max={100}
+                      min={0}
+                      onChange={(e) =>
+                        handleChange({ e, id: rate.id, fakeId: rate.fakeId })
+                      }
+                      name="rate"
+                      inputMode="numeric"
+                      value={rate.rate}
+                      defaultValue={rate.rate}
+                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                    />
+                  </label>
+                  <div className="flex flex-col justify-end gap-1">
+                    <span className="text-xs text-zinc-400">Action</span>
+                    <button
+                      onClick={() => {
+                        handleRemove({
+                          mongodbId: rate.id,
+                          fakeId: rate.fakeId,
+                        });
+                      }}
+                      type="button"
+                      className="rounded-full border border-rose-500/40 bg-rose-500/20 px-2 py-1 text-xs text-rose-300 hover:bg-rose-500/30"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setBonusState((prev) => [
+                    ...prev,
+                    {
+                      from: 0,
+                      to: 0,
+                      rate: 0,
+                      fakeId: crypto.randomBytes(10).toString("hex"),
+                    },
+                  ])
+                }
+                className="rounded-full border border-dashed border-white/15 bg-white/5 py-2 text-sm text-zinc-300 transition hover:border-main-color/40 hover:text-main-color"
+              >
+                + Add tier
+              </button>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-white/10 px-6 py-4">
+            <button
+              type="button"
+              onClick={() => {
+                setTrigger(() => false);
+                document.body.style.overflow = "auto";
+              }}
+              className="rounded-full px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white"
+            >
+              Update
+            </button>
+          </div>
         </Form>
       </main>
       <footer
@@ -364,7 +400,7 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
           setTrigger(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-black/50 "
+        className="fixed inset-0 -z-10 bg-black/70"
       ></footer>
     </div>
   );

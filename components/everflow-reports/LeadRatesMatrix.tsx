@@ -22,25 +22,25 @@ const LeadRatesMatrix = ({
 
   if (matrix.countries.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-10 text-gray-500">
-        <FaGlobe className="mb-3 text-4xl text-gray-300" />
+      <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
+        <FaGlobe className="mb-3 text-4xl text-zinc-600" />
         <p>No rates found.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-h-[70vh] overflow-auto rounded-lg border border-gray-200">
+    <div className="max-h-[70vh] overflow-auto rounded-xl border border-white/10">
       <table className="min-w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="sticky left-0 top-0 z-20 bg-blue-600 px-4 py-3 text-left font-bold text-white">
+            <th className="sticky left-0 top-0 z-20 bg-zinc-800/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
               Country
             </th>
             {columns.map((id) => (
               <th
                 key={id}
-                className="sticky top-0 z-10 whitespace-nowrap bg-green-600 px-4 py-3 text-left font-bold text-white"
+                className="sticky top-0 z-10 whitespace-nowrap border-l border-white/5 bg-zinc-800/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-300"
               >
                 {campaignName(id)}
               </th>
@@ -49,8 +49,11 @@ const LeadRatesMatrix = ({
         </thead>
         <tbody>
           {matrix.countries.map((country) => (
-            <tr key={country} className="even:bg-gray-50">
-              <th className="sticky left-0 z-10 whitespace-nowrap bg-blue-50 px-4 py-2 text-left font-semibold text-gray-800">
+            <tr
+              key={country}
+              className="border-b border-white/5 transition hover:bg-white/5"
+            >
+              <th className="sticky left-0 z-10 whitespace-nowrap bg-zinc-900 px-4 py-2 text-left font-semibold text-white">
                 <div className="flex items-center gap-2">
                   {getCountryFlag(country) && (
                     <img
@@ -67,9 +70,13 @@ const LeadRatesMatrix = ({
                 return (
                   <td
                     key={id}
-                    className="whitespace-nowrap px-4 py-2 font-medium text-gray-800"
+                    className="whitespace-nowrap border-l border-white/5 px-4 py-2 font-medium text-zinc-200"
                   >
-                    {rate ? formatRate(rate) : <span className="text-gray-300">—</span>}
+                    {rate ? (
+                      formatRate(rate)
+                    ) : (
+                      <span className="text-zinc-600">—</span>
+                    )}
                   </td>
                 );
               })}

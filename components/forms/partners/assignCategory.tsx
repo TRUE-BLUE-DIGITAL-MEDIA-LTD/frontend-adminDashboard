@@ -198,101 +198,88 @@ function AssignCategory({
     }
   };
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen  items-center justify-center gap-5 font-Poppins ">
-      <Form className="flex h-[30rem] w-max flex-col items-center justify-start gap-2 rounded-xl bg-white p-7">
-        <section className="flex h-max w-full flex-col items-center justify-start gap-5 rounded-lg  p-2 ring-2 ring-slate-300  md:w-max md:p-5">
-          <header className="flex w-full flex-col items-center justify-center gap-2 ">
-            <h1 className="flex w-full justify-center font-bold md:text-xl">
-              Assign Category {selectPartner.name}
-            </h1>
-          </header>
-
-          <div className=" h-60 w-[30rem] justify-center overflow-auto  ">
-            <table className=" w-full table-auto ">
-              <thead className="sticky top-0 z-20 h-14 border-b-2 border-black bg-gray-200 font-bold text-blue-700   drop-shadow-md ">
-                <tr className=" h-14 w-full border-slate-400 font-normal  text-slate-600">
-                  <th>Category</th>
-                  <th>Assing Category</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categorys.isLoading || categoryOnPartners.isLoading
-                  ? [...Array(5)].map((_, index) => (
-                      <tr key={index}>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-400 "></td>
-                        <td className="h-10 w-20 animate-pulse border-4 border-transparent bg-gray-200 "></td>
-                      </tr>
-                    ))
-                  : categoryOnPartnerData?.map((category) => {
-                      const createAt = new Date(category?.createAt);
-                      const formattedDatecreateAt = createAt.toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        },
-                      );
-                      return (
-                        <tr
-                          className=" h-12 border-b-[0.1px] border-gray-600 py-5 hover:bg-gray-200"
-                          key={category.id}
-                        >
-                          <td className="h-10 truncate border-4 border-transparent font-semibold text-black">
-                            {category.title}
-                          </td>
-                          <td className="truncate border-4 border-transparent  font-semibold text-black">
-                            <div className="flex items-center justify-center">
-                              {category.isLoading ? (
-                                <div className="h-5 w-5 animate-pulse rounded-lg bg-slate-300"></div>
-                              ) : (
-                                <input
-                                  onChange={(e) => {
-                                    if (e.target.checked === true) {
-                                      handleAssignCategory({
-                                        partnerId: selectPartner.id,
-                                        categoryId: category.id,
-                                      });
-                                    } else if (e.target.checked === false) {
-                                      handleDeleteCategoryOnPartner({
-                                        categoryId: category.id,
-                                        categoryOnPartnerId:
-                                          categoryOnPartners.data?.find(
-                                            (categoryOnPartner) =>
-                                              categoryOnPartner.categoryId ===
-                                              category.id,
-                                          )?.id || "",
-                                      });
-                                    }
-                                  }}
-                                  checked={category.isChecking}
-                                  type="checkbox"
-                                  className="h-5 w-5"
-                                />
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-              </tbody>
-            </table>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
+        <header className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Assign category</h2>
+            <p className="text-xs text-zinc-500">{selectPartner.name}</p>
           </div>
-        </section>
+          <button
+            type="button"
+            onClick={() => {
+              setTriggerAssignCategory(() => false);
+              document.body.style.overflow = "auto";
+            }}
+            className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </header>
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-4 sm:px-6">
+          {categorys.isLoading || categoryOnPartners.isLoading
+            ? [...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="h-14 animate-pulse rounded-xl border border-white/5 bg-zinc-800/60"
+                />
+              ))
+            : categoryOnPartnerData?.map((category) => {
+                return (
+                  <label
+                    key={category.id}
+                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 transition ${
+                      category.isChecking
+                        ? "border-emerald-500/30 bg-emerald-500/10"
+                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                    }`}
+                  >
+                    <span className="font-medium text-zinc-100">
+                      {category.title}
+                    </span>
+                    {category.isLoading ? (
+                      <div className="h-5 w-5 animate-pulse rounded bg-zinc-700" />
+                    ) : (
+                      <input
+                        onChange={(e) => {
+                          if (e.target.checked === true) {
+                            handleAssignCategory({
+                              partnerId: selectPartner.id,
+                              categoryId: category.id,
+                            });
+                          } else if (e.target.checked === false) {
+                            handleDeleteCategoryOnPartner({
+                              categoryId: category.id,
+                              categoryOnPartnerId:
+                                categoryOnPartners.data?.find(
+                                  (categoryOnPartner) =>
+                                    categoryOnPartner.categoryId ===
+                                    category.id,
+                                )?.id || "",
+                            });
+                          }
+                        }}
+                        checked={category.isChecking}
+                        type="checkbox"
+                        className="h-4 w-4 accent-main-color"
+                      />
+                    )}
+                  </label>
+                );
+              })}
+        </div>
       </Form>
-
       <footer
         onClick={() => {
           setTriggerAssignCategory(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-black/50 "
+        className="fixed inset-0 -z-10 bg-black/70"
       ></footer>
     </div>
   );
 }
+
 
 export default AssignCategory;

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { FaMoneyBillTrendUp, FaPeopleGroup, FaUser } from "react-icons/fa6";
 import {
   FiEdit,
+  FiKey,
   FiLogIn,
   FiPlusCircle,
   FiRotateCcw,
@@ -29,6 +30,18 @@ import {
 } from "../../services/admin/account";
 import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
 import PartnerTable from "../../components/forms/partners/PartnerTable";
+
+const paginationSx = {
+  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root.Mui-selected": {
+    backgroundColor: "#00ABE4",
+    color: "#ffffff",
+  },
+  "& .MuiPaginationItem-root:hover": {
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+};
 
 function Index({ user }: { user: User }) {
   const router = useRouter();
@@ -210,101 +223,110 @@ function Index({ user }: { user: User }) {
         />
       )}
 
-      <main className=" flex min-h-screen w-full flex-col items-center bg-gray-100 p-5 font-Poppins">
+      <main className="flex min-h-screen w-full flex-col items-center bg-black p-5 font-Poppins text-zinc-100">
         {user.role === "admin" && (
-          <section className="w-full max-w-7xl rounded-lg bg-white p-5 shadow-lg">
-            <header className="mb-5 flex flex-col items-center justify-between gap-4 md:flex-row">
-              <h1 className="flex items-center gap-3 text-2xl font-bold text-gray-800 md:text-3xl">
-                <FaPeopleGroup />
-                Account Management
-              </h1>
-              <div className="flex gap-2">
+          <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100">
+            {/* Toolbar */}
+            <header className="flex flex-col gap-4 border-b border-white/5 px-5 py-5 md:flex-row md:items-end md:justify-between">
+              <div className="flex flex-col gap-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-main-color">
+                  Control Center
+                </p>
+                <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-white">
+                  <FaPeopleGroup className="text-[#62C7D8]" />
+                  Account Management
+                </h1>
+                <p className="text-sm text-zinc-500">
+                  Manage team users, partners, and access in one place.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex rounded-full border border-white/10 bg-black/40 p-1">
+                  <button
+                    onClick={() => {
+                      setView("active");
+                      setPage(1);
+                    }}
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+                      view === "active"
+                        ? "bg-main-color/20 text-main-color"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    Active
+                  </button>
+                  <button
+                    onClick={() => {
+                      setView("suspended");
+                      setPage(1);
+                    }}
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+                      view === "suspended"
+                        ? "bg-rose-500/20 text-rose-300"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    Suspended
+                  </button>
+                </div>
                 <button
                   onClick={() => {
-                    setView("active");
-                    setPage(1);
+                    document.body.style.overflow = "hidden";
+                    setTriggerCreateAccount(() => true);
                   }}
-                  className={`rounded-2xl px-4 py-2 shadow-md transition duration-150 ease-in-out active:scale-95 ${
-                    view === "active"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
+                  className="inline-flex items-center gap-2 rounded-full border border-white bg-white px-4 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95"
                 >
-                  Active
-                </button>
-                <button
-                  onClick={() => {
-                    setView("suspended");
-                    setPage(1);
-                  }}
-                  className={`rounded-2xl px-4 py-2 shadow-md transition duration-150 ease-in-out active:scale-95 ${
-                    view === "suspended"
-                      ? "bg-red-500 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  Suspended
+                  <FiPlusCircle />
+                  Create User
                 </button>
               </div>
-              <button
-                onClick={() => {
-                  document.body.style.overflow = "hidden";
-                  setTriggerCreateAccount(() => true);
-                }}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-2 text-white shadow-md
-           transition duration-150 ease-in-out hover:bg-blue-600 active:scale-95"
-              >
-                <FiPlusCircle />
-                Create User
-              </button>
             </header>
-            <div className="h-96 overflow-x-auto">
-              <table className=" w-max min-w-full table-auto text-center">
-                <thead className="bg-gray-100">
-                  <tr className="text-sm font-bold text-gray-700">
-                    <th className="p-4">Photo</th>
-                    <th className="p-4">Email</th>
-                    <th className="p-4">Role</th>
-                    <th className="p-4">Created At</th>
-                    <th className="p-4">Partner</th>
-                    <th className="p-4">Bonus Setting</th>
-                    <th className="p-4">Login As</th>
-                    <th className="p-4">Reset Password</th>
-                    <th className="p-4">Options</th>
+
+            <div className="max-h-[28rem] overflow-auto">
+              <table className="w-full min-w-[720px] table-fixed text-left text-sm">
+                <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
+                  <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                    <th className="px-5 py-3 font-semibold">User</th>
+                    <th className="px-3 py-3 font-semibold">Role</th>
+                    <th className="hidden px-3 py-3 font-semibold md:table-cell">
+                      Created
+                    </th>
+                    <th className="px-3 py-3 font-semibold">Partner</th>
+                    <th className="w-44 px-5 py-3 text-right font-semibold">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {accounts.isLoading
                     ? [...Array(5)].map((_, index) => (
-                        <tr key={index} className="animate-pulse">
-                          <td className="p-4">
-                            <div className="mx-auto h-10 w-10 rounded-full bg-gray-300"></div>
+                        <tr
+                          key={index}
+                          className="animate-pulse border-b border-white/5"
+                        >
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="h-9 w-9 rounded-full bg-zinc-700" />
+                              <div className="space-y-2">
+                                <div className="h-3 w-28 rounded bg-zinc-700" />
+                                <div className="h-2.5 w-40 rounded bg-zinc-800" />
+                              </div>
+                            </div>
                           </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-4 w-40 rounded bg-gray-300"></div>
+                          <td className="px-3 py-4">
+                            <div className="h-5 w-16 rounded-full bg-zinc-700" />
                           </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-4 w-20 rounded bg-gray-300"></div>
+                          <td className="hidden px-3 py-4 md:table-cell">
+                            <div className="h-3 w-24 rounded bg-zinc-700" />
                           </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-4 w-32 rounded bg-gray-300"></div>
+                          <td className="px-3 py-4">
+                            <div className="h-5 w-24 rounded-full bg-zinc-700" />
                           </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
-                          </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-8 w-32 rounded bg-gray-300"></div>
-                          </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-8 w-24 rounded bg-gray-300"></div>
-                          </td>
-                          <td className="p-4">
-                            <div className="mx-auto h-8 w-24 rounded bg-gray-300"></div>
-                          </td>
-                          <td className="p-4">
-                            <div className="mx-auto flex justify-center gap-2">
-                              <div className="h-6 w-6 rounded bg-gray-300"></div>
-                              <div className="h-6 w-6 rounded bg-gray-300"></div>
+                          <td className="px-5 py-4">
+                            <div className="ml-auto flex justify-end gap-2">
+                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
+                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
+                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
                             </div>
                           </td>
                         </tr>
@@ -323,134 +345,133 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={account.id}
-                            className="border-b border-gray-200 hover:bg-gray-50"
+                            className="border-b border-white/5 transition hover:bg-white/5"
                           >
-                            <td className="p-4">
-                              <div className="relative mx-auto h-10 w-10 overflow-hidden rounded-full">
-                                <Image
-                                  src={account.image}
-                                  fill
-                                  alt="user account profile"
-                                  className="object-cover"
-                                />
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+                                  <Image
+                                    src={account.image}
+                                    fill
+                                    alt="user account profile"
+                                    className="object-cover"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="truncate font-medium text-white">
+                                    {account.name || "—"}
+                                  </p>
+                                  <p className="truncate text-xs text-zinc-500">
+                                    {account.email}
+                                  </p>
+                                </div>
                               </div>
                             </td>
-                            <td className="p-4 font-semibold text-gray-700">
-                              {account.email}
+                            <td className="px-3 py-3.5">
+                              <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium capitalize text-zinc-300">
+                                {account.role}
+                              </span>
                             </td>
-                            <td className="p-4 text-gray-600">
-                              {account.role}
-                            </td>
-                            <td className="p-4 text-gray-600">
+                            <td className="hidden px-3 py-3.5 text-xs text-zinc-500 md:table-cell">
                               {formattedDatecreateAt}
                             </td>
-                            <td className="p-4">
-                              {account.partner ? (
-                                <button
-                                  onClick={() => {
-                                    setTriggerAssignPartner(() => true);
-                                    setSelectAccount(() => account);
-                                    document.body.style.overflow = "hidden";
-                                  }}
-                                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-green-500 px-4 py-2 text-white shadow-md
-                   transition duration-150 ease-in-out hover:bg-green-600"
-                                >
-                                  <FaUser />
-                                  {account.partner?.name}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    setTriggerAssignPartner(() => true);
-                                    setSelectAccount(() => account);
-                                    document.body.style.overflow = "hidden";
-                                  }}
-                                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-600 px-4 py-2 text-white shadow-md
-                   transition duration-150 ease-in-out hover:bg-gray-700"
-                                >
-                                  <FaUser />
-                                  No Partner Connected
-                                </button>
-                              )}
-                            </td>
-                            <td className="p-4">
+                            <td className="px-3 py-3.5">
                               <button
                                 onClick={() => {
-                                  setTriggerUpdateBonusRate(() => true);
+                                  setTriggerAssignPartner(() => true);
                                   setSelectAccount(() => account);
                                   document.body.style.overflow = "hidden";
                                 }}
-                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-teal-500 px-4 py-2 text-white shadow-md
-                   transition duration-150 ease-in-out hover:bg-teal-600"
-                              >
-                                <FaMoneyBillTrendUp />
-                                Bonus Setting
-                              </button>
-                            </td>
-                            <td className="p-4">
-                              <button
-                                onClick={() =>
-                                  handleSignInAsAnotherUser({
-                                    email: account.email,
-                                  })
+                                className={`inline-flex max-w-[10rem] items-center gap-1.5 truncate rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+                                  account.partner
+                                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                                    : "border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10"
+                                }`}
+                                title={
+                                  account.partner
+                                    ? account.partner.name
+                                    : "Assign partner"
                                 }
-                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-4 py-2 text-white shadow-md
-                   transition duration-150 ease-in-out hover:bg-indigo-600"
                               >
-                                <FiLogIn />
-                                Sign In
+                                <FaUser className="shrink-0 text-[10px]" />
+                                <span className="truncate">
+                                  {account.partner
+                                    ? account.partner.name
+                                    : "Unassigned"}
+                                </span>
                               </button>
                             </td>
-                            <td className="p-4">
-                              <button
-                                onClick={() => {
-                                  setSelectAccount(() => account);
-                                  setTriggerResetPassword(() => true);
-                                  document.body.style.overflow = "hidden";
-                                }}
-                                className="w-full rounded-2xl bg-orange-500 px-4 py-2 text-white shadow-md
-                   transition duration-150 ease-in-out hover:bg-orange-600"
-                              >
-                                RESET
-                              </button>
-                            </td>
-
-                            <td className="p-4">
-                              <div className="flex justify-center gap-3">
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center justify-end gap-1">
                                 <button
+                                  title="Bonus setting"
+                                  onClick={() => {
+                                    setTriggerUpdateBonusRate(() => true);
+                                    setSelectAccount(() => account);
+                                    document.body.style.overflow = "hidden";
+                                  }}
+                                  className="rounded-lg p-2 text-[#62C7D8] transition hover:bg-main-color/10 hover:text-main-color"
+                                >
+                                  <FaMoneyBillTrendUp className="text-base" />
+                                </button>
+                                <button
+                                  title="Sign in as user"
+                                  onClick={() =>
+                                    handleSignInAsAnotherUser({
+                                      email: account.email,
+                                    })
+                                  }
+                                  className="rounded-lg p-2 text-indigo-300 transition hover:bg-indigo-500/10"
+                                >
+                                  <FiLogIn className="text-base" />
+                                </button>
+                                <button
+                                  title="Reset password"
+                                  onClick={() => {
+                                    setSelectAccount(() => account);
+                                    setTriggerResetPassword(() => true);
+                                    document.body.style.overflow = "hidden";
+                                  }}
+                                  className="rounded-lg p-2 text-amber-300 transition hover:bg-amber-500/10"
+                                >
+                                  <FiKey className="text-base" />
+                                </button>
+                                <button
+                                  title="Edit account"
                                   onClick={() => {
                                     setSelectAccount(() => account);
                                     setTriggerEditAccount(() => true);
                                     document.body.style.overflow = "hidden";
                                   }}
-                                  className="text-2xl text-blue-600 transition duration-100 hover:text-blue-800"
+                                  className="rounded-lg p-2 text-main-color transition hover:bg-main-color/10 hover:text-white"
                                 >
-                                  <FiEdit />
+                                  <FiEdit className="text-base" />
                                 </button>
-
                                 {view === "active" ? (
                                   <button
+                                    title="Suspend account"
                                     onClick={() =>
                                       handleDeletAccount({
                                         userId: account.id,
                                         email: account.email,
                                       })
                                     }
-                                    className="text-2xl text-red-600 transition duration-100 hover:text-red-800"
+                                    className="rounded-lg p-2 text-rose-400 transition hover:bg-rose-500/10 hover:text-rose-300"
                                   >
-                                    <FiTrash2 />
+                                    <FiTrash2 className="text-base" />
                                   </button>
                                 ) : (
                                   <button
+                                    title="Restore account"
                                     onClick={() =>
                                       handleRestoreAccount({
                                         userId: account.id,
                                         email: account.email,
                                       })
                                     }
-                                    className="text-2xl text-green-600 transition duration-100 hover:text-green-800"
+                                    className="rounded-lg p-2 text-emerald-400 transition hover:bg-emerald-500/10"
                                   >
-                                    <FiRotateCcw />
+                                    <FiRotateCcw className="text-base" />
                                   </button>
                                 )}
                               </div>
@@ -461,12 +482,15 @@ function Index({ user }: { user: User }) {
                 </tbody>
               </table>
             </div>
-            <div className="mt-5 flex justify-center">
-              <Pagination
-                onChange={(e, page) => setPage(page)}
-                count={accounts?.data?.totalPages}
-                color="primary"
-              />
+            <div className="flex justify-center border-t border-white/5 px-5 py-4">
+              <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+                <Pagination
+                  onChange={(e, page) => setPage(page)}
+                  count={accounts?.data?.totalPages}
+                  color="primary"
+                  sx={paginationSx}
+                />
+              </div>
             </div>
           </section>
         )}
@@ -480,6 +504,7 @@ function Index({ user }: { user: User }) {
     </DashboardLayout>
   );
 }
+
 
 export default Index;
 

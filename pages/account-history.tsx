@@ -176,7 +176,6 @@ function Index({ user }: { user: User }) {
 
   useEffect(() => {
     hanldeDateChanging("Today");
-    setSelectUsers(() => [user]);
   }, []);
 
   // ✅ 2. Create the handler function for form submission
@@ -198,11 +197,16 @@ function Index({ user }: { user: User }) {
         <meta name="description" content="Account History" />
       </Head>
       <DashboardLayout user={user}>
-        <main className="flex min-h-screen w-full flex-col items-center justify-start gap-2 p-20 font-Poppins">
-          <div className="flex w-full">
-            <h1 className="text-2xl font-semibold">Account History</h1>
+        <main className="flex min-h-screen w-full flex-col items-center justify-start gap-4 bg-black px-4 py-10 font-Poppins text-white sm:px-6 lg:px-8">
+          <div className="flex w-full max-w-7xl flex-col gap-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
+              Activity
+            </p>
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
+              Account History
+            </h1>
           </div>
-          <header className="py flex w-full flex-wrap justify-start gap-3 border-t border-gray-200 p-2">
+          <header className="flex w-full max-w-7xl flex-wrap justify-start gap-3 rounded-2xl border border-white/10 bg-zinc-900 p-4 text-black shadow-none">
             {(user.role === "admin" || user.role === "manager") && (
               <div className={`flex flex-col`}>
                 <label className="text-xs ">Select Users</label>
@@ -239,7 +243,7 @@ function Index({ user }: { user: User }) {
                       </div>
                     </section>
                   )}
-                  className={`h-10 w-72 rounded  border border-gray-400 text-gray-800 `}
+                  className={`h-10 w-72 rounded border  border-gray-400 text-black `}
                 />
               </div>
             )}
@@ -264,7 +268,7 @@ function Index({ user }: { user: User }) {
                     <span>{option.title}</span>
                   </div>
                 )}
-                className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
               />
             </div>
 
@@ -281,7 +285,7 @@ function Index({ user }: { user: User }) {
                   }}
                   type="text"
                   placeholder="Search Description"
-                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-gray-800 outline-none  focus:ring-2 active:ring-2"
+                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-black outline-none placeholder:text-black  focus:ring-2 active:ring-2"
                 />
                 <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
               </div>
@@ -298,7 +302,7 @@ function Index({ user }: { user: User }) {
                   setTimePeriod(newTimePeriod);
                   hanldeDateChanging(newTimePeriod);
                 }}
-                className="h-10 w-32 rounded  border border-gray-400 text-gray-800 "
+                className="h-10 w-32 rounded border border-gray-400 text-black "
               >
                 {timePeriods.map((time) => (
                   <option key={time} value={time}>
@@ -310,7 +314,7 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time Start</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
                 value={dateStart?.delay}
                 showTime
                 hourFormat="24"
@@ -340,7 +344,7 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time End</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-gray-800 "
+                className="h-10 w-72 rounded  border border-gray-400 text-black "
                 value={dateEnd?.delay}
                 showTime
                 hourFormat="24"
@@ -370,12 +374,12 @@ function Index({ user }: { user: User }) {
 
           <>
             <div
-              className="  min-h-60 w-full justify-center overflow-auto
-           rounded-lg border border-gray-200  "
+              className="min-h-60 w-full max-w-7xl overflow-auto rounded-2xl  border border-white/10
+           bg-zinc-900 text-zinc-100 shadow-none  "
             >
               <table className="w-max min-w-full border-collapse ">
                 <thead className="">
-                  <tr className="sticky top-0 z-20 h-10 bg-gray-300 font-semibold">
+                  <tr className="sticky top-0 z-20 h-10 bg-zinc-900/5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
                     <td className="pl-5">Account</td>
                     <td>Create At</td>
                     <td>Action</td>
@@ -389,7 +393,7 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={index}
-                            className="h-14 border-b border-gray-200 hover:bg-gray-100"
+                            className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
                           >
                             <td
                               className="animate-pulse"
@@ -458,7 +462,7 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={index}
-                            className="h-14 border-b border-gray-200 hover:bg-gray-100"
+                            className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
                           >
                             <td className="pl-5">
                               <section className="flex items-center gap-2">
@@ -476,7 +480,7 @@ function Index({ user }: { user: User }) {
                                   <span className="font-semibold leading-none">
                                     {record.user.name}
                                   </span>
-                                  <span className="text-xs text-gray-500">
+                                  <span className="text-xs text-zinc-400">
                                     {record.user.email}
                                   </span>
                                 </div>
@@ -489,7 +493,7 @@ function Index({ user }: { user: User }) {
                                     "DD MMMM YYYY",
                                   )}
                                 </span>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-zinc-400">
                                   At {moment(record.createAt).format("HH:mm")}
                                 </span>
                               </div>
@@ -520,6 +524,21 @@ function Index({ user }: { user: User }) {
                 color="primary"
                 showFirstButton
                 showLastButton
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#ffffff",
+                    borderColor: "rgba(255,255,255,0.35)",
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "#00ABE4",
+                    color: "#ffffff",
+                    "&:hover": { backgroundColor: "#0096c7" },
+                  },
+                  "& .MuiPaginationItem-root:hover": {
+                    backgroundColor: "rgba(0, 171, 228, 0.2)",
+                  },
+                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                }}
               />
               <Box
                 component="form"

@@ -45,7 +45,7 @@ const formatPercentage = (num: number) => {
 interface StatCardProps {
   title: string;
   mainStatValue: string;
-  percentChange: number; // e.g., 0.75 for +75%, -0.1 for -10%
+  percentChange: number;
   todayValue: string;
   yesterdayValue: string;
   lastMonthValue: string;
@@ -57,24 +57,30 @@ function PartnerSummaryStats({ user }: Props) {
   });
 
   if (isLoading) {
-    return <div className="p-4 text-slate-500">Loading stats...</div>;
+    return (
+      <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 text-zinc-500">
+        Loading stats...
+      </div>
+    );
   }
 
   if (!stats) {
-    return <div className="p-4 text-red-500">Error loading stats.</div>;
+    return (
+      <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 text-rose-400">
+        Error loading stats.
+      </div>
+    );
   }
 
-  // Helper to calculate percentage change, avoiding division by zero
   const getPercentChange = (current: number, previous: number) => {
     if (previous === 0) {
-      return current > 0 ? 1 : 0; // Show +100% if previous was 0 and current is positive
+      return current > 0 ? 1 : 0;
     }
     return (current - previous) / previous;
   };
   return (
-    <div className="bg-white p-4">
-      {/* This is the responsive grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard
           title="Clicks"
           mainStatValue={formatLargeNumber(stats.thisMonth.unique_click)}
@@ -163,17 +169,19 @@ const StatCard: React.FC<StatCardProps> = ({
   const percentChangeText = `${isPositive ? "+" : ""}${(percentChange * 100)?.toFixed(0)}%`;
 
   return (
-    <div className="w-full rounded-lg border border-slate-200 bg-slate-50 p-4 shadow-sm">
-      <h3 className="mb-2 text-sm font-semibold text-slate-600">{title}</h3>
+    <div className="w-full rounded-xl border border-white/10 bg-black/30 p-4">
+      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+        {title}
+      </h3>
 
       <div className="mb-3">
-        <div className="text-xs text-slate-500">Current Month</div>
+        <div className="text-xs text-zinc-500">Current Month</div>
         <div className="flex items-baseline space-x-2">
-          <span className="text-3xl font-bold text-slate-800">
+          <span className="text-2xl font-bold tracking-tight text-white">
             {mainStatValue}
           </span>
           <span
-            className={`flex items-center text-sm font-medium ${isPositive ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center text-sm font-medium ${isPositive ? "text-emerald-400" : "text-rose-400"}`}
           >
             {isPositive ? (
               <MdArrowCircleUp className="mr-1 h-4 w-4" />
@@ -187,16 +195,16 @@ const StatCard: React.FC<StatCardProps> = ({
 
       <div className="space-y-2 text-sm">
         <div className="flex items-center justify-between">
-          <span className="text-slate-500">Today</span>
-          <span className="font-medium text-slate-700">{todayValue}</span>
+          <span className="text-zinc-500">Today</span>
+          <span className="font-medium text-zinc-200">{todayValue}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-500">Yesterday</span>
-          <span className="font-medium text-slate-700">{yesterdayValue}</span>
+          <span className="text-zinc-500">Yesterday</span>
+          <span className="font-medium text-zinc-200">{yesterdayValue}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-500">Last Month</span>
-          <span className="font-medium text-slate-700">{lastMonthValue}</span>
+          <span className="text-zinc-500">Last Month</span>
+          <span className="font-medium text-zinc-200">{lastMonthValue}</span>
         </div>
       </div>
     </div>

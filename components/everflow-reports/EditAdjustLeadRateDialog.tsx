@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Dialog } from "primereact/dialog";
+﻿import React, { useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
-import { Button } from "primereact/button";
-import { RadioButton } from "primereact/radiobutton";
 import moment from "moment-timezone";
 import Swal from "sweetalert2";
 import { AdjustLeadRate } from "../../services/adjust-lead-rate";
@@ -12,6 +9,7 @@ import { useUpdateAdjustLeadRate } from "../../react-query/adjust-lead-rate";
 import { countries } from "../../data/country";
 import { ResponseCampaign } from "../../services/everflow/partner";
 import { ErrorMessages } from "../../models";
+import PopupLayout from "../../layouts/PopupLayout";
 
 // PrimeReact Calendar only works with browser-local Dates, so schedule times
 // travel as "wall-clock" Dates: the displayed h/m/s equal the time in the
@@ -109,6 +107,40 @@ const currencyOptions = ["THB", "USD", "EUR", "GBP"].map((c) => ({
   value: c,
 }));
 
+const fieldClass =
+  "w-full rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200";
+const labelClass = "text-xs font-medium text-zinc-400";
+const sectionLabelClass =
+  "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
+const panelClass = "oxy-dark-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
+
+function ChoiceCard({
+  selected,
+  onClick,
+  title,
+  description,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  title: string;
+  description: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col gap-1 rounded-xl border px-4 py-3 text-left transition ${
+        selected
+          ? "border-main-color/60 bg-main-color/10 ring-1 ring-main-color/40"
+          : "border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5"
+      }`}
+    >
+      <span className="text-sm font-semibold text-white">{title}</span>
+      <span className="text-xs text-zinc-500">{description}</span>
+    </button>
+  );
+}
+
 function EditAdjustLeadRateDialog({
   rate,
   smartLinks,
@@ -198,196 +230,211 @@ function EditAdjustLeadRateDialog({
     }
   };
 
+  if (!rate) return null;
+
   return (
-    <Dialog
-      header="Edit Lead Rate"
-      visible={!!rate}
-      style={{ width: "40vw", minWidth: "340px" }}
-      onHide={onClose}
+    <PopupLayout
+      onClose={onClose}
+      title="Edit lead rate"
+      subtitle="Update rate values and schedule without shifting untouched times"
+      maxWidthClassName="max-w-2xl"
+      zIndexClassName="z-[60]"
       footer={
-        <div className="flex justify-end gap-3">
-          <Button
-            label="Cancel"
+        <>
+          <button
+            type="button"
             onClick={onClose}
-            className="p-button-text h-9 w-32 rounded-md border text-gray-600"
-          />
-          <Button
+            className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
             disabled={updateMutation.isPending}
-            label={updateMutation.isPending ? "Updating..." : "Update"}
             onClick={handleUpdate}
-            autoFocus
-            className="p-button-text h-9 w-32 rounded-md border bg-blue-500 text-white"
-          />
-        </div>
+            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+          >
+            {updateMutation.isPending ? "Saving..." : "Save"}
+          </button>
+        </>
       }
     >
-      <div className="flex flex-col gap-4 py-4">
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-gray-700">Rate Type</label>
-          <div className="flex gap-4">
-            <div className="flex items-center">
-              <RadioButton
-                inputId="editRateCustom"
-                name="editRateType"
-                value="exchange"
-                onChange={(e) => setType(e.value)}
-                checked={type === "exchange"}
-              />
-              <label htmlFor="editRateCustom" className="ml-2 cursor-pointer">
-                Custom Rate
-              </label>
-            </div>
-            <div className="flex items-center">
-              <RadioButton
-                inputId="editRateFixed"
-                name="editRateType"
-                value="fixed"
-                onChange={(e) => setType(e.value)}
-                checked={type === "fixed"}
-              />
-              <label htmlFor="editRateFixed" className="ml-2 cursor-pointer">
-                Fixed Amount
-              </label>
-            </div>
+      <div className="flex flex-col gap-6">
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Rate type</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <ChoiceCard
+              selected={type === "exchange"}
+              onClick={() => setType("exchange")}
+              title="Custom"
+              description="Multiply payout by exchange rate"
+            />
+            <ChoiceCard
+              selected={type === "fixed"}
+              onClick={() => setType("fixed")}
+              title="Fixed"
+              description="Pay a fixed amount per conversion"
+            />
           </div>
           {type === "fixed" && (
-            <small className="text-gray-500">
-              Example: Italy €4 = pay partner 70 THB. Enter 70.
-            </small>
+            <p className="text-xs text-zinc-500">
+              Example: Italy โฌ4 = pay partner 70 THB. Enter 70.
+            </p>
           )}
-        </div>
+        </section>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="editRate" className="font-semibold text-gray-700">
-            {type === "fixed" ? "Fixed Amount" : "Exchange Rate"}
-          </label>
-          <InputNumber
-            id="editRate"
-            value={rateValue}
-            onValueChange={(e) => setRateValue(e.value ?? null)}
-            mode="decimal"
-            minFractionDigits={1}
-            maxFractionDigits={10}
-            className="w-full"
-            inputClassName="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">
-              Target Currency
-            </label>
-            <Dropdown
-              value={targetCurrency}
-              onChange={(e) => setTargetCurrency(e.value)}
-              options={currencyOptions}
-              className="w-full border"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">Convert To</label>
-            <Dropdown
-              value={convertedCurrency}
-              onChange={(e) => setConvertedCurrency(e.value)}
-              options={currencyOptions}
-              className="w-full border"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">Campaign</label>
-            <Dropdown
-              value={campaignId}
-              onChange={(e) => setCampaignId(e.value)}
-              options={campaignOptions}
-              filter
-              loading={smartLinksLoading}
-              placeholder={campaignId}
-              className="w-full border"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">Country</label>
-            <Dropdown
-              value={country}
-              onChange={(e) => setCountry(e.value)}
-              options={countryOptions}
-              filter
-              className="w-full border"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold text-gray-700">Time Zone</label>
-          <Dropdown
-            value={timezone}
-            onChange={(e) => handleTimezoneChange(e.value)}
-            options={timezoneOptions}
-            filter
-            className="w-full border"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">Start Date</label>
-            <div className="flex items-center gap-2">
-              <Calendar
-                value={startDate.value}
-                onChange={(e) =>
-                  setStartDate((f) =>
-                    markDateField(f, (e.value as Date) ?? null),
-                  )
-                }
-                showTime
-                hourFormat="24"
-                className="w-full border"
-                placeholder="No start date"
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Value & currency</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label htmlFor="editRate" className={labelClass}>
+                {type === "fixed" ? "Fixed amount" : "Exchange rate"}
+              </label>
+              <InputNumber
+                id="editRate"
+                value={rateValue}
+                onValueChange={(e) => setRateValue(e.value ?? null)}
+                mode="decimal"
+                minFractionDigits={1}
+                maxFractionDigits={10}
+                className="w-full max-w-xs"
+                inputClassName="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-zinc-200"
               />
-              {startDate.value && (
-                <Button
-                  icon="pi pi-times"
-                  onClick={() => setStartDate((f) => markDateField(f, null))}
-                  className="p-button-text p-button-rounded text-gray-500"
-                  tooltip="Clear (rule starts immediately)"
-                  type="button"
-                />
-              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Target currency</label>
+              <Dropdown
+                value={targetCurrency}
+                onChange={(e) => setTargetCurrency(e.value)}
+                options={currencyOptions}
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Convert to</label>
+              <Dropdown
+                value={convertedCurrency}
+                onChange={(e) => setConvertedCurrency(e.value)}
+                options={currencyOptions}
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700">End Date</label>
-            <div className="flex items-center gap-2">
-              <Calendar
-                value={endDate.value}
-                onChange={(e) =>
-                  setEndDate((f) => markDateField(f, (e.value as Date) ?? null))
-                }
-                showTime
-                hourFormat="24"
-                className="w-full border"
-                placeholder="No end date"
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Targeting</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Campaign</label>
+              <Dropdown
+                value={campaignId}
+                onChange={(e) => setCampaignId(e.value)}
+                options={campaignOptions}
+                filter
+                loading={smartLinksLoading}
+                placeholder={campaignId}
+                className={fieldClass}
+                panelClassName={panelClass}
               />
-              {endDate.value && (
-                <Button
-                  icon="pi pi-times"
-                  onClick={() => setEndDate((f) => markDateField(f, null))}
-                  className="p-button-text p-button-rounded text-gray-500"
-                  tooltip="Clear (rule never expires)"
-                  type="button"
-                />
-              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Country</label>
+              <Dropdown
+                value={country}
+                onChange={(e) => setCountry(e.value)}
+                options={countryOptions}
+                filter
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
             </div>
           </div>
-        </div>
-        {!startDate.value && !endDate.value && (
-          <small className="italic text-gray-500">
-            No dates = rule is always active.
-          </small>
-        )}
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Schedule</h3>
+          <div className="flex flex-col gap-1.5">
+            <label className={labelClass}>Timezone</label>
+            <Dropdown
+              value={timezone}
+              onChange={(e) => handleTimezoneChange(e.value)}
+              options={timezoneOptions}
+              filter
+              className={fieldClass}
+              panelClassName={panelClass}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Start date</label>
+              <div className="flex items-center gap-2">
+                <Calendar
+                  value={startDate.value}
+                  onChange={(e) =>
+                    setStartDate((f) =>
+                      markDateField(f, (e.value as Date) ?? null),
+                    )
+                  }
+                  showTime
+                  hourFormat="24"
+                  className={`flex-1 ${fieldClass}`}
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  panelClassName={panelClass}
+                  placeholder="No start date"
+                />
+                {startDate.value ? (
+                  <button
+                    type="button"
+                    onClick={() => setStartDate((f) => markDateField(f, null))}
+                    className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:bg-white/5 hover:text-white"
+                    title="Clear (rule starts immediately)"
+                  >
+                    Clear
+                  </button>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>End date</label>
+              <div className="flex items-center gap-2">
+                <Calendar
+                  value={endDate.value}
+                  onChange={(e) =>
+                    setEndDate((f) =>
+                      markDateField(f, (e.value as Date) ?? null),
+                    )
+                  }
+                  showTime
+                  hourFormat="24"
+                  className={`flex-1 ${fieldClass}`}
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  panelClassName={panelClass}
+                  placeholder="No end date"
+                />
+                {endDate.value ? (
+                  <button
+                    type="button"
+                    onClick={() => setEndDate((f) => markDateField(f, null))}
+                    className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:bg-white/5 hover:text-white"
+                    title="Clear (rule never expires)"
+                  >
+                    Clear
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          {!startDate.value && !endDate.value ? (
+            <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-zinc-400">
+              No dates = rule is always active.
+            </div>
+          ) : null}
+        </section>
       </div>
-    </Dialog>
+    </PopupLayout>
   );
 }
 

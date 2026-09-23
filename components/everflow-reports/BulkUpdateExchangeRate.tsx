@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Nullable } from "primereact/ts-helpers";
@@ -9,19 +9,8 @@ import {
   useGetPartners,
   useUpdateBulkExchangeRate,
 } from "../../react-query/partner";
-import { CiCalendarDate } from "react-icons/ci";
-import { IoMdClose } from "react-icons/io";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { RadioButton } from "primereact/radiobutton";
-import {
-  FaMoneyBillWave,
-  FaExchangeAlt,
-  FaGlobe,
-  FaLink,
-  FaCalendarAlt,
-  FaCheckCircle,
-} from "react-icons/fa";
 import {
   ConversionRawData,
   ResponseCampaign,
@@ -29,14 +18,53 @@ import {
 import { useCreateAdjustLeadRate } from "../../react-query";
 import Swal from "sweetalert2";
 import { ErrorMessages, Partner } from "../../models";
-import { FaPeopleGroup } from "react-icons/fa6";
 import { MultiSelect } from "primereact/multiselect";
+import PopupLayout from "../../layouts/PopupLayout";
 
 type Props = {
   onClose: () => void;
 };
 
 type Country = Countries[number];
+
+const fieldClass =
+  "w-full rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200";
+const labelClass = "text-xs font-medium text-zinc-400";
+const sectionLabelClass =
+  "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
+const panelClass = "oxy-dark-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
+
+function ChoiceCard({
+  selected,
+  onClick,
+  title,
+  description,
+  disabled,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  title: string;
+  description: string;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={`flex flex-col gap-1 rounded-xl border px-4 py-3 text-left transition ${
+        disabled
+          ? "cursor-not-allowed border-white/5 bg-black/20 opacity-40"
+          : selected
+            ? "border-main-color/60 bg-main-color/10 ring-1 ring-main-color/40"
+            : "border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5"
+      }`}
+    >
+      <span className="text-sm font-semibold text-white">{title}</span>
+      <span className="text-xs text-zinc-500">{description}</span>
+    </button>
+  );
+}
 
 function BulkUpdateExchangeRate({ onClose }: Props) {
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(() => {
@@ -223,19 +251,30 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
 
   if (results) {
     return (
-      <div className="relative flex w-11/12 max-w-5xl flex-col gap-6 rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700"
-        >
-          <IoMdClose />
-        </button>
-
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-          <FaCheckCircle className="text-green-500" />
-          Update Results
-        </h2>
-
+      <PopupLayout
+        onClose={onClose}
+        title="Update results"
+        subtitle="Review conversions affected by this rate update"
+        maxWidthClassName="max-w-4xl"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setResults(null)}
+              className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white"
+            >
+              Close
+            </button>
+          </>
+        }
+      >
         <DataTable value={results} paginator rows={5} className="w-full">
           <Column field="conversion_id" header="Conversion ID" sortable />
           <Column field="currency_id" header="Currency ID" sortable />
@@ -262,299 +301,251 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             sortable
           />
         </DataTable>
-
-        <div className="flex justify-end gap-3 pt-2">
-          <button
-            onClick={() => setResults(null)}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Back
-          </button>
-          <button
-            onClick={onClose}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Close
-          </button>
-        </div>
-      </div>
+      </PopupLayout>
     );
   }
 
   return (
-    <div className="relative flex h-5/6 w-11/12 flex-col gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg md:w-7/12">
-      <button
-        onClick={onClose}
-        className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700"
-      >
-        <IoMdClose />
-      </button>
-
-      <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
-        <FaMoneyBillWave className="text-green-500" />
-        Update Exchange Rate
-      </h2>
-
-      <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-gray-50 p-4">
-        <label className="flex items-center gap-2 font-semibold text-gray-700">
-          <FaExchangeAlt className="text-blue-500" /> Update Type
-        </label>
-        <div className="flex gap-4">
-          <div className="flex items-center">
-            <RadioButton
-              inputId="updateOnce"
-              name="updateType"
-              value="once"
-              onChange={(e) => setUpdateType(e.value)}
-              checked={updateType === "once"}
+    <PopupLayout
+      onClose={onClose}
+      title="Update exchange rate"
+      subtitle="Create a one-time or live lead rate adjustment"
+      maxWidthClassName="max-w-3xl"
+      footer={
+        <>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Updating..." : "Update rate"}
+          </button>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-6">
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Update mode</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <ChoiceCard
+              selected={updateType === "once"}
+              onClick={() => setUpdateType("once")}
+              title="Once"
+              description="Apply to conversions in a date range"
             />
-            <label htmlFor="updateOnce" className="ml-2 cursor-pointer">
-              Update once time
-            </label>
-          </div>
-          <div className="flex items-center">
-            <RadioButton
-              inputId="updateLive"
-              name="updateType"
-              value="live"
-              onChange={(e) => {
-                setUpdateType(e.value);
-                if (e.value === "live") {
-                  setSelectRateType("Custom");
-                }
+            <ChoiceCard
+              selected={updateType === "live"}
+              onClick={() => {
+                setUpdateType("live");
+                setSelectRateType("Custom");
               }}
-              checked={updateType === "live"}
+              title="Live"
+              description="Create an ongoing adjust-lead-rate rule"
             />
-            <label htmlFor="updateLive" className="ml-2 cursor-pointer">
-              Update live
-            </label>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaCalendarAlt className="text-orange-500" /> Select Date Range{" "}
-            {updateType === "live" && (
-              <span className="text-sm font-normal text-gray-500">
-                (Optional for Live Update)
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>
+            Schedule
+            {updateType === "live" ? (
+              <span className="ml-2 font-normal normal-case tracking-normal text-zinc-600">
+                optional for live
               </span>
-            )}
-          </label>
-          <Calendar
-            value={dates}
-            onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
-            selectionMode="range"
-            className="border"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaCalendarAlt className="text-orange-500" /> Select Time Range
-          </label>
-          <div className="flex gap-2">
-            <Calendar
-              value={startTime}
-              onChange={(e) => setStartTime(e.value as Date | null)}
-              timeOnly
-              className="w-full border"
-              placeholder="Start Time (Optional)"
-            />
-            <span className="flex items-center text-gray-500">-</span>
-            <Calendar
-              value={endTime}
-              onChange={(e) => setEndTime(e.value as Date | null)}
-              timeOnly
-              className="w-full border"
-              placeholder="End Time (Optional)"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaGlobe className="text-blue-500" /> Select Time Zone
-          </label>
-          <Dropdown
-            value={timezone}
-            onChange={(e) => setTimezone(e.value)}
-            options={timezones}
-            optionLabel="label"
-            placeholder="Select a Time Zone"
-            filter
-            className="w-full border"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaGlobe className="text-blue-500" /> Select Country
-          </label>
-
-          <Dropdown
-            value={selectedCountry}
-            onChange={(e) => setSelectedCountry(e.value)}
-            options={countries}
-            optionLabel="country"
-            placeholder="Select a Country"
-            filter
-            valueTemplate={selectedCountryTemplate}
-            itemTemplate={countryOptionTemplate}
-            className="w-full border"
-          />
-        </div>
-
-        {updateType === "once" && (
-          <div className="col-span-1 rounded border border-yellow-200 bg-yellow-50 p-2 text-sm text-yellow-700 md:col-span-2">
-            <span className="font-bold">Note:</span> You can only select either
-            selectedSmartLink or selectPartner.
-          </div>
-        )}
-
-        <div
-          className={`flex flex-col gap-2 ${updateType === "once" ? "" : "col-span-2"}`}
-        >
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaLink className="text-purple-500" /> Select Smart Link
-          </label>
-          <Dropdown
-            value={selectedSmartLink}
-            onChange={(e) => {
-              setSelectedSmartLink(e.value);
-            }}
-            options={smartLinks.data}
-            optionLabel="campaign_name"
-            placeholder="Select a Smart Link"
-            filter
-            showClear
-            className="w-full border"
-            loading={smartLinks.isLoading}
-          />
-        </div>
-        {updateType === "once" && (
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 font-semibold text-gray-700">
-              <FaPeopleGroup className="text-green-600" /> Select Partner
-            </label>
-            <MultiSelect
-              value={selectPartner}
-              onChange={(e) => {
-                setSelectPartner(e.value);
-              }}
-              options={partners.data?.data}
-              optionLabel="name"
-              showClear
-              placeholder="Select a Partner"
-              filter
-              className="w-full border"
-              loading={partners.isLoading}
-            />
-          </div>
-        )}
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaMoneyBillWave className="text-green-500" /> Target Currency
-          </label>
-          <Dropdown
-            value={currencyTarget}
-            onChange={(e) => setCurrencyTarget(e.value)}
-            options={currencies}
-            optionLabel="label"
-            placeholder="Select Target Currency"
-            className="w-full border"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaExchangeAlt className="text-indigo-500" /> Convert To
-          </label>
-          <Dropdown
-            value={currentcyConverted}
-            onChange={(e) => setCurrencyConverted(e.value)}
-            options={currencies}
-            optionLabel="label"
-            placeholder="Select Convert To Currency"
-            className="w-full border"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaExchangeAlt className="text-pink-500" /> Rate Type
-          </label>
-          <div className="flex h-12 items-center gap-4">
-            <div className="flex items-center">
-              <RadioButton
-                inputId="rateCustom"
-                name="rateType"
-                value="Custom"
-                onChange={(e) => setSelectRateType(e.value)}
-                checked={selectRateType === "Custom"}
+            ) : null}
+          </h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Date range</label>
+              <Calendar
+                value={dates}
+                onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
+                selectionMode="range"
+                className={fieldClass}
+                inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                panelClassName={panelClass}
               />
-              <label htmlFor="rateCustom" className="ml-2 cursor-pointer">
-                Custom Rate
-              </label>
             </div>
-            <div className="flex items-center">
-              <RadioButton
-                inputId="rateFixed"
-                name="rateType"
-                value="Fixed"
-                onChange={(e) => setSelectRateType(e.value)}
-                checked={selectRateType === "Fixed"}
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Time range</label>
+              <div className="flex items-center gap-2">
+                <Calendar
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.value as Date | null)}
+                  timeOnly
+                  className={`flex-1 ${fieldClass}`}
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  panelClassName={panelClass}
+                  placeholder="Start (optional)"
+                />
+                <span className="text-zinc-600">โ€“</span>
+                <Calendar
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.value as Date | null)}
+                  timeOnly
+                  className={`flex-1 ${fieldClass}`}
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  panelClassName={panelClass}
+                  placeholder="End (optional)"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className={labelClass}>Timezone</label>
+              <Dropdown
+                value={timezone}
+                onChange={(e) => setTimezone(e.value)}
+                options={timezones}
+                optionLabel="label"
+                placeholder="Select a timezone"
+                filter
+                className={fieldClass}
+                panelClassName={panelClass}
               />
-              <label
-                htmlFor="rateFixed"
-                className={`ml-2 cursor-pointer ${updateType === "live" ? "text-gray-400" : ""}`}
-              >
-                Fixed Amount
-              </label>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 font-semibold text-gray-700">
-            <FaMoneyBillWave className="text-yellow-500" />
-            {selectRateType === "Fixed" ? "Fixed Amount" : "Exchange Rate"}
-          </label>
-          <input
-            type="number"
-            step="0.0001"
-            placeholder={
-              selectRateType === "Fixed" ? "Enter fixed amount" : "Enter rate"
-            }
-            className="h-12 w-60 rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            value={rate}
-            onChange={(e) => setRate(e.target.value)}
-          />
-          {selectRateType === "Fixed" && (
-            <small className="text-gray-500">
-              Example: Italy €4 = pay partner 70 THB. Enter 70.
-            </small>
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Targeting</h3>
+          {updateType === "once" && (
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-200/90">
+              For one-time updates, choose either a Smart Link or Partner(s) โ€”
+              not both as primary filters when conflicting.
+            </div>
           )}
-        </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Country</label>
+              <Dropdown
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.value)}
+                options={countries}
+                optionLabel="country"
+                placeholder="Select a country"
+                filter
+                valueTemplate={selectedCountryTemplate}
+                itemTemplate={countryOptionTemplate}
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Smart Link</label>
+              <Dropdown
+                value={selectedSmartLink}
+                onChange={(e) => {
+                  setSelectedSmartLink(e.value);
+                }}
+                options={smartLinks.data}
+                optionLabel="campaign_name"
+                placeholder="Select a smart link"
+                filter
+                showClear
+                className={fieldClass}
+                panelClassName={panelClass}
+                loading={smartLinks.isLoading}
+              />
+            </div>
+            {updateType === "once" && (
+              <div className="flex flex-col gap-1.5 md:col-span-2">
+                <label className={labelClass}>Partner</label>
+                <MultiSelect
+                  value={selectPartner}
+                  onChange={(e) => {
+                    setSelectPartner(e.value);
+                  }}
+                  options={partners.data?.data}
+                  optionLabel="name"
+                  showClear
+                  placeholder="Select partner(s)"
+                  filter
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                  loading={partners.isLoading}
+                />
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h3 className={sectionLabelClass}>Rate</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <ChoiceCard
+              selected={selectRateType === "Custom"}
+              onClick={() => setSelectRateType("Custom")}
+              title="Custom"
+              description="Multiply payout by exchange rate"
+            />
+            <ChoiceCard
+              selected={selectRateType === "Fixed"}
+              onClick={() => setSelectRateType("Fixed")}
+              title="Fixed"
+              description="Pay a fixed amount per conversion"
+              disabled={updateType === "live"}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Target currency</label>
+              <Dropdown
+                value={currencyTarget}
+                onChange={(e) => setCurrencyTarget(e.value)}
+                options={currencies}
+                optionLabel="label"
+                placeholder="Select target currency"
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Convert to</label>
+              <Dropdown
+                value={currentcyConverted}
+                onChange={(e) => setCurrencyConverted(e.value)}
+                options={currencies}
+                optionLabel="label"
+                placeholder="Select convert-to currency"
+                className={fieldClass}
+                panelClassName={panelClass}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className={labelClass}>
+                {selectRateType === "Fixed" ? "Fixed amount" : "Exchange rate"}
+              </label>
+              <input
+                type="number"
+                step="0.0001"
+                placeholder={
+                  selectRateType === "Fixed"
+                    ? "Enter fixed amount"
+                    : "Enter rate"
+                }
+                className="h-11 w-full max-w-xs rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+              />
+              {selectRateType === "Fixed" && (
+                <p className="text-xs text-zinc-500">
+                  Example: Italy โฌ4 = pay partner 70 THB. Enter 70.
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
-      <div className="flex justify-end gap-3 pt-2">
-        <button
-          onClick={onClose}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSubmit}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-blue-300"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Updating..." : "Update Rate"}
-        </button>
-      </div>
-    </div>
+    </PopupLayout>
   );
 }
 
