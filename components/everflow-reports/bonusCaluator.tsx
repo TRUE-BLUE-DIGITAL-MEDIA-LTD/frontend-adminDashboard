@@ -30,17 +30,17 @@ function BonusCaluator({
   bonusRate,
 }: BonusRateProps) {
   return (
-    <div className="flex h-max w-full min-w-60 flex-col items-center justify-center gap-5 rounded-2xl border border-white/10 bg-zinc-900 p-4 font-Poppins md:p-5">
+    <div className="flex h-max w-full min-w-60 flex-col items-center justify-center gap-5 rounded-2xl border border-line bg-panel p-4 font-Poppins md:p-5">
       <table className="w-60 table-auto border-collapse overflow-hidden rounded-xl">
         <thead>
           <tr>
-            <th className="border-b border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <th className="border-b border-line bg-panel-raised px-3 py-2 text-xs font-semibold uppercase tracking-wide text-fg-subtle">
               From
             </th>
-            <th className="border-b border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <th className="border-b border-line bg-panel-raised px-3 py-2 text-xs font-semibold uppercase tracking-wide text-fg-subtle">
               To
             </th>
-            <th className="border-b border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <th className="border-b border-line bg-panel-raised px-3 py-2 text-xs font-semibold uppercase tracking-wide text-fg-subtle">
               Rate
             </th>
           </tr>
@@ -48,15 +48,15 @@ function BonusCaluator({
         <tbody>
           {bonusRate.map((rate, index) => {
             return (
-              <tr className="border-b border-white/5 bg-black/20" key={index}>
-                <td className="px-3 py-2 text-center text-sm font-normal text-zinc-200">
+              <tr className="border-b border-line bg-surface/20" key={index}>
+                <td className="px-3 py-2 text-center text-sm font-normal text-fg">
                   ${rate.from}
                 </td>
-                <td className="px-3 py-2 text-center text-sm font-normal text-zinc-200">
+                <td className="px-3 py-2 text-center text-sm font-normal text-fg">
                   ${rate.to}
                 </td>
                 <td
-                  className={`px-3 py-2 text-center text-sm ${rate.rate === 0.5 ? "font-semibold text-amber-300" : "font-normal text-zinc-200"}`}
+                  className={`px-3 py-2 text-center text-sm ${rate.rate === 0.5 ? "font-semibold text-amber-300" : "font-normal text-fg"}`}
                 >
                   {rate.rate * 100 + "%"}
                 </td>
@@ -67,7 +67,7 @@ function BonusCaluator({
       </table>
       <div className="flex w-full flex-col items-center justify-center gap-4 md:flex-row">
         {partnerPerformanceDayByDay.isLoading ? (
-          <div className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-1"></div>
+          <div className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2 rounded-full bg-panel-raised px-5 py-1"></div>
         ) : (
           <div className="flex min-w-60 items-center justify-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/15 px-5 py-2 text-xl font-semibold text-emerald-300">
             <RiMoneyDollarCircleFill />
@@ -78,10 +78,10 @@ function BonusCaluator({
           </div>
         )}
 
-        <FaLongArrowAltRight className="text-xl text-zinc-500" />
+        <FaLongArrowAltRight className="text-xl text-fg-subtle" />
 
         {partnerPerformanceDayByDay.isLoading ? (
-          <div className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-1"></div>
+          <div className="flex h-9 min-w-60 animate-pulse items-center justify-center gap-2 rounded-full bg-panel-raised px-5 py-1"></div>
         ) : (
           <div className="flex min-w-60 items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-5 py-2 text-xl font-semibold text-emerald-200">
             <GrMoney />

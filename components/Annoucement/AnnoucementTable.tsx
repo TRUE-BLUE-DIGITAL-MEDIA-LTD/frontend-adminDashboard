@@ -17,15 +17,15 @@ import { FiPlus, FiTrash2 } from "react-icons/fi";
 
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 function AnnoucementTable() {
@@ -83,21 +83,21 @@ function AnnoucementTable() {
           />
         </PopupLayout>
       )}
-      <div className="h-max w-full max-w-7xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100">
-        <header className="flex flex-col gap-4 border-b border-white/5 px-5 py-5 md:flex-row md:items-end md:justify-between">
+      <div className="h-max w-full max-w-7xl overflow-hidden rounded-2xl border border-line bg-panel text-fg">
+        <header className="flex flex-col gap-4 border-b border-line px-5 py-5 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-fg">
               <MdSettings className="text-[#62C7D8]" />
               Manage Announcement
             </h1>
-            <span className="text-sm text-zinc-500">
+            <span className="text-sm text-fg-subtle">
               Create, review, and remove dashboard announcements.
             </span>
           </div>
 
           <button
             onClick={() => setTriggerCreate(true)}
-            className="inline-flex items-center gap-2 rounded-full border border-white bg-white px-4 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full border border-fg bg-fg px-4 py-2 text-sm font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95"
           >
             <FiPlus />
             Create Announcement
@@ -106,8 +106,8 @@ function AnnoucementTable() {
 
         <main className="w-full overflow-auto">
           <table className="w-full min-w-[700px] table-fixed text-left text-sm">
-            <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
-              <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+            <thead className="sticky top-0 z-20 border-b border-line bg-panel/95 backdrop-blur">
+              <tr className="text-[11px] font-semibold uppercase tracking-wider text-fg-subtle">
                 <th className="px-5 py-3">Announcement</th>
                 <th className="hidden px-3 py-3 lg:table-cell">Schedule</th>
                 <th className="px-3 py-3">Status</th>
@@ -117,21 +117,21 @@ function AnnoucementTable() {
             <tbody>
               {annoucements.isLoading
                 ? [...Array(4)].map((_, i) => (
-                    <tr key={i} className="animate-pulse border-b border-white/5">
+                    <tr key={i} className="animate-pulse border-b border-line">
                       <td className="px-5 py-4">
                         <div className="space-y-2">
-                          <div className="h-3 w-40 rounded bg-zinc-700" />
-                          <div className="h-2.5 w-64 rounded bg-zinc-800" />
+                          <div className="h-3 w-40 rounded bg-panel-raised" />
+                          <div className="h-2.5 w-64 rounded bg-panel-raised" />
                         </div>
                       </td>
                       <td className="hidden px-3 py-4 lg:table-cell">
-                        <div className="h-3 w-28 rounded bg-zinc-700" />
+                        <div className="h-3 w-28 rounded bg-panel-raised" />
                       </td>
                       <td className="px-3 py-4">
-                        <div className="h-5 w-16 rounded-full bg-zinc-700" />
+                        <div className="h-5 w-16 rounded-full bg-panel-raised" />
                       </td>
                       <td className="px-5 py-4">
-                        <div className="ml-auto h-8 w-8 rounded-lg bg-zinc-700" />
+                        <div className="ml-auto h-8 w-8 rounded-lg bg-panel-raised" />
                       </td>
                     </tr>
                   ))
@@ -147,14 +147,14 @@ function AnnoucementTable() {
                     return (
                       <tr
                         key={annoucement.id}
-                        className="border-b border-white/5 transition hover:bg-white/5"
+                        className="border-b border-line transition hover:bg-hover"
                       >
                         <td className="px-5 py-3.5">
                           <div className="relative min-w-0 pr-2">
-                            <p className="truncate font-medium text-white">
+                            <p className="truncate font-medium text-fg">
                               {annoucement.title}
                             </p>
-                            <p className="mt-0.5 line-clamp-2 text-xs text-zinc-500">
+                            <p className="mt-0.5 line-clamp-2 text-xs text-fg-subtle">
                               {annoucement.description}
                             </p>
                             {currentAnnoucement.data?.id === annoucement.id && (
@@ -167,7 +167,7 @@ function AnnoucementTable() {
                         </td>
                         <td className="hidden px-3 py-3.5 lg:table-cell">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-xs text-zinc-300">
+                            <span className="text-xs text-fg-muted">
                               {new Date(annoucement.beginAt).toLocaleDateString(
                                 undefined,
                                 {
@@ -177,7 +177,7 @@ function AnnoucementTable() {
                                 },
                               )}
                             </span>
-                            <span className="text-[11px] text-zinc-500">
+                            <span className="text-[11px] text-fg-subtle">
                               Expires{" "}
                               {timeLeft({
                                 targetTime: new Date(
@@ -212,8 +212,8 @@ function AnnoucementTable() {
             </tbody>
           </table>
         </main>
-        <div className="flex justify-center border-t border-white/5 px-5 py-4">
-          <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+        <div className="flex justify-center border-t border-line px-5 py-4">
+          <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
             <Pagination
               page={page}
               onChange={(e, page) => {

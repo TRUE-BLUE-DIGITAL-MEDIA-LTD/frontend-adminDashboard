@@ -58,7 +58,7 @@ function PartnerSummaryStats({ user }: Props) {
 
   if (isLoading) {
     return (
-      <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 text-zinc-500">
+      <div className="w-full rounded-2xl border border-line bg-panel p-4 text-fg-subtle">
         Loading stats...
       </div>
     );
@@ -66,7 +66,7 @@ function PartnerSummaryStats({ user }: Props) {
 
   if (!stats) {
     return (
-      <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 text-rose-400">
+      <div className="w-full rounded-2xl border border-line bg-panel p-4 text-rose-400">
         Error loading stats.
       </div>
     );
@@ -79,7 +79,7 @@ function PartnerSummaryStats({ user }: Props) {
     return (current - previous) / previous;
   };
   return (
-    <div className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+    <div className="w-full rounded-2xl border border-line bg-panel p-4 md:p-5">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard
           title="Clicks"
@@ -169,15 +169,15 @@ const StatCard: React.FC<StatCardProps> = ({
   const percentChangeText = `${isPositive ? "+" : ""}${(percentChange * 100)?.toFixed(0)}%`;
 
   return (
-    <div className="w-full rounded-xl border border-white/10 bg-black/30 p-4">
-      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+    <div className="w-full rounded-xl border border-line bg-surface/30 p-4">
+      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">
         {title}
       </h3>
 
       <div className="mb-3">
-        <div className="text-xs text-zinc-500">Current Month</div>
+        <div className="text-xs text-fg-subtle">Current Month</div>
         <div className="flex items-baseline space-x-2">
-          <span className="text-2xl font-bold tracking-tight text-white">
+          <span className="text-2xl font-bold tracking-tight text-fg">
             {mainStatValue}
           </span>
           <span
@@ -195,16 +195,16 @@ const StatCard: React.FC<StatCardProps> = ({
 
       <div className="space-y-2 text-sm">
         <div className="flex items-center justify-between">
-          <span className="text-zinc-500">Today</span>
-          <span className="font-medium text-zinc-200">{todayValue}</span>
+          <span className="text-fg-subtle">Today</span>
+          <span className="font-medium text-fg">{todayValue}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-zinc-500">Yesterday</span>
-          <span className="font-medium text-zinc-200">{yesterdayValue}</span>
+          <span className="text-fg-subtle">Yesterday</span>
+          <span className="font-medium text-fg">{yesterdayValue}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-zinc-500">Last Month</span>
-          <span className="font-medium text-zinc-200">{lastMonthValue}</span>
+          <span className="text-fg-subtle">Last Month</span>
+          <span className="font-medium text-fg">{lastMonthValue}</span>
         </div>
       </div>
     </div>

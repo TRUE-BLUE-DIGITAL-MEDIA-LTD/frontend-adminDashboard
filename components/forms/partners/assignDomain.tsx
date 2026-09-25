@@ -21,15 +21,15 @@ import { Dropdown } from "primereact/dropdown";
 
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 type AssignDomainProps = {
@@ -251,24 +251,24 @@ function AssignDomain({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 p-4 font-Poppins lg:flex-row">
-      <ul className="relative z-10 flex max-h-[90vh] w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl lg:h-[32rem]">
-        <header className="shrink-0 border-b border-white/10 px-5 py-4">
-          <h3 className="text-sm font-semibold text-white">
+      <ul className="relative z-10 flex max-h-[90vh] w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl lg:h-[32rem]">
+        <header className="shrink-0 border-b border-line px-5 py-4">
+          <h3 className="text-sm font-semibold text-fg">
             {selectPartner.name}&apos;s domains
           </h3>
-          <p className="text-xs text-zinc-500">Currently assigned</p>
+          <p className="text-xs text-fg-subtle">Currently assigned</p>
         </header>
         <div className="min-h-0 flex-1 space-y-1 overflow-auto px-3 py-3">
           {partnerOnDomain.isLoading ? (
-            <div className="h-full w-full animate-pulse rounded-xl bg-zinc-800" />
+            <div className="h-full w-full animate-pulse rounded-xl bg-panel-raised" />
           ) : (
             partnerOnDomain.data?.map((partner) => {
               return (
                 <div
                   key={partner.id}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-black/30 px-3 py-2.5"
+                  className="flex items-center justify-between gap-2 rounded-xl border border-line bg-surface/30 px-3 py-2.5"
                 >
-                  <span className="truncate text-sm font-medium text-zinc-200">
+                  <span className="truncate text-sm font-medium text-fg">
                     {partner.domain.name}
                   </span>
                   <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
@@ -279,21 +279,22 @@ function AssignDomain({
             })
           )}
         </div>
-        <footer className="shrink-0 border-t border-white/10 px-5 py-3 text-center text-xs text-zinc-400">
+        <footer className="shrink-0 border-t border-line px-5 py-3 text-center text-xs text-fg-muted">
           Total: {partnerOnDomain.data?.length ?? 0}
         </footer>
       </ul>
 
-      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl lg:h-[32rem]">
-        <header className="flex shrink-0 flex-col gap-3 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl lg:h-[32rem]">
+        <header className="flex shrink-0 flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white">Assign domain</h2>
-            <p className="text-xs text-zinc-500">{selectPartner.name}</p>
+            <h2 className="text-lg font-semibold text-fg">Assign domain</h2>
+            <p className="text-xs text-fg-subtle">{selectPartner.name}</p>
           </div>
           <div className="flex flex-wrap items-end gap-2">
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-zinc-400">Filter</label>
+              <label className="text-xs font-medium text-fg-muted">Filter</label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={filterDomain}
                 onChange={(e) => {
                   setPage(1);
@@ -301,7 +302,7 @@ function AssignDomain({
                 }}
                 options={["all", "no-partner"]}
                 placeholder="Filter Partner"
-                className="h-10 w-36 rounded-lg border border-white/10 bg-black/40 text-left text-sm text-white outline-none"
+                className="h-10 w-36 rounded-lg border border-line bg-surface/40 text-left text-sm text-fg outline-none"
               />
             </div>
             <SearchField
@@ -314,7 +315,7 @@ function AssignDomain({
             >
               <Input
                 placeholder="Search domains"
-                className="h-10 appearance-none rounded-full border border-white/10 bg-black/40 py-2 pl-10 pr-3 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color"
+                className="h-10 appearance-none rounded-full border border-line bg-surface/40 py-2 pl-10 pr-3 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color"
               />
               <IoSearchCircleSharp className="absolute bottom-0 left-2 top-0 m-auto text-2xl text-main-color" />
             </SearchField>
@@ -324,7 +325,7 @@ function AssignDomain({
                 setTriggerAssignDomain(() => false);
                 document.body.style.overflow = "auto";
               }}
-              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              className="rounded-lg px-2 py-1 text-fg-muted hover:bg-hover hover:text-fg"
               aria-label="Close"
             >
               ✕
@@ -336,7 +337,7 @@ function AssignDomain({
             ? [...Array(5)].map((_, index) => (
                 <div
                   key={index}
-                  className="h-14 animate-pulse rounded-xl bg-zinc-800/60"
+                  className="h-14 animate-pulse rounded-xl bg-panel-raised/60"
                 />
               ))
             : responsibilityOnPartner?.domains.map((domain) => {
@@ -355,21 +356,21 @@ function AssignDomain({
                     className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
                       domain.isChecking
                         ? "border-emerald-500/30 bg-emerald-500/10"
-                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                        : "border-line bg-surface/30 hover:bg-hover"
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-white">
+                      <p className="truncate font-medium text-fg">
                         {domain.name}
                       </p>
-                      <p className="truncate text-xs text-zinc-500">
+                      <p className="truncate text-xs text-fg-subtle">
                         {formattedDatecreateAt} ·{" "}
                         {domain.partner?.name ?? "No partner"}
                       </p>
                     </div>
                     <div className="shrink-0">
                       {domain.isLoading ? (
-                        <div className="h-5 w-5 animate-pulse rounded bg-zinc-700" />
+                        <div className="h-5 w-5 animate-pulse rounded bg-panel-raised" />
                       ) : domain.partner &&
                         domain.partner.id !== selectPartner.id ? (
                         <button
@@ -418,8 +419,8 @@ function AssignDomain({
                 );
               })}
         </div>
-        <div className="flex shrink-0 justify-center border-t border-white/10 px-5 py-3">
-          <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+        <div className="flex shrink-0 justify-center border-t border-line px-5 py-3">
+          <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
             <Pagination
               page={page}
               onChange={(e, page) => setPage(page)}
@@ -436,7 +437,7 @@ function AssignDomain({
           setTriggerAssignDomain(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed inset-0 -z-10 bg-black/70"
+        className="fixed inset-0 -z-10 bg-scrim"
       ></footer>
     </div>
   );

@@ -20,15 +20,15 @@ import {
 } from "../../../services/admin/user";
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 type AssignPartnerProps = {
@@ -129,11 +129,11 @@ function AssignPartner({
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
-      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
-        <header className="flex shrink-0 flex-col gap-3 border-b border-white/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl">
+        <header className="flex shrink-0 flex-col gap-3 border-b border-line px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white">Assign partner</h2>
-            <p className="text-xs text-zinc-500">
+            <h2 className="text-lg font-semibold text-fg">Assign partner</h2>
+            <p className="text-xs text-fg-subtle">
               Connect a partner to this user account
             </p>
           </div>
@@ -147,7 +147,7 @@ function AssignPartner({
             >
               <Input
                 placeholder="Search name or manager"
-                className="h-10 appearance-none rounded-full border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color"
+                className="h-10 appearance-none rounded-full border border-line bg-surface/40 py-2 pl-10 pr-4 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color"
               />
               <IoSearchCircleSharp className="absolute bottom-0 left-2 top-0 m-auto text-2xl text-main-color" />
             </SearchField>
@@ -157,7 +157,7 @@ function AssignPartner({
                 document.body.style.overflow = "auto";
                 setTriggerAssignPartner(() => false);
               }}
-              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              className="rounded-lg px-2 py-1 text-fg-muted hover:bg-hover hover:text-fg"
               aria-label="Close"
             >
               ✕
@@ -169,7 +169,7 @@ function AssignPartner({
             ? [...Array(5)].map((_, index) => (
                 <div
                   key={index}
-                  className="h-16 animate-pulse rounded-xl border border-white/5 bg-zinc-800/60"
+                  className="h-16 animate-pulse rounded-xl border border-line bg-panel-raised/60"
                 />
               ))
             : partners?.data?.data.map((partner) => {
@@ -180,14 +180,14 @@ function AssignPartner({
                     className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition ${
                       isAssigned
                         ? "border-emerald-500/30 bg-emerald-500/10"
-                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                        : "border-line bg-surface/30 hover:bg-hover"
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-white">
+                      <p className="truncate font-medium text-fg">
                         {partner.name}
                       </p>
-                      <p className="truncate text-xs text-zinc-500">
+                      <p className="truncate text-xs text-fg-subtle">
                         ID {partner.affiliateId}
                         {partner.manager?.email
                           ? ` · ${partner.manager.email}`
@@ -217,8 +217,8 @@ function AssignPartner({
                 );
               })}
         </div>
-        <div className="flex shrink-0 justify-center border-t border-white/10 px-6 py-3">
-          <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+        <div className="flex shrink-0 justify-center border-t border-line px-6 py-3">
+          <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
             <Pagination
               onChange={(e, page) => setPage(page)}
               count={partners?.data?.meta.total || 1}
@@ -233,7 +233,7 @@ function AssignPartner({
           document.body.style.overflow = "auto";
           setTriggerAssignPartner(() => false);
         }}
-        className="fixed inset-0 -z-10 bg-black/70"
+        className="fixed inset-0 -z-10 bg-scrim"
       ></footer>
     </div>
   );

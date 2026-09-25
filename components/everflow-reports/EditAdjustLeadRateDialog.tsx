@@ -108,11 +108,11 @@ const currencyOptions = ["THB", "USD", "EUR", "GBP"].map((c) => ({
 }));
 
 const fieldClass =
-  "w-full rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200";
-const labelClass = "text-xs font-medium text-zinc-400";
+  "w-full rounded-lg border border-line bg-surface/40 text-sm text-fg";
+const labelClass = "text-xs font-medium text-fg-muted";
 const sectionLabelClass =
-  "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
-const panelClass = "oxy-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
+  "text-[11px] font-semibold uppercase tracking-wider text-fg-subtle";
+const panelClass = "oxy-overlay-panel border border-line bg-panel text-fg";
 
 function ChoiceCard({
   selected,
@@ -132,11 +132,11 @@ function ChoiceCard({
       className={`flex flex-col gap-1 rounded-xl border px-4 py-3 text-left transition ${
         selected
           ? "border-main-color/60 bg-main-color/10 ring-1 ring-main-color/40"
-          : "border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5"
+          : "border-line bg-surface/40 hover:border-line-strong hover:bg-hover"
       }`}
     >
-      <span className="text-sm font-semibold text-white">{title}</span>
-      <span className="text-xs text-zinc-500">{description}</span>
+      <span className="text-sm font-semibold text-fg">{title}</span>
+      <span className="text-xs text-fg-subtle">{description}</span>
     </button>
   );
 }
@@ -244,7 +244,7 @@ function EditAdjustLeadRateDialog({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+            className="rounded-full border border-line-strong bg-transparent px-4 py-2 text-sm font-medium text-fg transition hover:bg-hover"
           >
             Cancel
           </button>
@@ -252,7 +252,7 @@ function EditAdjustLeadRateDialog({
             type="button"
             disabled={updateMutation.isPending}
             onClick={handleUpdate}
-            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+            className="rounded-full bg-fg px-5 py-2 text-sm font-semibold text-surface transition hover:bg-main-color hover:text-white disabled:opacity-50"
           >
             {updateMutation.isPending ? "Saving..." : "Save"}
           </button>
@@ -277,7 +277,7 @@ function EditAdjustLeadRateDialog({
             />
           </div>
           {type === "fixed" && (
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-fg-subtle">
               Example: Italy โฌ4 = pay partner 70 THB. Enter 70.
             </p>
           )}
@@ -298,7 +298,7 @@ function EditAdjustLeadRateDialog({
                 minFractionDigits={1}
                 maxFractionDigits={10}
                 className="w-full max-w-xs"
-                inputClassName="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-zinc-200"
+                inputClassName="w-full rounded-lg border border-line bg-surface/40 px-3 py-2.5 text-sm text-fg"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -381,7 +381,7 @@ function EditAdjustLeadRateDialog({
                   showTime
                   hourFormat="24"
                   className={`flex-1 ${fieldClass}`}
-                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
                   placeholder="No start date"
                 />
@@ -389,7 +389,7 @@ function EditAdjustLeadRateDialog({
                   <button
                     type="button"
                     onClick={() => setStartDate((f) => markDateField(f, null))}
-                    className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:bg-white/5 hover:text-white"
+                    className="rounded-lg px-2 py-2 text-xs text-fg-muted hover:bg-hover hover:text-fg"
                     title="Clear (rule starts immediately)"
                   >
                     Clear
@@ -410,7 +410,7 @@ function EditAdjustLeadRateDialog({
                   showTime
                   hourFormat="24"
                   className={`flex-1 ${fieldClass}`}
-                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
                   placeholder="No end date"
                 />
@@ -418,7 +418,7 @@ function EditAdjustLeadRateDialog({
                   <button
                     type="button"
                     onClick={() => setEndDate((f) => markDateField(f, null))}
-                    className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:bg-white/5 hover:text-white"
+                    className="rounded-lg px-2 py-2 text-xs text-fg-muted hover:bg-hover hover:text-fg"
                     title="Clear (rule never expires)"
                   >
                     Clear
@@ -428,7 +428,7 @@ function EditAdjustLeadRateDialog({
             </div>
           </div>
           {!startDate.value && !endDate.value ? (
-            <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-zinc-400">
+            <div className="rounded-lg border border-line bg-panel-raised px-3 py-2.5 text-xs text-fg-muted">
               No dates = rule is always active.
             </div>
           ) : null}

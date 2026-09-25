@@ -71,12 +71,12 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
   };
 
   const fieldClass =
-    "w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40";
+    "w-full rounded-lg border border-line bg-surface/40 px-3 py-2.5 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40";
 
   return (
     <form onSubmit={handleCreate} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-zinc-400">Title</span>
+        <span className="text-xs font-medium text-fg-muted">Title</span>
         <input
           value={data?.title}
           onChange={(e) =>
@@ -89,7 +89,7 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
         />
       </label>
       <label className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-zinc-400">Description</span>
+        <span className="text-xs font-medium text-fg-muted">Description</span>
         <textarea
           required
           placeholder="What should users know?"
@@ -103,7 +103,7 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
       </label>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-zinc-400">Begin at</span>
+          <span className="text-xs font-medium text-fg-muted">Begin at</span>
           <input
             required
             type="datetime-local"
@@ -115,7 +115,7 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-zinc-400">Expire at</span>
+          <span className="text-xs font-medium text-fg-muted">Expire at</span>
           <input
             required
             type="datetime-local"
@@ -129,7 +129,7 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
         </label>
       </div>
       <label className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-zinc-400">Status</span>
+        <span className="text-xs font-medium text-fg-muted">Status</span>
         <select
           value={data?.status}
           onChange={(e) =>
@@ -144,18 +144,18 @@ function AnnoucementCreate({ toast, onClose, annoucements }: Props) {
           ))}
         </select>
       </label>
-      <div className="mt-2 flex items-center justify-end gap-3 border-t border-white/5 pt-4">
+      <div className="mt-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-white"
+          className="rounded-full px-4 py-2 text-sm font-medium text-fg-muted transition hover:bg-hover hover:text-fg"
         >
           Cancel
         </button>
         <button
           disabled={create.isPending}
           type="submit"
-          className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+          className="rounded-full bg-fg px-5 py-2 text-sm font-semibold text-surface transition hover:bg-main-color hover:text-white disabled:opacity-50"
         >
           {create.isPending ? "Creating…" : "Create"}
         </button>

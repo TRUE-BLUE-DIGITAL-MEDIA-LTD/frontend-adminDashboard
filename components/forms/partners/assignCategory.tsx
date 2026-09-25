@@ -199,11 +199,11 @@ function AssignCategory({
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
-      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
-        <header className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl">
+        <header className="flex shrink-0 items-center justify-between border-b border-line px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Assign category</h2>
-            <p className="text-xs text-zinc-500">{selectPartner.name}</p>
+            <h2 className="text-lg font-semibold text-fg">Assign category</h2>
+            <p className="text-xs text-fg-subtle">{selectPartner.name}</p>
           </div>
           <button
             type="button"
@@ -211,7 +211,7 @@ function AssignCategory({
               setTriggerAssignCategory(() => false);
               document.body.style.overflow = "auto";
             }}
-            className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+            className="rounded-lg px-2 py-1 text-fg-muted hover:bg-hover hover:text-fg"
             aria-label="Close"
           >
             ✕
@@ -222,7 +222,7 @@ function AssignCategory({
             ? [...Array(5)].map((_, index) => (
                 <div
                   key={index}
-                  className="h-14 animate-pulse rounded-xl border border-white/5 bg-zinc-800/60"
+                  className="h-14 animate-pulse rounded-xl border border-line bg-panel-raised/60"
                 />
               ))
             : categoryOnPartnerData?.map((category) => {
@@ -232,14 +232,14 @@ function AssignCategory({
                     className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 transition ${
                       category.isChecking
                         ? "border-emerald-500/30 bg-emerald-500/10"
-                        : "border-white/10 bg-black/30 hover:bg-white/5"
+                        : "border-line bg-surface/30 hover:bg-hover"
                     }`}
                   >
-                    <span className="font-medium text-zinc-100">
+                    <span className="font-medium text-fg">
                       {category.title}
                     </span>
                     {category.isLoading ? (
-                      <div className="h-5 w-5 animate-pulse rounded bg-zinc-700" />
+                      <div className="h-5 w-5 animate-pulse rounded bg-panel-raised" />
                     ) : (
                       <input
                         onChange={(e) => {
@@ -275,7 +275,7 @@ function AssignCategory({
           setTriggerAssignCategory(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed inset-0 -z-10 bg-black/70"
+        className="fixed inset-0 -z-10 bg-scrim"
       ></footer>
     </div>
   );

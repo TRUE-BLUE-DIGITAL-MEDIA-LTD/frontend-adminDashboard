@@ -30,7 +30,7 @@ const metrics: { label: string; key: keyof Reporting; suffix?: string }[] = [
 
 function SummaryReport({ summary }: SummaryReportProps) {
   return (
-    <section className="w-full rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+    <section className="w-full rounded-2xl border border-line bg-panel p-4 md:p-5">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
         {metrics.map((m) => {
           const raw = summary.data?.[m.key];
@@ -39,15 +39,15 @@ function SummaryReport({ summary }: SummaryReportProps) {
           return (
             <div
               key={m.label}
-              className="rounded-xl border border-white/5 bg-black/30 px-3 py-3"
+              className="rounded-xl border border-line bg-surface/30 px-3 py-3"
             >
-              <h2 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+              <h2 className="text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">
                 {m.label}
               </h2>
               {summary.isLoading ? (
-                <div className="mt-2 h-6 w-16 animate-pulse rounded bg-white/10" />
+                <div className="mt-2 h-6 w-16 animate-pulse rounded bg-panel-raised" />
               ) : (
-                <p className="mt-1 text-lg font-semibold tracking-tight text-white">
+                <p className="mt-1 text-lg font-semibold tracking-tight text-fg">
                   {value}
                   {m.suffix ?? ""}
                 </p>

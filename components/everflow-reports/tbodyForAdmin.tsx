@@ -68,20 +68,20 @@ function TbodyForAdmin({
       : "";
 
   const bgClass = isParent
-    ? "bg-zinc-800"
+    ? "bg-panel-raised"
     : isGroupedChild
-      ? "bg-zinc-900"
-      : "bg-zinc-900";
+      ? "bg-panel"
+      : "bg-panel";
 
   const fontClass = isParent
-    ? "font-bold text-white"
+    ? "font-bold text-fg"
     : isGroupedChild
-      ? "font-semibold text-zinc-200"
-      : "text-zinc-400";
+      ? "font-semibold text-fg"
+      : "text-fg-muted";
 
   return (
     <tr
-      className={`h-10 w-full text-sm transition hover:bg-white/5 border-b border-white/5 ${stickyClass} ${bgClass} ${fontClass}`}
+      className={`h-10 w-full text-sm transition hover:bg-hover border-b border-line ${stickyClass} ${bgClass} ${fontClass}`}
     >
       <td
         className={`left-0 max-w-60 truncate px-2 text-end md:sticky ${bgClass}`}
@@ -126,7 +126,7 @@ function TbodyForAdmin({
                 }),
               );
             }}
-            className="grid cursor-pointer grid-cols-3 p-2 hover:bg-white/10"
+            className="grid cursor-pointer grid-cols-3 p-2 hover:bg-hover"
           >
             <div
               className={`flex items-center justify-center ${

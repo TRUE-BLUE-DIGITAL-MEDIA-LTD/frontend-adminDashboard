@@ -146,8 +146,8 @@ const AdjustLeadRatesTable = ({
   const segmentBtn = (active: boolean) =>
     `border-0 px-4 py-2 text-sm font-medium transition-colors ${
       active
-        ? "bg-white/10 text-white"
-        : "bg-transparent text-zinc-400 hover:text-white"
+        ? "bg-panel-raised text-fg"
+        : "bg-transparent text-fg-muted hover:text-fg"
     }`;
 
   return (
@@ -160,7 +160,7 @@ const AdjustLeadRatesTable = ({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+          className="rounded-full border border-line-strong bg-transparent px-4 py-2 text-sm font-medium text-fg transition hover:bg-hover"
         >
           Close
         </button>
@@ -176,7 +176,7 @@ const AdjustLeadRatesTable = ({
             <div className="flex flex-wrap items-center gap-2">
               {canSeeHistory && (
                 <div
-                  className="flex overflow-hidden rounded-full border border-white/10"
+                  className="flex overflow-hidden rounded-full border border-line"
                   role="group"
                 >
                   <button
@@ -197,7 +197,7 @@ const AdjustLeadRatesTable = ({
               )}
               {canSeeHistory && !showMatrix && (
                 <div
-                  className="flex overflow-hidden rounded-full border border-white/10"
+                  className="flex overflow-hidden rounded-full border border-line"
                   role="group"
                 >
                   <button
@@ -219,15 +219,15 @@ const AdjustLeadRatesTable = ({
             </div>
             {!showMatrix && (
               <div className="flex items-center gap-2">
-                <label className="text-xs font-medium text-zinc-400">
+                <label className="text-xs font-medium text-fg-muted">
                   Group by
                 </label>
                 <Dropdown
                   value={groupBy}
                   options={groupByOptions}
                   onChange={(e) => setGroupBy(e.value)}
-                  className="w-48 rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200"
-                  panelClassName="oxy-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100"
+                  className="w-48 rounded-lg border border-line bg-surface/40 text-sm text-fg"
+                  panelClassName="oxy-overlay-panel border border-line bg-panel text-fg"
                 />
               </div>
             )}
@@ -240,9 +240,9 @@ const AdjustLeadRatesTable = ({
               {Object.entries(groupedData).map(([groupKey, groupRates]) => (
                 <div
                   key={groupKey}
-                  className="overflow-hidden rounded-xl border border-white/10 bg-black/30"
+                  className="overflow-hidden rounded-xl border border-line bg-surface/30"
                 >
-                  <div className="flex items-center gap-3 border-b border-white/10 bg-zinc-800/60 px-5 py-2.5 text-white">
+                  <div className="flex items-center gap-3 border-b border-line bg-panel-raised/60 px-5 py-2.5 text-fg">
                     {groupBy === "country" && (
                       <>
                         {getCountryFlag(groupKey) ? (
@@ -252,14 +252,14 @@ const AdjustLeadRatesTable = ({
                             className="h-5 w-7 rounded object-cover"
                           />
                         ) : (
-                          <FaGlobe className="text-base text-zinc-400" />
+                          <FaGlobe className="text-base text-fg-muted" />
                         )}
                         <span className="text-sm font-semibold">{groupKey}</span>
                       </>
                     )}
                     {groupBy === "campaignId" && (
                       <>
-                        <FaBullhorn className="text-base text-zinc-400" />
+                        <FaBullhorn className="text-base text-fg-muted" />
                         <span className="text-sm font-semibold">
                           Campaign: {groupKey} (
                           {
@@ -274,20 +274,20 @@ const AdjustLeadRatesTable = ({
                     )}
                     {groupBy === "convertedCurrency" && (
                       <>
-                        <FaMoneyBillWave className="text-base text-zinc-400" />
+                        <FaMoneyBillWave className="text-base text-fg-muted" />
                         <span className="text-sm font-semibold">
                           Currency: {groupKey}
                         </span>
                       </>
                     )}
-                    <span className="ml-auto rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-zinc-300">
+                    <span className="ml-auto rounded-full bg-panel-raised px-2.5 py-0.5 text-[11px] font-medium text-fg-muted">
                       {groupRates.length} items
                     </span>
                   </div>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-zinc-400">
-                      <thead className="bg-zinc-900/50 text-[11px] uppercase tracking-wide text-zinc-500">
+                    <table className="w-full text-left text-sm text-fg-muted">
+                      <thead className="bg-panel/50 text-[11px] uppercase tracking-wide text-fg-subtle">
                         <tr>
                           <th className="px-5 py-2.5">Type</th>
                           {groupBy !== "country" ? (
@@ -305,7 +305,7 @@ const AdjustLeadRatesTable = ({
                           ) : null}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5 bg-transparent">
+                      <tbody className="divide-y divide-line bg-transparent">
                         {groupRates.map((rate) => {
                           const campaign = smartLinks.data?.find(
                             (c) =>
@@ -315,7 +315,7 @@ const AdjustLeadRatesTable = ({
                           return (
                             <tr
                               key={rate.id}
-                              className="transition-colors hover:bg-white/5"
+                              className="transition-colors hover:bg-hover"
                             >
                               <td className="px-5 py-3">
                                 <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-300">
@@ -323,7 +323,7 @@ const AdjustLeadRatesTable = ({
                                 </span>
                               </td>
                               {groupBy !== "country" ? (
-                                <td className="px-5 py-3 font-medium text-white">
+                                <td className="px-5 py-3 font-medium text-fg">
                                   <div className="flex items-center gap-2">
                                     {getCountryFlag(rate.country) && (
                                       <img
@@ -351,10 +351,10 @@ const AdjustLeadRatesTable = ({
                                   {rate.convertedCurrency}
                                 </span>
                               </td>
-                              <td className="px-5 py-3 font-semibold text-white">
+                              <td className="px-5 py-3 font-semibold text-fg">
                                 {rate.rate.toFixed(4)}
                               </td>
-                              <td className="px-5 py-3 text-xs text-zinc-500">
+                              <td className="px-5 py-3 text-xs text-fg-subtle">
                                 {rate.startDate && (
                                   <div className="whitespace-nowrap">
                                     <span className="font-semibold">
@@ -370,7 +370,7 @@ const AdjustLeadRatesTable = ({
                                   </div>
                                 )}
                                 {!rate.startDate && !rate.endDate && (
-                                  <span className="italic text-zinc-500">
+                                  <span className="italic text-fg-subtle">
                                     Always active
                                   </span>
                                 )}
@@ -381,7 +381,7 @@ const AdjustLeadRatesTable = ({
                                     <button
                                       type="button"
                                       onClick={() => openEditModal(rate)}
-                                      className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+                                      className="rounded-lg p-2 text-fg-muted transition-colors hover:bg-hover hover:text-fg"
                                       title="Edit"
                                     >
                                       <FaEdit />
@@ -389,7 +389,7 @@ const AdjustLeadRatesTable = ({
                                     <button
                                       type="button"
                                       onClick={() => handleDelete(rate.id)}
-                                      className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/10 hover:text-rose-400"
+                                      className="rounded-lg p-2 text-fg-muted transition-colors hover:bg-hover hover:text-rose-400"
                                       title="Delete"
                                     >
                                       <FaTrash />
@@ -406,8 +406,8 @@ const AdjustLeadRatesTable = ({
                 </div>
               ))}
               {Object.keys(groupedData).length === 0 && (
-                <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
-                  <FaLayerGroup className="mb-3 text-4xl text-zinc-600" />
+                <div className="flex flex-col items-center justify-center py-10 text-fg-subtle">
+                  <FaLayerGroup className="mb-3 text-4xl text-fg-subtle" />
                   <p>
                     {canSeeHistory
                       ? `No ${viewMode === "active" ? "active" : "history"} adjust lead rates found.`

@@ -527,16 +527,16 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         />
       )}
 
-      <div className="mx-auto flex w-full  flex-col gap-5 bg-black px-4 py-6 md:px-6">
+      <div className="mx-auto flex w-full  flex-col gap-5 bg-surface px-4 py-6 md:px-6">
         {/* Page header */}
         <header className="flex flex-col gap-1">
           <p className="text-xs font-semibold uppercase tracking-wider text-main-color">
             Reports
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-fg md:text-3xl">
             Partners performance
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-fg-subtle">
             {dates?.[0] && dates?.[1]
               ? `${moment(dates[0]).format("MMM D, YYYY")} – ${moment(dates[1]).format("MMM D, YYYY")}`
               : "Select a date range"}
@@ -545,11 +545,11 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         </header>
 
         {/* Toolbar */}
-        <div className="rounded-2xl border border-white/10 bg-zinc-900 p-4 md:p-5">
+        <div className="rounded-2xl border border-line bg-panel p-4 md:p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div className="grid w-full flex-1 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-zinc-400">
+                <label className="text-xs font-medium text-fg-muted">
                   Parent
                 </label>
                 <Dropdown
@@ -580,11 +580,11 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   )}
                   optionLabel="name"
                   placeholder="Select a Parent"
-                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                  className="w-full rounded-lg border border-line bg-surface/40 text-fg"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-zinc-400">
+                <label className="text-xs font-medium text-fg-muted">
                   Child
                 </label>
                 <Dropdown
@@ -609,11 +609,11 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   )}
                   optionLabel="name"
                   placeholder="Select a Child"
-                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                  className="w-full rounded-lg border border-line bg-surface/40 text-fg"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-zinc-400">
+                <label className="text-xs font-medium text-fg-muted">
                   Grandchild
                 </label>
                 <Dropdown
@@ -638,20 +638,21 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   )}
                   optionLabel="name"
                   placeholder="Select a Grandchild"
-                  className="w-full rounded-lg border border-white/10 bg-black/40 text-zinc-200"
+                  className="w-full rounded-lg border border-line bg-surface/40 text-fg"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="flex items-center gap-1 text-xs font-medium text-zinc-400">
+                <label className="flex items-center gap-1 text-xs font-medium text-fg-muted">
                   Date range <CiCalendarDate />
                 </label>
                 <Calendar
+        panelClassName="oxy-overlay-panel"
                   value={dates}
                   onChange={(e) => {
                     setDates(e.value);
                   }}
                   selectionMode="range"
-                  className="w-full rounded-lg border border-white/10 bg-black/40 text-black "
+                  className="w-full rounded-lg border border-line bg-surface/40 text-fg "
                 />
               </div>
             </div>
@@ -660,20 +661,20 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
               {user.role === "admin" && (
                 <button
                   onClick={() => setShowBulkUpdate(true)}
-                  className="h-10 rounded-full bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-100"
+                  className="h-10 rounded-full bg-fg px-4 text-sm font-semibold text-surface transition hover:bg-fg/80"
                 >
                   Create Rate
                 </button>
               )}
               <button
                 onClick={() => setShowAdjustRates(true)}
-                className="h-10 rounded-full border border-white/15 px-4 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+                className="h-10 rounded-full border border-line-strong px-4 text-sm font-medium text-fg transition hover:bg-hover"
               >
                 View Rates
               </button>
               <button
                 onClick={() => setShowAiAnalysis(true)}
-                className="h-10 rounded-full border border-white/15 px-4 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+                className="h-10 rounded-full border border-line-strong px-4 text-sm font-medium text-fg transition hover:bg-hover"
               >
                 Analyze with AI
               </button>
@@ -713,11 +714,11 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
         )}
 
         {/* Data table card */}
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
+        <div className="overflow-hidden rounded-2xl border border-line bg-panel">
           <div className="max-h-[70vh] w-full overflow-auto">
             <table className="w-max min-w-full border-collapse">
               <thead className="sticky top-0 z-30">
-                <tr className="h-12 bg-zinc-900">
+                <tr className="h-12 bg-panel">
                   {menuTables
                     .filter((list) => {
                       if (user.role === "admin") {
@@ -741,12 +742,12 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                               };
                             });
                           }}
-                          className={`cursor-pointer px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 transition hover:text-white ${
+                          className={`cursor-pointer px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-fg-subtle transition hover:text-fg ${
                             menu.title === "Network Affiliate ID" &&
-                            "left-0 bg-zinc-900 md:sticky"
+                            "left-0 bg-panel md:sticky"
                           } ${
                             menu.title === "Affiliate Name" &&
-                            "sticky left-0 bg-zinc-900"
+                            "sticky left-0 bg-panel"
                           }`}
                           key={index}
                         >
@@ -758,7 +759,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                       );
                     })}
                   {user.partner?.isAllowBonuSystem && (
-                    <th className="cursor-pointer bg-zinc-900 px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 md:sticky md:left-0">
+                    <th className="cursor-pointer bg-panel px-2 py-3 text-[11px] font-semibold uppercase tracking-wide text-fg-subtle md:sticky md:left-0">
                       <button className="flex items-center justify-center gap-1">
                         bonus
                       </button>
@@ -770,20 +771,20 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                 <tbody>
                   {[...new Array(10)].map((item, index) => {
                     return (
-                      <tr key={index} className="border-b border-white/5">
-                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-40 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-20 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-32 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-20 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/10"></td>
-                        <td className="h-8 w-10 animate-pulse rounded bg-white/5"></td>
-                        <td className="h-8 w-32 animate-pulse rounded bg-white/10"></td>
+                      <tr key={index} className="border-b border-line">
+                        <td className="h-8 w-32 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-40 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-20 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-20 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-10 animate-pulse rounded bg-panel-raised"></td>
+                        <td className="h-8 w-32 animate-pulse rounded bg-panel-raised"></td>
                       </tr>
                     );
                   })}
