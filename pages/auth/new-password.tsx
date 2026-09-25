@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { NewPasswordService } from "../../services/auth/new-password";
 import { Alert, Avatar, Snackbar, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import ThemeToggle from "../../components/common/ThemeToggle";
 function NewPassword({ user }: { user: User }) {
   const router = useRouter();
   const [triggerRedirect, setTriggerRedirect] = useState(false);
@@ -60,7 +61,10 @@ function NewPassword({ user }: { user: User }) {
     setOpen(false);
   };
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-second-color to-supper-main-color">
+    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-b from-second-color to-supper-main-color text-fg dark:from-panel dark:to-surface">
+      <div className="fixed right-4 top-4 z-50">
+        <ThemeToggle compact />
+      </div>
       {triggerRedirect && (
         <div className="absolute bottom-0 left-0 right-0 top-0 z-40 m-auto h-screen w-screen animate-pulse bg-blue-300/80 backdrop-blur-sm"></div>
       )}

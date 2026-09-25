@@ -10,6 +10,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { GetUser } from "../../services/admin/user";
 import TotpRequire from "../../components/auth/totp-require";
 import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 function SignIn() {
   const router = useRouter();
@@ -102,7 +103,10 @@ function SignIn() {
     });
   };
   return (
-    <div className="flex h-screen w-screen flex-col items-center  justify-between bg-gradient-to-b from-second-color to-supper-main-color">
+    <div className="flex h-screen w-screen flex-col items-center  justify-between bg-gradient-to-b from-second-color to-supper-main-color text-fg dark:from-panel dark:to-surface">
+      <div className="fixed right-4 top-4 z-50">
+        <ThemeToggle compact />
+      </div>
       {triggerRedirect && (
         <div className="absolute bottom-0 left-0 right-0 top-0 z-40 m-auto h-screen w-screen animate-pulse bg-blue-300/80 backdrop-blur-sm"></div>
       )}
@@ -118,12 +122,12 @@ function SignIn() {
       {triggerSetupTotp && signInData.email && (
         <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center">
           <TotpRequire email={signInData.email} />
-          <footer className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-white/30 backdrop-blur-md "></footer>
+          <footer className="fixed bottom-0 left-0 right-0 top-0 -z-10 h-screen w-screen bg-surface/30 backdrop-blur-md "></footer>
         </div>
       )}
 
       <div className="mt-32 flex w-8/12 flex-col items-center justify-center gap-2">
-        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
+        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-surface">
           <Image
             src="/favicon.ico"
             fill
