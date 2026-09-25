@@ -227,7 +227,7 @@ const AdjustLeadRatesTable = ({
                   options={groupByOptions}
                   onChange={(e) => setGroupBy(e.value)}
                   className="w-48 rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200"
-                  panelClassName="oxy-dark-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100"
+                  panelClassName="oxy-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100"
                 />
               </div>
             )}

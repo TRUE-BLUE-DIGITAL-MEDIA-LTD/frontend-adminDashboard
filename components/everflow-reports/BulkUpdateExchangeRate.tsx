@@ -32,7 +32,7 @@ const fieldClass =
 const labelClass = "text-xs font-medium text-zinc-400";
 const sectionLabelClass =
   "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
-const panelClass = "oxy-dark-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
+const panelClass = "oxy-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
 
 function ChoiceCard({
   selected,
