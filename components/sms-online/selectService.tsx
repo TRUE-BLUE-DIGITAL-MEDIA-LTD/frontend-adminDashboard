@@ -99,15 +99,15 @@ function SelectService({
   };
   return (
     <section
-      className="relative w-max rounded-lg border border-gray-100  bg-gradient-to-r 
- from-gray-50 to-gray-200 p-5 drop-shadow-xl"
+      className="relative w-max rounded-lg border border-line  bg-panel 
+ p-5 drop-shadow-xl"
     >
       {tariffs.isFetchingNextPage && (
         <div
           className="absolute bottom-0 left-0 right-0 top-0 z-20 m-auto flex h-full
-   w-full animate-pulse items-center justify-center rounded-lg bg-slate-200"
+   w-full animate-pulse items-center justify-center rounded-lg bg-panel-raised"
         >
-          <div className="h-14 w-14 animate-spin rounded-full border-8 border-gray-300 border-t-blue-600" />
+          <div className="h-14 w-14 animate-spin rounded-full border-8 border-line border-t-blue-600" />
         </div>
       )}
       <h2 className=" text-lg font-semibold">Select Service</h2>
@@ -123,7 +123,7 @@ function SelectService({
             });
           }}
           placeholder="Search Service"
-          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-gray-500
+          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-line-strong
        placeholder:text-sm lg:w-full"
         />
         <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
@@ -134,11 +134,11 @@ function SelectService({
               return (
                 <li
                   key={index}
-                  className="grid animate-pulse grid-cols-5 items-center justify-between  bg-gray-200"
+                  className="grid animate-pulse grid-cols-5 items-center justify-between  bg-panel-raised"
                 >
-                  <div className="h-10 w-10 bg-gray-300"></div>
-                  <span className="col-span-3 bg-gray-300"></span>
-                  <FaRegCircle className="text-gray-800" />
+                  <div className="h-10 w-10 bg-panel-raised"></div>
+                  <span className="col-span-3 bg-panel-raised"></span>
+                  <FaRegCircle className="text-fg" />
                 </li>
               );
             })
@@ -150,7 +150,7 @@ function SelectService({
                     ref={array.length === index + 1 ? ref : undefined}
                     key={key}
                     className={`grid cursor-pointer grid-cols-5 items-center justify-between p-2  
-           hover:bg-gray-200 ${query.service === value.slug ? "bg-gray-200" : ""}`}
+           hover:bg-hover ${query.service === value.slug ? "bg-panel-raised" : ""}`}
                   >
                     <div className="relative h-10 w-10 overflow-hidden ">
                       <Image
@@ -167,15 +167,15 @@ function SelectService({
                       {value.service}
                     </span>
                     <div className="flex items-center justify-end gap-2">
-                      <span className="text-sm font-normal text-gray-400">
+                      <span className="text-sm font-normal text-fg-subtle">
                         {value.count}
                       </span>
                       <button
                         onClick={() =>
                           handleRequestNumber({ service_slug: value.slug })
                         }
-                        className="rounded-lg bg-blue-200 px-2 py-1 text-sm
-               font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105"
+                        className="rounded-lg bg-blue-500/20 px-2 py-1 text-sm
+               font-semibold text-blue-700 dark:text-blue-400 transition duration-100 hover:bg-blue-300 active:scale-105"
                       >
                         ${value.price}
                       </button>

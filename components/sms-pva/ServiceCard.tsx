@@ -27,7 +27,7 @@ function ServiceCard({
   return (
     <li
       className={` flex  cursor-pointer items-center justify-between p-2  
-             hover:bg-gray-200 ${selectService === service.slug ? "bg-gray-200" : ""}`}
+             hover:bg-hover ${selectService === service.slug ? "bg-panel-raised" : ""}`}
     >
       <div className="flex items-center justify-center gap-2">
         <div className="relative h-10 w-10 overflow-hidden ">
@@ -43,9 +43,9 @@ function ServiceCard({
       </div>
       <div className="flex items-center justify-end gap-2">
         {loadingNumberAvailable ? (
-          <div className="h-2 w-5 animate-pulse rounded-full bg-gray-400"></div>
+          <div className="h-2 w-5 animate-pulse rounded-full bg-panel-raised"></div>
         ) : (
-          <span className="text-sm font-normal text-gray-400">
+          <span className="text-sm font-normal text-fg-subtle">
             {totalAvailable}
           </span>
         )}
@@ -54,9 +54,9 @@ function ServiceCard({
           onClick={() => {
             onSelectService(service.code);
           }}
-          className={`w-24 rounded-lg bg-blue-200 px-2 py-1 text-sm
+          className={`w-24 rounded-lg bg-blue-500/20 px-2 py-1 text-sm
                   
-                 font-semibold text-blue-700 transition duration-100 hover:bg-blue-300 active:scale-105`}
+                 font-semibold text-blue-700 dark:text-blue-400 transition duration-100 hover:bg-blue-300 active:scale-105`}
         >
           BUY
         </button>

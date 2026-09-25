@@ -73,7 +73,7 @@ function EmailTab({ user }: SmsBulkProps) {
       <section className="flex w-10/12 flex-col items-start justify-start gap-5">
         <h1 className="text-lg font-semibold">My emails</h1>
         {(!activeEmails.data || activeEmails.data.data.length === 0) && (
-          <div className="flex w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
+          <div className="flex w-96 flex-col items-center justify-center gap-5 rounded-md bg-panel p-5 ring-1 ring-line-strong drop-shadow-xl">
             <RiErrorWarningLine className="text-5xl" />
             <h3 className="text-xl">No operations.</h3>
             <span className="text-sm">Order an email address and use it to register on the target site</span>

@@ -135,7 +135,7 @@ function SelectService({ activeNumbers }: Props) {
     }
   };
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
         value={selectedCountry}
         onChange={(e: DropdownChangeEvent) => setSelectedCountry(e.value)}
@@ -170,7 +170,7 @@ function SelectService({ activeNumbers }: Props) {
         itemTemplate={serviceOptionTemplate}
       />
 
-      <div className="flex h-10 w-96 items-center justify-center rounded-md border bg-white font-semibold text-gray-500">
+      <div className="flex h-10 w-96 items-center justify-center rounded-md border bg-panel font-semibold text-fg-muted">
         {stock.isLoading && "Loading.."}
         {stock.isError && "-"}
         {stock.data && stock.data.success !== 1 && `${stock.data.message}`}

@@ -28,8 +28,8 @@ function ActiveNumber({ sms, onCancel, onDone, onResend }: Props) {
   }, [sms.cancellableAt, holdLeft]);
 
   return (
-    <div className="w-full overflow-hidden rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-400 pb-2">
+    <div className="w-full overflow-hidden rounded-md bg-panel p-3 ring-1 ring-line-strong drop-shadow-xl">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-strong pb-2">
         <div className="flex min-w-0 items-center justify-start gap-2">
           <div className="relative h-5 w-7 shrink-0 overflow-hidden">
             <Image src={flagUrl(sms.country)} alt="country flag" fill className="object-contain" />
@@ -37,7 +37,7 @@ function ActiveNumber({ sms, onCancel, onDone, onResend }: Props) {
           <h3 className="truncate text-lg font-semibold">{sms.phoneNumber}</h3>
         </div>
         <div className="flex shrink-0 items-center justify-start gap-2">
-          <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
+          <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-500/20 p-1 px-3 text-sm font-normal">
             <Countdown
               date={new Date(sms.expireAt)}
               renderer={({ minutes, seconds }) => (
@@ -52,7 +52,7 @@ function ActiveNumber({ sms, onCancel, onDone, onResend }: Props) {
               <button
                 onClick={() => onResend(sms.id)}
                 title="Ask the provider to send another SMS to this number"
-                className="flex h-8 w-20 items-center justify-center rounded-sm bg-blue-100 p-1 px-2 text-xs font-semibold text-blue-700 hover:bg-blue-200"
+                className="flex h-8 w-20 items-center justify-center rounded-sm bg-blue-500/15 p-1 px-2 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-500/20"
               >
                 Resend
               </button>
@@ -69,7 +69,7 @@ function ActiveNumber({ sms, onCancel, onDone, onResend }: Props) {
               onClick={() => onCancel(sms.id)}
               disabled={holdLeft > 0}
               title={holdLeft > 0 ? `Cancel available in ${holdLeft}s` : "Cancel and refund"}
-              className="flex h-8 w-20 items-center justify-center rounded-sm bg-red-300 p-1 px-2 text-xs text-red-700 disabled:bg-gray-200 disabled:text-gray-500"
+              className="flex h-8 w-20 items-center justify-center rounded-sm bg-red-300 p-1 px-2 text-xs text-red-700 dark:text-red-400 disabled:bg-panel-raised disabled:text-fg-muted"
             >
               {holdLeft > 0 ? `wait ${holdLeft}s` : "refund"}
             </button>
@@ -85,8 +85,8 @@ function ActiveNumber({ sms, onCancel, onDone, onResend }: Props) {
         {messages.length > 0 ? (
           <ul className="flex max-h-40 flex-col gap-2 overflow-auto">
             {messages.map((m, i) => (
-              <li key={m.id} className="flex w-full flex-col gap-1 rounded-sm bg-gray-50 p-2">
-                <span className="text-xs text-gray-500">
+              <li key={m.id} className="flex w-full flex-col gap-1 rounded-sm bg-panel-raised p-2">
+                <span className="text-xs text-fg-muted">
                   SMS {i + 1} · {moment(m.receivedAt).format("HH:mm:ss")}
                 </span>
                 {m.code && <span className="text-lg font-bold tracking-widest">{m.code}</span>}

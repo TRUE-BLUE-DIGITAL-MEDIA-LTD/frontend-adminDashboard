@@ -69,7 +69,7 @@ function SelectService({ activeNumbers }: Props) {
   };
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-4 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex w-full max-w-md flex-col gap-4 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <h3 className="border-b pb-2 text-lg font-semibold">Order New Number</h3>
       <Dropdown
         value={selectService}

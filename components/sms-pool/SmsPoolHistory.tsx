@@ -38,15 +38,15 @@ function SmsPoolHistory({ activeNumbers }: Props) {
   return (
     <>
       <header className="flex flex-col items-center">
-        <h1 className="text-xl font-semibold text-black">All Verifications</h1>
-        <h1 className="text-lg font-semibold text-gray-400">
+        <h1 className="text-xl font-semibold text-fg">All Verifications</h1>
+        <h1 className="text-lg font-semibold text-fg-subtle">
           A history of all verifications.
         </h1>
       </header>
       <div className="mt-1 overflow-auto lg:w-10/12 xl:w-10/12 2xl:w-7/12">
         <table className="w-max min-w-full border">
           <thead>
-            <tr className="bg-gray-300">
+            <tr className="bg-panel-raised">
               <th>Date</th>
               <th>Phone Number</th>
               <th>Country</th>
@@ -149,7 +149,7 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
           <span className="font-semibold leading-none">
             {moment(sms.createAt).format("DD MMMM YYYY")}
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-fg-muted">
             At {moment(sms.createAt).format("HH:mm")}
           </span>
         </section>
@@ -174,11 +174,11 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
       <td className="">
         <div className="flex w-full items-center justify-center gap-1 text-center">
           {sms.isGetSms === true ? (
-            <div className=" w-max rounded-md bg-green-200 px-2 text-sm text-green-600">
+            <div className=" w-max rounded-md bg-green-500/20 px-2 text-sm text-green-600">
               SMS <span className="text-xs">(${sms.price})</span>
             </div>
           ) : (
-            <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">
+            <div className="w-20 rounded-md bg-red-500/20 px-2 text-sm text-red-600">
               NO SMS
             </div>
           )}
@@ -194,7 +194,7 @@ function ItemHistory({ sms, activeNumbers }: PropsItemHistory) {
           <button
             disabled={resend.isPending}
             onClick={() => handleResend(sms.id)}
-            className="h-10 w-40 rounded-lg border bg-gray-950 text-white hover:scale-105 active:scale-110"
+            className="h-10 w-40 rounded-lg border bg-surface text-fg hover:scale-105 active:scale-110"
           >
             {resend.isPending ? "Loading.." : "Reused"}
           </button>

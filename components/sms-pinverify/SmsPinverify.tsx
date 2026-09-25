@@ -65,8 +65,8 @@ function SmsPinverify({ user }: Props) {
             })}
           </ul>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">Oxy Pin</h1>
-        <span className="text-sm text-gray-500">
+        <h1 className="text-4xl font-semibold text-fg">Oxy Pin</h1>
+        <span className="text-sm text-fg-muted">
           OxyPin provides the opportunity to use short-term temp phone numbers
           from different countries at fair and affordable prices for receiving
           SMS messages.
@@ -85,7 +85,7 @@ function SmsPinverify({ user }: Props) {
           <h1 className="text-lg font-semibold">My numbers</h1>
           {!activeNumbers.data ||
             (activeNumbers.data.data.length === 0 && (
-              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
+              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-panel p-5 ring-1 ring-line-strong drop-shadow-xl">
                 <RiErrorWarningLine className="text-5xl" />
                 <h3 className="text-xl">No operations.</h3>
                 <span className="text-sm">

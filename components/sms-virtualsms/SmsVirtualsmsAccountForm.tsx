@@ -42,7 +42,7 @@ function SmsVirtualsmsAccountForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-800 hover:text-white"
+        className="rounded-lg border px-3 py-1 text-sm hover:bg-hover hover:text-fg"
       >
         + Add VirtualSMS account
       </button>
@@ -79,7 +79,7 @@ function SmsVirtualsmsAccountForm() {
         <button
           disabled={create.isPending || !username || !apiKey}
           onClick={handleCreate}
-          className="h-9 flex-1 rounded-lg bg-gray-800 text-sm text-white disabled:opacity-40"
+          className="h-9 flex-1 rounded-lg bg-panel text-sm text-fg disabled:opacity-40"
         >
           {create.isPending ? "Loading.." : "Save"}
         </button>

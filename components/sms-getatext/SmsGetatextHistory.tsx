@@ -93,15 +93,15 @@ function SmsGetatextHistory({ activeNumbers }: Props) {
   return (
     <>
       <header className="flex flex-col items-center">
-        <h1 className="text-xl font-semibold text-black">All Verifications</h1>
-        <h1 className="text-lg font-semibold text-gray-400">
+        <h1 className="text-xl font-semibold text-fg">All Verifications</h1>
+        <h1 className="text-lg font-semibold text-fg-subtle">
           A history of all verifications.
         </h1>
       </header>
       <div className="mt-1 overflow-auto lg:w-10/12 xl:w-10/12 2xl:w-7/12">
         <table className="w-max min-w-full border">
           <thead>
-            <tr className="bg-gray-300">
+            <tr className="bg-panel-raised">
               <th className="px-2 py-1">Date</th>
               <th className="px-2 py-1">Phone Number</th>
               <th className="px-2 py-1">Country</th>
@@ -189,7 +189,7 @@ function ItemHistory({ sms, onReRent, disabled }: PropsItemHistory) {
           <span className="font-semibold leading-none">
             {moment(sms.createAt).format("DD MMMM YYYY")}
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-fg-muted">
             At {moment(sms.createAt).format("HH:mm")}
           </span>
         </section>
@@ -208,13 +208,13 @@ function ItemHistory({ sms, onReRent, disabled }: PropsItemHistory) {
             sms.messages.map((m) => (
               <div
                 key={m.id}
-                className="w-40 rounded-md bg-green-200 px-2 text-sm text-green-600"
+                className="w-40 rounded-md bg-green-500/20 px-2 text-sm text-green-600"
               >
                 {m.text}
               </div>
             ))
           ) : (
-            <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">
+            <div className="w-20 rounded-md bg-red-500/20 px-2 text-sm text-red-600">
               NO SMS
             </div>
           )}

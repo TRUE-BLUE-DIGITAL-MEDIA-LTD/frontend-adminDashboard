@@ -25,24 +25,24 @@ function EmailHtmlModal({ html, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4"
       onClick={onClose}
     >
       <div
-        className="relative max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+        className="relative max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-panel p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           aria-label="Close"
-          className="absolute right-4 top-4 text-xl leading-none text-gray-400 hover:text-gray-600"
+          className="absolute right-4 top-4 text-xl leading-none text-fg-subtle hover:text-fg-muted"
           onClick={onClose}
         >
           ✕
         </button>
         <h2 className="mb-4 text-lg font-bold">Email</h2>
         <div
-          className="rounded-lg border bg-white p-4 text-sm"
+          className="rounded-lg border bg-panel p-4 text-sm"
           dangerouslySetInnerHTML={{ __html: sanitized }}
         />
       </div>

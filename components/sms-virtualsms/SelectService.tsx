@@ -36,7 +36,7 @@ function SelectService({ activeNumbers }: Props) {
   const serviceTemplate = (option: SmsVirtualsmsServiceItem) => (
     <div className="flex w-96 justify-between gap-2">
       <span>{option.service_name}</span>
-      <span className="text-gray-500">{option.service_id}</span>
+      <span className="text-fg-muted">{option.service_id}</span>
     </div>
   );
 
@@ -86,7 +86,7 @@ function SelectService({ activeNumbers }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
         value={service}
         onChange={(e: DropdownChangeEvent) => {
@@ -115,7 +115,7 @@ function SelectService({ activeNumbers }: Props) {
         className="w-96 border"
         itemTemplate={countryTemplate}
       />
-      <div className="flex h-6 w-96 items-center justify-end text-sm text-gray-600">
+      <div className="flex h-6 w-96 items-center justify-end text-sm text-fg-muted">
         {country ? `Price: $${country.price.toFixed(2)}` : ""}
       </div>
       <button

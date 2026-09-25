@@ -139,7 +139,7 @@ function SelectService({ activeNumbers }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
         value={selectedCountry}
         onChange={(e: DropdownChangeEvent) => {

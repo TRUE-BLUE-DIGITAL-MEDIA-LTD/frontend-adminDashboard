@@ -82,7 +82,7 @@ function ShowActiveNumber() {
     <section className="flex  flex-col items-start  justify-start gap-5 ">
       <h1 className="text-lg font-semibold">My numbers</h1>
       {activeNumber.data?.response === "ERROR_NO_OPERATIONS" && (
-        <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
+        <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-panel p-5 ring-1 ring-line-strong drop-shadow-xl">
           <RiErrorWarningLine className="text-5xl" />
           <h3 className="text-xl">No operations.</h3>
           <span className="text-sm">
@@ -96,10 +96,10 @@ function ShowActiveNumber() {
 
           return (
             <div
-              className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl"
+              className=" w-full rounded-md bg-panel p-3 ring-1 ring-line-strong drop-shadow-xl"
               key={index}
             >
-              <div className="flex justify-between border-b border-gray-400 pb-2">
+              <div className="flex justify-between border-b border-line-strong pb-2">
                 <div className="flex items-center justify-start gap-2">
                   <div className="relative h-5 w-7 overflow-hidden ">
                     <Image
@@ -117,7 +117,7 @@ function ShowActiveNumber() {
                   <h3 className="text-lg font-semibold">{number.number}</h3>
                 </div>
                 <div className="flex items-center justify-start gap-2">
-                  <h3 className="rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
+                  <h3 className="rounded-sm bg-green-500/20 p-1 px-3 text-sm font-normal">
                     <Countdown
                       date={currentTime}
                       intervalDelay={0}
@@ -136,7 +136,7 @@ function ShowActiveNumber() {
                   </h3>
                   <button
                     onClick={() => handleDeleteNumber(number.tzid)}
-                    className=" flex items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"
+                    className=" flex items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700 dark:text-red-400"
                   >
                     <GiCancel />
                   </button>
