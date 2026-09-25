@@ -62,10 +62,10 @@ const Section = ({
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-gray-100 py-4 last:border-0">
+    <div className="border-b border-line py-4 last:border-0">
       <button
         type="button"
-        className="-mx-2 flex w-full items-center justify-between rounded px-2 py-2 text-left font-medium text-gray-900 transition-colors hover:bg-gray-50"
+        className="-mx-2 flex w-full items-center justify-between rounded px-2 py-2 text-left font-medium text-fg transition-colors hover:bg-hover"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{title}</span>
@@ -86,7 +86,7 @@ const SegmentedControl = ({
   onChange: (val: any) => void;
 }) => {
   return (
-    <div className="flex w-max rounded-full bg-gray-100 p-1">
+    <div className="flex w-max rounded-full bg-panel-raised p-1">
       {options.map((opt) => (
         <button
           key={String(opt.value)}
@@ -95,8 +95,8 @@ const SegmentedControl = ({
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
             value === opt.value
-              ? "bg-white text-blue-600 shadow-sm ring-1 ring-gray-200"
-              : "text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              ? "bg-panel text-blue-600 shadow-sm ring-1 ring-line-strong"
+              : "text-fg-muted hover:text-fg-muted disabled:cursor-not-allowed disabled:opacity-50"
           }`}
         >
           {opt.label}
@@ -256,15 +256,15 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
   console.log("mobileRegion:", region);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-surface bg-opacity-50 backdrop-blur-sm">
+      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-panel p-6 shadow-2xl">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-fg">
             Create Cloud Phone
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-fg-muted hover:text-fg-muted"
           >
             <svg
               className="h-6 w-6"
@@ -286,7 +286,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
           <Section title="Profile settings">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Name
                 </label>
                 <div className="relative">
@@ -296,16 +296,16 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                     onChange={(e) => setProfileName(e.target.value)}
                     placeholder="The profile name is optional"
                     maxLength={100}
-                    className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-gray-400">
+                  <span className="absolute right-4 top-2.5 text-xs text-fg-subtle">
                     {profileName.length} / 100
                   </span>
                 </div>
               </div>
 
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Operating system
                 </label>
                 <SegmentedControl
@@ -326,7 +326,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
               </div>
 
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Group
                 </label>
                 <input
@@ -334,12 +334,12 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                   value={profileGroup}
                   onChange={(e) => setProfileGroup(e.target.value)}
                   placeholder="Select or enter a group"
-                  className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Tags
                 </label>
                 <input
@@ -347,12 +347,12 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                   value={profileTags}
                   onChange={(e) => setProfileTags(e.target.value)}
                   placeholder="Find tag/Create tag"
-                  className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               <div className="col-span-1 md:col-span-2">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Remarks
                 </label>
                 <div className="relative">
@@ -362,9 +362,9 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                     onChange={(e) => setProfileNote(e.target.value)}
                     placeholder="Please enter remarks"
                     maxLength={1500}
-                    className="block w-full rounded-2xl border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="block w-full rounded-2xl border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
-                  <span className="absolute bottom-2 right-4 text-xs text-gray-400">
+                  <span className="absolute bottom-2 right-4 text-xs text-fg-subtle">
                     {profileNote.length} / 1500
                   </span>
                 </div>
@@ -376,7 +376,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="col-span-1 flex items-center gap-6 md:col-span-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                  <label className="mb-2 block text-sm font-medium text-fg-muted">
                     Option
                   </label>
                   <SegmentedControl
@@ -390,13 +390,13 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                 </div>
 
                 <div className="flex-1">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                  <label className="mb-2 block text-sm font-medium text-fg-muted">
                     Type
                   </label>
                   <select
                     value={proxyType}
                     onChange={(e) => setProxyType(e.target.value)}
-                    className="block w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="block w-full rounded-full border border-line bg-panel px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="noproxy">No proxy (local network)</option>
                     <option value="http">HTTP</option>
@@ -405,12 +405,12 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                 </div>
 
                 <div className="flex-1">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                  <label className="mb-2 block text-sm font-medium text-fg-muted">
                     IP query channel
                   </label>
                   <div className="flex gap-2">
                     <select
-                      className="block w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line bg-panel px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                       defaultValue="IP2Location"
                     >
                       <option value="IP2Location">IP2Location</option>
@@ -422,7 +422,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
               {proxyMode === "saved" && (
                 <div className="col-span-1 md:col-span-2">
                   <div className="mb-1 flex items-center justify-between">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-fg-muted">
                       Proxy Number
                     </label>
                     <button
@@ -455,7 +455,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                             {option.serialNo})
                           </span>
                           {option.data && (
-                            <div className="text-xs  text-gray-500">
+                            <div className="text-xs  text-fg-muted">
                               {option.data.countryCode} -{" "}
                               {option.data.countryName},{" "}
                               {option.data.subdivision}, {option.data.city} (
@@ -476,7 +476,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                                 )
                               </span>
                               {option.data && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-fg-muted">
                                   {option.data.countryCode} - {option.data.city}
                                 </span>
                               )}
@@ -488,7 +488,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       pt={{
                         root: {
                           className:
-                            "w-full rounded-full border border-gray-300 bg-white text-gray-700",
+                            "w-full rounded-full border border-line bg-panel text-fg-muted",
                         },
                         input: {
                           className:
@@ -500,10 +500,10 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                         },
                         panel: {
                           className:
-                            "bg-white border shadow-lg rounded-lg mt-1",
+                            "bg-panel border shadow-lg rounded-lg mt-1",
                         },
                         item: {
-                          className: "p-2 cursor-pointer hover:bg-gray-100",
+                          className: "p-2 cursor-pointer hover:bg-hover",
                         },
                       }}
                     />
@@ -517,7 +517,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                           e.target.value === "" ? "" : Number(e.target.value),
                         )
                       }
-                      className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   )}
                 </div>
@@ -526,7 +526,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
               {proxyMode === "custom" && (
                 <>
                   <div className="col-span-1 md:col-span-2">
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                    <label className="mb-1 block text-sm font-medium text-fg-muted">
                       Proxy Information
                     </label>
                     <input
@@ -534,12 +534,12 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       placeholder="socks5://user:pass@host:port"
                       value={proxyInformation}
                       onChange={(e) => setProxyInformation(e.target.value)}
-                      className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
                   <div className="col-span-1 md:col-span-2">
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                    <label className="mb-1 block text-sm font-medium text-fg-muted">
                       Refresh URL
                     </label>
                     <input
@@ -547,18 +547,18 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       placeholder="http://..."
                       value={refreshUrl}
                       onChange={(e) => setRefreshUrl(e.target.value)}
-                      className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                    <label className="mb-1 block text-sm font-medium text-fg-muted">
                       Dynamic Proxy
                     </label>
                     <select
                       value={dynamicProxy}
                       onChange={(e) => setDynamicProxy(e.target.value)}
-                      className="block w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line bg-panel px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">Select Dynamic Proxy</option>
                       {DYNAMIC_PROXY_TYPES.map((type) => (
@@ -570,7 +570,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                    <label className="mb-1 block text-sm font-medium text-fg-muted">
                       Dynamic Proxy Location
                     </label>
                     <input
@@ -578,7 +578,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       placeholder="e.g. us"
                       value={dynamicProxyLocation}
                       onChange={(e) => setDynamicProxyLocation(e.target.value)}
-                      className="block w-full rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 </>
@@ -589,7 +589,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
           <Section title="Device information">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Charging method
                 </label>
                 <SegmentedControl
@@ -603,13 +603,13 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
               </div>
 
               <div className="col-span-1">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="mb-1 block text-sm font-medium text-fg-muted">
                   Version
                 </label>
                 <select
                   value={mobileType}
                   onChange={(e) => setMobileType(e.target.value as MobileType)}
-                  className="block w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="block w-full rounded-full border border-line bg-panel px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {MOBILE_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -625,7 +625,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
             <div className="space-y-6">
               {/* Network */}
               <div className="flex flex-col md:flex-row md:items-center">
-                <label className="mb-2 w-48 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 text-sm font-medium text-fg-muted md:mb-0">
                   Network
                 </label>
                 <SegmentedControl
@@ -637,7 +637,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Phone Number */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Phone number
                 </label>
                 <div className="flex-1 space-y-3">
@@ -655,7 +655,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="Enter phone number"
-                      className="block w-full max-w-md rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full max-w-md rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   )}
                 </div>
@@ -663,7 +663,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Location */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Location
                 </label>
                 <div className="flex-1 space-y-3">
@@ -686,7 +686,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                     <select
                       value={region}
                       onChange={(e) => setRegion(e.target.value)}
-                      className="block w-full max-w-md rounded-full border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full max-w-md rounded-full border border-line bg-panel px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">Select Region</option>
                       {REGIONS.map((r, index) => (
@@ -701,7 +701,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Device Brand */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Device brand
                 </label>
                 <div className="flex-1 space-y-3">
@@ -718,7 +718,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       type="text"
                       value={surfaceBrandName}
                       onChange={(e) => setSurfaceBrandName(e.target.value)}
-                      className="block w-full max-w-md rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full max-w-md rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   )}
                 </div>
@@ -726,7 +726,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Device Model */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Device model
                 </label>
                 <div className="flex-1 space-y-3">
@@ -743,7 +743,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       type="text"
                       value={surfaceModelName}
                       onChange={(e) => setSurfaceModelName(e.target.value)}
-                      className="block w-full max-w-md rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full max-w-md rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   )}
                 </div>
@@ -751,7 +751,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Device Name */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Device name
                 </label>
                 <div className="flex-1 space-y-3">
@@ -768,7 +768,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
 
               {/* Cloud Phone Language */}
               <div className="flex flex-col md:flex-row md:items-start">
-                <label className="mb-2 w-48 pt-2 text-sm font-medium text-gray-700 md:mb-0">
+                <label className="mb-2 w-48 pt-2 text-sm font-medium text-fg-muted md:mb-0">
                   Cloud phone language
                 </label>
                 <div className="flex-1 space-y-3">
@@ -786,7 +786,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                       value={mobileLanguage}
                       onChange={(e) => setMobileLanguage(e.target.value)}
                       placeholder="English (United States)"
-                      className="block w-full max-w-md rounded-full border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full max-w-md rounded-full border border-line px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   )}
                 </div>
@@ -795,16 +795,16 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
           </Section>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-2 text-sm text-red-500">
+            <div className="rounded-md bg-red-500/10 p-2 text-sm text-red-500">
               {error}
             </div>
           )}
 
-          <div className="mt-8 flex justify-end gap-3 border-t border-gray-100 pt-4">
+          <div className="mt-8 flex justify-end gap-3 border-t border-line pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full bg-gray-100 px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
+              className="rounded-full bg-panel-raised px-6 py-2 text-sm font-medium text-fg-muted hover:bg-hover focus:outline-none"
             >
               Cancel
             </button>

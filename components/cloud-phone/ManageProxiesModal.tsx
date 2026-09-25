@@ -62,10 +62,10 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="flex h-[80vh] w-full max-w-4xl flex-col rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface bg-opacity-50">
+      <div className="flex h-[80vh] w-full max-w-4xl flex-col rounded-lg bg-panel p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-fg">
             Manage Proxies
           </h2>
           <div className="flex gap-2">
@@ -77,7 +77,7 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
             </button>
             <button
               onClick={onClose}
-              className="rounded bg-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              className="rounded bg-panel-raised px-3 py-2 text-sm font-medium text-fg-muted hover:bg-hover dark:text-fg-subtle"
             >
               Close
             </button>
@@ -88,57 +88,57 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
           {isLoading ? (
             <div className="py-10 text-center">Loading proxies...</div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+            <table className="min-w-full divide-y divide-line dark:divide-line">
+              <thead className="bg-panel-raised">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted dark:text-fg-subtle">
                     Serial No
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted dark:text-fg-subtle">
                     Details
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted dark:text-fg-subtle">
                     IP
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted dark:text-fg-subtle">
                     Location
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-fg-muted dark:text-fg-subtle">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+              <tbody className="divide-y divide-line bg-panel dark:divide-line">
                 {proxiesData?.data?.map((proxy) => (
                   <tr key={proxy.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-fg">
                       {proxy.serialNo}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 text-sm text-fg-muted dark:text-fg-subtle">
                       <div>
                         {proxy.scheme}://{proxy.server}:{proxy.port}
                       </div>
                       {proxy.username && (
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-fg-subtle">
                           User: {proxy.username}
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 text-sm text-fg-muted dark:text-fg-subtle">
                       <div>{proxy.data.outboundIP}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 text-sm text-fg-muted dark:text-fg-subtle">
                       {proxy.data ? (
                         <div>
                           <div>
                             {proxy.data.city}, {proxy.data.countryName}
                           </div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-fg-subtle">
                             {proxy.data.timezone}
                           </div>
                         </div>
                       ) : (
-                        <span className="text-gray-400">Checking...</span>
+                        <span className="text-fg-subtle">Checking...</span>
                       )}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
@@ -164,7 +164,7 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
                   <tr>
                     <td
                       colSpan={4}
-                      className="px-6 py-4 text-center text-sm text-gray-500"
+                      className="px-6 py-4 text-center text-sm text-fg-muted"
                     >
                       No proxies found
                     </td>
@@ -176,8 +176,8 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
         </div>
 
         {proxiesData?.meta && (
-          <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
-            <div className="text-sm text-gray-700 dark:text-gray-300">
+          <div className="mt-4 flex items-center justify-between border-t border-line pt-4 dark:border-line-strong">
+            <div className="text-sm text-fg-muted dark:text-fg-subtle">
               Showing page {proxiesData.meta.currentPage} of{" "}
               {proxiesData.meta.lastPage}
             </div>
@@ -185,14 +185,14 @@ const ManageProxiesModal: React.FC<ManageProxiesModalProps> = ({
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!proxiesData.meta.prev}
-                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+                className="rounded border border-line px-3 py-1 text-sm font-medium hover:bg-hover disabled:opacity-50 dark:border-line-strong"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!proxiesData.meta.next}
-                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+                className="rounded border border-line px-3 py-1 text-sm font-medium hover:bg-hover disabled:opacity-50 dark:border-line-strong"
               >
                 Next
               </button>

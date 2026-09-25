@@ -87,20 +87,20 @@ const CreateUpdateProxyModal: React.FC<CreateUpdateProxyModalProps> = ({
   const isPending = isCreating || isUpdating;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-surface bg-opacity-50">
+      <div className="w-full max-w-md rounded-lg bg-panel p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-bold text-fg">
           {proxyToEdit ? "Update Proxy" : "Create Proxy"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-fg-muted dark:text-fg-subtle">
               Scheme
             </label>
             <select
               value={scheme}
               onChange={(e) => setScheme(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full rounded-md border border-line px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-line-strong"
             >
               <option value="socks5">socks5</option>
               <option value="http">http</option>
@@ -109,7 +109,7 @@ const CreateUpdateProxyModal: React.FC<CreateUpdateProxyModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-fg-muted dark:text-fg-subtle">
               Server
             </label>
             <input
@@ -118,12 +118,12 @@ const CreateUpdateProxyModal: React.FC<CreateUpdateProxyModalProps> = ({
               value={server}
               onChange={(e) => setServer(e.target.value)}
               placeholder="127.0.0.1"
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full rounded-md border border-line px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-line-strong"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-fg-muted dark:text-fg-subtle">
               Port
             </label>
             <input
@@ -132,31 +132,31 @@ const CreateUpdateProxyModal: React.FC<CreateUpdateProxyModalProps> = ({
               value={port}
               onChange={(e) => setPort(Number(e.target.value))}
               placeholder="8080"
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full rounded-md border border-line px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-line-strong"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-fg-muted dark:text-fg-subtle">
               Username (Optional)
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full rounded-md border border-line px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-line-strong"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-fg-muted dark:text-fg-subtle">
               Password (Optional)
             </label>
             <input
               type="text"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full rounded-md border border-line px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-line-strong"
             />
           </div>
 
@@ -165,7 +165,7 @@ const CreateUpdateProxyModal: React.FC<CreateUpdateProxyModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              className="rounded-md bg-panel-raised px-4 py-2 text-sm font-medium text-fg-muted hover:bg-hover focus:outline-none dark:text-fg-subtle"
             >
               Cancel
             </button>

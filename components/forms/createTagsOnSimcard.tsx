@@ -79,14 +79,14 @@ function CreateTagsOnSimcard({
       <Form
         onSubmit={handleAddTag}
         className="relative flex h-max w-96 flex-col  items-center justify-start 
-        gap-5 rounded-lg border  border-gray-100 bg-gradient-to-r from-gray-50  to-gray-200 
+        gap-5 rounded-lg border  border-line bg-panel  
         p-5 drop-shadow-xl"
       >
-        <header className="border-b border-gray-400 ">
-          <h4 className="w-full text-center text-sm font-semibold text-gray-500">
+        <header className="border-b border-line-strong ">
+          <h4 className="w-full text-center text-sm font-semibold text-fg-muted">
             {simcard.phoneNumber.replace(/(\d{4})(\d{3})(\d{4})/, "($1) $2-$3")}
           </h4>
-          <h1 className="w-full text-xl font-bold text-black">
+          <h1 className="w-full text-xl font-bold text-fg">
             Create Tags On Simcard
           </h1>
         </header>
@@ -123,6 +123,7 @@ function CreateTagsOnSimcard({
             hidden={!triggerCustom}
           />
           <Dropdown
+        panelClassName="oxy-overlay-panel"
             hidden={triggerCustom}
             value={tag}
             onChange={(e) => setTag(e.value)}
@@ -156,7 +157,7 @@ function CreateTagsOnSimcard({
       <footer
         onClick={() => setTrigger(() => false)}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen
-        bg-black/30  "
+        bg-surface/30  "
       ></footer>
     </div>
   );

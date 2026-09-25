@@ -130,7 +130,7 @@ function CloudPhone() {
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Cloud Phones</h1>
+        <h1 className="text-2xl font-bold text-fg">Cloud Phones</h1>
         <button
           onClick={() => setIsCreateModalOpen(true)}
           className="rounded bg-blue-600 px-4 py-2 font-bold text-white transition-colors hover:bg-blue-700"
@@ -162,7 +162,7 @@ function CloudPhone() {
           />
         ))}
         {!isLoading && cloudPhones?.length === 0 && (
-          <div className="col-span-full py-10 text-center text-gray-500">
+          <div className="col-span-full py-10 text-center text-fg-muted">
             No cloud phones found. Create one to get started.
           </div>
         )}

@@ -36,20 +36,20 @@ import TextEditor from "../common/TextEditor";
 import SpinLoading from "../loadings/spinLoading";
 const priorityStyles = {
   Critical: {
-    wrapper: "border-red-700 bg-red-200 text-red-700",
-    badge: "bg-red-300 text-red-700",
+    wrapper: "border-red-700 bg-red-500/20 text-red-700 dark:text-red-400",
+    badge: "bg-red-300 text-red-700 dark:text-red-400",
   },
   High: {
-    wrapper: "border-orange-700 bg-orange-200 text-orange-700",
-    badge: "bg-orange-300 text-orange-700",
+    wrapper: "border-orange-700 bg-orange-500/20 text-orange-700 dark:text-orange-400",
+    badge: "bg-orange-300 text-orange-700 dark:text-orange-400",
   },
   Medium: {
-    wrapper: "border-yellow-700 bg-yellow-200 text-yellow-700",
-    badge: "bg-yellow-300 text-yellow-700",
+    wrapper: "border-yellow-700 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400",
+    badge: "bg-yellow-300 text-yellow-700 dark:text-yellow-400",
   },
   Low: {
-    wrapper: "border-blue-700 bg-blue-200 text-blue-700",
-    badge: "bg-blue-300 text-blue-700",
+    wrapper: "border-blue-700 bg-blue-500/20 text-blue-700 dark:text-blue-400",
+    badge: "bg-blue-300 text-blue-700 dark:text-blue-400",
   },
 };
 type Props = {
@@ -128,16 +128,16 @@ function SimcardItem({
         flex-col gap-2 rounded-md ${
           slotInUsed
             ? activeSimcards?.find((active) => active.id === sim.id)
-              ? "bg-green-200"
-              : "bg-slate-400"
-            : "bg-slate-200"
+              ? "bg-green-500/20"
+              : "bg-panel-raised"
+            : "bg-panel-raised"
         }  p-2   `}
       key={sim.id}
     >
       <button
         onClick={() => onReport(sim)}
         className={`absolute right-8 top-1 m-auto flex h-5 w-5 items-center justify-center 
-    text-xl text-red-700 transition hover:scale-105 active:scale-110`}
+    text-xl text-red-700 dark:text-red-400 transition hover:scale-105 active:scale-110`}
       >
         <MdFlag />
       </button>
@@ -151,12 +151,12 @@ function SimcardItem({
           }
         }}
         className={`absolute right-1 top-1 m-auto flex h-5 w-5 items-center justify-center 
-    text-xl text-red-700 transition hover:scale-105 active:scale-110`}
+    text-xl text-red-700 dark:text-red-400 transition hover:scale-105 active:scale-110`}
       >
         {favorite ? <MdFavorite /> : <MdFavoriteBorder />}
       </button>
-      <div className="flex w-full flex-wrap gap-2 border-b  border-gray-400 py-1 ">
-        <div className="w-max rounded-sm px-2 text-xs text-black  ring-1 ring-black">
+      <div className="flex w-full flex-wrap gap-2 border-b  border-line-strong py-1 ">
+        <div className="w-max rounded-sm px-2 text-xs text-fg  ring-1 ring-line-strong">
           <span className="font-bold">
             Number {page === 1 ? index + 1 : index + 1 + 20 * (page - 1)}{" "}
           </span>{" "}
@@ -173,7 +173,7 @@ function SimcardItem({
         )}
 
         {slotInUsed && (
-          <div className="w-max rounded-sm bg-gray-600 px-2  text-xs text-green-100">
+          <div className="w-max rounded-sm bg-panel-raised px-2  text-xs text-green-100">
             slot in used
           </div>
         )}
@@ -230,8 +230,8 @@ function SimcardItem({
           Phone Number:{" "}
         </span>
         <span
-          className="w-full bg-slate-200 
-  text-start font-semibold text-black"
+          className="w-full bg-panel-raised 
+  text-start font-semibold text-fg"
         >
           {country?.countryCode}{" "}
           {sim.phoneNumber.replace(/(\d{4})(\d{3})(\d{4})/, "($1) $2-$3")}
@@ -241,8 +241,8 @@ function SimcardItem({
           Sim Country:{" "}
         </span>
         <span
-          className="w-full bg-slate-200 
-  text-start font-semibold text-black"
+          className="w-full bg-panel-raised 
+  text-start font-semibold text-fg"
         >
           {country?.country}
         </span>
@@ -251,8 +251,8 @@ function SimcardItem({
           Device User:{" "}
         </span>
         <span
-          className="w-full bg-slate-200 
-  text-start font-semibold text-black"
+          className="w-full bg-panel-raised 
+  text-start font-semibold text-fg"
         >
           {deviceUser.data?.find((d) => d.id === sim.deviceUserId)?.portNumber}
         </span>
@@ -262,8 +262,8 @@ function SimcardItem({
           Port Number:{" "}
         </span>
         <span
-          className="w-full bg-slate-200 
-  text-start font-semibold text-black"
+          className="w-full bg-panel-raised 
+  text-start font-semibold text-fg"
         >
           {sim.portNumber}
         </span>
@@ -272,8 +272,8 @@ function SimcardItem({
           Provider:{" "}
         </span>
         <span
-          className="w-full bg-slate-200 
-  text-start font-semibold text-black"
+          className="w-full bg-panel-raised 
+  text-start font-semibold text-fg"
         >
           {sim.provider}
         </span>
@@ -286,7 +286,7 @@ function SimcardItem({
           <span
             className="col-span-2 flex w-full
   animate-pulse items-center justify-center gap-1
-   bg-slate-200 text-start font-semibold text-slate-800"
+   bg-panel-raised text-start font-semibold text-fg"
           >
             {portStatus} <SpinLoading />
           </span>
@@ -294,7 +294,7 @@ function SimcardItem({
           <span
             className="col-span-2 
 flex w-full animate-pulse items-center justify-center gap-1
-bg-yellow-200 text-start font-semibold text-yellow-800"
+bg-yellow-500/20 text-start font-semibold text-yellow-800 dark:text-yellow-400"
           >
             {portStatus}
             <SpinLoading />
@@ -303,7 +303,7 @@ bg-yellow-200 text-start font-semibold text-yellow-800"
           <span
             className="col-span-2 
 flex w-full animate-pulse items-center justify-center gap-1
-bg-gray-200 text-start font-semibold text-gray-800"
+bg-panel-raised text-start font-semibold text-fg"
           >
             {portStatus}
             <SpinLoading />
@@ -312,14 +312,14 @@ bg-gray-200 text-start font-semibold text-gray-800"
           <span
             className="col-span-2 flex
 w-full  items-center justify-center gap-1
-bg-green-200 text-start font-semibold text-green-800"
+bg-green-500/20 text-start font-semibold text-green-800 dark:text-green-400"
           >
             Ready To Recieve A Message <BiCheckCircle />
           </span>
         ) : (
           <span
-            className="col-span-2 w-full bg-slate-200  text-center
-   font-semibold text-black"
+            className="col-span-2 w-full bg-panel-raised  text-center
+   font-semibold text-fg"
           >
             {portStatus}
           </span>
@@ -332,7 +332,7 @@ bg-green-200 text-start font-semibold text-green-800"
                 <li
                   onClick={() => setMenu(m.title)}
                   key={index}
-                  className={`flex cursor-pointer items-center justify-center gap-1 ${m.title === menu ? "text-black" : "text-gray-400"}`}
+                  className={`flex cursor-pointer items-center justify-center gap-1 ${m.title === menu ? "text-fg" : "text-fg-subtle"}`}
                 >
                   {m.icon}
                   {m.title === "Reports"
@@ -394,7 +394,7 @@ bg-green-200 text-start font-semibold text-green-800"
         {sim.isLoading ? (
           <div
             className="col-span-2 mt-2 w-full animate-pulse rounded-md px-5 py-2 text-center
-       text-gray-600"
+       text-fg-muted"
           >
             Saving Note...
           </div>
@@ -421,20 +421,20 @@ bg-green-200 text-start font-semibold text-green-800"
             intervalDelay={0}
             precision={3}
             renderer={(props) => (
-              <div className="w-full rounded-sm bg-slate-200 px-5 font-bold text-black">
+              <div className="w-full rounded-sm bg-panel-raised px-5 font-bold text-fg">
                 {props.minutes} : {props.seconds} : {props.milliseconds}
               </div>
             )}
           />
         )}
       </div>
-      <div className="grid w-full grid-cols-5 gap-2 border-t border-gray-400 py-2">
+      <div className="grid w-full grid-cols-5 gap-2 border-t border-line-strong py-2">
         <button
           onClick={() => {
             onAddTag();
           }}
           className="group z-20 col-span-1 flex w-10 items-center justify-center gap-1 
-     rounded-md bg-green-200 px-3 text-green-600 transition-width hover:w-32 hover:drop-shadow-md  active:scale-105"
+     rounded-md bg-green-500/20 px-3 text-green-600 transition-width hover:w-32 hover:drop-shadow-md  active:scale-105"
         >
           <IoIosPricetags className="h-10" />
           <span className="hidden text-xs group-hover:block">add tag</span>
@@ -445,7 +445,7 @@ bg-green-200 text-start font-semibold text-green-800"
               <div
                 key={tag.id}
                 className="group flex items-center  justify-between    gap-1 rounded-sm 
-        bg-white p-1 text-xs transition-width"
+        bg-panel p-1 text-xs transition-width"
               >
                 <div className="relative h-5 w-5 overflow-hidden rounded-md">
                   <Image

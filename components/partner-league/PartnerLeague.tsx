@@ -148,26 +148,26 @@ function PartnerLeague({ user }: Props) {
   }, [timePeriod]); // This effect runs whenever timePeriod changes
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 font-sans">
+    <div className="min-h-screen bg-panel-raised p-4 font-sans">
       <header className="flex w-full flex-col items-center justify-center gap-5 p-5">
         <NewsPartnerLeague />
         <section className="mx-auto flex w-full max-w-7xl flex-col justify-start">
-          <h1 className="w-full text-start text-3xl font-bold text-gray-900">
+          <h1 className="w-full text-start text-3xl font-bold text-fg">
             Partner Events Ranking
           </h1>
-          <h4 className="mt-1 text-start text-gray-500">
+          <h4 className="mt-1 text-start text-fg-muted">
             Track partner performance based on number of events
           </h4>
         </section>
         <section
           className="my-5 flex w-full max-w-7xl flex-wrap items-end gap-4
-          rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+          rounded-xl border border-line bg-panel p-6 shadow-sm"
         >
           {/* Time Period Dropdown */}
           <div className="flex flex-col">
             <label
               htmlFor="time-period"
-              className="mb-1 text-sm font-medium text-gray-700"
+              className="mb-1 text-sm font-medium text-fg-muted"
             >
               Time Period
             </label>
@@ -175,7 +175,7 @@ function PartnerLeague({ user }: Props) {
               id="time-period"
               value={timePeriod}
               onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
-              className="h-10 w-60 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="h-10 w-60 rounded-lg border-line shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
               {timePeriods.map((time) => (
                 <option key={time} value={time}>
@@ -188,7 +188,7 @@ function PartnerLeague({ user }: Props) {
           <div className="flex flex-col">
             <label
               htmlFor="country"
-              className="mb-1 text-sm font-medium text-gray-700"
+              className="mb-1 text-sm font-medium text-fg-muted"
             >
               Country
             </label>
@@ -196,7 +196,7 @@ function PartnerLeague({ user }: Props) {
               id="country"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="h-10 w-60 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="h-10 w-60 rounded-lg border-line shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
               {[
                 {
@@ -217,13 +217,13 @@ function PartnerLeague({ user }: Props) {
           <div className="flex flex-col">
             <label
               htmlFor="from-date"
-              className="mb-1 text-sm font-medium text-gray-700"
+              className="mb-1 text-sm font-medium text-fg-muted"
             >
               From
             </label>
             <input
               id="from-date"
-              className="h-10 w-60 rounded-lg border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+              className="h-10 w-60 rounded-lg border-line p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-panel-raised"
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
@@ -234,13 +234,13 @@ function PartnerLeague({ user }: Props) {
           <div className="flex flex-col">
             <label
               htmlFor="to-date"
-              className="mb-1 text-sm font-medium text-gray-700"
+              className="mb-1 text-sm font-medium text-fg-muted"
             >
               To
             </label>
             <input
               id="to-date"
-              className="h-10 w-60 rounded-lg border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+              className="h-10 w-60 rounded-lg border-line p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-panel-raised"
               type="date"
               value={toDate}
               min={fromDate}
@@ -254,34 +254,34 @@ function PartnerLeague({ user }: Props) {
       {table.isLoading ? (
         <Skeleton height={200} />
       ) : table.data && table.data.length > 0 ? (
-        <main className="min-h-screen  p-4 font-sans text-gray-800 md:p-8">
+        <main className="min-h-screen  p-4 font-sans text-fg md:p-8">
           <div className="mx-auto max-w-7xl">
             {table.data.length > 2 && (
               <header className="flex w-full flex-col items-start justify-center gap-5">
                 <section className="flex w-full flex-col items-center justify-center gap-2">
                   <h1 className="text-3xl font-bold">Championship Podium</h1>
-                  <h3 className="text-lg text-gray-500">
+                  <h3 className="text-lg text-fg-muted">
                     Top 3 performers of the season
                   </h3>
                 </section>
                 <section className="mb-8 flex w-full items-end  justify-center space-x-8 drop-shadow-md">
                   <div className="flex flex-col items-center">
                     <div className="relative mb-4">
-                      <div className="gradient-silver silver-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-gray-300">
+                      <div className="gradient-silver silver-glow flex h-20 w-20 items-center justify-center rounded-full border-4 border-line">
                         <span className="text-2xl font-bold text-white">2</span>
                       </div>
-                      <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-300">
-                        <i className=" text-sm text-gray-600">
+                      <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-panel-raised">
+                        <i className=" text-sm text-fg-muted">
                           <FaAward />
                         </i>
                       </div>
                     </div>
                     <div className="silver-glow flex h-32 w-24 flex-col items-center justify-end rounded-t-lg bg-gradient-to-t from-gray-400 to-gray-300 pb-4">
                       <div className="text-center">
-                        <div className="text-sm font-bold text-gray-800">
+                        <div className="text-sm font-bold text-fg">
                           {table.data?.[1].partnerName}
                         </div>
-                        <div className="text-xs text-gray-700">
+                        <div className="text-xs text-fg-muted">
                           {table.data?.[1].sumEvent?.toFixed(2)} EVT
                         </div>
                       </div>
@@ -314,7 +314,7 @@ function PartnerLeague({ user }: Props) {
                         <div className="text-sm text-yellow-100">
                           {table.data?.[0].sumEvent?.toFixed(2)} EVT
                         </div>
-                        <div className="mt-1 rounded-full bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-800">
+                        <div className="mt-1 rounded-full bg-yellow-500/20 px-2 py-1 text-xs font-semibold text-yellow-800 dark:text-yellow-400">
                           CHAMPION
                         </div>
                       </div>
@@ -372,14 +372,14 @@ function PartnerLeague({ user }: Props) {
                     return (
                       <div
                         key={index}
-                        className="w-60 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                        className="w-60 rounded-xl border border-line bg-panel p-6 shadow-sm"
                       >
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-fg-muted">
                               {stats.title}
                             </p>
-                            <p className="text-2xl font-bold text-gray-900">
+                            <p className="text-2xl font-bold text-fg">
                               {number.toLocaleString()}
                             </p>
                           </div>
@@ -402,48 +402,48 @@ function PartnerLeague({ user }: Props) {
               {/* Table Section */}
               <div className="overflow-hidden rounded-xl  shadow-lg">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-700">
+                  <table className="min-w-full divide-y divide-line">
                     <thead className="">
-                      <tr className="bg-white">
+                      <tr className="bg-panel">
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           #
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           Partner
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           <div className="flex items-center gap-1">CV</div>
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           <div className="flex items-center gap-1">CVR</div>
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           <div className="flex items-center gap-1">EVT</div>
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           <div className="flex items-center gap-1">EVR</div>
                         </th>
                         <th
                           scope="col"
-                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                          className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-fg-subtle"
                         >
                           <div className="flex items-center gap-1">GEO</div>
                         </th>
@@ -473,9 +473,9 @@ function PartnerLeague({ user }: Props) {
                                 })
                               }
                               key={index}
-                              className="border-b transition-colors duration-200 hover:bg-gray-100"
+                              className="border-b transition-colors duration-200 hover:bg-hover"
                             >
-                              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-fg-muted">
                                 {position === 1 ? (
                                   <div className="flex items-center space-x-3">
                                     <div className="gradient-gold flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white">
@@ -490,7 +490,7 @@ function PartnerLeague({ user }: Props) {
                                     <div className="gradient-silver flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white">
                                       2
                                     </div>
-                                    <i className=" text-gray-400">
+                                    <i className=" text-fg-subtle">
                                       <FaAward />
                                     </i>
                                   </div>
@@ -504,15 +504,15 @@ function PartnerLeague({ user }: Props) {
                                     </i>
                                   </div>
                                 ) : (
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-panel-raised text-sm font-semibold text-fg-muted">
                                     {position}
                                   </div>
                                 )}
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                              <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                                 <div className="flex items-center space-x-3">
                                   <div>
-                                    <div className="font-semibold text-gray-900">
+                                    <div className="font-semibold text-fg">
                                       {name.fullName}
                                     </div>
                                     <div className="text-sm text-main-color">
@@ -526,28 +526,28 @@ function PartnerLeague({ user }: Props) {
                               <td className="px-6 py-4 text-center">
                                 <span
                                   className={`rounded-full px-3 py-1 text-sm font-semibold 
-                                    ${partner.sumCv === 0 ? "bg-gray-100 text-gray-900" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    ${partner.sumCv === 0 ? "bg-panel-raised text-fg" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-500/15 text-yellow-900 dark:text-yellow-400" : "bg-blue-500/15 text-blue-900 dark:text-blue-400"}
                                     `}
                                 >
                                   {partner.sumCv}
                                 </span>
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-fg-muted">
                                 {(Number.isNaN(cvr) ? 0 : cvr)?.toFixed(2)} %
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
                                   className={`rounded-full px-3 py-1 text-sm font-semibold 
-                                    ${partner.sumCv === 0 ? "bg-gray-100 text-gray-900" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    ${partner.sumCv === 0 ? "bg-panel-raised text-fg" : partner.sumCv > 0 && partner.sumCv < 10 ? "bg-yellow-500/15 text-yellow-900 dark:text-yellow-400" : "bg-blue-500/15 text-blue-900 dark:text-blue-400"}
                                     `}
                                 >
                                   {partner.sumEvent}
                                 </span>
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-700">
+                              <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-fg-muted">
                                 {(Number.isNaN(evr) ? 0 : evr)?.toFixed(2)} %
                               </td>
-                              <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-700 hover:cursor-pointer">
+                              <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-fg-muted hover:cursor-pointer">
                                 {country}
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -572,37 +572,37 @@ function PartnerLeague({ user }: Props) {
                                   return (
                                     <tr
                                       key={a.country}
-                                      className="bg-gray-50 transition-colors duration-200 "
+                                      className="bg-panel-raised transition-colors duration-200 "
                                     >
-                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-500"></td>
-                                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-fg-muted"></td>
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                                         <div className="flex items-center"></div>
                                       </td>
                                       <td className="px-6 py-4 text-center">
                                         <span
                                           className={`rounded-full px-3 py-1 text-sm font-semibold 
-                                    ${a.cv === 0 ? "bg-gray-100 text-gray-900" : a.cv > 0 && a.cv < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    ${a.cv === 0 ? "bg-panel-raised text-fg" : a.cv > 0 && a.cv < 10 ? "bg-yellow-500/15 text-yellow-900 dark:text-yellow-400" : "bg-blue-500/15 text-blue-900 dark:text-blue-400"}
                                     `}
                                         >
                                           {a.cv}
                                         </span>
                                       </td>
-                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-fg-muted">
                                         {a.cvr && a.cvr?.toFixed(2)}%
                                       </td>
                                       <td className="px-6 py-4 text-center">
                                         <span
                                           className={`rounded-full px-3 py-1 text-sm font-semibold 
-                                    ${a.event === 0 ? "bg-gray-100 text-gray-900" : a.event > 0 && a.event < 10 ? "bg-yellow-100 text-yellow-900" : "bg-blue-100 text-blue-900"}
+                                    ${a.event === 0 ? "bg-panel-raised text-fg" : a.event > 0 && a.event < 10 ? "bg-yellow-500/15 text-yellow-900 dark:text-yellow-400" : "bg-blue-500/15 text-blue-900 dark:text-blue-400"}
                                     `}
                                         >
                                           {a.event}
                                         </span>
                                       </td>
-                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-500">
+                                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-fg-muted">
                                         {a.evr?.toFixed(2)}%
                                       </td>
-                                      <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-gray-500 hover:cursor-pointer">
+                                      <td className="flex gap-2 whitespace-nowrap px-6 py-4 text-sm text-fg-muted hover:cursor-pointer">
                                         {a.country}
                                       </td>
                                     </tr>
