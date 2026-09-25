@@ -15,13 +15,13 @@ const RecentTransaction: React.FC = () => {
   ): { Icon: IconType; colors: string } => {
     switch (type) {
       case TransactionType.TOPUP:
-        return { Icon: FaPlus, colors: "bg-green-100 text-green-600" };
+        return { Icon: FaPlus, colors: "bg-green-500/15 text-green-600" };
       case TransactionType.SPEND:
-        return { Icon: FaMinus, colors: "bg-red-100 text-red-600" };
+        return { Icon: FaMinus, colors: "bg-red-500/15 text-red-600" };
       case TransactionType.REFUND:
-        return { Icon: FaUndo, colors: "bg-purple-100 text-purple-600" };
+        return { Icon: FaUndo, colors: "bg-purple-500/15 text-purple-600" };
       default:
-        return { Icon: FaPlus, colors: "bg-gray-100 text-gray-600" };
+        return { Icon: FaPlus, colors: "bg-panel-raised text-fg-muted" };
     }
   };
 
@@ -58,9 +58,9 @@ const RecentTransaction: React.FC = () => {
   };
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-md">
+    <div className="rounded-xl bg-panel p-6 shadow-md">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-fg">
           Recent Transactions
         </h2>
       </div>
@@ -73,7 +73,7 @@ const RecentTransaction: React.FC = () => {
           return (
             <div
               key={tx.id}
-              className={`flex items-center justify-between rounded-lg p-3 transition-colors duration-200 ${tx.status === TransactionStatus.FAILED ? "bg-red-50" : "bg-gray-50 hover:bg-gray-100"}`}
+              className={`flex items-center justify-between rounded-lg p-3 transition-colors duration-200 ${tx.status === TransactionStatus.FAILED ? "bg-red-500/10" : "bg-panel-raised hover:bg-hover"}`}
             >
               {/* Left side: Icon + Text */}
               <div className="flex items-center space-x-4">
@@ -85,16 +85,16 @@ const RecentTransaction: React.FC = () => {
                 <div>
                   <div className="flex gap-1">
                     <div
-                      className={`flex w-max items-center justify-center rounded-xl px-2 text-xs font-semibold text-gray-800 ${colors}`}
+                      className={`flex w-max items-center justify-center rounded-xl px-2 text-xs font-semibold text-fg ${colors}`}
                     >
                       {tx.type}{" "}
                     </div>
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-fg-muted">
                       {tx.detail}
                     </span>
                   </div>
 
-                  <p className="font  text-sm text-gray-500">
+                  <p className="font  text-sm text-fg-muted">
                     {new Date(tx.createAt).toLocaleString("en-US", {
                       month: "long",
                       day: "numeric",

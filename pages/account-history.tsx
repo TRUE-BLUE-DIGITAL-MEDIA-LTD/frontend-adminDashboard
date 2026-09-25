@@ -197,20 +197,21 @@ function Index({ user }: { user: User }) {
         <meta name="description" content="Account History" />
       </Head>
       <DashboardLayout user={user}>
-        <main className="flex min-h-screen w-full flex-col items-center justify-start gap-4 bg-black px-4 py-10 font-Poppins text-white sm:px-6 lg:px-8">
+        <main className="flex min-h-screen w-full flex-col items-center justify-start gap-4 bg-surface px-4 py-10 font-Poppins text-fg sm:px-6 lg:px-8">
           <div className="flex w-full max-w-7xl flex-col gap-1">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
               Activity
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-white">
+            <h1 className="text-3xl font-semibold tracking-tight text-fg">
               Account History
             </h1>
           </div>
-          <header className="flex w-full max-w-7xl flex-wrap justify-start gap-3 rounded-2xl border border-white/10 bg-zinc-900 p-4 text-black shadow-none">
+          <header className="flex w-full max-w-7xl flex-wrap justify-start gap-3 rounded-2xl border border-line bg-panel p-4 text-fg shadow-none">
             {(user.role === "admin" || user.role === "manager") && (
               <div className={`flex flex-col`}>
                 <label className="text-xs ">Select Users</label>
                 <MultiSelect
+        panelClassName="oxy-overlay-panel"
                   value={selectUsers}
                   onChange={(e) => {
                     setPage(1);
@@ -243,7 +244,7 @@ function Index({ user }: { user: User }) {
                       </div>
                     </section>
                   )}
-                  className={`h-10 w-72 rounded border  border-gray-400 text-black `}
+                  className={`h-10 w-72 rounded border  border-line-strong text-fg `}
                 />
               </div>
             )}
@@ -251,6 +252,7 @@ function Index({ user }: { user: User }) {
             <div className="flex flex-col">
               <label className="text-xs ">Select Action</label>
               <MultiSelect
+        panelClassName="oxy-overlay-panel"
                 value={filter?.actions}
                 onChange={(e) => {
                   setPage(1);
@@ -268,7 +270,7 @@ function Index({ user }: { user: User }) {
                     <span>{option.title}</span>
                   </div>
                 )}
-                className="h-10 w-72 rounded  border border-gray-400 text-black "
+                className="h-10 w-72 rounded  border border-line-strong text-fg "
               />
             </div>
 
@@ -285,7 +287,7 @@ function Index({ user }: { user: User }) {
                   }}
                   type="text"
                   placeholder="Search Description"
-                  className="h-10 w-72 rounded border border-gray-400 p-2 pl-10 text-black outline-none placeholder:text-black  focus:ring-2 active:ring-2"
+                  className="h-10 w-72 rounded border border-line-strong p-2 pl-10 text-fg outline-none placeholder:text-fg-subtle  focus:ring-2 active:ring-2"
                 />
                 <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
               </div>
@@ -302,7 +304,7 @@ function Index({ user }: { user: User }) {
                   setTimePeriod(newTimePeriod);
                   hanldeDateChanging(newTimePeriod);
                 }}
-                className="h-10 w-32 rounded border border-gray-400 text-black "
+                className="h-10 w-32 rounded border border-line-strong text-fg "
               >
                 {timePeriods.map((time) => (
                   <option key={time} value={time}>
@@ -314,7 +316,8 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time Start</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-black "
+        panelClassName="oxy-overlay-panel"
+                className="h-10 w-72 rounded  border border-line-strong text-fg "
                 value={dateStart?.delay}
                 showTime
                 hourFormat="24"
@@ -344,7 +347,8 @@ function Index({ user }: { user: User }) {
             <label className="flex flex-col">
               <span className="text-xs">Pick Time End</span>
               <Calendar
-                className="h-10 w-72 rounded  border border-gray-400 text-black "
+        panelClassName="oxy-overlay-panel"
+                className="h-10 w-72 rounded  border border-line-strong text-fg "
                 value={dateEnd?.delay}
                 showTime
                 hourFormat="24"
@@ -374,12 +378,12 @@ function Index({ user }: { user: User }) {
 
           <>
             <div
-              className="min-h-60 w-full max-w-7xl overflow-auto rounded-2xl  border border-white/10
-           bg-zinc-900 text-zinc-100 shadow-none  "
+              className="min-h-60 w-full max-w-7xl overflow-auto rounded-2xl  border border-line
+           bg-panel text-fg shadow-none  "
             >
               <table className="w-max min-w-full border-collapse ">
                 <thead className="">
-                  <tr className="sticky top-0 z-20 h-10 bg-zinc-900/5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <tr className="sticky top-0 z-20 h-10 bg-hover text-xs font-semibold uppercase tracking-wide text-fg-muted">
                     <td className="pl-5">Account</td>
                     <td>Create At</td>
                     <td>Action</td>
@@ -393,7 +397,7 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={index}
-                            className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
+                            className="h-14 border-b border-line transition hover:bg-hover"
                           >
                             <td
                               className="animate-pulse"
@@ -462,7 +466,7 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={index}
-                            className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
+                            className="h-14 border-b border-line transition hover:bg-hover"
                           >
                             <td className="pl-5">
                               <section className="flex items-center gap-2">
@@ -480,7 +484,7 @@ function Index({ user }: { user: User }) {
                                   <span className="font-semibold leading-none">
                                     {record.user.name}
                                   </span>
-                                  <span className="text-xs text-zinc-400">
+                                  <span className="text-xs text-fg-muted">
                                     {record.user.email}
                                   </span>
                                 </div>
@@ -493,7 +497,7 @@ function Index({ user }: { user: User }) {
                                     "DD MMMM YYYY",
                                   )}
                                 </span>
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-xs text-fg-muted">
                                   At {moment(record.createAt).format("HH:mm")}
                                 </span>
                               </div>
@@ -501,7 +505,7 @@ function Index({ user }: { user: User }) {
                             <td>
                               <section
                                 className={`flex items-center gap-2
-                            ${method === "create" ? "text-green-800" : method === "get" ? "text-blue-800" : method === "update" ? "text-yellow-600" : "text-red-800"} 
+                            ${method === "create" ? "text-green-800 dark:text-green-400" : method === "get" ? "text-blue-800 dark:text-blue-400" : method === "update" ? "text-yellow-600" : "text-red-800 dark:text-red-400"} 
                             `}
                               >
                                 {icon} <span>{record.action}</span>
@@ -526,8 +530,8 @@ function Index({ user }: { user: User }) {
                 showLastButton
                 sx={{
                   "& .MuiPaginationItem-root": {
-                    color: "#ffffff",
-                    borderColor: "rgba(255,255,255,0.35)",
+                    color: "rgb(var(--fg))",
+                    borderColor: "var(--line-strong)",
                   },
                   "& .MuiPaginationItem-root.Mui-selected": {
                     backgroundColor: "#00ABE4",
@@ -537,7 +541,7 @@ function Index({ user }: { user: User }) {
                   "& .MuiPaginationItem-root:hover": {
                     backgroundColor: "rgba(0, 171, 228, 0.2)",
                   },
-                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
                 }}
               />
               <Box

@@ -38,11 +38,11 @@ export default function MailboxSidebar({
   };
 
   return (
-    <aside className="sticky top-24 max-h-[calc(100vh-7rem)] self-start overflow-y-auto rounded-xl border bg-white p-4 shadow-sm">
+    <aside className="sticky top-24 max-h-[calc(100vh-7rem)] self-start overflow-y-auto rounded-xl border bg-panel p-4 shadow-sm">
       {isLoading ? (
         <Skeleton variant="rectangular" height={200} />
       ) : (domains?.length ?? 0) === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-fg-muted">
           No mail yet. Enable mail on a domain and share an address like
           hello@your-domain.com.
         </p>
@@ -58,9 +58,9 @@ export default function MailboxSidebar({
               <button
                 type="button"
                 onClick={() => toggleDomain(group.domainId)}
-                className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left hover:bg-gray-50"
+                className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left hover:bg-hover"
               >
-                <span className="text-xs font-semibold uppercase text-gray-500">
+                <span className="text-xs font-semibold uppercase text-fg-muted">
                   {group.domainName}
                 </span>
                 <span className="flex items-center gap-1">
@@ -70,9 +70,9 @@ export default function MailboxSidebar({
                     </span>
                   )}
                   {isExpanded ? (
-                    <MdExpandLess className="text-gray-400" />
+                    <MdExpandLess className="text-fg-subtle" />
                   ) : (
-                    <MdExpandMore className="text-gray-400" />
+                    <MdExpandMore className="text-fg-subtle" />
                   )}
                 </span>
               </button>
@@ -81,10 +81,10 @@ export default function MailboxSidebar({
                   <button
                     key={mailbox.id}
                     onClick={() => onSelectMailbox(mailbox.id)}
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-gray-50 ${
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-hover ${
                       selectedMailboxId === mailbox.id
-                        ? "bg-blue-50 font-medium text-blue-700"
-                        : "text-gray-700"
+                        ? "bg-blue-500/10 font-medium text-blue-700 dark:text-blue-400"
+                        : "text-fg-muted"
                     }`}
                   >
                     <span className="truncate">

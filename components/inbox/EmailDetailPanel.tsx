@@ -24,9 +24,9 @@ export default function EmailDetailPanel({ emailId }: { emailId: string }) {
   return (
     <div className="mt-2">
       <h2 className="mb-1 text-xl font-bold">{d.subject || "(no subject)"}</h2>
-      <div className="mb-4 text-sm text-gray-500">
+      <div className="mb-4 text-sm text-fg-muted">
         From{" "}
-        <span className="font-medium text-gray-700">
+        <span className="font-medium text-fg-muted">
           {formatSender(d.fromName, d.fromAddress)}
         </span>{" "}
         &lt;{d.fromAddress}&gt; · to {d.toAddress} ·{" "}
@@ -35,18 +35,18 @@ export default function EmailDetailPanel({ emailId }: { emailId: string }) {
 
       {d.htmlBody ? (
         <div
-          className="max-h-[50vh] overflow-y-auto rounded-lg border bg-white p-4 text-sm"
+          className="max-h-[50vh] overflow-y-auto rounded-lg border bg-panel p-4 text-sm"
           dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(d.htmlBody) }}
         />
       ) : (
-        <pre className="max-h-[50vh] overflow-y-auto whitespace-pre-wrap rounded-lg border bg-white p-4 text-sm">
+        <pre className="max-h-[50vh] overflow-y-auto whitespace-pre-wrap rounded-lg border bg-panel p-4 text-sm">
           {d.textBody || "(empty message)"}
         </pre>
       )}
 
       {d.attachments.length > 0 && (
         <div className="mt-4">
-          <h3 className="mb-2 text-sm font-semibold text-gray-700">
+          <h3 className="mb-2 text-sm font-semibold text-fg-muted">
             Attachments
           </h3>
           <ul className="flex flex-wrap gap-2">
@@ -56,10 +56,10 @@ export default function EmailDetailPanel({ emailId }: { emailId: string }) {
                   href={attachment.downloadUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2 text-sm text-blue-700 hover:bg-gray-100"
+                  className="inline-flex items-center gap-2 rounded-lg border bg-panel-raised px-3 py-2 text-sm text-blue-700 dark:text-blue-400 hover:bg-hover"
                 >
                   {attachment.filename}
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-fg-subtle">
                     {formatBytes(attachment.sizeBytes)}
                   </span>
                 </a>

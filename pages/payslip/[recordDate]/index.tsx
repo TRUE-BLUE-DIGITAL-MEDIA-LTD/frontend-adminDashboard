@@ -21,7 +21,8 @@ function Index({
   }, []);
 
   return (
-    <>
+    // Paper document: always light, whatever the dashboard theme
+    <div className="theme-light-scope min-h-screen bg-panel text-fg">
       {payslips.map((payslip, index) => {
         return (
           <div
@@ -67,7 +68,7 @@ function Index({
                 )}
               </div>
             </div>
-            <ul className="mt-5 grid w-11/12 grid-cols-2 border-t-2 border-gray-300 py-5">
+            <ul className="mt-5 grid w-11/12 grid-cols-2 border-t-2 border-line py-5">
               <li>
                 <h2 className="text-sm font-semibold">Employee name</h2>
                 {payslip.engName && (
@@ -90,7 +91,7 @@ function Index({
             </ul>
             <table className="w-11/12 table-auto border-collapse  ">
               <thead>
-                <tr className=" bg-gray-200  ">
+                <tr className=" bg-panel-raised  ">
                   <th className="px-4 py-5">Payments</th>
                   <th className="px-4 py-5">Deductions</th>
                 </tr>
@@ -136,7 +137,7 @@ function Index({
                     </div>
                   </td>
                 </tr>
-                <tr className="border-2 border-gray-200">
+                <tr className="border-2 border-line">
                   <td className="px-4 py-5 text-lg">
                     <h1 className="flex w-full justify-between">
                       <span className="font-bold">Total Payments {"  "}</span>
@@ -160,7 +161,7 @@ function Index({
                     </h1>
                   </td>
                 </tr>
-                <tr className="border-2 border-gray-200">
+                <tr className="border-2 border-line">
                   <td className="px-4 py-5 text-lg"></td>
                   <td className="px-4 py-5 text-lg">
                     <h1 className="flex w-full justify-between">
@@ -194,50 +195,50 @@ function Index({
       })}
 
       <div className="print flex w-full flex-col items-center gap-5 ">
-        <table className="mt-5 w-96 table-auto border-collapse border-black ">
+        <table className="mt-5 w-96 table-auto border-collapse border-line-strong ">
           <thead>
-            <tr className=" border-2 border-black bg-gray-200 drop-shadow-md">
-              <th className="border-2 border-black px-2">No.</th>
-              <th className="sticky left-0 border-2 border-black bg-gray-200 px-2">
+            <tr className=" border-2 border-line-strong bg-panel-raised drop-shadow-md">
+              <th className="border-2 border-line-strong px-2">No.</th>
+              <th className="sticky left-0 border-2 border-line-strong bg-panel-raised px-2">
                 Name / Description
               </th>
-              <th className="border-2 border-black px-2">Start Date</th>
-              <th className="border-2 border-black px-2">Salary (THB)</th>
-              <th className="border-2 border-black px-2">Social Security</th>
-              <th className="border-2 border-black px-2">
+              <th className="border-2 border-line-strong px-2">Start Date</th>
+              <th className="border-2 border-line-strong px-2">Salary (THB)</th>
+              <th className="border-2 border-line-strong px-2">Social Security</th>
+              <th className="border-2 border-line-strong px-2">
                 Commission /Allowance
               </th>
-              <th className="border-2 border-black px-2">Tax</th>
-              <th className="border-2 border-black px-2">Deduction</th>
-              <th className="border-2 border-black px-2">Note</th>
+              <th className="border-2 border-line-strong px-2">Tax</th>
+              <th className="border-2 border-line-strong px-2">Deduction</th>
+              <th className="border-2 border-line-strong px-2">Note</th>
             </tr>
           </thead>
           <tbody>
             {payslips?.map((payslip, index) => {
               return (
                 <tr key={index} className="">
-                  <td className="border-2  border-black px-2 text-center font-semibold">
+                  <td className="border-2  border-line-strong px-2 text-center font-semibold">
                     {index + 1}
                   </td>
-                  <td className="border-2 border-black  px-2 ">
+                  <td className="border-2 border-line-strong  px-2 ">
                     {payslip.name}
                   </td>
-                  <td className="border-2 border-black px-2">
+                  <td className="border-2 border-line-strong px-2">
                     {moment(payslip.startDate).format("DD/MM/YYYY")}
                   </td>
-                  <td className="border-2 border-black px-2 font-bold text-green-600">
+                  <td className="border-2 border-line-strong px-2 font-bold text-green-600">
                     {payslip.salary.toLocaleString()}
                   </td>
-                  <td className="border-2 border-black px-2">
+                  <td className="border-2 border-line-strong px-2">
                     {payslip.socialSecurity.toLocaleString()}
                   </td>
-                  <td className="border-2 border-black px-2">
+                  <td className="border-2 border-line-strong px-2">
                     {payslip.bonus.toLocaleString()}
                   </td>
-                  <td className="border-2 border-black px-2">
+                  <td className="border-2 border-line-strong px-2">
                     {payslip.tax.toLocaleString()}
                   </td>
-                  <td className="border-2 border-black px-2">
+                  <td className="border-2 border-line-strong px-2">
                     {payslip.deductions.map((deduction, index) => {
                       return (
                         <div key={index}>
@@ -246,47 +247,47 @@ function Index({
                       );
                     })}
                   </td>
-                  <td className="max-w-96 break-words border-2 border-black px-2">
+                  <td className="max-w-96 break-words border-2 border-line-strong px-2">
                     {payslip.note}
                   </td>
                 </tr>
               );
             })}
             <tr>
-              <td className="border-2  border-black px-2 text-center font-semibold">
+              <td className="border-2  border-line-strong px-2 text-center font-semibold">
                 สรุป
               </td>
-              <td className="border-2 border-black px-2"></td>
-              <td className="border-2 border-black px-2"></td>
-              <td className="border-2 border-black px-2 font-bold text-green-600">
+              <td className="border-2 border-line-strong px-2"></td>
+              <td className="border-2 border-line-strong px-2"></td>
+              <td className="border-2 border-line-strong px-2 font-bold text-green-600">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.salary;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-black px-2">
+              <td className="border-2 border-line-strong px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.socialSecurity;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-black px-2">
+              <td className="border-2 border-line-strong px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.bonus;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-black px-2">
+              <td className="border-2 border-line-strong px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.tax;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-black px-2">
+              <td className="border-2 border-line-strong px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return (
@@ -298,13 +299,13 @@ function Index({
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-black px-2"></td>
+              <td className="border-2 border-line-strong px-2"></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div className="print w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
-        <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-black">
+      <div className="print w-full rounded-lg bg-panel-raised p-5 ring-1 ring-line-strong">
+        <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-fg">
           Summary <MdOutlineSummarize />{" "}
           {moment(payslips[0].recordDate).format("MMMM YYYY")}
         </h2>
@@ -364,7 +365,7 @@ function Index({
           </li>
         </ul>
       </div>
-    </>
+    </div>
   );
 }
 

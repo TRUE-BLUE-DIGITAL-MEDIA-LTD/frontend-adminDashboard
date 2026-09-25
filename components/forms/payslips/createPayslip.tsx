@@ -204,7 +204,7 @@ function CreatePayslip({
     <div className=" fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen items-center justify-center">
       <Form
         onSubmit={handleCreatePaySlip}
-        className="max mt-5 flex w-8/12 flex-col  items-center gap-5  rounded-lg bg-gray-100 p-5 ring-2  ring-black "
+        className="max mt-5 flex w-8/12 flex-col  items-center gap-5  rounded-lg bg-panel-raised p-5 ring-2  ring-line-strong "
       >
         <Toast ref={toast} />
         <div className="max-h-96 w-full overflow-y-auto">
@@ -217,7 +217,7 @@ function CreatePayslip({
               <Label>Name / Description</Label>
               <Input
                 placeholder="Name / Description"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 name="name"
                 value={payslipData?.name}
@@ -229,7 +229,7 @@ function CreatePayslip({
                 }}
                 maxLength={255}
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField
               className="flex flex-col"
@@ -239,7 +239,7 @@ function CreatePayslip({
               <Label>English Name</Label>
               <Input
                 placeholder="English Name"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 value={payslipData?.engName}
                 onChange={(e) => {
@@ -250,7 +250,7 @@ function CreatePayslip({
                 }}
                 maxLength={255}
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField
               isRequired
@@ -259,6 +259,7 @@ function CreatePayslip({
             >
               <Label>Start Date</Label>
               <Calendar
+        panelClassName="oxy-overlay-panel"
                 required
                 value={
                   payslipData?.startDate
@@ -271,12 +272,12 @@ function CreatePayslip({
                     startDate: e.value?.toISOString(),
                   }));
                 }}
-                className="rounded-lg border-2 border-gray-600 bg-white  outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel  outline-none transition duration-75 focus:drop-shadow-md"
                 name="startDate"
                 dateFormat="dd/mm/yy"
               />
 
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField
               isRequired
@@ -286,14 +287,14 @@ function CreatePayslip({
               <Label>Salary (THB)</Label>
               <Input
                 placeholder="Salary (THB)"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 value={payslipData?.salary}
                 onChange={handleChangePayslipData}
                 inputMode="numeric"
                 name="salary"
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField
               isRequired
@@ -303,14 +304,14 @@ function CreatePayslip({
               <Label>Social Security</Label>
               <Input
                 placeholder="Social Security"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 value={payslipData?.socialSecurity}
                 onChange={handleChangePayslipData}
                 inputMode="numeric"
                 name="socialSecurity"
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField
               isRequired
@@ -320,27 +321,27 @@ function CreatePayslip({
               <Label>Commission /Allowance</Label>
               <Input
                 placeholder="Commission /Allowance"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 value={payslipData?.bonus}
                 onChange={handleChangePayslipData}
                 inputMode="numeric"
                 name="bonus"
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
             <TextField isRequired className="flex flex-col" aria-label="tax">
               <Label>tax</Label>
               <Input
                 placeholder="tax"
-                className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                 type="text"
                 value={payslipData?.tax}
                 onChange={handleChangePayslipData}
                 inputMode="numeric"
                 name="tax"
               />
-              <FieldError className="text-xs text-red-700" />
+              <FieldError className="text-xs text-red-700 dark:text-red-400" />
             </TextField>
           </div>
           <div className="w-full">
@@ -349,7 +350,7 @@ function CreatePayslip({
               return (
                 <div
                   key={index}
-                  className="grid w-full grid-cols-3 gap-5 border-b-2  border-gray-200 pb-2"
+                  className="grid w-full grid-cols-3 gap-5 border-b-2  border-line pb-2"
                 >
                   <TextField
                     isRequired
@@ -374,12 +375,12 @@ function CreatePayslip({
                         }));
                       }}
                       placeholder="title"
-                      className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                      className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                       type="text"
                       inputMode="numeric"
                       name="tax"
                     />
-                    <FieldError className="text-xs text-red-700" />
+                    <FieldError className="text-xs text-red-700 dark:text-red-400" />
                   </TextField>
                   <TextField
                     isRequired
@@ -389,7 +390,7 @@ function CreatePayslip({
                     <Label>value</Label>
                     <Input
                       placeholder="value"
-                      className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                      className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                       type="text"
                       value={deduction.value}
                       onChange={(e) => {
@@ -411,7 +412,7 @@ function CreatePayslip({
                       inputMode="numeric"
                       name="tax"
                     />
-                    <FieldError className="text-xs text-red-700" />
+                    <FieldError className="text-xs text-red-700 dark:text-red-400" />
                   </TextField>
                   <div className="flex  items-end justify-start gap-3 ">
                     {payslipData.deductions?.length === index + 1 && (
@@ -419,7 +420,7 @@ function CreatePayslip({
                         type="button"
                         onClick={handleAddMoreDeduction}
                         className=" flex h-12 w-28 items-center justify-center gap-2
-             rounded-lg bg-green-300 text-xl text-green-600 ring-black transition duration-100
+             rounded-lg bg-green-300 text-xl text-green-600 ring-line-strong transition duration-100
               hover:bg-green-400 focus:drop-shadow-lg active:scale-105
          active:ring-2"
                       >
@@ -434,7 +435,7 @@ function CreatePayslip({
                         handleDeleteDeduction({ id: deduction.id })
                       }
                       className=" flex h-12 w-28 items-center justify-center gap-2
-             rounded-lg bg-red-300 text-xl text-red-600 ring-black transition duration-100
+             rounded-lg bg-red-300 text-xl text-red-600 ring-line-strong transition duration-100
               hover:bg-red-400 focus:drop-shadow-lg active:scale-105
          active:ring-2"
                     >
@@ -450,7 +451,7 @@ function CreatePayslip({
                 type="button"
                 onClick={handleAddMoreDeduction}
                 className=" flex h-12 w-28 items-center justify-center gap-2
-             rounded-lg bg-green-300 text-xl text-green-600 ring-black transition duration-100
+             rounded-lg bg-green-300 text-xl text-green-600 ring-line-strong transition duration-100
               hover:bg-green-400 focus:drop-shadow-lg active:scale-105
          active:ring-2"
               >
@@ -495,7 +496,7 @@ function CreatePayslip({
                 }}
               />
             </div>
-            <FieldError className="text-xs text-red-700" />
+            <FieldError className="text-xs text-red-700 dark:text-red-400" />
           </TextField>
           <TextField className="mt-5 flex w-full flex-col" aria-label="note">
             <Label>Note</Label>
@@ -509,23 +510,23 @@ function CreatePayslip({
               }}
               placeholder="note"
               className="h-40 w-full resize-none
-           rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+           rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
               name="note"
             />
-            <FieldError className="text-xs text-red-700" />
+            <FieldError className="text-xs text-red-700 dark:text-red-400" />
           </TextField>
         </div>
         {loading ? (
           <div
-            className="animate-pulse rounded-lg  bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
-  hover:bg-gray-600 active:scale-105 active:ring-2"
+            className="animate-pulse rounded-lg  bg-panel-raised px-10 py-2 font-bold text-fg ring-line-strong transition duration-150
+  hover:bg-panel-raised active:scale-105 active:ring-2"
           >
             Loading...
           </div>
         ) : (
           <Button
             type="submit"
-            className="rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+            className="rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
    hover:bg-green-600 active:scale-105 active:ring-2"
           >
             Create
@@ -534,7 +535,7 @@ function CreatePayslip({
       </Form>
       <footer
         onClick={() => setTriggerCreatePayslip(() => false)}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10  h-screen w-screen bg-black/50 "
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10  h-screen w-screen bg-scrim "
       ></footer>
     </div>
   );

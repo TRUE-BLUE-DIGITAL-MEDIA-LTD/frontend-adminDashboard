@@ -137,7 +137,7 @@ function SummaryTransaction({ user }: Props) {
     if (simType.includes("TEXT")) return "bg-orange-400";
     if (simType.includes("PIN")) return "bg-indigo-400";
     if (simType.includes("PVA")) return "bg-yellow-400";
-    return "bg-gray-400";
+    return "bg-panel-raised";
   };
 
   // Calculates the rate for a single SIM
@@ -303,9 +303,9 @@ function SummaryTransaction({ user }: Props) {
   const grandAvgRate =
     grandTotalMessages === 0 ? 0 : grandTotalUsage / grandTotalMessages;
   return (
-    <div className="mt-10 rounded-xl bg-white p-6 shadow-md ">
+    <div className="mt-10 rounded-xl bg-panel p-6 shadow-md ">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-fg">
           Summary Transactions
         </h2>
       </div>
@@ -314,6 +314,7 @@ function SummaryTransaction({ user }: Props) {
           <div className={`flex flex-col`}>
             <label className="text-xs ">Select User</label>
             <MultiSelect
+        panelClassName="oxy-overlay-panel"
               value={selectUser}
               onChange={(e) => {
                 setSelectUser(() => e.value);
@@ -346,7 +347,7 @@ function SummaryTransaction({ user }: Props) {
                   </div>
                 </section>
               )}
-              className={`h-10 w-60 rounded  border border-gray-400 text-gray-800 `}
+              className={`h-10 w-60 rounded  border border-line-strong text-fg `}
             />
           </div>
         )}
@@ -362,7 +363,7 @@ function SummaryTransaction({ user }: Props) {
               setTimePeriod(newTimePeriod);
               hanldeDateChanging(newTimePeriod);
             }}
-            className="h-10 w-32 rounded  border border-gray-400 text-gray-800 "
+            className="h-10 w-32 rounded  border border-line-strong text-fg "
           >
             {timePeriods.map((time) => (
               <option key={time} value={time}>
@@ -374,7 +375,8 @@ function SummaryTransaction({ user }: Props) {
         <label className="flex flex-col">
           <span className="text-xs">Pick Time Start</span>
           <Calendar
-            className="h-10 w-48 rounded  border border-gray-400 text-gray-800 "
+        panelClassName="oxy-overlay-panel"
+            className="h-10 w-48 rounded  border border-line-strong text-fg "
             value={dateStart?.delay}
             showTime
             hourFormat="24"
@@ -394,7 +396,8 @@ function SummaryTransaction({ user }: Props) {
         <label className="flex flex-col">
           <span className="text-xs">Pick Time End</span>
           <Calendar
-            className="h-10 w-48 rounded  border border-gray-400 text-gray-800 "
+        panelClassName="oxy-overlay-panel"
+            className="h-10 w-48 rounded  border border-line-strong text-fg "
             value={dateEnd?.delay}
             showTime
             hourFormat="24"
@@ -420,10 +423,10 @@ function SummaryTransaction({ user }: Props) {
           />
         </div>
       </header>
-      <main className="relative mt-5 h-96  overflow-x-auto bg-white text-gray-800 ">
+      <main className="relative mt-5 h-96  overflow-x-auto bg-panel text-fg ">
         <table className="w-full min-w-[1200px] text-left text-sm">
           {/* --- Table Header --- */}
-          <thead className="sticky  top-0 z-10 border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="sticky  top-0 z-10 border-b border-line bg-panel-raised text-xs uppercase text-fg-muted">
             <tr className="">
               <th scope="col" className="px-6 py-3">
                 Partner Name
@@ -450,13 +453,13 @@ function SummaryTransaction({ user }: Props) {
           <tbody>
             {data.isLoading ? (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-gray-500">
+                <td colSpan={7} className="p-6 text-center text-fg-muted">
                   Loading data...
                 </td>
               </tr>
             ) : data.data?.length === 0 ? (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-gray-500">
+                <td colSpan={7} className="p-6 text-center text-fg-muted">
                   No summary data.data? found for the selected criteria.
                 </td>
               </tr>
@@ -471,10 +474,10 @@ function SummaryTransaction({ user }: Props) {
                   return (
                     <tr
                       key={user.id}
-                      className="group border-b border-gray-200 align-top hover:bg-gray-50"
+                      className="group border-b border-line align-top hover:bg-hover"
                     >
                       {/* 1. User Info */}
-                      <td className="sticky left-0 bg-white px-6 py-4 group-hover:bg-gray-50">
+                      <td className="sticky left-0 bg-panel px-6 py-4 group-hover:bg-panel-raised">
                         <div className="flex w-40 items-center gap-3">
                           <img
                             src={user.image || "/default-avatar.png"}
@@ -482,10 +485,10 @@ function SummaryTransaction({ user }: Props) {
                             className="h-10 w-10 rounded-full object-cover"
                           />
                           <div>
-                            <div className="font-semibold text-gray-900">
+                            <div className="font-semibold text-fg">
                               {user.name}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-fg-muted">
                               {user.email}
                             </div>
                           </div>
@@ -496,7 +499,7 @@ function SummaryTransaction({ user }: Props) {
                       {sims.length === 0 ? (
                         <td
                           colSpan={4}
-                          className="px-6 py-4 text-center italic text-gray-400"
+                          className="px-6 py-4 text-center italic text-fg-subtle"
                         >
                           No transactions
                         </td>
@@ -534,7 +537,7 @@ function SummaryTransaction({ user }: Props) {
 
                           {/* 4. $ Cost */}
                           <td className="px-6 py-4 text-right">
-                            <div className="flex flex-col gap-1 font-mono font-medium text-green-700">
+                            <div className="flex flex-col gap-1 font-mono font-medium text-green-700 dark:text-green-400">
                               {sims.map((sim) => (
                                 <div key={sim.type}>
                                   ${sim.usage.toFixed(2)}
@@ -545,7 +548,7 @@ function SummaryTransaction({ user }: Props) {
 
                           {/* 5. $ Rate (Avg) */}
                           <td className="px-6 py-4 text-right">
-                            <div className="flex flex-col gap-1 font-mono text-gray-500">
+                            <div className="flex flex-col gap-1 font-mono text-fg-muted">
                               {sims.map((sim) => (
                                 <div key={sim.type}>
                                   ${getSimRate(sim).toFixed(3)}
@@ -559,16 +562,16 @@ function SummaryTransaction({ user }: Props) {
                       {/* 6. Totals */}
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-0.5">
-                          <div className="text-gray-900">
+                          <div className="text-fg">
                             Total:{" "}
                             <span className="font-semibold">
                               {totalNumber.toLocaleString()}
                             </span>
                           </div>
-                          <div className="font-semibold text-green-700">
+                          <div className="font-semibold text-green-700 dark:text-green-400">
                             ${totalUsage.toFixed(2)}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-fg-muted">
                             Avg: ${avgRate.toFixed(3)}
                           </div>
                         </div>
@@ -581,17 +584,17 @@ function SummaryTransaction({ user }: Props) {
 
           {/* --- Table Footer --- */}
           <tfoot>
-            <tr className="border-t-2 border-gray-300 bg-gray-50 font-semibold text-gray-900">
+            <tr className="border-t-2 border-line bg-panel-raised font-semibold text-fg">
               <td className="px-6 py-4" colSpan={2}>
                 Grand Total
               </td>
               <td className="px-6 py-4 text-right">
                 {grandTotalMessages.toLocaleString()}
               </td>
-              <td className="px-6 py-4 text-right text-green-700">
+              <td className="px-6 py-4 text-right text-green-700 dark:text-green-400">
                 ${grandTotalUsage.toFixed(2)}
               </td>
-              <td className="px-6 py-4 text-right text-gray-600">
+              <td className="px-6 py-4 text-right text-fg-muted">
                 ${grandAvgRate.toFixed(3)}
               </td>
               <td className="px-6 py-4" colSpan={2}>

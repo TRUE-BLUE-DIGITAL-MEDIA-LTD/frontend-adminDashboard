@@ -63,7 +63,7 @@ export default function TrustedDevicesPage() {
 
   if (!user.data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
+      <div className="flex min-h-screen items-center justify-center bg-surface">
         <SpinLoading />
       </div>
     );
@@ -71,23 +71,23 @@ export default function TrustedDevicesPage() {
 
   return (
     <DashboardLayout user={user.data}>
-      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="min-h-screen w-full bg-surface font-Poppins text-fg">
         <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
             Security
           </p>
-          <h1 className="mt-1 mb-2 text-3xl font-semibold tracking-tight text-white">
+          <h1 className="mt-1 mb-2 text-3xl font-semibold tracking-tight text-fg">
             Trusted Devices
           </h1>
-          <p className="mb-6 text-sm text-white/60">
+          <p className="mb-6 text-sm text-fg-muted">
             Devices listed here can sign in without being prompted for a TOTP code.
             Revoke any device you don&apos;t recognize.
           </p>
 
-          {loading && <div className="text-white/50">Loading…</div>}
+          {loading && <div className="text-fg-subtle">Loading…</div>}
 
           {!loading && devices.length === 0 && (
-            <div className="rounded-2xl border border-white/10 bg-zinc-900 p-6 text-center text-zinc-400 shadow-sm">
+            <div className="rounded-2xl border border-line bg-panel p-6 text-center text-fg-muted shadow-sm">
               No trusted devices yet.
             </div>
           )}
@@ -96,7 +96,7 @@ export default function TrustedDevicesPage() {
             {devices.map((d) => (
               <li
                 key={d.id}
-                className="rounded-2xl border border-white/10 bg-zinc-900 p-4 text-zinc-100 shadow-none"
+                className="rounded-2xl border border-line bg-panel p-4 text-fg shadow-none"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -106,20 +106,20 @@ export default function TrustedDevicesPage() {
                         {d.os ? ` on ${d.os}` : ''}
                       </span>
                       {d.isCurrent && (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">
+                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
                           This device
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-sm text-zinc-400">
+                    <div className="mt-1 text-sm text-fg-muted">
                       Last seen {relativeFromNow(d.lastSeenAt)}
                     </div>
-                    <div className="text-sm text-zinc-400">
+                    <div className="text-sm text-fg-muted">
                       {d.lastIp ?? '—'}
                       {(d.city || d.country) && ' · '}
                       {[d.city, d.country].filter(Boolean).join(', ')}
                     </div>
-                    <div className="text-xs text-zinc-400">
+                    <div className="text-xs text-fg-muted">
                       Expires {relativeFromNow(d.expiresAt)}
                     </div>
                   </div>
