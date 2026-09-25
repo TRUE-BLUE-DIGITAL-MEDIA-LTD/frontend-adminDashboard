@@ -59,7 +59,7 @@ function GscSitemapsTab({
   if (sitemaps.isLoading) return <SpinLoading />;
   if (sitemaps.isError)
     return (
-      <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
+      <div className="rounded-lg border border-yellow-300 bg-yellow-500/10 p-4 text-sm text-yellow-800 dark:text-yellow-400">
         {(sitemaps.error as any)?.message?.toString() ??
           "Could not load sitemaps from Search Console."}
       </div>
@@ -133,10 +133,10 @@ function GscSitemapsTab({
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         sitemap.isPending
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-yellow-500/15 text-yellow-800 dark:text-yellow-400"
                           : ok
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-green-500/15 text-green-800 dark:text-green-400"
+                            : "bg-red-500/15 text-red-800 dark:text-red-400"
                       }`}
                     >
                       {sitemap.isPending ? "PENDING" : ok ? "SUCCESS" : "ISSUES"}

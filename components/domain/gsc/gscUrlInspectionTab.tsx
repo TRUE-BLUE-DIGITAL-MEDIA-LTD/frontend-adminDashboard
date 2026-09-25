@@ -39,10 +39,10 @@ function GscUrlInspectionTab({
 
   const verdictStyle =
     indexResult?.verdict === "PASS"
-      ? "bg-green-100 text-green-800"
+      ? "bg-green-500/15 text-green-800 dark:text-green-400"
       : indexResult?.verdict === "FAIL"
-        ? "bg-red-100 text-red-800"
-        : "bg-yellow-100 text-yellow-800";
+        ? "bg-red-500/15 text-red-800 dark:text-red-400"
+        : "bg-yellow-500/15 text-yellow-800 dark:text-yellow-400";
 
   return (
     <div className="space-y-4">

@@ -26,6 +26,14 @@ describe("auditSource", () => {
     expect(hits(`<span className="bg-green-500/10 text-white">`)).toEqual(["text-white"]);
   });
 
+  it("flags pale status tints that become white blobs in Dark", () => {
+    expect(hits(`<span className="bg-green-100 text-green-700 hover:bg-blue-50">`)).toEqual([
+      "bg-green-100",
+      "hover:bg-blue-50",
+    ]);
+    expect(hits(`<span className="bg-green-500/15 bg-red-500 bg-green-100/50">`)).toEqual([]);
+  });
+
   it("honours the ignore marker", () => {
     expect(hits(`<div className="bg-white"> {/* theme-audit-ignore */}`)).toEqual([]);
   });

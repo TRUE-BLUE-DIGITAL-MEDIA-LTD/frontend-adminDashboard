@@ -43,6 +43,13 @@ describe("theme tokens", () => {
     for (const t of THEME_TOKENS) expect(colors).toContain(t);
   });
 
+  it("drives the `dark:` variant from the theme toggle, not the OS", () => {
+    expect(tailwindConfig.darkMode).toEqual([
+      "variant",
+      "&:not(.light *):not(.theme-light-scope *)",
+    ]);
+  });
+
   it("makes bare `border` / `divide-*` use the theme line color", () => {
     const extend = tailwindConfig.theme!.extend as Record<string, Record<string, string>>;
     expect(extend.borderColor?.DEFAULT).toBe("var(--line)");

@@ -18,6 +18,30 @@ export const THEME_TOKENS = [
   "scrim",
 ] as const;
 
+/**
+ * Hex mirrors of the channel tokens in styles/globals.css, for libraries that
+ * can't read CSS variables (MUI computes alphas from real colors).
+ * utils/muiTheme.test.ts fails if these drift from the CSS.
+ */
+export const THEME_HEX = {
+  dark: {
+    surface: "#000000",
+    panel: "#18181b",
+    "panel-raised": "#27272a",
+    fg: "#f4f4f5",
+    "fg-muted": "#a1a1aa",
+    "fg-subtle": "#71717a",
+  },
+  light: {
+    surface: "#f4f4f5",
+    panel: "#ffffff",
+    "panel-raised": "#fafafa",
+    fg: "#18181b",
+    "fg-muted": "#52525b",
+    "fg-subtle": "#71717a",
+  },
+} as const;
+
 export function parsePref(value: unknown): ThemePref {
   return value === "light" || value === "dark" || value === "system"
     ? value

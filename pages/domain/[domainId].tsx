@@ -383,8 +383,8 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
         )}
 
         {user.role === "admin" && (
-          <section className="rounded-xl border border-red-200 bg-red-50 p-6">
-            <h2 className="mb-2 text-xl font-semibold text-red-700">
+          <section className="rounded-xl border border-red-200 bg-red-500/10 p-6">
+            <h2 className="mb-2 text-xl font-semibold text-red-700 dark:text-red-400">
               Danger Zone
             </h2>
             <p className="mb-4 text-sm text-red-600">
@@ -394,7 +394,7 @@ function DomainDetail({ user }: { user: User & { partner: Partner } }) {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleResetGoogleVerification}
-                className="flex items-center gap-2 rounded-full border border-red-600 bg-panel px-6 py-2 font-medium text-red-600 transition hover:bg-red-100 active:scale-95"
+                className="flex items-center gap-2 rounded-full border border-red-600 bg-panel px-6 py-2 font-medium text-red-600 transition hover:bg-red-500/15 active:scale-95"
               >
                 <MdRefresh /> Reset Google Verification
               </button>

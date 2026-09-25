@@ -20,9 +20,9 @@ const getScoreColor = (score: number | undefined | null) => {
 
 const getScoreBgColor = (score: number | undefined | null) => {
   if (score === undefined || score === null) return "bg-panel-raised";
-  if (score >= 90) return "bg-green-50";
-  if (score >= 50) return "bg-orange-50";
-  return "bg-red-50";
+  if (score >= 90) return "bg-green-500/10";
+  if (score >= 50) return "bg-orange-500/10";
+  return "bg-red-500/10";
 };
 
 const CircularScore = ({
@@ -66,7 +66,7 @@ function SeoPerformanceSection({
         <button
           onClick={onUpdateSeoScore}
           disabled={isLoading}
-          className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-2 text-sm font-medium text-green-700 transition hover:bg-green-100 active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400 transition hover:bg-green-500/15 active:scale-95 disabled:opacity-50"
         >
           {isLoading ? (
             <SpinLoading />

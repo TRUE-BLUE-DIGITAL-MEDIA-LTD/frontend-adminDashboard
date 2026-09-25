@@ -58,7 +58,7 @@ function SpeedByRegionSection({ latest, isLoading, isProbing, onProbeNow }: Prop
         <button
           onClick={onProbeNow}
           disabled={isProbing}
-          className="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-400 transition hover:bg-blue-500/15 active:scale-95 disabled:opacity-50"
         >
           {isProbing ? <SpinLoading /> : <><MdUpdate /> Probe now</>}
         </button>

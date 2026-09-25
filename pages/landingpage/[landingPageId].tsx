@@ -343,7 +343,7 @@ function Index({ user }: { user: User }) {
           {message?.message}
         </Alert>
       </Snackbar>
-      <div className="min-h-screen w-full bg-surface text-fg">
+      <div className="flow-root min-h-screen w-full bg-surface text-fg">
         <div className="mt-20 flex w-full justify-start bg-surface">
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             <span className="text-icon-color">U</span>pdate Landing Page

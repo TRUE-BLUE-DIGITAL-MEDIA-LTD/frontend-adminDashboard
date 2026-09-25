@@ -263,10 +263,10 @@ function ListDomain({ list, domains, user }: Props) {
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEODesktop >= 90
-                ? "border-green-500 bg-green-50 text-green-500"
+                ? "border-green-500 bg-green-500/10 text-green-500"
                 : averageSEODesktop >= 50
-                  ? "border-orange-500 bg-orange-50 text-orange-500"
-                  : "border-red-500 bg-red-50 text-red-500"
+                  ? "border-orange-500 bg-orange-500/10 text-orange-500"
+                  : "border-red-500 bg-red-500/10 text-red-500"
             }`}
           >
             {averageSEODesktop.toFixed(1)}
@@ -275,10 +275,10 @@ function ListDomain({ list, domains, user }: Props) {
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEOMobile >= 90
-                ? "border-green-500 bg-green-50 text-green-500"
+                ? "border-green-500 bg-green-500/10 text-green-500"
                 : averageSEOMobile >= 50
-                  ? "border-orange-500 bg-orange-50 text-orange-500"
-                  : "border-red-500 bg-red-50 text-red-500"
+                  ? "border-orange-500 bg-orange-500/10 text-orange-500"
+                  : "border-red-500 bg-red-500/10 text-red-500"
             }`}
           >
             {averageSEOMobile.toFixed(1)}

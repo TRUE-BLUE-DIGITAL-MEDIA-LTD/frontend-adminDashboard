@@ -8,9 +8,9 @@ export function formatSeconds(ms: number | null | undefined): string {
 
 export function loadColorClass(ms: number | null | undefined): string {
   if (ms === null || ms === undefined) return "border-line bg-panel-raised text-fg-subtle";
-  if (ms < LOAD_GREEN_BELOW_MS) return "border-green-500 bg-green-50 text-green-600";
-  if (ms < LOAD_ORANGE_BELOW_MS) return "border-orange-500 bg-orange-50 text-orange-600";
-  return "border-red-500 bg-red-50 text-red-600";
+  if (ms < LOAD_GREEN_BELOW_MS) return "border-green-500 bg-green-500/10 text-green-600";
+  if (ms < LOAD_ORANGE_BELOW_MS) return "border-orange-500 bg-orange-500/10 text-orange-600";
+  return "border-red-500 bg-red-500/10 text-red-600";
 }
 
 export type RegionGroup = "United States" | "Europe" | "Other";

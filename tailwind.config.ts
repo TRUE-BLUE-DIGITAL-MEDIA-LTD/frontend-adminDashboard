@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 const config: Config = {
+  // `dark:` follows the theme toggle (html.light / .theme-light-scope), not the OS.
+  darkMode: ["variant", "&:not(.light *):not(.theme-light-scope *)"],
   content: [
     "./index.html",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",

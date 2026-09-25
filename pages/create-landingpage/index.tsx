@@ -197,7 +197,7 @@ function Index({ user }: { user: User }) {
   return (
     <DashboardLayout user={user}>
       {isLoadingEditor && <FullLoading />}
-      <div className="min-h-screen w-full bg-surface text-fg">
+      <div className="flow-root min-h-screen w-full bg-surface text-fg">
         <div className="mt-5 flex w-full justify-start bg-surface">
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             Create Landing Page

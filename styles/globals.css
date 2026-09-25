@@ -38,6 +38,19 @@
     --scrim: rgb(0 0 0 / 0.4);
   }
 
+  /* Native fields without a bg-* class would otherwise render browser-white in Dark.
+     Base layer, so any utility class still wins. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    background-color: transparent;
+    color: inherit;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(var(--fg-subtle));
+  }
+
   /* Paper is always light (payslips, .print sections). Keep in sync with html.light. */
   @media print {
     :root {

@@ -33,7 +33,7 @@ function sum(rows: SearchAnalyticsRow[], key: "clicks" | "impressions") {
 
 function GscErrorBanner({ error }: { error: any }) {
   return (
-    <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
+    <div className="rounded-lg border border-yellow-300 bg-yellow-500/10 p-4 text-sm text-yellow-800 dark:text-yellow-400">
       {error?.message?.toString() ??
         "Could not load Search Console data for this domain."}
     </div>
@@ -162,29 +162,29 @@ function GscPerformanceTab({ domainId }: { domainId: string }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-lg border bg-blue-50 p-4">
-          <div className="text-xs uppercase text-blue-700">Total Clicks</div>
-          <div className="text-2xl font-bold text-blue-900">{totalClicks}</div>
+        <div className="rounded-lg border bg-blue-500/10 p-4">
+          <div className="text-xs uppercase text-blue-700 dark:text-blue-400">Total Clicks</div>
+          <div className="text-2xl font-bold text-blue-900 dark:text-blue-400">{totalClicks}</div>
         </div>
-        <div className="rounded-lg border bg-purple-50 p-4">
-          <div className="text-xs uppercase text-purple-700">
+        <div className="rounded-lg border bg-purple-500/10 p-4">
+          <div className="text-xs uppercase text-purple-700 dark:text-purple-400">
             Total Impressions
           </div>
-          <div className="text-2xl font-bold text-purple-900">
+          <div className="text-2xl font-bold text-purple-900 dark:text-purple-400">
             {totalImpressions}
           </div>
         </div>
-        <div className="rounded-lg border bg-green-50 p-4">
-          <div className="text-xs uppercase text-green-700">Average CTR</div>
-          <div className="text-2xl font-bold text-green-900">
+        <div className="rounded-lg border bg-green-500/10 p-4">
+          <div className="text-xs uppercase text-green-700 dark:text-green-400">Average CTR</div>
+          <div className="text-2xl font-bold text-green-900 dark:text-green-400">
             {avgCtr.toFixed(1)}%
           </div>
         </div>
-        <div className="rounded-lg border bg-orange-50 p-4">
-          <div className="text-xs uppercase text-orange-700">
+        <div className="rounded-lg border bg-orange-500/10 p-4">
+          <div className="text-xs uppercase text-orange-700 dark:text-orange-400">
             Average Position
           </div>
-          <div className="text-2xl font-bold text-orange-900">
+          <div className="text-2xl font-bold text-orange-900 dark:text-orange-400">
             {avgPosition.toFixed(1)}
           </div>
         </div>

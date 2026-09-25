@@ -107,13 +107,13 @@ function DomainSettingsSection({
               </p>
             </div>
             {getDomain.data?.domain.mailEnabled ? (
-              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+              <span className="rounded-full bg-green-500/15 px-3 py-1 text-sm font-medium text-green-700 dark:text-green-400">
                 Enabled
               </span>
             ) : canEnableMail ? (
               <button
                 onClick={onEnableMail}
-                className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 active:scale-95"
+                className="rounded-lg bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-400 transition hover:bg-blue-500/15 active:scale-95"
               >
                 Enable mail
               </button>

@@ -6,7 +6,10 @@ import type { AppProps } from "next/app";
 import { PagesProgressBar as ProgressBar } from "next-nprogress-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
+import { useMemo, useState } from "react";
+import { useTheme } from "../hooks/useTheme";
+import { buildMuiTheme } from "../utils/muiTheme";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(
@@ -21,6 +24,8 @@ export default function App({ Component, pageProps }: AppProps) {
         },
       }),
   );
+  const { resolved } = useTheme();
+  const muiTheme = useMemo(() => buildMuiTheme(resolved), [resolved]);
   return (
     <QueryClientProvider client={queryClient}>
       <ProgressBar
@@ -30,7 +35,10 @@ export default function App({ Component, pageProps }: AppProps) {
         shallowRouting
       />
 
-      <Component {...pageProps} />
+      {/* MUI palette follows the dashboard theme (utils/muiTheme.ts) */}
+      <MuiThemeProvider theme={muiTheme}>
+        <Component {...pageProps} />
+      </MuiThemeProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>
   );

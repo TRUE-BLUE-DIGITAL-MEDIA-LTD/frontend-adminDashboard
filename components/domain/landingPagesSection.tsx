@@ -24,14 +24,14 @@ function LandingPagesSection({
     <section className="rounded-xl border bg-panel p-6 shadow-sm">
       <h2 className="mb-6 flex items-center gap-2 border-b pb-3 text-xl font-semibold text-fg">
         <MdList className="text-purple-600" /> Linked Landing Pages
-        <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700">
+        <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-500/15 text-xs font-bold text-purple-700 dark:text-purple-400">
           {landingPages.length}
         </span>
         <span
           className={`ml-auto rounded-full px-3 py-1 text-xs font-bold ${
             distributionValid
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
+              ? "bg-green-500/15 text-green-700 dark:text-green-400"
+              : "bg-red-500/15 text-red-700 dark:text-red-400"
           }`}
         >
           Total: {totalPercent}% / 100%
@@ -81,7 +81,7 @@ function LandingPagesSection({
                     landingPageId: landingPage.id,
                   })
                 }
-                className="flex items-center gap-2 rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-600 hover:text-white active:scale-95"
+                className="flex items-center gap-2 rounded-md bg-red-500/10 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-600 hover:text-white active:scale-95"
               >
                 <MdRemoveCircle /> Remove
               </button>

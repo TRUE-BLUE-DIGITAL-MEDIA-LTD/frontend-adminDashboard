@@ -7,6 +7,9 @@ import { fileURLToPath } from "node:url";
 
 const NEUTRAL =
   /(?<![\w-])((?:[\w-]+:)*(?:bg|text|border(?:-[trblxy])?|ring|divide|placeholder|outline|from|via|to|fill|stroke)-(?:black|white|zinc-\d+|gray-\d+|slate-\d+|neutral-\d+|stone-\d+)(?:\/\d+)?)(?![\w/-])/g;
+// Pale status fills (bg-green-100 etc.) read as white blobs in Dark; use bg-<hue>-500/10–20.
+const PALE =
+  /(?<![\w-])((?:[\w-]+:)*bg-(?:red|green|blue|amber|yellow|emerald|sky|rose|orange|purple|indigo|teal|cyan|violet|pink|lime|fuchsia)-(?:50|100|200))(?![\w/-])/g;
 // A solid brand/status/gradient background on the same line makes white text legitimate.
 const SOLID_ACCENT_BG =
   /(?<![\w-])(?:[\w-]+:)*(?:bg-main-color|bg-icon-color|bg-(?:red|green|blue|amber|yellow|emerald|sky|rose|orange|purple|indigo|teal|cyan|violet|pink|lime|fuchsia)-\d+|bg-gradient-[\w-]+|gradient-[\w-]+|animate-gradient)(?![\w/-])/;
@@ -18,11 +21,15 @@ export function auditSource(source) {
   source.split(/\r?\n/).forEach((text, i) => {
     if (text.includes(IGNORE)) return;
     const accent = SOLID_ACCENT_BG.test(text);
+    const found = [];
     for (const m of text.matchAll(NEUTRAL)) {
-      const cls = m[1];
-      if (accent && WHITE_TEXT.test(cls)) continue;
-      out.push({ line: i + 1, cls });
+      if (accent && WHITE_TEXT.test(m[1])) continue;
+      found.push(m);
     }
+    for (const m of text.matchAll(PALE)) found.push(m);
+    found
+      .sort((a, b) => a.index - b.index)
+      .forEach((m) => out.push({ line: i + 1, cls: m[1] }));
   });
   return out;
 }
