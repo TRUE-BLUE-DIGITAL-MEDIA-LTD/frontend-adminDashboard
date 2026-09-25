@@ -22,6 +22,22 @@ describe("auditSource", () => {
     expect(hits(`<div className="gradient-gold text-white">`)).toEqual([]);
   });
 
+  it("allows text-white when the accent background is on one of the two previous lines", () => {
+    const src = `<button\n  className="rounded-lg bg-blue-500 px-20 py-2\n  font-Poppins text-lg text-white"\n>`;
+    expect(auditSource(src)).toEqual([]);
+    const far = `<div className="bg-blue-500">\n\n\n<p className="text-white">`;
+    expect(auditSource(far)).toEqual([{ line: 4, cls: "text-white" }]);
+  });
+
+  it("ignores gradient stops (decorative, not surfaces)", () => {
+    expect(hits(`<div className="bg-gradient-to-r from-neutral-300 to-stone-400 text-white">`)).toEqual([]);
+  });
+
+  it("allows text-black on a solid accent (e.g. green-400 buttons) but not on neutrals", () => {
+    expect(hits(`<button className="rounded-lg bg-green-400 px-10 font-bold text-black">`)).toEqual([]);
+    expect(hits(`<p className="bg-panel text-black">`)).toEqual(["text-black"]);
+  });
+
   it("does not treat a status tint as a solid background", () => {
     expect(hits(`<span className="bg-green-500/10 text-white">`)).toEqual(["text-white"]);
   });

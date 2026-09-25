@@ -61,9 +61,9 @@ function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
   };
 
   return (
-    <div className="mx-auto mt-5 flex w-11/12 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-blue-400 bg-blue-50 p-6 shadow-sm transition-all hover:border-blue-500">
+    <div className="mx-auto mt-5 flex w-11/12 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-blue-400 bg-blue-500/10 p-6 shadow-sm transition-all hover:border-blue-500">
       <div className="flex w-full flex-col gap-2">
-        <h3 className="text-xl font-bold text-blue-800">
+        <h3 className="text-xl font-bold text-blue-800 dark:text-blue-400">
           ✨ AI Design Generator
         </h3>
         <p className="text-sm text-fg-muted">
