@@ -60,7 +60,7 @@ function Searchbar({ items, title, setQueryFilterLandingPages }: Searchbar) {
         <label className="text-sm text-icon-color">{title}</label>
         <div className="relative">
           <Combobox.Input
-            className="w-full border-none appearance-none bg-slate-100 rounded-lg overflow-hidden outline-icon-color  py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 "
+            className="w-full border-none appearance-none bg-panel-raised rounded-lg overflow-hidden outline-icon-color  py-2 pl-3 pr-10 text-sm leading-5 text-fg "
             displayValue={(list: { id: string; option: string }) => list.option}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -75,9 +75,9 @@ function Searchbar({ items, title, setQueryFilterLandingPages }: Searchbar) {
           leaveTo="opacity-0"
           afterLeave={() => setQuery("")}
         >
-          <Combobox.Options className="absolute mt-1 z-50 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="absolute mt-1 z-50 max-h-60 w-full overflow-auto rounded-md bg-panel py-1 text-base shadow-lg ring-1 ring-line focus:outline-none sm:text-sm">
             {filterdSearchOptions.length === 0 && query !== "" ? (
-              <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+              <div className="relative cursor-default select-none px-4 py-2 text-fg-muted">
                 Nothing found.
               </div>
             ) : (
@@ -86,7 +86,7 @@ function Searchbar({ items, title, setQueryFilterLandingPages }: Searchbar) {
                   key={list.id}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-teal-600 text-white" : "text-gray-900"
+                      active ? "bg-teal-600 text-white" : "text-fg"
                     }`
                   }
                   value={list}
@@ -103,7 +103,7 @@ function Searchbar({ items, title, setQueryFilterLandingPages }: Searchbar) {
                       {selected ? (
                         <span
                           className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? "text-white" : "text-teal-600"
+                            active ? "text-white" : "text-teal-600" // active row is bg-teal-600 — theme-audit-ignore
                           }`}
                         >
                           <FaCheck />

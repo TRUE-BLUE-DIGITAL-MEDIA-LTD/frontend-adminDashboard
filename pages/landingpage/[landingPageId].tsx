@@ -343,8 +343,8 @@ function Index({ user }: { user: User }) {
           {message?.message}
         </Alert>
       </Snackbar>
-      <div className="w-full ">
-        <div className="mt-20 flex w-full justify-start bg-white">
+      <div className="min-h-screen w-full bg-surface text-fg">
+        <div className="mt-20 flex w-full justify-start bg-surface">
           <div className="ml-20 w-full border-b-2 pb-2 pt-20 text-2xl font-bold">
             <span className="text-icon-color">U</span>pdate Landing Page
           </div>
@@ -367,7 +367,7 @@ function Index({ user }: { user: User }) {
           {blurEditor ? (
             <div
               className="z-10  flex h-full min-h-[40rem] w-full  items-center
-            justify-center bg-black text-xl font-semibold text-black "
+            justify-center bg-surface text-xl font-semibold text-fg "
             >
               <button
                 onClick={() => {
@@ -664,7 +664,7 @@ function Index({ user }: { user: User }) {
                 <label
                   htmlFor="dropzone-file"
                   className="flex h-10 w-full cursor-pointer items-center justify-center
-         gap-2 rounded-md bg-white px-2 text-xl ring-2 ring-black transition duration-100 hover:scale-105 "
+         gap-2 rounded-md bg-panel px-2 text-xl ring-2 ring-line-strong transition duration-100 hover:scale-105 "
                 >
                   <BiUpload />
                   <input
@@ -681,7 +681,7 @@ function Index({ user }: { user: User }) {
                 </span>
               </div>
               {icon ? (
-                <div className="flex h-full w-20 items-center justify-center overflow-hidden rounded-lg ring-2 ring-black">
+                <div className="flex h-full w-20 items-center justify-center overflow-hidden rounded-lg ring-2 ring-line-strong">
                   {isLoadingUploadIcon ? (
                     <div className="h-full w-full animate-pulse bg-blue-500"></div>
                   ) : (
@@ -704,7 +704,7 @@ function Index({ user }: { user: User }) {
               ) : (
                 <div
                   className="flex h-full w-20 items-center justify-center
-           overflow-hidden rounded-lg ring-2 ring-black"
+           overflow-hidden rounded-lg ring-2 ring-line-strong"
                 >
                   {isLoadingUploadIcon ? (
                     <div className="h-full w-full animate-pulse bg-blue-500"></div>
@@ -794,7 +794,8 @@ function Index({ user }: { user: User }) {
                 }}
                 optionLabel="name"
                 loading={domains.isLoading}
-                className="h-14 w-full text-left text-3xl ring-1 ring-gray-400"
+                className="h-14 w-full bg-panel text-left text-3xl text-fg ring-1 ring-line-strong"
+                panelClassName="oxy-overlay-panel"
               />
             </div>
 
@@ -824,7 +825,8 @@ function Index({ user }: { user: User }) {
                 }}
                 optionLabel="title"
                 loading={categories.isLoading}
-                className="h-14 w-full text-left text-3xl ring-1 ring-gray-400"
+                className="h-14 w-full bg-panel text-left text-3xl text-fg ring-1 ring-line-strong"
+                panelClassName="oxy-overlay-panel"
               />
             </div>
           </div>

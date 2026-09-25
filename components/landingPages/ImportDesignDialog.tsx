@@ -134,7 +134,7 @@ export default function ImportDesignDialog({
                 Failed to load landing pages. Close and try again.
               </Alert>
             ) : rows.length === 0 ? (
-              <div className="py-10 text-center text-sm text-gray-500">
+              <div className="py-10 text-center text-sm text-fg-muted">
                 No other landing pages found
               </div>
             ) : (
@@ -144,10 +144,10 @@ export default function ImportDesignDialog({
                     <button
                       type="button"
                       onClick={() => setSelected(row)}
-                      className="flex w-full items-center justify-between gap-3 rounded-md border border-gray-200 px-3 py-2 text-left hover:bg-gray-50"
+                      className="flex w-full items-center justify-between gap-3 rounded-md border border-line px-3 py-2 text-left hover:bg-hover"
                     >
                       <span className="font-semibold">{row.name}</span>
-                      <span className="flex shrink-0 gap-3 text-xs text-gray-500">
+                      <span className="flex shrink-0 gap-3 text-xs text-fg-muted">
                         {row.domain?.name && <span>{row.domain.name}</span>}
                         {row.category?.title && (
                           <span>{row.category.title}</span>

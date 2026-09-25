@@ -45,15 +45,15 @@ function Index({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="min-h-screen w-full bg-surface font-Poppins text-fg">
         <header className="mx-auto flex h-max w-full max-w-7xl flex-col items-start justify-center gap-4 px-4 py-10 sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
             Campaign assets
           </p>
-          <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-fg sm:text-5xl md:text-6xl">
             <span className="text-main-color">C</span>ategories
           </h1>
-          <section className="grid h-full w-full grid-cols-2 items-end justify-start gap-5 border-b border-white/10 pb-5 md:flex">
+          <section className="grid h-full w-full grid-cols-2 items-end justify-start gap-5 border-b border-line pb-5 md:flex">
             {categories.isLoading ? (
               <Skeleton width={200} height={60} animation="wave" />
             ) : (
@@ -84,7 +84,7 @@ function Index({ user }: { user: User }) {
                   ...queryFilterLandingPages,
                 },
               }}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white bg-white px-8 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-fg bg-fg px-8 py-2 text-sm font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white"
             >
               Enter
             </Link>
@@ -101,10 +101,10 @@ function Index({ user }: { user: User }) {
                   },
                 }}
                 key={category.id}
-                className="group relative flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 font-semibold no-underline  transition hover:border-main-color/40"
+                className="group relative flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-line bg-panel font-semibold no-underline  transition hover:border-main-color/40"
               >
                 <h3
-                  className={` relative z-20 bg-white bg-clip-text text-center text-5xl text-white   drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]`}
+                  className={` relative z-20 bg-white bg-clip-text text-center text-5xl text-white drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]`} // title sits on a photo — theme-audit-ignore
                 >
                   {category.option}
                 </h3>

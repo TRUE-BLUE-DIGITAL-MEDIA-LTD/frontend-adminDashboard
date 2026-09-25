@@ -49,7 +49,7 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
   };
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
-      <main className="flex h-max w-96 flex-col items-center  justify-start gap-5 rounded-lg bg-white p-4">
+      <main className="flex h-max w-96 flex-col items-center  justify-start gap-5 rounded-lg bg-panel p-4">
         <h3 className="text-lg font-bold text-main-color">Fill Information</h3>
         <TextField
           onChange={handleChange}
@@ -72,7 +72,7 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
             Create
           </button>
         ) : (
-          <button className="rounded-full bg-slate-500 px-5 py-1 text-lg font-normal text-white">
+          <button className="rounded-full border border-line-strong bg-panel-raised px-5 py-1 text-lg font-normal text-fg">
             Create
           </button>
         )}
@@ -82,7 +82,7 @@ function DomainCreate({ setTriggerCreateDomain, domains }: DomainCreate) {
           setTriggerCreateDomain(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen bg-black/30 "
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen bg-scrim "
       ></footer>
     </div>
   );

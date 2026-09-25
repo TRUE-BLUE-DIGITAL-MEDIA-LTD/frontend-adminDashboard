@@ -81,7 +81,7 @@ function ListDomain({ list, domains, user }: Props) {
   };
 
   return (
-    <tr className="h-14 border-b border-white/5 text-zinc-200 transition hover:bg-white/5">
+    <tr className="h-14 border-b border-line text-fg transition hover:bg-hover">
       <td className="px-3 py-2 align-middle">
         <Link
           href={`/domain/${list.id}`}
@@ -129,7 +129,7 @@ function ListDomain({ list, domains, user }: Props) {
             In Queue
           </div>
         ) : (
-          <div className="flex w-max items-center gap-2 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-center text-xs font-semibold uppercase text-zinc-300">
+          <div className="flex w-max items-center gap-2 rounded-full border border-line-strong bg-panel-raised px-2 py-0.5 text-center text-xs font-semibold uppercase text-fg-muted">
             <MdPublic />
             Unknow Status
           </div>
@@ -154,7 +154,7 @@ function ListDomain({ list, domains, user }: Props) {
                 Swal.fire("error!", error.message?.toString(), "error");
               }
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-center text-xs font-semibold uppercase text-zinc-300 active:scale-105"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-panel-raised px-2 py-0.5 text-center text-xs font-semibold uppercase text-fg-muted active:scale-105"
           >
             <MdDomainVerification />
             {verifyGoogle.isPending ? "Verifying..." : "Not Verify"}
@@ -214,7 +214,7 @@ function ListDomain({ list, domains, user }: Props) {
       <td className="px-3 py-2 align-middle">
         <div className="flex max-w-40 flex-wrap">
           {list.partner ? (
-            <div className="flex items-center gap-2 rounded-md px-2 py-1 text-xs text-zinc-400">
+            <div className="flex items-center gap-2 rounded-md px-2 py-1 text-xs text-fg-muted">
               <MdPeople />
               <div>
                 <div className="w-40 truncate">NAME: {list.partner.name}</div>
@@ -240,7 +240,7 @@ function ListDomain({ list, domains, user }: Props) {
                   target="_blank"
                   href={`/landingpage/${landingPage.id}`}
                   key={landingPage.id}
-                  className="flex max-w-36 items-start truncate rounded-md px-2 py-1 text-start text-xs text-zinc-400 underline"
+                  className="flex max-w-36 items-start truncate rounded-md px-2 py-1 text-start text-xs text-fg-muted underline"
                 >
                   <div className="flex w-40 items-center gap-2 truncate">
                     <MdContentCopy />
@@ -259,7 +259,7 @@ function ListDomain({ list, domains, user }: Props) {
       </td>
       <td className="px-3 py-2 align-middle">
         <div className="flex  items-center gap-5">
-          <div className="text-xs uppercase text-zinc-500">Desktop</div>
+          <div className="text-xs uppercase text-fg-subtle">Desktop</div>
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEODesktop >= 90
@@ -271,7 +271,7 @@ function ListDomain({ list, domains, user }: Props) {
           >
             {averageSEODesktop.toFixed(1)}
           </div>
-          <div className="mt-1 text-xs uppercase text-zinc-500">Mobile</div>
+          <div className="mt-1 text-xs uppercase text-fg-subtle">Mobile</div>
           <div
             className={`flex h-10 w-10 items-center justify-center rounded text-sm font-bold shadow-sm ${
               averageSEOMobile >= 90

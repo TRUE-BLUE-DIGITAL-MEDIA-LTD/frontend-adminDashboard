@@ -13,7 +13,7 @@ function VerifyDomain({ domainName }: { domainName: string }) {
   return (
     <div className="font-Poppins">
       {verify.isLoading && (
-        <div className="font-extrabold text-gray-600">Loading...</div>
+        <div className="font-extrabold text-fg-muted">Loading...</div>
       )}
       {verify.data?.results[0].result === true ? (
         <div className=" flex w-max  items-center  justify-center gap-2  rounded-lg bg-green-300 px-1 text-center font-bold uppercase  text-green-800">

@@ -40,7 +40,7 @@ const statusPillClass: Record<LinkAuditStatus, string> = {
   MISMATCH: "border-rose-500/30 bg-rose-500/10 text-rose-300",
   ERROR: "border-rose-500/40 bg-rose-500/15 text-rose-200",
   NO_SMARTLINK: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  UNASSIGNED: "border-white/10 bg-white/5 text-zinc-400",
+  UNASSIGNED: "border-line bg-panel-raised text-fg-muted",
 };
 
 const statusDotClass: Record<LinkAuditStatus, string> = {
@@ -48,55 +48,55 @@ const statusDotClass: Record<LinkAuditStatus, string> = {
   MISMATCH: "bg-rose-400",
   ERROR: "bg-rose-300",
   NO_SMARTLINK: "bg-amber-400",
-  UNASSIGNED: "bg-zinc-500",
+  UNASSIGNED: "bg-fg-subtle",
 };
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 const checkboxSx = {
-  color: "rgba(255,255,255,0.35)",
+  color: "rgb(var(--fg-subtle))",
   "&.Mui-checked": { color: "#00ABE4" },
   "&.MuiCheckbox-indeterminate": { color: "#00ABE4" },
-  "&.Mui-disabled": { color: "rgba(255,255,255,0.15)" },
+  "&.Mui-disabled": { color: "var(--line-strong)" },
 };
 
 const selectSx = {
-  color: "#e4e4e7",
+  color: "rgb(var(--fg))",
   fontSize: "0.875rem",
   borderRadius: "9999px",
-  backgroundColor: "rgba(0,0,0,0.4)",
+  backgroundColor: "rgb(var(--surface) / 0.4)",
   ".MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: "var(--line)",
     borderRadius: "9999px",
   },
   "&:hover .MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: "var(--line-strong)",
   },
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
     borderColor: "#00ABE4",
   },
-  ".MuiSvgIcon-root": { color: "#a1a1aa" },
+  ".MuiSvgIcon-root": { color: "rgb(var(--fg-muted))" },
 };
 
 const selectMenuProps = {
   PaperProps: {
     sx: {
-      bgcolor: "#18181b",
-      color: "#e4e4e7",
-      border: "1px solid rgba(255,255,255,0.1)",
+      bgcolor: "rgb(var(--panel))",
+      color: "rgb(var(--fg))",
+      border: "1px solid var(--line)",
       "& .MuiMenuItem-root": {
         fontSize: "0.875rem",
-        "&:hover": { bgcolor: "rgba(255,255,255,0.05)" },
+        "&:hover": { bgcolor: "var(--hover)" },
         "&.Mui-selected": {
           bgcolor: "rgba(0,171,228,0.15)",
           "&:hover": { bgcolor: "rgba(0,171,228,0.25)" },
@@ -189,18 +189,18 @@ function Index({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <main className="flex min-h-screen w-full flex-col items-center bg-black p-3 font-Poppins text-zinc-100 sm:p-5">
-        <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100">
+      <main className="flex min-h-screen w-full flex-col items-center bg-surface p-3 font-Poppins text-fg sm:p-5">
+        <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-line bg-panel text-fg">
           {/* Toolbar */}
-          <header className="flex flex-col gap-4 border-b border-white/5 px-4 py-4 sm:px-5 sm:py-5 md:flex-row md:items-end md:justify-between">
+          <header className="flex flex-col gap-4 border-b border-line px-4 py-4 sm:px-5 sm:py-5 md:flex-row md:items-end md:justify-between">
             <div className="flex flex-col gap-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-main-color">
                 Control Center
               </p>
-              <h1 className="text-2xl font-semibold tracking-tight text-white">
+              <h1 className="text-2xl font-semibold tracking-tight text-fg">
                 Link Audit
               </h1>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-fg-subtle">
                 Scan domain smartlinks, catch mismatches, and fix in bulk.
               </p>
             </div>
@@ -224,7 +224,7 @@ function Index({ user }: { user: User }) {
                   type="button"
                   disabled={rescan.isPending}
                   onClick={() => rescan.mutate()}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white bg-white px-4 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-fg bg-fg px-4 py-2 text-sm font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <FiRefreshCw
                     className={`text-base ${rescan.isPending ? "animate-spin" : ""}`}
@@ -240,7 +240,7 @@ function Index({ user }: { user: User }) {
           </header>
 
           {/* Filters */}
-          <div className="flex flex-col gap-3 border-b border-white/5 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-5">
+          <div className="flex flex-col gap-3 border-b border-line px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-5">
             <Select
               size="small"
               value={status}
@@ -267,12 +267,12 @@ function Index({ user }: { user: User }) {
                 setPage(1);
                 clearSelection();
               }}
-              className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-zinc-200 sm:max-w-xs"
+              className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-line bg-surface/40 px-3 py-1.5 text-fg sm:max-w-xs"
             >
-              <FiSearch className="shrink-0 text-zinc-500" size={16} />
+              <FiSearch className="shrink-0 text-fg-subtle" size={16} />
               <Input
                 placeholder="Search domain..."
-                className="w-full bg-transparent py-0.5 text-sm text-zinc-200 outline-none placeholder:text-zinc-500"
+                className="w-full bg-transparent py-0.5 text-sm text-fg outline-none placeholder:text-fg-subtle"
               />
             </SearchField>
           </div>
@@ -285,8 +285,8 @@ function Index({ user }: { user: User }) {
 
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] table-fixed text-left text-sm">
-              <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
-                <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+              <thead className="sticky top-0 z-20 border-b border-line bg-panel/95 backdrop-blur">
+                <tr className="text-[11px] font-semibold uppercase tracking-wider text-fg-subtle">
                   <th className="w-12 px-3 py-3 sm:px-5">
                     <Checkbox
                       size="small"
@@ -319,31 +319,31 @@ function Index({ user }: { user: User }) {
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr
                       key={i}
-                      className="animate-pulse border-b border-white/5"
+                      className="animate-pulse border-b border-line"
                     >
                       <td className="px-3 py-4 sm:px-5">
-                        <div className="h-4 w-4 rounded bg-zinc-700" />
+                        <div className="h-4 w-4 rounded bg-panel-raised" />
                       </td>
                       <td className="px-3 py-4">
                         <div className="space-y-2">
-                          <div className="h-3 w-36 rounded bg-zinc-700" />
-                          <div className="h-2.5 w-24 rounded bg-zinc-800" />
+                          <div className="h-3 w-36 rounded bg-panel-raised" />
+                          <div className="h-2.5 w-24 rounded bg-panel-raised" />
                         </div>
                       </td>
                       <td className="px-3 py-4">
-                        <div className="h-5 w-20 rounded-full bg-zinc-700" />
+                        <div className="h-5 w-20 rounded-full bg-panel-raised" />
                       </td>
                       <td className="px-3 py-4">
-                        <div className="h-5 w-24 rounded-full bg-zinc-700" />
+                        <div className="h-5 w-24 rounded-full bg-panel-raised" />
                       </td>
                       <td className="px-3 py-4">
-                        <div className="ml-auto h-3 w-8 rounded bg-zinc-700" />
+                        <div className="ml-auto h-3 w-8 rounded bg-panel-raised" />
                       </td>
                       <td className="hidden px-3 py-4 md:table-cell">
-                        <div className="h-3 w-28 rounded bg-zinc-700" />
+                        <div className="h-3 w-28 rounded bg-panel-raised" />
                       </td>
                       <td className="px-3 py-4 sm:px-5">
-                        <div className="ml-auto h-8 w-8 rounded-lg bg-zinc-700" />
+                        <div className="ml-auto h-8 w-8 rounded-lg bg-panel-raised" />
                       </td>
                     </tr>
                   ))}
@@ -352,7 +352,7 @@ function Index({ user }: { user: User }) {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-5 py-16 text-center text-sm text-zinc-500"
+                      className="px-5 py-16 text-center text-sm text-fg-subtle"
                     >
                       No domains match this filter.
                     </td>
@@ -362,7 +362,7 @@ function Index({ user }: { user: User }) {
                 {results.map((row) => (
                   <tr
                     key={row.domainId}
-                    className="border-b border-white/5 transition hover:bg-white/5"
+                    className="border-b border-line transition hover:bg-hover"
                   >
                     <td className="px-3 py-3 sm:px-5">
                       <Checkbox
@@ -377,12 +377,12 @@ function Index({ user }: { user: User }) {
                       />
                     </td>
                     <td className="px-3 py-3.5">
-                      <p className="truncate font-medium text-white">
+                      <p className="truncate font-medium text-fg">
                         {row.domainName}
                       </p>
                     </td>
                     <td className="px-3 py-3.5">
-                      <span className="inline-flex max-w-[10rem] truncate rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-zinc-300">
+                      <span className="inline-flex max-w-[10rem] truncate rounded-full border border-line bg-panel-raised px-2.5 py-0.5 text-[11px] font-medium text-fg-muted">
                         {row.partnerName ?? "—"}
                       </span>
                     </td>
@@ -396,10 +396,10 @@ function Index({ user }: { user: User }) {
                         {row.status}
                       </span>
                     </td>
-                    <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                    <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                       {row.mismatchCount}
                     </td>
-                    <td className="hidden px-3 py-3.5 text-xs text-zinc-500 md:table-cell">
+                    <td className="hidden px-3 py-3.5 text-xs text-fg-subtle md:table-cell">
                       {row.scannedAt
                         ? moment(row.scannedAt).format("YYYY-MM-DD HH:mm")
                         : "—"}
@@ -424,8 +424,8 @@ function Index({ user }: { user: User }) {
           </div>
 
           {(audit.data?.totalPages ?? 1) > 1 && (
-            <div className="flex justify-center border-t border-white/5 px-5 py-4">
-              <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+            <div className="flex justify-center border-t border-line px-5 py-4">
+              <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
                 <Pagination
                   count={audit.data?.totalPages ?? 1}
                   page={page}

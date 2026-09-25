@@ -70,7 +70,7 @@ function GscSitemapsTab({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 font-medium text-gray-700">
+        <h3 className="flex items-center gap-2 font-medium text-fg-muted">
           <BiSitemap className="text-orange-500" /> Sitemaps in Search Console
         </h3>
         <button
@@ -82,8 +82,8 @@ function GscSitemapsTab({
         </button>
       </div>
       <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full text-left text-sm text-gray-600">
-          <thead className="border-b bg-gray-100 text-gray-700">
+        <table className="w-full text-left text-sm text-fg-muted">
+          <thead className="border-b bg-panel-raised text-fg-muted">
             <tr>
               <th className="px-4 py-3 font-semibold">Sitemap</th>
               <th className="px-4 py-3 text-center font-semibold">Submitted</th>
@@ -99,10 +99,10 @@ function GscSitemapsTab({
               )}
             </tr>
           </thead>
-          <tbody className="divide-y bg-white">
+          <tbody className="divide-y bg-panel">
             {list.length === 0 && (
               <tr>
-                <td className="px-4 py-4 text-gray-400" colSpan={isAdmin ? 8 : 7}>
+                <td className="px-4 py-4 text-fg-subtle" colSpan={isAdmin ? 8 : 7}>
                   No sitemaps submitted to Search Console yet
                 </td>
               </tr>
@@ -112,7 +112,7 @@ function GscSitemapsTab({
               const warnings = Number(sitemap.warnings ?? 0);
               const ok = !sitemap.isPending && errors === 0 && warnings === 0;
               return (
-                <tr key={sitemap.path} className="hover:bg-gray-50">
+                <tr key={sitemap.path} className="hover:bg-hover">
                   <td className="px-4 py-3">
                     <a
                       target="_blank"

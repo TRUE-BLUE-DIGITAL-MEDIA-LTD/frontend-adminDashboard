@@ -136,8 +136,8 @@ export default function LandingPageLists() {
       <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
         <div className="lg:w-10/12 xl:w-9/12 ">
           <table className="w-full table-auto border-collapse">
-            <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-              <tr className="sticky top-0 z-40 bg-white ">
+            <thead className="h-14 border-b-2 border-line-strong font-bold text-blue-700   drop-shadow-md ">
+              <tr className="sticky top-0 z-40 bg-panel ">
                 <td className=" px-5">Name</td>
                 <td>Domain</td>
                 <td>Language</td>

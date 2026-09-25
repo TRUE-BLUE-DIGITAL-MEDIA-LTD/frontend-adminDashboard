@@ -10,7 +10,7 @@ const POLL_MS = 3_000;
 function label(status: Status | null, publishedAt: string | null, error: string | null) {
   switch (status) {
     case "queued":
-      return { text: "Queued", cls: "bg-gray-100 text-gray-700" };
+      return { text: "Queued", cls: "bg-panel-raised text-fg-muted" };
     case "publishing":
       return { text: "Publishing…", cls: "bg-blue-100 text-blue-700" };
     case "live":
@@ -82,10 +82,10 @@ export default function LanderPublishStatus({
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-gray-500">Live site:</span>
+      <span className="text-fg-muted">Live site:</span>
       <span className={`rounded-full px-3 py-1 font-medium ${shown.cls}`}>{shown.text}</span>
       {data.status === "published_unverified" && (
-        <span className="text-xs text-gray-500">Check that the domain&apos;s DNS points at Netlify.</span>
+        <span className="text-xs text-fg-muted">Check that the domain&apos;s DNS points at Netlify.</span>
       )}
       {data.status === "failed" && (
         <button

@@ -43,6 +43,10 @@ const config: Config = {
         },
         scrim: "var(--scrim)",
       },
+      // Bare `border` / `divide-*` (no color) follow the theme instead of gray-200.
+      borderColor: {
+        DEFAULT: "var(--line)",
+      },
     },
   },
   plugins: [],

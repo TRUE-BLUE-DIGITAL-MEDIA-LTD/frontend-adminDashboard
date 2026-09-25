@@ -21,8 +21,8 @@ function LandingPagesSection({
 }: LandingPagesSectionProps) {
   if (landingPages.length === 0) return null;
   return (
-    <section className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-6 flex items-center gap-2 border-b pb-3 text-xl font-semibold text-gray-800">
+    <section className="rounded-xl border bg-panel p-6 shadow-sm">
+      <h2 className="mb-6 flex items-center gap-2 border-b pb-3 text-xl font-semibold text-fg">
         <MdList className="text-purple-600" /> Linked Landing Pages
         <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700">
           {landingPages.length}
@@ -40,7 +40,7 @@ function LandingPagesSection({
       <ul className="flex flex-col gap-4">
         {landingPages.map((landingPage) => (
           <li
-            className="flex flex-col items-center justify-between gap-4 rounded-lg border bg-gray-50 p-4 transition hover:bg-gray-100 sm:flex-row"
+            className="flex flex-col items-center justify-between gap-4 rounded-lg border bg-panel-raised p-4 transition hover:bg-hover sm:flex-row"
             key={landingPage.id}
           >
             <Link
@@ -56,7 +56,7 @@ function LandingPagesSection({
                 type="number"
                 value={landingPage?.percent}
                 size="small"
-                className="w-32 bg-white"
+                className="w-32 bg-panel"
                 onChange={(e) =>
                   setDomainData((prev) => {
                     const landingPages = [...prev.landingPages];

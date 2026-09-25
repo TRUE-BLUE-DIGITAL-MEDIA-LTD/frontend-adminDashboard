@@ -42,4 +42,9 @@ describe("theme tokens", () => {
     );
     for (const t of THEME_TOKENS) expect(colors).toContain(t);
   });
+
+  it("makes bare `border` / `divide-*` use the theme line color", () => {
+    const extend = tailwindConfig.theme!.extend as Record<string, Record<string, string>>;
+    expect(extend.borderColor?.DEFAULT).toBe("var(--line)");
+  });
 });
