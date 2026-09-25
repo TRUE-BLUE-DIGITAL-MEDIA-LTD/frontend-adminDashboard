@@ -41,21 +41,21 @@ function PopupLayout({
     <section className={`fixed inset-0 ${zIndexClassName} flex items-center justify-center p-4`}>
       {useShell ? (
         <div
-          className={`relative z-10 flex max-h-[90vh] w-full ${maxWidthClassName} flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl`}
+          className={`relative z-10 flex max-h-[90vh] w-full ${maxWidthClassName} flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl`}
         >
-          <header className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 px-6 py-4">
+          <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-6 py-4">
             <div className="min-w-0">
-              <h2 className="text-lg font-semibold tracking-tight text-white">
+              <h2 className="text-lg font-semibold tracking-tight text-fg">
                 {title ?? ""}
               </h2>
               {subtitle ? (
-                <p className="mt-0.5 text-xs text-zinc-500">{subtitle}</p>
+                <p className="mt-0.5 text-xs text-fg-subtle">{subtitle}</p>
               ) : null}
             </div>
             <button
               type="button"
               onClick={close}
-              className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-white/5 hover:text-white"
+              className="rounded-lg p-1.5 text-fg-muted transition hover:bg-hover hover:text-fg"
               aria-label="Close"
             >
               <IoClose className="text-xl" />
@@ -65,7 +65,7 @@ function PopupLayout({
             {children}
           </div>
           {footer ? (
-            <div className="flex shrink-0 items-center justify-end gap-3 border-t border-white/10 px-6 py-4">
+            <div className="flex shrink-0 items-center justify-end gap-3 border-t border-line px-6 py-4">
               {footer}
             </div>
           ) : null}
@@ -73,7 +73,7 @@ function PopupLayout({
       ) : (
         <div className="relative z-10">{children}</div>
       )}
-      <div onClick={close} className="fixed inset-0 -z-10 bg-black/70" />
+      <div onClick={close} className="fixed inset-0 -z-10 bg-scrim" />
     </section>
   );
 }

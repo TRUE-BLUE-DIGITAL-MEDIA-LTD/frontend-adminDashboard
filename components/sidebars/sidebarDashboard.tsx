@@ -110,7 +110,7 @@ const SidebarDashboard = forwardRef<
   return (
     <ul
       ref={ref}
-      className="fixed left-0 top-0 z-40 flex h-screen w-60 flex-col gap-0.5 overflow-y-auto overflow-x-hidden border-r border-white/10 bg-black py-16 pl-1 pr-1.5"
+      className="fixed left-0 top-0 z-40 flex h-screen w-60 flex-col gap-0.5 overflow-y-auto overflow-x-hidden border-r border-line bg-surface py-16 pl-1 pr-1.5"
     >
       {visibleMenus.map((list, index) => {
         return (
