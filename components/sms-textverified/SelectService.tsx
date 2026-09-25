@@ -145,6 +145,7 @@ function SelectService({ activeNumbers }: Props) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={selectedCountry}
         onChange={(e: DropdownChangeEvent) => setSelectedCountry(e.value)}
         options={country.data?.sort((a, b) => a.name.localeCompare(b.name))}
@@ -158,6 +159,7 @@ function SelectService({ activeNumbers }: Props) {
       />
 
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={selectService}
         onChange={(e: DropdownChangeEvent) => setSelectService(e.value)}
         options={service.data}

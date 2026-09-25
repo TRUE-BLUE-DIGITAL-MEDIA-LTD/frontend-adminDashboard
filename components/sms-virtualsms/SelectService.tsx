@@ -88,6 +88,7 @@ function SelectService({ activeNumbers }: Props) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={service}
         onChange={(e: DropdownChangeEvent) => {
           setService(e.value);
@@ -103,6 +104,7 @@ function SelectService({ activeNumbers }: Props) {
         itemTemplate={serviceTemplate}
       />
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={country}
         onChange={(e: DropdownChangeEvent) => setCountry(e.value)}
         filter

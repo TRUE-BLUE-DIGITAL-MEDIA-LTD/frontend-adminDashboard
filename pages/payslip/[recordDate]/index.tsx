@@ -195,50 +195,50 @@ function Index({
       })}
 
       <div className="print flex w-full flex-col items-center gap-5 ">
-        <table className="mt-5 w-96 table-auto border-collapse border-line-strong ">
+        <table className="mt-5 w-96 table-auto border-collapse border-fg ">
           <thead>
-            <tr className=" border-2 border-line-strong bg-panel-raised drop-shadow-md">
-              <th className="border-2 border-line-strong px-2">No.</th>
-              <th className="sticky left-0 border-2 border-line-strong bg-panel-raised px-2">
+            <tr className=" border-2 border-fg bg-panel-raised drop-shadow-md">
+              <th className="border-2 border-fg px-2">No.</th>
+              <th className="sticky left-0 border-2 border-fg bg-panel-raised px-2">
                 Name / Description
               </th>
-              <th className="border-2 border-line-strong px-2">Start Date</th>
-              <th className="border-2 border-line-strong px-2">Salary (THB)</th>
-              <th className="border-2 border-line-strong px-2">Social Security</th>
-              <th className="border-2 border-line-strong px-2">
+              <th className="border-2 border-fg px-2">Start Date</th>
+              <th className="border-2 border-fg px-2">Salary (THB)</th>
+              <th className="border-2 border-fg px-2">Social Security</th>
+              <th className="border-2 border-fg px-2">
                 Commission /Allowance
               </th>
-              <th className="border-2 border-line-strong px-2">Tax</th>
-              <th className="border-2 border-line-strong px-2">Deduction</th>
-              <th className="border-2 border-line-strong px-2">Note</th>
+              <th className="border-2 border-fg px-2">Tax</th>
+              <th className="border-2 border-fg px-2">Deduction</th>
+              <th className="border-2 border-fg px-2">Note</th>
             </tr>
           </thead>
           <tbody>
             {payslips?.map((payslip, index) => {
               return (
                 <tr key={index} className="">
-                  <td className="border-2  border-line-strong px-2 text-center font-semibold">
+                  <td className="border-2  border-fg px-2 text-center font-semibold">
                     {index + 1}
                   </td>
-                  <td className="border-2 border-line-strong  px-2 ">
+                  <td className="border-2 border-fg  px-2 ">
                     {payslip.name}
                   </td>
-                  <td className="border-2 border-line-strong px-2">
+                  <td className="border-2 border-fg px-2">
                     {moment(payslip.startDate).format("DD/MM/YYYY")}
                   </td>
-                  <td className="border-2 border-line-strong px-2 font-bold text-green-600">
+                  <td className="border-2 border-fg px-2 font-bold text-green-600">
                     {payslip.salary.toLocaleString()}
                   </td>
-                  <td className="border-2 border-line-strong px-2">
+                  <td className="border-2 border-fg px-2">
                     {payslip.socialSecurity.toLocaleString()}
                   </td>
-                  <td className="border-2 border-line-strong px-2">
+                  <td className="border-2 border-fg px-2">
                     {payslip.bonus.toLocaleString()}
                   </td>
-                  <td className="border-2 border-line-strong px-2">
+                  <td className="border-2 border-fg px-2">
                     {payslip.tax.toLocaleString()}
                   </td>
-                  <td className="border-2 border-line-strong px-2">
+                  <td className="border-2 border-fg px-2">
                     {payslip.deductions.map((deduction, index) => {
                       return (
                         <div key={index}>
@@ -247,47 +247,47 @@ function Index({
                       );
                     })}
                   </td>
-                  <td className="max-w-96 break-words border-2 border-line-strong px-2">
+                  <td className="max-w-96 break-words border-2 border-fg px-2">
                     {payslip.note}
                   </td>
                 </tr>
               );
             })}
             <tr>
-              <td className="border-2  border-line-strong px-2 text-center font-semibold">
+              <td className="border-2  border-fg px-2 text-center font-semibold">
                 สรุป
               </td>
-              <td className="border-2 border-line-strong px-2"></td>
-              <td className="border-2 border-line-strong px-2"></td>
-              <td className="border-2 border-line-strong px-2 font-bold text-green-600">
+              <td className="border-2 border-fg px-2"></td>
+              <td className="border-2 border-fg px-2"></td>
+              <td className="border-2 border-fg px-2 font-bold text-green-600">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.salary;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-line-strong px-2">
+              <td className="border-2 border-fg px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.socialSecurity;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-line-strong px-2">
+              <td className="border-2 border-fg px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.bonus;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-line-strong px-2">
+              <td className="border-2 border-fg px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return acc + payslip.tax;
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-line-strong px-2">
+              <td className="border-2 border-fg px-2">
                 {payslips
                   ?.reduce((acc, payslip) => {
                     return (
@@ -299,7 +299,7 @@ function Index({
                   }, 0)
                   .toLocaleString()}
               </td>
-              <td className="border-2 border-line-strong px-2"></td>
+              <td className="border-2 border-fg px-2"></td>
             </tr>
           </tbody>
         </table>

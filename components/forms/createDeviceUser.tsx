@@ -213,7 +213,7 @@ function CreateDeviceUser({
       <footer
         onClick={() => setTrigger(false)}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen
-        bg-surface/30 backdrop-blur-md "
+        bg-scrim backdrop-blur-md "
       ></footer>
     </div>
   );

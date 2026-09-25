@@ -70,6 +70,7 @@ function SelectEmailDomain({ activeEmails }: Props) {
         </button>
       </div>
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={domain}
         onChange={(e: DropdownChangeEvent) => setDomain(e.value)}
         filter

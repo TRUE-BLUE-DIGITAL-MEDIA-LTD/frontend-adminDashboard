@@ -435,6 +435,7 @@ const CreateCloudPhoneModal: React.FC<CreateCloudPhoneModalProps> = ({
                   </div>
                   {proxiesData?.data?.length ? (
                     <Dropdown
+        panelClassName="oxy-overlay-panel"
                       value={proxyNumber}
                       onChange={(e) => setProxyNumber(e.value)}
                       options={proxiesData.data}

@@ -63,7 +63,7 @@ function ProvinceInput({
         <div className="relative w-80 cursor-default text-left shadow-md ">
           <Combobox.Input
             name="province"
-            className="w-full appearance-none rounded-md border-none bg-panel py-5 pl-3 pr-10 text-sm leading-5 text-fg ring-2 ring-line-strong focus:bg-icon-color"
+            className="w-full appearance-none rounded-md border-none bg-panel py-5 pl-3 pr-10 text-sm leading-5 text-fg ring-2 ring-line-strong focus:bg-icon-color focus:text-black"
             displayValue={(province: string) => {
               return province;
             }}

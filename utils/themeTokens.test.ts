@@ -9,7 +9,7 @@ const css = readFileSync(join(__dirname, "../styles/globals.css"), "utf8");
 /** Innermost `selector { body }` blocks — enough for flat variable blocks. */
 function blocks(): { selector: string; body: string }[] {
   return [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
-    selector: m[1].trim(),
+    selector: m[1].replace(/\/\*[\s\S]*?\*\//g, "").trim(),
     body: m[2],
   }));
 }
@@ -41,6 +41,12 @@ describe("theme tokens", () => {
       tailwindConfig.theme!.extend!.colors as Record<string, unknown>,
     );
     for (const t of THEME_TOKENS) expect(colors).toContain(t);
+  });
+
+  it("keeps the native field reset at zero specificity so utilities win", () => {
+    const reset = all.find((b) => /\btextarea\b/.test(b.selector) && /\bselect\b/.test(b.selector));
+    expect(reset, "native field reset block").toBeDefined();
+    expect(reset!.selector.startsWith(":where(")).toBe(true);
   });
 
   it("drives the `dark:` variant from the theme toggle, not the OS", () => {

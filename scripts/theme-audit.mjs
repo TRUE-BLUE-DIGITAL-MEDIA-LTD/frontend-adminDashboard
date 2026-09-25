@@ -14,7 +14,34 @@ const PALE =
 const SOLID_ACCENT_BG =
   /(?<![\w-])(?:[\w-]+:)*(?:bg-main-color|bg-icon-color|bg-(?:red|green|blue|amber|yellow|emerald|sky|rose|orange|purple|indigo|teal|cyan|violet|pink|lime|fuchsia)-\d+|bg-gradient-[\w-]+|gradient-[\w-]+|animate-gradient)(?![\w/-])/;
 const WHITE_TEXT = /^(?:[\w-]+:)*(?:text-white|text-black|ring-black|border-white)$/;
+// Hardcoded color-scheme and arbitrary-value neutrals bypass the tokens too.
+const HARD =
+  /(?<![\w-])((?:[\w-]+:)*(?:\[color-scheme:(?:dark|light)\]|(?:bg|text|border)-\[#(?:fff|ffffff|000|000000)\]))(?![\w/-])/gi;
+// Prime overlays render outside the component tree; without this class the list stays bootstrap-white.
+const PRIME_OVERLAY = { dropdown: "Dropdown", multiselect: "MultiSelect", calendar: "Calendar", autocomplete: "AutoComplete" };
 const IGNORE = "theme-audit-ignore";
+
+function auditPrimeOverlays(source, lines) {
+  const names = [...source.matchAll(/from\s+"primereact\/(dropdown|multiselect|calendar|autocomplete)"/g)].map(
+    (m) => PRIME_OVERLAY[m[1]],
+  );
+  const out = [];
+  if (!names.length) return out;
+  for (const m of source.matchAll(new RegExp(`<(${names.join("|")})(?=[\\s/>])`, "g"))) {
+    let depth = 0;
+    let j = m.index + m[0].length;
+    for (; j < source.length; j++) {
+      const c = source[j];
+      if (c === "{") depth++;
+      else if (c === "}") depth--;
+      else if (c === ">" && depth === 0) break;
+    }
+    const line = source.slice(0, m.index).split(/\r?\n/).length;
+    if (/panelClassName/.test(source.slice(m.index, j)) || lines[line - 1].includes(IGNORE)) continue;
+    out.push({ line, cls: `${m[1]} without panelClassName` });
+  }
+  return out;
+}
 
 export function auditSource(source) {
   const out = [];
@@ -29,11 +56,12 @@ export function auditSource(source) {
       found.push(m);
     }
     for (const m of text.matchAll(PALE)) found.push(m);
+    for (const m of text.matchAll(HARD)) found.push(m);
     found
       .sort((a, b) => a.index - b.index)
       .forEach((m) => out.push({ line: i + 1, cls: m[1] }));
   });
-  return out;
+  return [...out, ...auditPrimeOverlays(source, lines)].sort((a, b) => a.line - b.line);
 }
 
 function files(path) {

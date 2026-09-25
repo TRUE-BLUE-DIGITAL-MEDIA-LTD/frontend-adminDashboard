@@ -72,6 +72,7 @@ function SelectService({ activeNumbers }: Props) {
     <div className="flex w-full max-w-md flex-col gap-4 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <h3 className="border-b pb-2 text-lg font-semibold">Order New Number</h3>
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={selectService}
         onChange={(e: DropdownChangeEvent) => setSelectService(e.value)}
         filter

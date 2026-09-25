@@ -50,6 +50,26 @@ describe("auditSource", () => {
     expect(hits(`<span className="bg-green-500/15 bg-red-500 bg-green-100/50">`)).toEqual([]);
   });
 
+  it("flags a Prime overlay component without panelClassName", () => {
+    const src = [
+      `import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";`,
+      `<Dropdown`,
+      `  value={v}`,
+      `  onChange={(e) => set(e.value)}`,
+      `/>`,
+      `<Dropdown panelClassName="oxy-overlay-panel" value={v} />`,
+    ].join("\n");
+    expect(auditSource(src)).toEqual([{ line: 2, cls: "Dropdown without panelClassName" }]);
+  });
+
+  it("flags hardcoded color-scheme and arbitrary neutral hex classes", () => {
+    expect(hits(`<input className="[color-scheme:dark] bg-[#fff] text-[#000000] text-[#62C7D8]">`)).toEqual([
+      "[color-scheme:dark]",
+      "bg-[#fff]",
+      "text-[#000000]",
+    ]);
+  });
+
   it("honours the ignore marker", () => {
     expect(hits(`<div className="bg-white"> {/* theme-audit-ignore */}`)).toEqual([]);
   });

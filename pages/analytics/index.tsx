@@ -96,7 +96,7 @@ const selectMenuProps = {
 };
 
 const dateInputClass =
-  "rounded-full border border-line bg-surface/40 px-3 py-1.5 text-sm text-fg outline-none [color-scheme:dark] focus:border-main-color";
+  "rounded-full border border-line bg-surface/40 px-3 py-1.5 text-sm text-fg outline-none focus:border-main-color";
 
 function Index({ user }: { user: User }) {
   const [preset, setPreset] = useState<RangePreset | "custom">("today");

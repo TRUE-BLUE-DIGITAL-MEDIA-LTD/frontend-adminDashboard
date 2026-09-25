@@ -553,6 +553,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Parent
                 </label>
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   showClear
                   value={selectColumns.parent}
                   onChange={(e) =>
@@ -588,6 +589,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Child
                 </label>
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={selectColumns.child}
                   showClear
                   onChange={(e) =>
@@ -617,6 +619,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Grandchild
                 </label>
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={selectColumns.grandchild}
                   showClear
                   onChange={(e) =>
