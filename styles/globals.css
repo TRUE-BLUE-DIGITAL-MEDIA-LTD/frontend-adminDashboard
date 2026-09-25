@@ -4,6 +4,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme tokens ─────────────────────────────────────────────
+   Channel tokens hold "r g b" so Tailwind opacity modifiers work.
+   Translucent tokens hold full colors. Dark is the default (:root);
+   html.light is set before paint by THEME_INIT_SCRIPT (utils/theme.ts). */
+@layer base {
+  :root {
+    color-scheme: dark;
+    --surface: 0 0 0;
+    --panel: 24 24 27;
+    --panel-raised: 39 39 42;
+    --fg: 244 244 245;
+    --fg-muted: 161 161 170;
+    --fg-subtle: 113 113 122;
+    --hover: rgb(255 255 255 / 0.05);
+    --line: rgb(255 255 255 / 0.1);
+    --line-strong: rgb(255 255 255 / 0.18);
+    --scrim: rgb(0 0 0 / 0.6);
+  }
+
+  html.light,
+  .theme-light-scope {
+    color-scheme: light;
+    --surface: 244 244 245;
+    --panel: 255 255 255;
+    --panel-raised: 250 250 250;
+    --fg: 24 24 27;
+    --fg-muted: 82 82 91;
+    --fg-subtle: 113 113 122;
+    --hover: rgb(0 0 0 / 0.04);
+    --line: rgb(0 0 0 / 0.1);
+    --line-strong: rgb(0 0 0 / 0.18);
+    --scrim: rgb(0 0 0 / 0.4);
+  }
+
+  /* Paper is always light (payslips, .print sections). Keep in sync with html.light. */
+  @media print {
+    :root {
+      color-scheme: light;
+      --surface: 255 255 255;
+      --panel: 255 255 255;
+      --panel-raised: 250 250 250;
+      --fg: 24 24 27;
+      --fg-muted: 82 82 91;
+      --fg-subtle: 113 113 122;
+      --hover: rgb(0 0 0 / 0.04);
+      --line: rgb(0 0 0 / 0.1);
+      --line-strong: rgb(0 0 0 / 0.18);
+      --scrim: rgb(0 0 0 / 0.4);
+    }
+  }
+}
+
 @layer components {
   .main-button {
     @apply flex items-center justify-center gap-2 rounded-xl bg-green-400 p-3 ring-black 
