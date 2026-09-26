@@ -24,6 +24,7 @@ import {
   resendRemainingSeconds,
   sanitizeCodeInput,
 } from "../../utils/signupCode";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -240,7 +241,10 @@ function SignUp() {
     !!validateData.password;
 
   return (
-    <div className="bg-gradient-to-b from-second-color to-supper-main-color py-10">
+    <div className="bg-gradient-to-b from-second-color to-supper-main-color text-fg dark:from-panel dark:to-surface py-10">
+      <div className="fixed right-4 top-4 z-50">
+        <ThemeToggle compact />
+      </div>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
@@ -249,7 +253,7 @@ function SignUp() {
             alignItems: "center",
           }}
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
+          <div className="relative h-10 w-10 overflow-hidden rounded-full bg-surface">
             <Image
               alt="logo"
               src="/favicon.ico"
@@ -370,7 +374,7 @@ function SignUp() {
                     loading...
                   </div>
                 ) : formInvalid || !turnstileToken ? (
-                  <div className="rounded-lg bg-slate-500 px-20 py-2 text-center font-Poppins font-semibold text-white">
+                  <div className="rounded-lg bg-panel-raised px-20 py-2 text-center font-Poppins font-semibold text-fg">
                     register
                   </div>
                 ) : (
@@ -436,7 +440,7 @@ function SignUp() {
                     loading...
                   </div>
                 ) : !isSixDigitCode(code) ? (
-                  <div className="rounded-lg bg-slate-500 px-20 py-2 text-center font-Poppins font-semibold text-white">
+                  <div className="rounded-lg bg-panel-raised px-20 py-2 text-center font-Poppins font-semibold text-fg">
                     verify
                   </div>
                 ) : (

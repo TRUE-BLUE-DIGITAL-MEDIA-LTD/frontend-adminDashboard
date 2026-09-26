@@ -581,7 +581,7 @@ function SimCards({ user }: { user: User }) {
                 {sim.phoneNumber}
               </span>
             </div>
-            <div className="flex w-full items-center justify-start gap-2 border-t border-gray-300 py-3">
+            <div className="flex w-full items-center justify-start gap-2 border-t border-line py-3">
               <span className="text-start text-sm font-semibold">
                 {message.message}
               </span>
@@ -783,11 +783,11 @@ function SimCards({ user }: { user: User }) {
         </h1>
         {user.role === "admin" && (
           <section
-            className="bg-gra w-10/12 rounded-md bg-gradient-to-tr from-neutral-50
-         to-neutral-200 p-5 ring-1 ring-gray-400 "
+            className="w-10/12 rounded-md bg-panel
+          p-5 ring-1 ring-line-strong "
           >
             <section className="flex w-full justify-between gap-5">
-              <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-black pr-5">
+              <h3 className="flex w-max items-center justify-start gap-2 border-b-2 border-line-strong pr-5">
                 Device User <FaServer />
               </h3>
               <div className="flex w-max gap-2">
@@ -829,7 +829,7 @@ function SimCards({ user }: { user: User }) {
                   <li
                     key={device.id}
                     className=" relative flex w-96 flex-col items-center  justify-center gap-1  
-                  rounded-sm bg-white p-2 ring-1  ring-gray-700"
+                  rounded-sm bg-panel p-2 ring-1  ring-line-strong"
                   >
                     <div className="absolute right-2 top-2 flex w-40 items-center justify-end gap-3">
                       <div
@@ -886,7 +886,7 @@ function SimCards({ user }: { user: User }) {
                             handleReadOld(device.portNumber);
                           }
                         }}
-                        className="h-8 w-max rounded-md bg-white px-2 text-sm text-blue-600 ring-1 drop-shadow-lg 
+                        className="h-8 w-max rounded-md bg-panel px-2 text-sm text-blue-600 ring-1 drop-shadow-lg 
             transition duration-100 hover:bg-blue-400"
                       >
                         Read old sims
@@ -935,6 +935,7 @@ function SimCards({ user }: { user: User }) {
           <div className="flex flex-col">
             <label className="text-sm font-normal">Select Availability</label>
             <Dropdown
+        panelClassName="oxy-overlay-panel"
               value={selectAvailableSlot}
               onChange={(e) => {
                 setPage(1);
@@ -950,6 +951,7 @@ function SimCards({ user }: { user: User }) {
               Select Active Sim Card
             </label>
             <Dropdown
+        panelClassName="oxy-overlay-panel"
               value={selectActiveSimcard}
               onChange={(e) => {
                 setPage(1);
@@ -964,6 +966,7 @@ function SimCards({ user }: { user: User }) {
             <div className="flex flex-col">
               <label className="text-sm font-normal">Select Device User</label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={selectDeviceUser}
                 onChange={(e) => {
                   setPage(1);
@@ -982,6 +985,7 @@ function SimCards({ user }: { user: User }) {
             <div className="flex flex-col">
               <label className="text-sm font-normal">Select Partner</label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={selectPartner}
                 onChange={(e) => {
                   setPage(1);
@@ -997,7 +1001,7 @@ function SimCards({ user }: { user: User }) {
                     <div className="n flex w-full items-center gap-2">
                       <IoMdPerson />
                       <span>{partner.name}</span>
-                      <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
+                      <span className="rounded-md bg-panel-raised px-2 py-1 text-xs text-fg">
                         Total {partner.simCardOnPartner.length}
                       </span>
                     </div>

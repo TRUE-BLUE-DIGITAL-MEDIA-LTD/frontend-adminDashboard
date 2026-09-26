@@ -233,11 +233,11 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-Poppins">
-      <main className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl">
-        <header className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
+      <main className="relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl">
+        <header className="flex shrink-0 items-center justify-between border-b border-line px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Bonus rate</h2>
-            <p className="text-xs text-zinc-500">
+            <h2 className="text-lg font-semibold text-fg">Bonus rate</h2>
+            <p className="text-xs text-fg-subtle">
               Configure tiers for this user
             </p>
           </div>
@@ -256,7 +256,7 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                 setTrigger(() => false);
                 document.body.style.overflow = "auto";
               }}
-              className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+              className="rounded-lg px-2 py-1 text-fg-muted hover:bg-hover hover:text-fg"
               aria-label="Close"
             >
               ✕
@@ -266,7 +266,7 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
         <Form onSubmit={handelUpdate} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-col gap-4 overflow-y-auto px-6 py-5">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-400">
+              <span className="text-xs font-medium text-fg-muted">
                 Calculate period
               </span>
               <select
@@ -274,7 +274,7 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                 onChange={(e) =>
                   setBonusStatus(e.target.value as BonusCalculatePeriod)
                 }
-                className="w-full max-w-xs rounded-lg border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
+                className="w-full max-w-xs rounded-lg border border-line bg-surface/40 px-3 py-2.5 text-sm text-fg outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
               >
                 {bonusList.map((bonus) => (
                   <option key={bonus.title} value={bonus.title}>
@@ -287,10 +287,10 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
               {bonusState.map((rate) => (
                 <div
                   key={rate.id ?? rate.fakeId}
-                  className="grid grid-cols-4 gap-2 rounded-xl border border-white/10 bg-black/30 p-3"
+                  className="grid grid-cols-4 gap-2 rounded-xl border border-line bg-surface/30 p-3"
                 >
                   <label className="flex flex-col gap-1">
-                    <span className="text-xs text-zinc-400">From</span>
+                    <span className="text-xs text-fg-muted">From</span>
                     <InputNumber
                       mode="currency"
                       currency="USD"
@@ -303,11 +303,11 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                       value={rate.from}
                       inputMode="numeric"
                       defaultValue={rate.from}
-                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                      className="w-full rounded-lg border border-line bg-surface p-1 text-fg"
                     />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="text-xs text-zinc-400">To</span>
+                    <span className="text-xs text-fg-muted">To</span>
                     <InputNumber
                       mode="currency"
                       currency="USD"
@@ -320,11 +320,11 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                       type="text"
                       inputMode="numeric"
                       defaultValue={rate.to}
-                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                      className="w-full rounded-lg border border-line bg-surface p-1 text-fg"
                     />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="text-xs text-zinc-400">Rate</span>
+                    <span className="text-xs text-fg-muted">Rate</span>
                     <InputNumber
                       prefix="% "
                       max={100}
@@ -336,11 +336,11 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                       inputMode="numeric"
                       value={rate.rate}
                       defaultValue={rate.rate}
-                      className="w-full rounded-lg border border-white/10 bg-zinc-950 p-1 text-black"
+                      className="w-full rounded-lg border border-line bg-surface p-1 text-fg"
                     />
                   </label>
                   <div className="flex flex-col justify-end gap-1">
-                    <span className="text-xs text-zinc-400">Action</span>
+                    <span className="text-xs text-fg-muted">Action</span>
                     <button
                       onClick={() => {
                         handleRemove({
@@ -369,26 +369,26 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
                     },
                   ])
                 }
-                className="rounded-full border border-dashed border-white/15 bg-white/5 py-2 text-sm text-zinc-300 transition hover:border-main-color/40 hover:text-main-color"
+                className="rounded-full border border-dashed border-line-strong bg-panel-raised py-2 text-sm text-fg-muted transition hover:border-main-color/40 hover:text-main-color"
               >
                 + Add tier
               </button>
             </div>
           </div>
-          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-white/10 px-6 py-4">
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-line px-6 py-4">
             <button
               type="button"
               onClick={() => {
                 setTrigger(() => false);
                 document.body.style.overflow = "auto";
               }}
-              className="rounded-full px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-medium text-fg-muted transition hover:bg-hover hover:text-fg"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white"
+              className="rounded-full bg-fg px-5 py-2 text-sm font-semibold text-surface transition hover:bg-main-color hover:text-white"
             >
               Update
             </button>
@@ -400,7 +400,7 @@ function UpdateBonusRate({ setTrigger, user, accounts }: UpdateBonusRateProps) {
           setTrigger(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed inset-0 -z-10 bg-black/70"
+        className="fixed inset-0 -z-10 bg-scrim"
       ></footer>
     </div>
   );

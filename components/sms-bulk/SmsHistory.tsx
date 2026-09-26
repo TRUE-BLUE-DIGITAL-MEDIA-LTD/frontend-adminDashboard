@@ -12,12 +12,12 @@ function SmsHistory() {
   return (
     <>
       <header className="flex flex-col items-center">
-        <h1 className="text-xl font-semibold text-black">SMS History</h1>
+        <h1 className="text-xl font-semibold text-fg">SMS History</h1>
       </header>
       <div className="mt-1 overflow-auto lg:w-10/12 xl:w-10/12 2xl:w-7/12">
         <table className="w-max min-w-full border">
           <thead>
-            <tr className="bg-gray-300">
+            <tr className="bg-panel-raised">
               <th>Date</th>
               <th>Phone Number</th>
               <th>Country</th>
@@ -33,7 +33,7 @@ function SmsHistory() {
                     <span className="font-semibold leading-none">
                       {moment(sms.createAt).format("DD MMMM YYYY")}
                     </span>
-                    <span className="text-xs text-gray-500">At {moment(sms.createAt).format("HH:mm")}</span>
+                    <span className="text-xs text-fg-muted">At {moment(sms.createAt).format("HH:mm")}</span>
                   </section>
                 </td>
                 <td>
@@ -50,7 +50,7 @@ function SmsHistory() {
                 <td>
                   <div className="flex w-48 items-center justify-center text-center">
                     {sms.isGetSms ? (
-                      <div className="flex w-48 flex-col items-center gap-1 rounded-md bg-green-200 px-2 py-1 text-sm text-green-600">
+                      <div className="flex w-48 flex-col items-center gap-1 rounded-md bg-green-500/20 px-2 py-1 text-sm text-green-600">
                         <span className="break-words">
                           ${sms.price.toFixed(2)} - {sms.messages?.[sms.messages.length - 1]?.code ?? sms.messages?.[sms.messages.length - 1]?.content}
                         </span>
@@ -64,7 +64,7 @@ function SmsHistory() {
                         )}
                       </div>
                     ) : (
-                      <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">NO SMS</div>
+                      <div className="w-20 rounded-md bg-red-500/20 px-2 text-sm text-red-600">NO SMS</div>
                     )}
                   </div>
                 </td>

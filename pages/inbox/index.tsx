@@ -55,9 +55,9 @@ function Inbox({ user }: { user: User }) {
           />
 
           {/* Message list for the selected mailbox */}
-          <section className="rounded-xl border bg-white p-4 shadow-sm">
+          <section className="rounded-xl border bg-panel p-4 shadow-sm">
             {!selectedMailboxId ? (
-              <p className="p-6 text-center text-sm text-gray-500">
+              <p className="p-6 text-center text-sm text-fg-muted">
                 Select a mailbox to read its messages.
               </p>
             ) : emails.isLoading ? (
@@ -69,32 +69,32 @@ function Inbox({ user }: { user: User }) {
                     <li
                       key={email.id}
                       onClick={() => setSelectedEmailId(email.id)}
-                      className="flex cursor-pointer items-center gap-3 px-3 py-3 hover:bg-gray-50"
+                      className="flex cursor-pointer items-center gap-3 px-3 py-3 hover:bg-hover"
                     >
                       {!email.isRead && (
                         <MdMarkEmailUnread className="shrink-0 text-blue-600" />
                       )}
                       <span
                         className={`w-48 truncate text-sm ${
-                          email.isRead ? "text-gray-600" : "font-semibold"
+                          email.isRead ? "text-fg-muted" : "font-semibold"
                         }`}
                       >
                         {formatSender(email.fromName, email.fromAddress)}
                       </span>
                       <span
                         className={`flex-1 truncate text-sm ${
-                          email.isRead ? "text-gray-500" : "font-medium"
+                          email.isRead ? "text-fg-muted" : "font-medium"
                         }`}
                       >
                         {email.subject || "(no subject)"}
                       </span>
-                      <span className="shrink-0 text-xs text-gray-400">
+                      <span className="shrink-0 text-xs text-fg-subtle">
                         {new Date(email.createAt).toLocaleDateString()}
                       </span>
                     </li>
                   ))}
                   {emails.data?.data.length === 0 && (
-                    <li className="p-6 text-center text-sm text-gray-500">
+                    <li className="p-6 text-center text-sm text-fg-muted">
                       This mailbox is empty.
                     </li>
                   )}
@@ -116,17 +116,17 @@ function Inbox({ user }: { user: User }) {
         {/* Detail overlay — same hand-rolled modal as pages/analytics/index.tsx */}
         {selectedEmailId && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4"
             onClick={() => setSelectedEmailId(null)}
           >
             <div
-              className="relative max-h-[85vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
+              className="relative max-h-[85vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-panel p-6 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
                 aria-label="Close"
-                className="absolute right-4 top-4 text-xl leading-none text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-4 text-xl leading-none text-fg-subtle hover:text-fg-muted"
                 onClick={() => setSelectedEmailId(null)}
               >
                 ✕

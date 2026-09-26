@@ -12,6 +12,8 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { useTheme } from "../../hooks/useTheme";
+import { chartColors } from "../../utils/theme";
 import moment from "moment";
 
 ChartJS.register(
@@ -43,6 +45,7 @@ const ranges: TimeRange[] = [
 ];
 
 function SmsReport() {
+  const { resolved } = useTheme();
   const [selectedRange, setSelectedRange] = useState<TimeRange>("last 6 hours");
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -171,17 +174,21 @@ function SmsReport() {
     };
   }, [reportsData, selectedRange, startDate, endDate]);
 
-  const options = useMemo(
-    () => ({
+  const options = useMemo(() => {
+    const cc = chartColors(resolved);
+    return {
       responsive: true,
+      color: cc.text,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           position: "top" as const,
+          labels: { color: cc.text },
         },
         title: {
           display: true,
           text: "SMS Reports Over Time",
+          color: cc.text,
         },
         tooltip: {
           mode: "index" as const,
@@ -208,11 +215,11 @@ function SmsReport() {
         },
       },
       scales: {
+        x: { ticks: { color: cc.text }, grid: { color: cc.grid } },
         y: {
           beginAtZero: true,
-          ticks: {
-            stepSize: 1,
-          },
+          ticks: { stepSize: 1, color: cc.text },
+          grid: { color: cc.grid },
         },
       },
       interaction: {
@@ -220,23 +227,20 @@ function SmsReport() {
         axis: "x" as const,
         intersect: false,
       },
-    }),
-    [bucketDetails],
-  );
+    };
+  }, [bucketDetails, resolved]);
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
+    <div className="rounded-lg bg-panel p-4 shadow">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Reports Analysis
-        </h2>
+        <h2 className="text-lg font-semibold text-fg">Reports Analysis</h2>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-600">
+          <label className="text-sm font-medium text-fg-muted">
             Select Period:
           </label>
           <select
-            className="rounded border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+            className="rounded border border-line px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
             value={selectedRange}
             onChange={(e) => setSelectedRange(e.target.value as TimeRange)}
           >
@@ -252,40 +256,38 @@ function SmsReport() {
       <div className="h-96 w-full">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-gray-500">Loading data...</p>
+            <p className="text-fg-muted">Loading data...</p>
           </div>
         ) : chartData ? (
-          <Line options={options} data={chartData} />
+          <Line key={resolved} options={options} data={chartData} />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <p className="text-gray-500">No data available</p>
+            <p className="text-fg-muted">No data available</p>
           </div>
         )}
       </div>
 
       <div className="mt-8 border-t pt-6">
-        <h3 className="mb-4 text-lg font-semibold text-gray-800">
-          Report Details
-        </h3>
+        <h3 className="mb-4 text-lg font-semibold text-fg">Report Details</h3>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 border">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-line border">
+            <thead className="bg-panel-raised">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted">
                   SMS ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted">
                   Issue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-fg-muted">
                   Created At
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-line bg-panel">
               {tableLoading ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-4 text-center">
@@ -301,16 +303,16 @@ function SmsReport() {
               ) : (
                 tableData?.data?.map((row) => (
                   <tr key={row.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-fg">
                       {row.type}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                       {row.sms_id}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                       {row.issue || "-"}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                       {moment(row.createAt).format("YYYY-MM-DD HH:mm:ss")}
                     </td>
                   </tr>
@@ -322,26 +324,26 @@ function SmsReport() {
 
         {/* Pagination */}
         {tableData?.meta && (
-          <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+          <div className="mt-4 flex items-center justify-between border-t border-line bg-panel px-4 py-3 sm:px-6">
             <div className="flex flex-1 justify-between sm:hidden">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!tableData.meta.prev}
-                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="relative inline-flex items-center rounded-md border border-line bg-panel px-4 py-2 text-sm font-medium text-fg-muted hover:bg-hover disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!tableData.meta.next}
-                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="relative ml-3 inline-flex items-center rounded-md border border-line bg-panel px-4 py-2 text-sm font-medium text-fg-muted hover:bg-hover disabled:opacity-50"
               >
                 Next
               </button>
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-fg-muted">
                   Showing page{" "}
                   <span className="font-medium">
                     {tableData.meta.currentPage}
@@ -358,7 +360,7 @@ function SmsReport() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={!tableData.meta.prev}
-                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-fg-subtle ring-1 ring-inset ring-line-strong hover:bg-hover focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                   >
                     <span className="sr-only">Previous</span>
                     Previous
@@ -366,7 +368,7 @@ function SmsReport() {
                   <button
                     onClick={() => setPage((p) => p + 1)}
                     disabled={!tableData.meta.next}
-                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-fg-subtle ring-1 ring-inset ring-line-strong hover:bg-hover focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                   >
                     <span className="sr-only">Next</span>
                     Next

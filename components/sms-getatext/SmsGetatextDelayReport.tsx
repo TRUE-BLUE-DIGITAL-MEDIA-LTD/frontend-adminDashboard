@@ -72,29 +72,29 @@ function SmsGetatextDelayReport() {
 
   return (
     <div className="mt-2 flex flex-wrap items-end justify-center gap-2">
-      <label className="flex flex-col text-xs text-gray-600">
+      <label className="flex flex-col text-xs text-fg-muted">
         From
         <input
           type="date"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="rounded-md border border-gray-300 px-2 py-1 text-sm"
+          className="rounded-md border border-line px-2 py-1 text-sm"
         />
       </label>
-      <label className="flex flex-col text-xs text-gray-600">
+      <label className="flex flex-col text-xs text-fg-muted">
         To
         <input
           type="date"
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          className="rounded-md border border-gray-300 px-2 py-1 text-sm"
+          className="rounded-md border border-line px-2 py-1 text-sm"
         />
       </label>
       <button
         type="button"
         onClick={handleDownload}
         disabled={isLoading}
-        className="rounded-md bg-gray-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
+        className="rounded-md bg-panel px-3 py-1.5 text-sm font-semibold text-fg hover:bg-hover disabled:opacity-50"
       >
         {isLoading ? "Preparing..." : "Download delay report (CSV)"}
       </button>

@@ -71,7 +71,7 @@ function SmsReceive() {
         {balance.data && (
           <h2 className="mt-2 flex h-6 items-center justify-center text-center text-xl font-bold ">
             {balance.isFetching ? (
-              <div className="h-6 w-40 animate-pulse rounded-sm bg-gray-400" />
+              <div className="h-6 w-40 animate-pulse rounded-sm bg-panel-raised" />
             ) : (
               <span>
                 Balance $
@@ -82,7 +82,7 @@ function SmsReceive() {
         )}
         <h3 className="flex h-6 items-center justify-center text-center text-lg font-normal ">
           {balance.isFetching ? (
-            <div className="h-6 w-40 animate-pulse rounded-sm bg-gray-200" />
+            <div className="h-6 w-40 animate-pulse rounded-sm bg-panel-raised" />
           ) : (
             <span>Frozen balance: {balance.data?.zbalance}</span>
           )}

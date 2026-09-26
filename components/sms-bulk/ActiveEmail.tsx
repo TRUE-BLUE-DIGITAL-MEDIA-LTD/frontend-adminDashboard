@@ -27,8 +27,8 @@ function ActiveEmail({ email, onCancel, onDone, onReorder }: Props) {
 
   return (
     <>
-      <div className="w-full overflow-hidden rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-400 pb-2">
+      <div className="w-full overflow-hidden rounded-md bg-panel p-3 ring-1 ring-line-strong drop-shadow-xl">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-strong pb-2">
           <button
             onClick={copy}
             title="Copy address"
@@ -37,7 +37,7 @@ function ActiveEmail({ email, onCancel, onDone, onReorder }: Props) {
             {email.emailAddress ?? "provisioning address..."}
           </button>
           <div className="flex shrink-0 items-center gap-2">
-            <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
+            <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-500/20 p-1 px-3 text-sm font-normal">
               <Countdown
                 date={new Date(email.expireAt)}
                 renderer={({ minutes, seconds }) => (
@@ -52,7 +52,7 @@ function ActiveEmail({ email, onCancel, onDone, onReorder }: Props) {
                 <button
                   onClick={() => onReorder(email.id)}
                   title="Re-open this address for another OTP (charged again)"
-                  className="flex h-8 w-20 items-center justify-center rounded-sm bg-blue-100 p-1 px-2 text-xs font-semibold text-blue-700 hover:bg-blue-200"
+                  className="flex h-8 w-20 items-center justify-center rounded-sm bg-blue-500/15 p-1 px-2 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-500/20"
                 >
                   Reorder
                 </button>
@@ -67,7 +67,7 @@ function ActiveEmail({ email, onCancel, onDone, onReorder }: Props) {
               <button
                 onClick={() => onCancel(email.id)}
                 title="Cancel and refund"
-                className="flex h-8 w-20 items-center justify-center rounded-sm bg-red-300 p-1 px-2 text-xs text-red-700"
+                className="flex h-8 w-20 items-center justify-center rounded-sm bg-red-300 p-1 px-2 text-xs text-red-700 dark:text-red-400"
               >
                 refund
               </button>
@@ -79,14 +79,14 @@ function ActiveEmail({ email, onCancel, onDone, onReorder }: Props) {
         </div>
         <div className="py-2">
           {email.otpValue ? (
-            <div className="flex items-center justify-between gap-2 rounded-sm bg-gray-50 p-2">
+            <div className="flex items-center justify-between gap-2 rounded-sm bg-panel-raised p-2">
               <span className="max-w-40 truncate text-2xl font-bold tracking-widest lg:max-w-60">
                 {email.otpValue}
               </span>
               {email.htmlMessage && (
                 <button
                   onClick={() => setShowEmail(true)}
-                  className="rounded border px-2 py-1 text-xs hover:bg-gray-800 hover:text-white"
+                  className="rounded border px-2 py-1 text-xs hover:bg-hover hover:text-fg"
                 >
                   View email
                 </button>

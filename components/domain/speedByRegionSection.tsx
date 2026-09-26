@@ -25,8 +25,8 @@ function Cell({ ms }: { ms: number | null }) {
 
 function Row({ item }: { item: RegionLatest }) {
   return (
-    <tr className="border-b border-gray-100">
-      <td className="px-2 py-1 font-mono text-xs text-gray-700">{item.region}</td>
+    <tr className="border-b border-line">
+      <td className="px-2 py-1 font-mono text-xs text-fg-muted">{item.region}</td>
       {item.status === "FAILED" ? (
         <td colSpan={3} className="px-2 py-1 text-sm text-red-600">
           Failed: {item.error ?? "unknown error"}
@@ -38,7 +38,7 @@ function Row({ item }: { item: RegionLatest }) {
           <Cell ms={item.lcpMs} />
         </>
       )}
-      <td className="px-2 py-1 text-xs text-gray-500">{probeAge(item.probedAt)}</td>
+      <td className="px-2 py-1 text-xs text-fg-muted">{probeAge(item.probedAt)}</td>
     </tr>
   );
 }
@@ -50,15 +50,15 @@ function SpeedByRegionSection({ latest, isLoading, isProbing, onProbeNow }: Prop
   })).filter((g) => g.rows.length > 0);
 
   return (
-    <section className="rounded-xl border bg-white p-6 shadow-sm">
+    <section className="rounded-xl border bg-panel p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between border-b pb-3">
-        <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-fg">
           <MdSpeed className="text-blue-600" /> Load Speed by Region
         </h2>
         <button
           onClick={onProbeNow}
           disabled={isProbing}
-          className="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-400 transition hover:bg-blue-500/15 active:scale-95 disabled:opacity-50"
         >
           {isProbing ? <SpinLoading /> : <><MdUpdate /> Probe now</>}
         </button>
@@ -66,10 +66,10 @@ function SpeedByRegionSection({ latest, isLoading, isProbing, onProbeNow }: Prop
       {isLoading ? (
         <SpinLoading />
       ) : latest.length === 0 ? (
-        <p className="text-sm text-gray-500">No regions configured.</p>
+        <p className="text-sm text-fg-muted">No regions configured.</p>
       ) : (
         <table className="w-full text-left">
-          <thead className="text-xs uppercase tracking-wider text-gray-500">
+          <thead className="text-xs uppercase tracking-wider text-fg-muted">
             <tr>
               <th className="px-2 py-1">Region</th>
               <th className="px-2 py-1">TTFB</th>
@@ -81,8 +81,8 @@ function SpeedByRegionSection({ latest, isLoading, isProbing, onProbeNow }: Prop
           <tbody>
             {grouped.map(({ group, rows }) => (
               <React.Fragment key={group}>
-                <tr className="bg-gray-50">
-                  <td colSpan={5} className="px-2 py-1 text-sm font-semibold text-gray-700">{group}</td>
+                <tr className="bg-panel-raised">
+                  <td colSpan={5} className="px-2 py-1 text-sm font-semibold text-fg-muted">{group}</td>
                 </tr>
                 {rows.map((item) => <Row key={item.region} item={item} />)}
               </React.Fragment>

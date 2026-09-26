@@ -29,7 +29,7 @@ function AnnoucementShow({ announcement }: Props) {
   return (
     <div
       className={`fixed bottom-0 z-50 flex h-14 w-full items-center justify-start gap-2 
-        ${announcement.status === "info" ? "bg-blue-50" : announcement.status === "success" ? "bg-green-50" : announcement.status === "warning" ? "bg-yellow-50" : "bg-red-50"}
+        ${announcement.status === "info" ? "bg-blue-500/10" : announcement.status === "success" ? "bg-green-500/10" : announcement.status === "warning" ? "bg-yellow-500/10" : "bg-red-500/10"}
         `}
     >
       <div
@@ -37,12 +37,12 @@ function AnnoucementShow({ announcement }: Props) {
         `}
       />
       <div
-        className={`flex items-center justify-center ${announcement.status === "info" ? "text-blue-700" : announcement.status === "success" ? "text-green-700" : announcement.status === "warning" ? "text-yellow-700" : "text-red-700"}`}
+        className={`flex items-center justify-center ${announcement.status === "info" ? "text-blue-700 dark:text-blue-400" : announcement.status === "success" ? "text-green-700 dark:text-green-400" : announcement.status === "warning" ? "text-yellow-700 dark:text-yellow-400" : "text-red-700 dark:text-red-400"}`}
       >
         {icon}
       </div>
       <h1
-        className={`font-semibold ${announcement.status === "info" ? "text-blue-700" : announcement.status === "success" ? "text-green-700" : announcement.status === "warning" ? "text-yellow-700" : "text-red-700"}`}
+        className={`font-semibold ${announcement.status === "info" ? "text-blue-700 dark:text-blue-400" : announcement.status === "success" ? "text-green-700 dark:text-green-400" : announcement.status === "warning" ? "text-yellow-700 dark:text-yellow-400" : "text-red-700 dark:text-red-400"}`}
       >
         {announcement.title}
       </h1>

@@ -33,8 +33,8 @@ function SelectService({
 
   return (
     <section
-      className="relative w-max rounded-lg border border-gray-100  bg-gradient-to-r 
- from-gray-50 to-gray-200 p-5 drop-shadow-xl"
+      className="relative w-max rounded-lg border border-line  bg-panel 
+ p-5 drop-shadow-xl"
     >
       <h2 className=" text-lg font-semibold">Select Service</h2>
       <SearchField className="relative mb-2 flex w-full flex-col">
@@ -44,7 +44,7 @@ function SelectService({
             handleFilterService(e.target.value);
           }}
           placeholder="Search Service"
-          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-gray-500
+          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-line-strong
        placeholder:text-sm lg:w-full"
         />
         <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />

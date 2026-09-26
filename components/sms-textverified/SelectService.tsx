@@ -143,8 +143,9 @@ function SelectService({ activeNumbers }: Props) {
     }
   };
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={selectedCountry}
         onChange={(e: DropdownChangeEvent) => setSelectedCountry(e.value)}
         options={country.data?.sort((a, b) => a.name.localeCompare(b.name))}
@@ -158,6 +159,7 @@ function SelectService({ activeNumbers }: Props) {
       />
 
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={selectService}
         onChange={(e: DropdownChangeEvent) => setSelectService(e.value)}
         options={service.data}
@@ -169,7 +171,7 @@ function SelectService({ activeNumbers }: Props) {
         panelFooterTemplate={panelFooterTemplate}
       />
 
-      <div className="flex h-10 w-96 items-center justify-center rounded-md border bg-white font-semibold text-gray-500">
+      <div className="flex h-10 w-96 items-center justify-center rounded-md border bg-panel font-semibold text-fg-muted">
         {price.isLoading
           ? "...Loading Price"
           : price.data

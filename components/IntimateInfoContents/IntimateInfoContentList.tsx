@@ -63,9 +63,9 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col gap-6 overflow-auto rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
+    <div className="flex h-full w-full flex-col gap-6 overflow-auto rounded-xl bg-panel p-6 shadow-md transition-all hover:shadow-lg">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <h2 className="text-2xl font-bold text-gray-800">Content Management</h2>
+        <h2 className="text-2xl font-bold text-fg">Content Management</h2>
         <button
           onClick={onCreateNew}
           className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
@@ -84,11 +84,12 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-line py-2 pl-10 pr-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <Dropdown
+        panelClassName="oxy-overlay-panel"
           value={status}
           options={statusOptions}
           onChange={(e) => {
@@ -100,6 +101,7 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
         />
 
         <Dropdown
+        panelClassName="oxy-overlay-panel"
           value={sortOrder}
           options={sortOptions}
           onChange={(e) => {
@@ -117,9 +119,9 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="bg-gray-100 text-xs uppercase text-gray-700">
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-sm text-fg-muted">
+              <thead className="bg-panel-raised text-xs uppercase text-fg-muted">
                 <tr>
                   <th className="px-6 py-3">Title</th>
                   <th className="px-6 py-3">Keyword</th>
@@ -128,10 +130,10 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-line bg-panel">
                 {data?.data?.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-gray-500">
+                    <td colSpan={5} className="py-8 text-center text-fg-muted">
                       No contents found.
                     </td>
                   </tr>
@@ -139,9 +141,9 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                   data?.data?.map((item) => (
                     <tr
                       key={item.id}
-                      className="transition-colors hover:bg-gray-50"
+                      className="transition-colors hover:bg-hover"
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                      <td className="px-6 py-4 font-medium text-fg">
                         {item.title}
                       </td>
                       <td className="px-6 py-4">{item.focusKeyword || "-"}</td>
@@ -149,8 +151,8 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             item.status === "publish"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? "bg-green-500/15 text-green-800 dark:text-green-400"
+                              : "bg-panel-raised text-fg"
                           }`}
                         >
                           {item.status}
@@ -163,14 +165,14 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => onEdit(item.id)}
-                            className="rounded-full bg-blue-100 p-2 text-blue-600 transition-colors hover:bg-blue-200"
+                            className="rounded-full bg-blue-500/15 p-2 text-blue-600 transition-colors hover:bg-blue-500/20"
                             title="Edit"
                           >
                             <FaEdit />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="rounded-full bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200"
+                            className="rounded-full bg-red-500/15 p-2 text-red-600 transition-colors hover:bg-red-500/20"
                             title="Delete"
                           >
                             <FaTrash />
@@ -187,7 +189,7 @@ const IntimateInfoContentList = ({ onCreateNew, onEdit }: Props) => {
           {/* Pagination */}
           {data?.meta && data.meta.totalPages > 1 && (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-fg-muted">
                 Showing page {data.meta.page} of {data.meta.totalPages}
               </span>
               <div className="flex gap-2">

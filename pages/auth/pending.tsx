@@ -3,12 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { parseCookies } from "nookies";
 import { GetUser } from "../../services/admin/user";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 function Pending() {
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-between bg-gradient-to-b from-second-color to-supper-main-color">
+    <div className="flex h-screen w-screen flex-col items-center justify-between bg-gradient-to-b from-second-color to-supper-main-color text-fg dark:from-panel dark:to-surface">
+      <div className="fixed right-4 top-4 z-50">
+        <ThemeToggle compact />
+      </div>
       <div className="mt-32 flex w-11/12 max-w-md flex-col items-center justify-center gap-4 text-center">
-        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-black">
+        <div className="relative h-10 w-10 overflow-hidden rounded-full bg-surface">
           <Image
             src="/favicon.ico"
             fill

@@ -290,25 +290,25 @@ const IntimateInfoContentEditor = ({
   }
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-gray-50">
+    <div className="flex h-full w-full flex-col overflow-hidden bg-panel-raised">
       {/* Header */}
-      <div className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
+      <div className="flex items-center justify-between border-b bg-panel px-6 py-4 shadow-sm">
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-blue-600"
+            className="flex items-center gap-2 text-fg-muted hover:text-blue-600"
           >
             <FaArrowLeft /> Back
           </button>
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-fg">
             {isEditing ? "Edit Content" : "Create Content"}
           </h2>
           {isEditing && (
             <span
               className={`ml-2 rounded-full px-3 py-1 text-xs font-semibold ${
                 formData.status === "publish"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-200 text-gray-800"
+                  ? "bg-green-500/15 text-green-800 dark:text-green-400"
+                  : "bg-panel-raised text-fg"
               }`}
             >
               {formData.status.toUpperCase()}
@@ -365,9 +365,9 @@ const IntimateInfoContentEditor = ({
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Side: Preview HTML */}
-        <div className="flex flex-1 flex-col overflow-auto border-r bg-white p-6 shadow-inner">
+        <div className="flex flex-1 flex-col overflow-auto border-r bg-panel p-6 shadow-inner">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-700">
+            <h3 className="text-lg font-semibold text-fg-muted">
               Live Preview
             </h3>
             {thoughtProcess && (
@@ -383,8 +383,8 @@ const IntimateInfoContentEditor = ({
           </div>
 
           {showThoughtProcess && thoughtProcess && (
-            <div className="mb-6 rounded-md border border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 shadow-sm transition-all">
-              <h4 className="mb-2 font-bold text-purple-800">
+            <div className="mb-6 rounded-md border border-purple-200 bg-purple-500/10 p-4 text-sm text-purple-900 dark:text-purple-400 shadow-sm transition-all">
+              <h4 className="mb-2 font-bold text-purple-800 dark:text-purple-400">
                 AI Thinking Process:
               </h4>
               <pre className="whitespace-pre-wrap font-mono text-xs opacity-80">
@@ -393,14 +393,14 @@ const IntimateInfoContentEditor = ({
             </div>
           )}
 
-          <div className="min-h-full rounded-md border border-gray-200 bg-gray-50 p-4">
+          <div className="min-h-full rounded-md border border-line bg-panel-raised p-4">
             {formData.html ? (
               <div
                 className="prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: formData.html }}
               />
             ) : (
-              <div className="flex h-64 items-center justify-center text-gray-400">
+              <div className="flex h-64 items-center justify-center text-fg-subtle">
                 No HTML generated yet. Fill out the details and click{" "}
                 {'"AI Generate HTML"'}.
               </div>
@@ -409,14 +409,14 @@ const IntimateInfoContentEditor = ({
         </div>
 
         {/* Right Side: Form */}
-        <div className="w-[450px] overflow-auto bg-gray-50 p-6">
+        <div className="w-[450px] overflow-auto bg-panel-raised p-6">
           <div className="flex flex-col gap-5">
-            <h3 className="text-lg font-semibold text-gray-700">
+            <h3 className="text-lg font-semibold text-fg-muted">
               Content Details
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Title *
               </label>
               <InputText
@@ -429,7 +429,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Focus Keyword
               </label>
               <InputText
@@ -442,7 +442,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Excerpt
               </label>
               <InputTextarea
@@ -456,7 +456,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Additional AI Prompt (Optional)
               </label>
               <InputTextarea
@@ -469,7 +469,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Slug
               </label>
               <InputText
@@ -482,10 +482,11 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Category
               </label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={formData.category}
                 options={categoryOptions}
                 onChange={(e) => handleDropdownChange("category", e.value)}
@@ -496,10 +497,11 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Author
               </label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={formData.author}
                 options={authorOptions}
                 onChange={(e) => handleDropdownChange("author", e.value)}
@@ -510,7 +512,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Featured Image (ID or URL)
               </label>
               <div className="flex gap-2">
@@ -533,7 +535,7 @@ const IntimateInfoContentEditor = ({
                   onClick={() =>
                     document.getElementById("featuredImageUpload")?.click()
                   }
-                  className="flex items-center gap-2 rounded-md bg-gray-200 px-3 py-2 font-medium text-gray-700 transition hover:bg-gray-300"
+                  className="flex items-center gap-2 rounded-md bg-panel-raised px-3 py-2 font-medium text-fg-muted transition hover:bg-hover"
                   title="Upload Image"
                 >
                   <FaUpload />
@@ -541,12 +543,12 @@ const IntimateInfoContentEditor = ({
               </div>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-700">
+            <h3 className="mt-4 text-lg font-semibold text-fg-muted">
               SEO & Meta
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Meta Title
               </label>
               <InputText
@@ -559,7 +561,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Meta Description
               </label>
               <InputTextarea
@@ -573,7 +575,7 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 Permalink
               </label>
               <InputText
@@ -586,10 +588,11 @@ const IntimateInfoContentEditor = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-fg-muted">
                 QA Check
               </label>
               <Dropdown
+        panelClassName="oxy-overlay-panel"
                 value={formData.qaCheck}
                 options={qaOptions}
                 onChange={(e) => handleDropdownChange("qaCheck", e.value)}

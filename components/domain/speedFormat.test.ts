@@ -15,7 +15,7 @@ describe("loadColorClass", () => {
     expect(loadColorClass(2500)).toContain("orange");
     expect(loadColorClass(4999)).toContain("orange");
     expect(loadColorClass(5000)).toContain("red");
-    expect(loadColorClass(null)).toContain("gray");
+    expect(loadColorClass(null)).toContain("text-fg-subtle");
   });
 });
 

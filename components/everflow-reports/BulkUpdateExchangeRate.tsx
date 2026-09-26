@@ -28,11 +28,11 @@ type Props = {
 type Country = Countries[number];
 
 const fieldClass =
-  "w-full rounded-lg border border-white/10 bg-black/40 text-sm text-zinc-200";
-const labelClass = "text-xs font-medium text-zinc-400";
+  "w-full rounded-lg border border-line bg-surface/40 text-sm text-fg";
+const labelClass = "text-xs font-medium text-fg-muted";
 const sectionLabelClass =
-  "text-[11px] font-semibold uppercase tracking-wider text-zinc-500";
-const panelClass = "oxy-dark-overlay-panel border border-white/10 bg-zinc-900 text-zinc-100";
+  "text-[11px] font-semibold uppercase tracking-wider text-fg-subtle";
+const panelClass = "oxy-overlay-panel border border-line bg-panel text-fg";
 
 function ChoiceCard({
   selected,
@@ -54,14 +54,14 @@ function ChoiceCard({
       onClick={onClick}
       className={`flex flex-col gap-1 rounded-xl border px-4 py-3 text-left transition ${
         disabled
-          ? "cursor-not-allowed border-white/5 bg-black/20 opacity-40"
+          ? "cursor-not-allowed border-line bg-surface/20 opacity-40"
           : selected
             ? "border-main-color/60 bg-main-color/10 ring-1 ring-main-color/40"
-            : "border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5"
+            : "border-line bg-surface/40 hover:border-line-strong hover:bg-hover"
       }`}
     >
-      <span className="text-sm font-semibold text-white">{title}</span>
-      <span className="text-xs text-zinc-500">{description}</span>
+      <span className="text-sm font-semibold text-fg">{title}</span>
+      <span className="text-xs text-fg-subtle">{description}</span>
     </button>
   );
 }
@@ -261,14 +261,14 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             <button
               type="button"
               onClick={() => setResults(null)}
-              className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+              className="rounded-full border border-line-strong bg-transparent px-4 py-2 text-sm font-medium text-fg transition hover:bg-hover"
             >
               Back
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white"
+              className="rounded-full bg-fg px-5 py-2 text-sm font-semibold text-surface transition hover:bg-main-color hover:text-white"
             >
               Close
             </button>
@@ -316,7 +316,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+            className="rounded-full border border-line-strong bg-transparent px-4 py-2 text-sm font-medium text-fg transition hover:bg-hover"
             disabled={isSubmitting}
           >
             Cancel
@@ -324,7 +324,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-main-color hover:text-white disabled:opacity-50"
+            className="rounded-full bg-fg px-5 py-2 text-sm font-semibold text-surface transition hover:bg-main-color hover:text-white disabled:opacity-50"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Updating..." : "Update rate"}
@@ -358,7 +358,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <h3 className={sectionLabelClass}>
             Schedule
             {updateType === "live" ? (
-              <span className="ml-2 font-normal normal-case tracking-normal text-zinc-600">
+              <span className="ml-2 font-normal normal-case tracking-normal text-fg-subtle">
                 optional for live
               </span>
             ) : null}
@@ -371,7 +371,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                 onChange={(e) => setDates(e.value as Nullable<(Date | null)[]>)}
                 selectionMode="range"
                 className={fieldClass}
-                inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                 panelClassName={panelClass}
               />
             </div>
@@ -383,17 +383,17 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                   onChange={(e) => setStartTime(e.value as Date | null)}
                   timeOnly
                   className={`flex-1 ${fieldClass}`}
-                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
                   placeholder="Start (optional)"
                 />
-                <span className="text-zinc-600">โ€“</span>
+                <span className="text-fg-subtle">โ€“</span>
                 <Calendar
                   value={endTime}
                   onChange={(e) => setEndTime(e.value as Date | null)}
                   timeOnly
                   className={`flex-1 ${fieldClass}`}
-                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-zinc-200"
+                  inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
                   placeholder="End (optional)"
                 />
@@ -532,12 +532,12 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                     ? "Enter fixed amount"
                     : "Enter rate"
                 }
-                className="h-11 w-full max-w-xs rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
+                className="h-11 w-full max-w-xs rounded-lg border border-line bg-surface/40 px-3 py-2 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
                 value={rate}
                 onChange={(e) => setRate(e.target.value)}
               />
               {selectRateType === "Fixed" && (
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-fg-subtle">
                   Example: Italy โฌ4 = pay partner 70 THB. Enter 70.
                 </p>
               )}

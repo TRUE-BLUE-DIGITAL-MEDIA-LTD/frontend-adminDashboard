@@ -186,7 +186,7 @@ export default function Home({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="min-h-screen w-full bg-surface font-Poppins text-fg">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {/* Page header */}
           <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -194,17 +194,17 @@ export default function Home({ user }: { user: User }) {
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
                 Campaign assets
               </p>
-              <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
+              <h1 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-4xl">
                 Landing <span className="text-main-color">Pages</span>
               </h1>
-              <p className="max-w-xl text-sm text-white/60 sm:text-base">
+              <p className="max-w-xl text-sm text-fg-muted sm:text-base">
                 Create, filter, and manage high-performing landers for every
                 offer and domain.
               </p>
             </div>
             <Link
               href={"/create-landingpage"}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-white bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-[0.98] sm:text-base"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-fg bg-fg px-5 py-2.5 text-sm font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-[0.98] sm:text-base"
             >
               <HiPlus className="text-lg" />
               Create landing page
@@ -212,7 +212,7 @@ export default function Home({ user }: { user: User }) {
           </header>
 
           {/* Toolbar */}
-          <section className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm sm:p-5">
+          <section className="rounded-2xl border border-line bg-panel p-4 shadow-sm sm:p-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <SearchField
                 value={searchField}
@@ -223,7 +223,7 @@ export default function Home({ user }: { user: User }) {
               >
                 <Input
                   placeholder="Search landing page name"
-                  className="h-11 w-full appearance-none rounded-xl border border-white/10 bg-zinc-900/5 py-2 pl-11 pr-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-main-color focus:bg-black/60 focus:ring-2 focus:ring-main-color/30"
+                  className="h-11 w-full appearance-none rounded-xl border border-line bg-hover py-2 pl-11 pr-4 text-sm text-fg outline-none transition placeholder:text-fg-subtle focus:border-main-color focus:bg-surface/60 focus:ring-2 focus:ring-main-color/30"
                 />
                 <IoSearchCircleSharp className="absolute bottom-0 left-2.5 top-0 m-auto text-3xl text-main-color" />
               </SearchField>
@@ -259,7 +259,7 @@ export default function Home({ user }: { user: User }) {
                 ? loadingNumber.map((list, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm"
+                      className="rounded-2xl border border-line bg-panel p-4 shadow-sm"
                     >
                       <Skeleton height={28} />
                       <Skeleton className="mt-2" />
@@ -274,18 +274,18 @@ export default function Home({ user }: { user: User }) {
                       return (
                         <article
                           key={landingPage.id ?? index}
-                          className="rounded-2xl border border-white/10 bg-zinc-900 p-4 shadow-sm transition hover:border-main-color/30 hover:shadow-md"
+                          className="rounded-2xl border border-line bg-panel p-4 shadow-sm transition hover:border-main-color/30 hover:shadow-md"
                         >
                           <div className="mb-3 space-y-1">
-                            <h2 className="text-base font-semibold text-zinc-100">
+                            <h2 className="text-base font-semibold text-fg">
                               {landingPages.isFetching ? (
                                 <Skeleton animation="wave" />
                               ) : (
                                 landingPage?.name
                               )}
                             </h2>
-                            <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
-                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/10 px-2.5 py-1 text-zinc-300">
+                            <div className="flex flex-wrap gap-2 text-xs text-fg-muted">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-hover px-2.5 py-1 text-fg-muted">
                                 <FiGlobe className="text-main-color" />
                                 {landingPage?.domain?.id ? (
                                   <Link
@@ -303,11 +303,11 @@ export default function Home({ user }: { user: User }) {
                                   "No domain"
                                 )}
                               </span>
-                              <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-hover px-2.5 py-1">
                                 {languageName}
                               </span>
                               {landingPage?.category?.title && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/5 px-2.5 py-1">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-hover px-2.5 py-1">
                                   <FiTag className="text-icon-color" />
                                   {landingPage.category.title}
                                 </span>
@@ -322,29 +322,29 @@ export default function Home({ user }: { user: User }) {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden h-96 overflow-auto rounded-2xl border border-white/10 bg-zinc-900 shadow-sm md:block md:h-[36rem]">
+            <div className="hidden h-96 overflow-auto rounded-2xl border border-line bg-panel shadow-sm md:block md:h-[36rem]">
               <div className="w-full overflow-x-auto">
                 <table className="min-w-full border-collapse text-left text-sm">
-                  <thead className="border-b border-white/10 bg-zinc-900/5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <thead className="border-b border-line bg-hover text-xs font-semibold uppercase tracking-wide text-fg-muted">
                     <tr>
-                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                      <th className="sticky top-0 z-10 bg-panel/95 px-4 py-3.5">
                         Name
                       </th>
-                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                      <th className="sticky top-0 z-10 bg-panel/95 px-4 py-3.5">
                         Domain
                       </th>
-                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                      <th className="sticky top-0 z-10 bg-panel/95 px-4 py-3.5">
                         Language
                       </th>
-                      <th className="sticky top-0 z-10 bg-zinc-900/95 px-4 py-3.5">
+                      <th className="sticky top-0 z-10 bg-panel/95 px-4 py-3.5">
                         Category
                       </th>
-                      <th className="sticky top-0 z-10 bg-zinc-900 px-4 py-3.5 text-right">
+                      <th className="sticky top-0 z-10 bg-panel px-4 py-3.5 text-right">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-line">
                     {landingPages.isLoading
                       ? loadingNumber.map((list, index) => (
                           <tr key={index}>
@@ -372,10 +372,10 @@ export default function Home({ user }: { user: User }) {
                             );
                             return (
                               <tr
-                                className="transition hover:bg-zinc-900/5"
+                                className="transition hover:bg-hover"
                                 key={landingPage.id ?? index}
                               >
-                                <td className="px-4 py-3.5 font-medium text-zinc-100">
+                                <td className="px-4 py-3.5 font-medium text-fg">
                                   {landingPages.isFetching ? (
                                     <Skeleton animation="wave" />
                                   ) : (
@@ -402,13 +402,13 @@ export default function Home({ user }: { user: User }) {
                                       {landingPage.domain.name}
                                     </span>
                                   ) : (
-                                    <span className="text-zinc-500">—</span>
+                                    <span className="text-fg-subtle">—</span>
                                   )}
                                 </td>
-                                <td className="px-4 py-3.5 text-zinc-400">
+                                <td className="px-4 py-3.5 text-fg-muted">
                                   {languageName}
                                 </td>
-                                <td className="px-4 py-3.5 text-zinc-400">
+                                <td className="px-4 py-3.5 text-fg-muted">
                                   {landingPage?.category?.title || "—"}
                                 </td>
                                 <td className="px-4 py-3.5">
@@ -426,15 +426,15 @@ export default function Home({ user }: { user: User }) {
             </div>
 
             <div className="flex shrink-0 justify-center pb-16 pt-2">
-              <div className="rounded-full border border-white/15 bg-zinc-900/5 px-3 py-2">
+              <div className="rounded-full border border-line-strong bg-hover px-3 py-2">
                 <Pagination
                   onChange={(e, page) => setPage(page)}
                   count={landingPages?.data?.totalPages}
                   color="primary"
                   sx={{
                     "& .MuiPaginationItem-root": {
-                      color: "#ffffff",
-                      borderColor: "rgba(255,255,255,0.35)",
+                      color: "rgb(var(--fg))",
+                      borderColor: "var(--line-strong)",
                     },
                     "& .MuiPaginationItem-root.Mui-selected": {
                       backgroundColor: "#00ABE4",
@@ -444,7 +444,7 @@ export default function Home({ user }: { user: User }) {
                     "& .MuiPaginationItem-root:hover": {
                       backgroundColor: "rgba(0, 171, 228, 0.2)",
                     },
-                    "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                    "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
                   }}
                 />
               </div>

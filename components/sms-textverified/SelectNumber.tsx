@@ -118,7 +118,7 @@ function SelectNumber({ textverified }: Props) {
   };
 
   return (
-    <div className="flex h-max w-96 flex-col gap-2 rounded-xl bg-white p-3">
+    <div className="flex h-max w-96 flex-col gap-2 rounded-xl bg-panel p-3">
       <header className="flex items-center justify-between">
         {cancel.isPending ||
         report.isPending ||
@@ -149,25 +149,25 @@ function SelectNumber({ textverified }: Props) {
           </div>
         )}
 
-        <div className="flex h-7 items-center justify-center rounded-lg bg-green-200 px-3 text-green-800">
+        <div className="flex h-7 items-center justify-center rounded-lg bg-green-500/20 px-3 text-green-800 dark:text-green-400">
           {sms_textverified.data?.detail.state}
         </div>
       </header>
 
       <main className="flex flex-col gap-3">
-        <div className="flex h-10 w-full items-center justify-center rounded-md border bg-white font-semibold text-gray-500">
+        <div className="flex h-10 w-full items-center justify-center rounded-md border bg-panel font-semibold text-fg-muted">
           Phone number {textverified.phoneNumber}
         </div>
         <div className="flex w-full justify-between gap-3">
           <div
             className="flex h-10 w-full items-center justify-center 
-          rounded-md border bg-white font-semibold text-gray-500"
+          rounded-md border bg-panel font-semibold text-fg-muted"
           >
             {textverified.price} $
           </div>
           <div
             className="flex h-10 w-full items-center justify-center 
-          rounded-md border bg-white font-semibold text-gray-500"
+          rounded-md border bg-panel font-semibold text-fg-muted"
           >
             <div className="relative h-5 w-7 overflow-hidden ">
               <Image
@@ -185,7 +185,7 @@ function SelectNumber({ textverified }: Props) {
               onClick={() => handleCancel(textverified.id)}
               disabled={!sms_textverified.data.detail.cancel.canCancel}
               className="flex h-10 w-full items-center justify-center gap-1 rounded-lg
-           bg-red-500 text-white hover:bg-red-600 active:scale-110 disabled:bg-gray-600"
+           bg-red-500 text-white hover:bg-red-600 active:scale-110 disabled:bg-panel-raised"
             >
               <MdCancel /> Cancel
             </button>
@@ -193,7 +193,7 @@ function SelectNumber({ textverified }: Props) {
               onClick={() => handleReport(textverified.id)}
               disabled={!sms_textverified.data.detail.report.canReport}
               className="flex h-10 w-full items-center justify-center gap-1 rounded-lg
-           bg-orange-500 text-white hover:bg-orange-600 active:scale-110 disabled:bg-gray-600"
+           bg-orange-500 text-white hover:bg-orange-600 active:scale-110 disabled:bg-panel-raised"
             >
               <MdReport /> Report
             </button>
@@ -201,7 +201,7 @@ function SelectNumber({ textverified }: Props) {
               onClick={() => handleReactive(textverified.id)}
               disabled={!sms_textverified.data.detail.reactivate.canReactivate}
               className="flex h-10 w-full items-center justify-center gap-1 rounded-lg
-           bg-green-500 text-white hover:bg-green-600 active:scale-110 disabled:bg-gray-600"
+           bg-green-500 text-white hover:bg-green-600 active:scale-110 disabled:bg-panel-raised"
             >
               <MdCheckBox />
               Reactive
@@ -218,7 +218,7 @@ function SelectNumber({ textverified }: Props) {
                     : true
               }
               className="flex h-10 w-full items-center justify-center gap-1 rounded-lg
-           bg-green-500 text-white hover:bg-green-600 active:scale-110 disabled:bg-gray-600"
+           bg-green-500 text-white hover:bg-green-600 active:scale-110 disabled:bg-panel-raised"
             >
               <MdOutlineRecycling />
               Reused

@@ -59,26 +59,26 @@ function SmsPinverifyAccount({ user, account }: Props) {
   return (
     <li className="relative flex h-max w-max flex-col gap-3 rounded-lg border p-3 font-Poppins">
       <h1 className="w-max border-b pr-20 text-lg font-bold ">
-        <span className="text-base text-gray-400">Username: </span>
+        <span className="text-base text-fg-subtle">Username: </span>
         {account.username}
       </h1>
       {account.isActive ? (
-        <div className=" absolute right-2 top-2 bg-green-100 px-3 text-green-600">
+        <div className=" absolute right-2 top-2 bg-green-500/15 px-3 text-green-600">
           Active
         </div>
       ) : (
-        <div className=" absolute right-2 top-2 bg-gray-100 px-3 text-gray-600">
+        <div className=" absolute right-2 top-2 bg-panel-raised px-3 text-fg-muted">
           Disable
         </div>
       )}
       <h1 className="mt-2  text-base ">
-        <span className="text-sm text-gray-400">Last Active At: </span>
+        <span className="text-sm text-fg-subtle">Last Active At: </span>
         {moment(account.lastActiveAt).format("DD/MM/YYYY HH:mm:ss")}
       </h1>
       <button
         onClick={handleSwichAccount}
         disabled={update.isPaused}
-        className="flex h-10 w-full items-center justify-center rounded-lg bg-gray-800 text-white "
+        className="flex h-10 w-full items-center justify-center rounded-lg bg-panel text-fg "
       >
         {update.isPending ? "Loading.." : "Activate"}
       </button>

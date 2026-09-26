@@ -13,7 +13,7 @@ const EXIT_COLORS: Record<string, string> = {
   clicked_through: "bg-emerald-500",
   back: "bg-amber-500",
   closed: "bg-rose-500",
-  unknown: "bg-zinc-500",
+  unknown: "bg-fg-subtle",
 };
 
 function Bar({
@@ -30,16 +30,16 @@ function Bar({
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
     <div className="mb-2 flex items-center gap-2 text-sm">
-      <span className="w-36 truncate text-zinc-300 sm:w-44" title={label}>
+      <span className="w-36 truncate text-fg-muted sm:w-44" title={label}>
         {label}
       </span>
-      <div className="h-2.5 flex-1 rounded-full bg-white/5">
+      <div className="h-2.5 flex-1 rounded-full bg-panel-raised">
         <div
           className={`h-2.5 rounded-full ${color}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="w-24 shrink-0 text-right text-xs tabular-nums text-zinc-500">
+      <span className="w-24 shrink-0 text-right text-xs tabular-nums text-fg-subtle">
         {count} ({pct}%)
       </span>
     </div>
@@ -54,8 +54,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-      <h3 className="mb-3 text-sm font-semibold text-zinc-200">{title}</h3>
+    <div className="rounded-xl border border-line bg-surface/30 p-4">
+      <h3 className="mb-3 text-sm font-semibold text-fg">{title}</h3>
       {children}
     </div>
   );
@@ -82,20 +82,20 @@ export default function LanderDetailPanel({
     return (
       <div className="mt-2 animate-pulse space-y-4">
         <div className="space-y-2">
-          <div className="h-6 w-56 rounded bg-zinc-700" />
-          <div className="h-3 w-72 rounded bg-zinc-800" />
+          <div className="h-6 w-56 rounded bg-panel-raised" />
+          <div className="h-3 w-72 rounded bg-panel-raised" />
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-32 rounded-xl border border-white/10 bg-black/30 p-4"
+              className="h-32 rounded-xl border border-line bg-surface/30 p-4"
             >
-              <div className="mb-3 h-3 w-28 rounded bg-zinc-700" />
+              <div className="mb-3 h-3 w-28 rounded bg-panel-raised" />
               <div className="space-y-3">
-                <div className="h-2.5 rounded-full bg-zinc-800" />
-                <div className="h-2.5 w-[80%] rounded-full bg-zinc-800" />
-                <div className="h-2.5 w-[60%] rounded-full bg-zinc-800" />
+                <div className="h-2.5 rounded-full bg-panel-raised" />
+                <div className="h-2.5 w-[80%] rounded-full bg-panel-raised" />
+                <div className="h-2.5 w-[60%] rounded-full bg-panel-raised" />
               </div>
             </div>
           ))}
@@ -108,10 +108,10 @@ export default function LanderDetailPanel({
 
   return (
     <div className="mt-1">
-      <h2 className="mb-1 text-xl font-semibold tracking-tight text-white">
+      <h2 className="mb-1 text-xl font-semibold tracking-tight text-fg">
         {d.landingPageName ?? d.landingPageId}
       </h2>
-      <p className="mb-4 text-sm text-zinc-500">
+      <p className="mb-4 text-sm text-fg-subtle">
         {[
           d.domainName || null,
           `${d.views} views`,
@@ -148,7 +148,7 @@ export default function LanderDetailPanel({
               />
             </>
           ) : (
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-fg-subtle">
               No visitor data in this range (collected from deploy day onward).
             </p>
           )}

@@ -1,9 +1,13 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import { THEME_INIT_SCRIPT } from '../utils/theme'
 
 export default function Document() {
   return (
-    <Html lang="en">
-      <Head />
+    <Html lang="en" suppressHydrationWarning>
+      <Head>
+        {/* Sets html.light before first paint so light users never see a dark flash */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </Head>
       <body>
         <Main />
         <NextScript />

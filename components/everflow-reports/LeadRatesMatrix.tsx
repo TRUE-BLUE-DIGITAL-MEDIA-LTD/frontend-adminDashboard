@@ -22,25 +22,25 @@ const LeadRatesMatrix = ({
 
   if (matrix.countries.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-10 text-zinc-500">
-        <FaGlobe className="mb-3 text-4xl text-zinc-600" />
+      <div className="flex flex-col items-center justify-center py-10 text-fg-subtle">
+        <FaGlobe className="mb-3 text-4xl text-fg-subtle" />
         <p>No rates found.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-h-[70vh] overflow-auto rounded-xl border border-white/10">
+    <div className="max-h-[70vh] overflow-auto rounded-xl border border-line">
       <table className="min-w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="sticky left-0 top-0 z-20 bg-zinc-800/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+            <th className="sticky left-0 top-0 z-20 bg-panel-raised/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-muted">
               Country
             </th>
             {columns.map((id) => (
               <th
                 key={id}
-                className="sticky top-0 z-10 whitespace-nowrap border-l border-white/5 bg-zinc-800/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-300"
+                className="sticky top-0 z-10 whitespace-nowrap border-l border-line bg-panel-raised/90 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-muted"
               >
                 {campaignName(id)}
               </th>
@@ -51,9 +51,9 @@ const LeadRatesMatrix = ({
           {matrix.countries.map((country) => (
             <tr
               key={country}
-              className="border-b border-white/5 transition hover:bg-white/5"
+              className="border-b border-line transition hover:bg-hover"
             >
-              <th className="sticky left-0 z-10 whitespace-nowrap bg-zinc-900 px-4 py-2 text-left font-semibold text-white">
+              <th className="sticky left-0 z-10 whitespace-nowrap bg-panel px-4 py-2 text-left font-semibold text-fg">
                 <div className="flex items-center gap-2">
                   {getCountryFlag(country) && (
                     <img
@@ -70,12 +70,12 @@ const LeadRatesMatrix = ({
                 return (
                   <td
                     key={id}
-                    className="whitespace-nowrap border-l border-white/5 px-4 py-2 font-medium text-zinc-200"
+                    className="whitespace-nowrap border-l border-line px-4 py-2 font-medium text-fg"
                   >
                     {rate ? (
                       formatRate(rate)
                     ) : (
-                      <span className="text-zinc-600">—</span>
+                      <span className="text-fg-subtle">—</span>
                     )}
                   </td>
                 );

@@ -24,7 +24,7 @@ function SelectEmailDomain({ activeEmails }: Props) {
   const domainTemplate = (option: SmsBulkEmailDomainItem) => (
     <div className="flex w-96 items-center justify-between gap-2">
       <span>
-        {option.name} <span className="text-xs text-gray-400">{option.count} in stock</span>
+        {option.name} <span className="text-xs text-fg-subtle">{option.count} in stock</span>
       </span>
       <span className="font-semibold">${option.price.toFixed(2)}</span>
     </div>
@@ -45,7 +45,7 @@ function SelectEmailDomain({ activeEmails }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <div className="flex w-96 gap-2">
         <input
           value={siteInput}
@@ -64,12 +64,13 @@ function SelectEmailDomain({ activeEmails }: Props) {
             setSite(normaliseSite(siteInput));
             setDomain(null);
           }}
-          className="h-10 rounded border bg-white px-3 text-sm hover:bg-gray-800 hover:text-white"
+          className="h-10 rounded border bg-panel px-3 text-sm hover:bg-hover hover:text-fg"
         >
           Find domains
         </button>
       </div>
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={domain}
         onChange={(e: DropdownChangeEvent) => setDomain(e.value)}
         filter
@@ -82,7 +83,7 @@ function SelectEmailDomain({ activeEmails }: Props) {
         className="w-96 border"
         itemTemplate={domainTemplate}
       />
-      <div className="flex h-6 w-96 items-center justify-end text-sm text-gray-600">
+      <div className="flex h-6 w-96 items-center justify-end text-sm text-fg-muted">
         {domain ? `Price: $${domain.price.toFixed(2)}` : ""}
       </div>
       <button

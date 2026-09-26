@@ -79,7 +79,7 @@ function SetupTotp({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
-      <div className="bg-slate-50">
+      <div className="bg-panel-raised">
         <Head>
           <title>Setup Two Factor Authentication</title>
           <meta
@@ -89,7 +89,7 @@ function SetupTotp({ user }: { user: User }) {
         </Head>
 
         <main className="flex min-h-screen flex-col items-center justify-center gap-2">
-          <div className="flex h-96 w-96 flex-col items-center justify-start gap-2 rounded-2xl bg-white p-5 font-Poppins drop-shadow-lg">
+          <div className="flex h-96 w-96 flex-col items-center justify-start gap-2 rounded-2xl bg-panel p-5 font-Poppins drop-shadow-lg">
             <h1 className="text-center text-lg font-semibold">
               Setup Two Factor Authentication
             </h1>
@@ -103,7 +103,7 @@ function SetupTotp({ user }: { user: User }) {
               />
             </h2>
             <div
-              className={`relative h-52 w-52 rounded-md p-3 ${isLoading && "animate-pulse bg-gradient-to-r from-slate-300 to-slate-500 "}`}
+              className={`relative h-52 w-52 rounded-md p-3 ${isLoading && "animate-pulse bg-panel-raised "}`}
             >
               {qrCode && (
                 <Image
@@ -116,14 +116,14 @@ function SetupTotp({ user }: { user: User }) {
             </div>
             <form onSubmit={handleConfirm} className="flex w-60 flex-col gap-2">
               {isLoading ? (
-                <div className="h-10 w-full animate-pulse rounded-md bg-slate-200" />
+                <div className="h-10 w-full animate-pulse rounded-md bg-panel-raised" />
               ) : (
                 <input
                   type="text"
                   onChange={(e) => setCode(e.target.value)}
                   value={code}
                   placeholder="Enter the 6 digit code"
-                  className="h-10 w-full rounded-md p-2 text-center ring-1 ring-slate-300 
+                  className="h-10 w-full rounded-md p-2 text-center ring-1 ring-line-strong 
                 focus:outline-none active:outline-none"
                   maxLength={6}
                   minLength={6}
@@ -135,9 +135,9 @@ function SetupTotp({ user }: { user: User }) {
                 />
               )}
               {isLoading ? (
-                <div className="h-10 w-full animate-pulse rounded-md bg-slate-400" />
+                <div className="h-10 w-full animate-pulse rounded-md bg-panel-raised" />
               ) : (
-                <button className="h-10 w-full rounded-md bg-slate-700 text-white hover:bg-slate-800">
+                <button className="h-10 w-full rounded-md bg-panel-raised text-fg hover:bg-hover">
                   Confirm
                 </button>
               )}

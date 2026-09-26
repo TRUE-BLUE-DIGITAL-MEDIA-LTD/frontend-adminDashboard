@@ -51,17 +51,17 @@ function SmsGetatextAccountCard({ account, user }: Props) {
 
   return (
     <li
-      className={`flex items-center justify-between gap-5 rounded-md p-2 ring-1 ring-gray-300 drop-shadow-md ${
-        account.isActive ? "bg-green-100" : "bg-white"
+      className={`flex items-center justify-between gap-5 rounded-md p-2 ring-1 ring-line-strong drop-shadow-md ${
+        account.isActive ? "bg-green-500/15" : "bg-panel"
       }`}
     >
       <div className="flex flex-col">
-        <h2 className="font-semibold text-gray-800">{account.username}</h2>
+        <h2 className="font-semibold text-fg">{account.username}</h2>
       </div>
       <button
         onClick={handleActiveAccount}
         disabled={account.isActive}
-        className="rounded-md bg-blue-500 px-3 py-1 font-semibold text-white drop-shadow-md transition hover:bg-blue-600 disabled:bg-gray-400"
+        className="rounded-md bg-blue-500 px-3 py-1 font-semibold text-white drop-shadow-md transition hover:bg-blue-600 disabled:bg-panel-raised"
       >
         {account.isActive ? "Active" : "Set Active"}
       </button>

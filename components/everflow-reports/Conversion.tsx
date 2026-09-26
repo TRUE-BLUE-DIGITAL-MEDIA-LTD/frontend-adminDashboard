@@ -66,159 +66,159 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
   return (
     <div className="flex flex-col">
       <div className="flex h-96 w-full flex-col overflow-auto">
-        <table className="w-max min-w-full divide-y divide-white/5">
-          <thead className="bg-zinc-900">
+        <table className="w-max min-w-full divide-y divide-line">
+          <thead className="bg-panel">
             <tr>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Number
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Date
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Click Date
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Delta
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Partner
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Offer
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Status
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Conversion IP
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Session IP
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Conversion ID
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Payout
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Country
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 City
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Platform
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Device
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Browser
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Carrier
               </th>
               <th
                 scope="col"
-                className="sticky top-0 bg-zinc-900 px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500"
+                className="sticky top-0 bg-panel px-6 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle"
               >
                 Sub1
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5 bg-transparent">
+          <tbody className="divide-y divide-line bg-transparent">
             {data?.map((conv, index) => (
               <tr
                 key={conv.conversion_id}
-                className="border-b border-white/5 transition hover:bg-white/5"
+                className="border-b border-line transition hover:bg-hover"
               >
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {index + 1}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {formatTimestamp(conv.conversion_timestamp)}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {formatTimestamp(conv.click_timestamp)}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-white">
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-fg">
                   {calculateAndFormatDelta(
                     conv.conversion_timestamp,
                     conv.click_timestamp,
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-white">
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-fg">
                   {conv.network_affiliate_id}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.network_offer_id}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {renderStatus(conv.conversion_status)}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.conversion_user_ip}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.session_user_ip}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.conversion_id}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.currency_converted_id
                     ? formatCurrency(
                         Number(
@@ -236,25 +236,25 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({
                       </span>
                     )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.country}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.city}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.platform}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.device_type}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.browser}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.carrier}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-400">
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-fg-muted">
                   {conv.sub1}
                 </td>
               </tr>
@@ -311,14 +311,14 @@ function Conversion({ startDate, endDate, columns, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-white/15 bg-transparent px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/5"
+          className="rounded-full border border-line-strong bg-transparent px-4 py-2 text-sm font-medium text-fg transition hover:bg-hover"
         >
           Close
         </button>
       }
     >
       {data.isLoading && !data.data?.length ? (
-        <div className="flex h-40 items-center justify-center text-sm text-zinc-400">
+        <div className="flex h-40 items-center justify-center text-sm text-fg-muted">
           Loading…
         </div>
       ) : (

@@ -81,7 +81,7 @@ function SmsGetatexts({ user }: Props) {
         )}
         {(user.role === "manager" || user.role === "admin") && (
           <div className="mt-2 flex w-full flex-col items-center justify-center gap-2">
-            <span className="rounded-md bg-gray-100 px-3 py-1 font-semibold text-gray-800 ring-1 ring-gray-300">
+            <span className="rounded-md bg-panel-raised px-3 py-1 font-semibold text-fg ring-1 ring-line-strong">
               Balance: {balance.data?.balance}
             </span>
             {user.role === "admin" && (
@@ -92,8 +92,8 @@ function SmsGetatexts({ user }: Props) {
             )}
           </div>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">OxyGT</h1>
-        <span className="text-sm text-gray-500">
+        <h1 className="text-4xl font-semibold text-fg">OxyGT</h1>
+        <span className="text-sm text-fg-muted">
           OxyGT provides real US Non-VoIP phone numbers for SMS verification.
         </span>
       </header>
@@ -102,7 +102,7 @@ function SmsGetatexts({ user }: Props) {
           <h1 className="text-lg font-semibold">My numbers</h1>
           {!activeNumbers.data ||
             (activeNumbers.data.length === 0 && (
-              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
+              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-panel p-5 ring-1 ring-line-strong drop-shadow-xl">
                 <RiErrorWarningLine className="text-5xl" />
                 <h3 className="text-xl">No operations.</h3>
                 <span className="text-sm">

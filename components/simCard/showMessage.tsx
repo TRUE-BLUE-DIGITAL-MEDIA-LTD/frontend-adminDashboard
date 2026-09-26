@@ -139,20 +139,20 @@ function ShowMessage({
     <div className="fixed bottom-0 left-0 right-0 top-0 z-50 m-auto flex h-screen w-screen items-center justify-center font-Poppins">
       <main
         className="relative grid h-96 grid-cols-2 gap-5 overflow-y-auto rounded-lg border
-         border-gray-100  bg-gradient-to-r from-gray-50 to-gray-200  p-5 
+         border-line  bg-panel  p-5 
         drop-shadow-xl lg:w-11/12 xl:w-10/12  2xl:w-9/12"
       >
         {message.isFetching ? (
           <div
             className="absolute left-2 top-2 m-auto animate-pulse rounded-md
-          bg-gray-200 px-2 text-gray-800"
+          bg-panel-raised px-2 text-fg"
           >
             Syncing data ...
           </div>
         ) : (
           <div
             className="absolute left-2 top-2 m-auto rounded-md
-           bg-green-200 px-2 text-green-800"
+           bg-green-500/20 px-2 text-green-800 dark:text-green-400"
           >
             Synced
           </div>
@@ -161,13 +161,13 @@ function ShowMessage({
         <section className="flex flex-col justify-center gap-5">
           <h1
             className="flex items-center justify-center gap-2 border-b
-         border-gray-400 text-xl font-semibold text-main-color"
+         border-line-strong text-xl font-semibold text-main-color"
           >
             Sim card Information <FcSimCard />
           </h1>
           <div className="flex w-full gap-3 ">
             {simCard.isLoading ? (
-              <div className="h-8 w-20 animate-pulse rounded-md bg-gray-400"></div>
+              <div className="h-8 w-20 animate-pulse rounded-md bg-panel-raised"></div>
             ) : simCard.data?.simCard.status === "active" ? (
               <div className="w-max rounded-sm bg-green-600 px-2   text-green-100">
                 active
@@ -178,7 +178,7 @@ function ShowMessage({
               </div>
             )}
             {simCard.isLoading ? (
-              <div className="h-8 w-full animate-pulse rounded-md bg-gray-300"></div>
+              <div className="h-8 w-full animate-pulse rounded-md bg-panel-raised"></div>
             ) : (
               <div className="rounded-sm border border-blue-400 bg-blue-500 px-2  text-white">
                 last update at{" "}
@@ -195,9 +195,9 @@ function ShowMessage({
                 Phone Number:{" "}
               </span>
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <span className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   {simCard.data?.simCard.phoneNumber.replace(
                     /(\d{4})(\d{3})(\d{4})/,
                     "($1) $2-$3",
@@ -211,9 +211,10 @@ function ShowMessage({
                 Last Used:{" "}
               </span>
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
                 <Calendar
+        panelClassName="oxy-overlay-panel"
                   value={lastUsed ? new Date(lastUsed) : null}
                   onChange={async (e) => {
                     setLastUsed(e.value ? e.value?.toISOString() : null);
@@ -232,9 +233,9 @@ function ShowMessage({
                 Port Number:{" "}
               </span>
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <span className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   {simCard.data?.simCard.portNumber}
                 </span>
               )}
@@ -246,9 +247,9 @@ function ShowMessage({
               </span>
 
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-400"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <span className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   {simCard.data?.simCard.iccid}
                 </span>
               )}
@@ -260,9 +261,9 @@ function ShowMessage({
               </span>
 
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-300"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <span className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   {simCard.data?.simCard.imsi}
                 </span>
               )}
@@ -274,9 +275,9 @@ function ShowMessage({
               </span>
 
               {simCard.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : (
-                <span className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <span className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   {simCard.data?.simCard?.deviceUser?.portNumber ?? "N/A"}
                 </span>
               )}
@@ -288,20 +289,20 @@ function ShowMessage({
               </span>
 
               {message.isLoading ? (
-                <div className="h-8 w-60 animate-pulse rounded-md bg-gray-600"></div>
+                <div className="h-8 w-60 animate-pulse rounded-md bg-panel-raised"></div>
               ) : message.data?.simCard.expireAt ? (
                 <Countdown
                   date={message.data?.simCard.expireAt}
                   intervalDelay={0}
                   precision={3}
                   renderer={(props) => (
-                    <div className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                    <div className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                       {props.minutes} : {props.seconds} : {props.milliseconds}
                     </div>
                   )}
                 />
               ) : (
-                <div className="rounded-sm bg-blue-100 px-5 font-bold text-black">
+                <div className="rounded-sm bg-blue-500/15 px-5 font-bold text-fg">
                   Slot is not available
                 </div>
               )}
@@ -315,7 +316,7 @@ function ShowMessage({
               saving...
             </span>
           ) : (
-            <span className="absolute right-2 top-2 m-auto text-xs text-green-800">
+            <span className="absolute right-2 top-2 m-auto text-xs text-green-800 dark:text-green-400">
               saved
             </span>
           )}
@@ -327,11 +328,11 @@ function ShowMessage({
             >
               Message <Message />
             </button>
-            <div className="h-full  w-[1px] bg-black"></div>
+            <div className="h-full  w-[1px] bg-surface"></div>
             <button
               onClick={(e) => setSelectMenu(() => "note")}
               className="flex items-center justify-center gap-2  text-xl font-semibold 
-              text-green-700 hover:text-green-800 active:scale-105"
+              text-green-700 dark:text-green-400 hover:text-green-800 active:scale-105"
             >
               Note <Note />
             </button>
@@ -340,7 +341,7 @@ function ShowMessage({
           {selectMenu === "note" ? (
             <div ref={focusNote} className="h-full rounded-md ">
               {loading && (
-                <div className="h-full w-full animate-pulse bg-gray-500"></div>
+                <div className="h-full w-full animate-pulse bg-panel-raised"></div>
               )}
 
               <Editor
@@ -392,10 +393,10 @@ function ShowMessage({
               />
             </div>
           ) : message.isLoading ? (
-            <div className="h-60 w-full animate-pulse rounded-md bg-gray-200"></div>
+            <div className="h-60 w-full animate-pulse rounded-md bg-panel-raised"></div>
           ) : message.error ? (
             <section className="flex flex-col items-center justify-center gap-5">
-              <span className="text-2xl font-semibold text-red-700">
+              <span className="text-2xl font-semibold text-red-700 dark:text-red-400">
                 {message.error.message}
               </span>
               {message.error.simCard && (
@@ -409,7 +410,7 @@ function ShowMessage({
                 </div>
               )}
               {message.error.simCard && (
-                <div className="flex flex-col items-center gap-2 font-semibold text-green-700">
+                <div className="flex flex-col items-center gap-2 font-semibold text-green-700 dark:text-green-400">
                   Please come back in{" "}
                   <Countdown
                     date={message.error.simCard.expireAt ?? new Date()}
@@ -445,7 +446,7 @@ function ShowMessage({
                             }
                           }}
                           className="flex w-full flex-col gap-1 rounded-md
-                         border border-gray-500 bg-white p-2
+                         border border-line-strong bg-panel p-2
                          py-2  "
                           key={index}
                         >
@@ -454,13 +455,13 @@ function ShowMessage({
                             {msg.message}
                           </span>
                           <div className="flex w-full items-center gap-3">
-                            <span className="w-max rounded-sm bg-gray-600 px-2 text-xs text-white">
+                            <span className="w-max rounded-sm bg-panel-raised px-2 text-xs text-fg">
                               {moment(
                                 new Date(msg.timestamp * 1000).toISOString(),
                               ).format("DD MMMM YYYY HH:mm:ss")}{" "}
                             </span>
                             <span
-                              className={`w-max rounded-sm ${msg.isRead ? "bg-green-600" : "bg-gray-600"}  px-2 text-xs text-white`}
+                              className={`w-max rounded-sm ${msg.isRead ? "bg-green-600" : "bg-panel-raised"}  px-2 text-xs text-white`}
                             >
                               {msg.isRead ? "Read" : "Unread"}
                             </span>
@@ -508,7 +509,7 @@ function ShowMessage({
           }
         }}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen
-        bg-black/30  "
+        bg-scrim  "
       ></footer>
     </div>
   );

@@ -38,15 +38,15 @@ const availableSlot = ["available", "unavailable"];
 
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 type AssignPhoneNumberProps = {
@@ -292,23 +292,23 @@ function AssignPhoneNumber({
     <div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 p-4 font-Poppins md:flex-row"
     >
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl md:h-[40rem] md:w-96">
-        <header className="shrink-0 border-b border-white/10 px-5 py-4">
-          <h2 className="text-sm font-semibold text-white">
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl md:h-[40rem] md:w-96">
+        <header className="shrink-0 border-b border-line px-5 py-4">
+          <h2 className="text-sm font-semibold text-fg">
             {`${selectPartner.name}'s numbers`}
           </h2>
-          <p className="text-xs text-zinc-500">Currently assigned</p>
+          <p className="text-xs text-fg-subtle">Currently assigned</p>
         </header>
         <ul className="min-h-0 flex-1 space-y-1 overflow-auto px-3 py-3">
           {simCardOnPartners.isLoading ? (
-            <div className="h-full w-full animate-pulse rounded-xl bg-zinc-800" />
+            <div className="h-full w-full animate-pulse rounded-xl bg-panel-raised" />
           ) : (
             simCardOnPartners.data?.map((simCardOnPartner) => (
               <li
                 key={simCardOnPartner.id}
-                className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-black/30 px-3 py-2.5"
+                className="flex w-full items-center justify-between rounded-xl border border-line bg-surface/30 px-3 py-2.5"
               >
-                <span className="font-medium text-zinc-200">
+                <span className="font-medium text-fg">
                   {simCardOnPartner.simCard.phoneNumber.replace(
                     /(\d{4})(\d{3})(\d{4})/,
                     "($1) $2-$3",
@@ -321,31 +321,31 @@ function AssignPhoneNumber({
             ))
           )}
         </ul>
-        <footer className="shrink-0 border-t border-white/10 px-5 py-3 text-center text-xs text-zinc-400">
+        <footer className="shrink-0 border-t border-line px-5 py-3 text-center text-xs text-fg-muted">
           Total: {simCardOnPartners.data?.length ?? 0}
         </footer>
       </div>
-      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-2xl md:h-[40rem]">
+      <Form className="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-2xl md:h-[40rem]">
         {phoneNumber.isFetching && (
-          <div className="absolute right-14 top-4 z-20 text-xs text-zinc-400">
+          <div className="absolute right-14 top-4 z-20 text-xs text-fg-muted">
             Loading…
           </div>
         )}
 
         <section className="flex h-full min-h-0 w-full flex-col">
-          <header className="flex shrink-0 flex-col gap-4 border-b border-white/10 px-5 py-4">
+          <header className="flex shrink-0 flex-col gap-4 border-b border-line px-5 py-4">
             <div className="flex w-full flex-col items-start justify-between gap-3 md:flex-row md:items-center">
               <div>
-                <h1 className="text-lg font-semibold text-white">
+                <h1 className="text-lg font-semibold text-fg">
                   Assign phone number
                 </h1>
-                <p className="text-xs text-zinc-500">{selectPartner.name}</p>
+                <p className="text-xs text-fg-subtle">{selectPartner.name}</p>
               </div>
               <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setSelectBulkAssign((prev) => !prev)}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-300 transition hover:bg-white/10"
+                className="rounded-full border border-line bg-panel-raised px-4 py-2 text-sm font-semibold text-fg-muted transition hover:bg-hover"
               >
                 {selectBulkAssign ? "Close bulk" : "Bulk assign"}
               </button>
@@ -355,7 +355,7 @@ function AssignPhoneNumber({
                   setTriggerAssignNumber(() => false);
                   document.body.style.overflow = "auto";
                 }}
-                className="rounded-lg px-2 py-1 text-zinc-400 hover:bg-white/5 hover:text-white"
+                className="rounded-lg px-2 py-1 text-fg-muted hover:bg-hover hover:text-fg"
                 aria-label="Close"
               >
                 ✕
@@ -377,11 +377,12 @@ function AssignPhoneNumber({
                 >
                   <Input
                     placeholder="Search Phone Number Or Note"
-                    className="h-12 w-full appearance-none rounded-lg border border-white/10 bg-black/40 p-3 pl-10 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-main-color"
+                    className="h-12 w-full appearance-none rounded-lg border border-line bg-surface/40 p-3 pl-10 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color"
                   />
                   <IoSearchCircleSharp className="absolute left-2 top-1/2 -translate-y-1/2 text-3xl text-main-color" />
                 </SearchField>
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={selectAvailableSlot}
                   onChange={(e) => {
                     setPage(1);
@@ -389,9 +390,10 @@ function AssignPhoneNumber({
                   }}
                   options={availableSlot}
                   placeholder="Select Availability"
-                  className="h-12 w-full rounded-lg border border-white/10 bg-black/40 text-sm text-white"
+                  className="h-12 w-full rounded-lg border border-line bg-surface/40 text-sm text-fg"
                 />
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={selectDeviceUser}
                   onChange={(e) => {
                     setPage(1);
@@ -402,9 +404,10 @@ function AssignPhoneNumber({
                   loading={deviceUser.isLoading}
                   optionLabel="portNumber"
                   placeholder="Select Device User"
-                  className="h-12 w-full rounded-lg border border-white/10 bg-black/40 text-sm text-white"
+                  className="h-12 w-full rounded-lg border border-line bg-surface/40 text-sm text-fg"
                 />
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={getNoPartner}
                   onChange={(e) => {
                     setPage(1);
@@ -413,9 +416,10 @@ function AssignPhoneNumber({
                   showClear
                   options={["no-partner", "partner", "default"]}
                   placeholder="Filter Partner"
-                  className="h-12 w-full rounded-lg border border-white/10 bg-black/40 text-sm text-white"
+                  className="h-12 w-full rounded-lg border border-line bg-surface/40 text-sm text-fg"
                 />
                 <Dropdown
+        panelClassName="oxy-overlay-panel"
                   value={selectPartnerSearch}
                   onChange={(e) => {
                     setPage(1);
@@ -432,7 +436,7 @@ function AssignPhoneNumber({
                   loading={partners.isLoading}
                   options={partners.data?.data}
                   placeholder="Select Partner"
-                  className="h-12 w-full rounded-lg border border-white/10 bg-black/40 text-sm text-white lg:col-span-2"
+                  className="h-12 w-full rounded-lg border border-line bg-surface/40 text-sm text-fg lg:col-span-2"
                 />
               </div>
             )}
@@ -442,7 +446,7 @@ function AssignPhoneNumber({
               ? [...Array(5)].map((_, index) => (
                   <div
                     key={index}
-                    className="h-14 animate-pulse rounded-xl bg-zinc-800/60"
+                    className="h-14 animate-pulse rounded-xl bg-panel-raised/60"
                   />
                 ))
               : simCardOnPartnerData?.simCards?.map((sim) => {
@@ -457,19 +461,19 @@ function AssignPhoneNumber({
                       className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
                         sim.isChecking
                           ? "border-emerald-500/30 bg-emerald-500/10"
-                          : "border-white/10 bg-black/30 hover:bg-white/5"
+                          : "border-line bg-surface/30 hover:bg-hover"
                       }`}
                       key={sim.id}
                     >
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-white">
+                        <p className="truncate font-medium text-fg">
                           {country?.countryCode}{" "}
                           {sim.phoneNumber.replace(
                             /(\d{4})(\d{3})(\d{4})/,
                             "($1) $2-$3",
                           )}
                         </p>
-                        <p className="truncate text-xs text-zinc-500">
+                        <p className="truncate text-xs text-fg-subtle">
                           {country?.country || "—"} ·{" "}
                           {device?.portNumber ?? "No device"} ·{" "}
                           {sim.simcardOnPartner?.partner.name || "No partner"}
@@ -477,7 +481,7 @@ function AssignPhoneNumber({
                       </div>
                       <div className="shrink-0">
                         {sim.isLoading ? (
-                          <div className="h-6 w-6 animate-spin rounded-full border-4 border-zinc-700 border-t-main-color" />
+                          <div className="h-6 w-6 animate-spin rounded-full border-4 border-line-strong border-t-main-color" />
                         ) : sim.simcardOnPartner &&
                           sim.simcardOnPartner.partnerId !==
                             selectPartner.id ? (
@@ -528,8 +532,8 @@ function AssignPhoneNumber({
                   );
                 })}
           </div>
-          <div className="flex shrink-0 justify-center border-t border-white/10 px-5 py-3">
-            <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+          <div className="flex shrink-0 justify-center border-t border-line px-5 py-3">
+            <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
               <Pagination
                 page={page}
                 onChange={(e, page) => setPage(page)}
@@ -547,7 +551,7 @@ function AssignPhoneNumber({
           setTriggerAssignNumber(() => false);
           document.body.style.overflow = "auto";
         }}
-        className="fixed inset-0 -z-10 bg-black/70"
+        className="fixed inset-0 -z-10 bg-scrim"
       ></footer>
     </div>
   );
@@ -617,8 +621,9 @@ function BulkAssign({
     <div className="flex flex-col items-center justify-center gap-2">
       <div className="flex flex-wrap gap-3">
         <div className="flex flex-col">
-          <label className="text-sm font-normal text-zinc-400">Select Device User</label>
+          <label className="text-sm font-normal text-fg-muted">Select Device User</label>
           <Dropdown
+        panelClassName="oxy-overlay-panel"
             value={selectDeviceUser}
             onChange={(e) => {
               setSelectDeviceUser(() => e.value);
@@ -628,12 +633,13 @@ function BulkAssign({
             loading={deviceUser.isLoading}
             optionLabel="portNumber"
             placeholder="Select Available Slot"
-            className="h-10 w-40 rounded-lg border border-white/10 bg-black/40 text-sm text-white outline-none"
+            className="h-10 w-40 rounded-lg border border-line bg-surface/40 text-sm text-fg outline-none"
           />
         </div>
         <div className="flex flex-col">
-          <label className="text-sm font-normal text-zinc-400">Select Type Of Perform</label>
+          <label className="text-sm font-normal text-fg-muted">Select Type Of Perform</label>
           <Dropdown
+        panelClassName="oxy-overlay-panel"
             value={selectOption}
             onChange={(e) => {
               setSelectOption(() => e.value as OptionKey);
@@ -641,13 +647,13 @@ function BulkAssign({
             options={[...options]}
             optionLabel="Option"
             placeholder="Select Available Slot"
-            className="h-10 w-40 rounded-lg border border-white/10 bg-black/40 text-sm text-white outline-none"
+            className="h-10 w-40 rounded-lg border border-line bg-surface/40 text-sm text-fg outline-none"
           />
         </div>
         <div className="flex flex-col">
-          <label className="text-sm font-normal text-zinc-400">Select Type Of Perform</label>
+          <label className="text-sm font-normal text-fg-muted">Select Type Of Perform</label>
           <InputNumber
-            className="h-10 w-40 rounded-lg border border-white/10 bg-black/40 text-sm text-white outline-none"
+            className="h-10 w-40 rounded-lg border border-line bg-surface/40 text-sm text-fg outline-none"
             value={number}
             onValueChange={(e) => setNumber(e.value)}
           />
@@ -657,7 +663,7 @@ function BulkAssign({
         type="button"
         disabled={loading}
         onClick={() => handleBulk()}
-        className="h-10 w-40 rounded-full bg-white text-sm font-semibold text-black hover:bg-main-color hover:text-white"
+        className="h-10 w-40 rounded-full bg-fg text-sm font-semibold text-surface hover:bg-main-color hover:text-white"
       >
         {loading ? "Loading..." : "Perform"}
       </button>

@@ -8,7 +8,7 @@ function Cities({ cities }: { cities: ResponseGetPostalCodesByStateService }) {
         .flat()
         .map((city, index) => (
           <li
-            className=" flex flex-col items-start justify-center rounded-md bg-blue-100  p-5 ring-blue-900 transition duration-100 hover:bg-blue-200 hover:ring-2"
+            className=" flex flex-col items-start justify-center rounded-md bg-blue-500/15  p-5 ring-blue-900 transition duration-100 hover:bg-blue-500/20 hover:ring-2"
             key={index}
           >
             <span>

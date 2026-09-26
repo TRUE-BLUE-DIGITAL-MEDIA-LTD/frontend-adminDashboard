@@ -43,7 +43,7 @@ function TotpRequire({ email }: { email: string }) {
   };
 
   return (
-    <div className="flex h-min w-96 flex-col items-center justify-start gap-2 rounded-2xl bg-white p-5 font-Poppins drop-shadow-lg">
+    <div className="flex h-min w-96 flex-col items-center justify-start gap-2 rounded-2xl bg-panel p-5 font-Poppins drop-shadow-lg">
       <h1 className="text-center text-lg font-semibold">
         Two Factor Authentication Required
       </h1>
@@ -66,7 +66,7 @@ function TotpRequire({ email }: { email: string }) {
           onChange={(e) => setCode(e.target.value)}
           value={code}
           placeholder="Enter the 6 digit code"
-          className="h-10 w-full rounded-md p-2 text-center ring-1 ring-slate-300 focus:outline-none active:outline-none"
+          className="h-10 w-full rounded-md p-2 text-center ring-1 ring-line-strong focus:outline-none active:outline-none"
           maxLength={6}
           minLength={6}
           pattern="\d{6}"
@@ -76,7 +76,7 @@ function TotpRequire({ email }: { email: string }) {
           }}
         />
 
-        <label className="flex items-center gap-2 text-sm text-slate-700">
+        <label className="flex items-center gap-2 text-sm text-fg">
           <input
             type="checkbox"
             checked={trustDevice}
@@ -87,7 +87,7 @@ function TotpRequire({ email }: { email: string }) {
 
         <button
           disabled={isLoading}
-          className="flex h-10 w-full items-center justify-center rounded-md bg-slate-700 text-white hover:bg-slate-800"
+          className="flex h-10 w-full items-center justify-center rounded-md bg-panel-raised text-fg hover:bg-hover"
         >
           {isLoading ? <SpinLoading /> : 'Confirm'}
         </button>

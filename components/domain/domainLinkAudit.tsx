@@ -13,7 +13,7 @@ const statusPillClass: Record<LinkAuditStatus, string> = {
   MISMATCH: "border-rose-500/30 bg-rose-500/10 text-rose-300",
   ERROR: "border-rose-500/40 bg-rose-500/15 text-rose-200",
   NO_SMARTLINK: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  UNASSIGNED: "border-white/10 bg-white/5 text-zinc-400",
+  UNASSIGNED: "border-line bg-panel-raised text-fg-muted",
 };
 
 const statusDotClass: Record<LinkAuditStatus, string> = {
@@ -21,7 +21,7 @@ const statusDotClass: Record<LinkAuditStatus, string> = {
   MISMATCH: "bg-rose-400",
   ERROR: "bg-rose-300",
   NO_SMARTLINK: "bg-amber-400",
-  UNASSIGNED: "bg-zinc-500",
+  UNASSIGNED: "bg-fg-subtle",
 };
 
 function formatError(err: any): string {
@@ -76,7 +76,7 @@ export default function DomainLinkAudit({ domainId }: { domainId: string }) {
 
   if (audit.isLoading) {
     return (
-      <div className="flex items-center gap-2 p-4 text-sm text-zinc-400">
+      <div className="flex items-center gap-2 p-4 text-sm text-fg-muted">
         <CircularProgress size={18} sx={{ color: "#00ABE4" }} /> Scanning
         links…
       </div>
@@ -95,10 +95,10 @@ export default function DomainLinkAudit({ domainId }: { domainId: string }) {
   const data = audit.data!;
 
   return (
-    <div className="flex flex-col gap-3 p-2 text-zinc-100">
+    <div className="flex flex-col gap-3 p-2 text-fg">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold text-white">Link health</span>
+          <span className="font-semibold text-fg">Link health</span>
           <span
             className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ${statusPillClass[data.status]}`}
           >
@@ -107,7 +107,7 @@ export default function DomainLinkAudit({ domainId }: { domainId: string }) {
             />
             {data.status}
           </span>
-          <span className="text-sm text-zinc-500">
+          <span className="text-sm text-fg-subtle">
             {data.mismatchCount}/{data.landingPageCount} landing pages
             mismatched
           </span>
@@ -150,20 +150,20 @@ export default function DomainLinkAudit({ domainId }: { domainId: string }) {
       {data.findings.map((f) => (
         <div
           key={f.landingPageId}
-          className="rounded-xl border border-white/10 bg-black/30 p-3"
+          className="rounded-xl border border-line bg-surface/30 p-3"
         >
           <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 font-medium text-white">
+            <div className="min-w-0 font-medium text-fg">
               <span className="truncate">
                 {f.landingPageName ?? f.landingPageId}
               </span>
-              <span className="ml-2 text-xs text-zinc-500">{f.percent}%</span>
+              <span className="ml-2 text-xs text-fg-subtle">{f.percent}%</span>
             </div>
             <button
               type="button"
               disabled={fix.isPending}
               onClick={() => runFix(f.landingPageId)}
-              className="inline-flex shrink-0 items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-200 transition hover:border-main-color/40 hover:bg-main-color/10 hover:text-main-color disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex shrink-0 items-center rounded-full border border-line-strong bg-panel-raised px-3 py-1 text-xs font-semibold text-fg transition hover:border-main-color/40 hover:bg-main-color/10 hover:text-main-color disabled:cursor-not-allowed disabled:opacity-50"
             >
               Fix
             </button>
@@ -182,9 +182,9 @@ export default function DomainLinkAudit({ domainId }: { domainId: string }) {
               .map((l, i) => (
                 <div
                   key={i}
-                  className="rounded-lg border border-white/5 bg-zinc-900/80 p-2 text-xs"
+                  className="rounded-lg border border-line bg-panel/80 p-2 text-xs"
                 >
-                  <div className="font-semibold text-zinc-300">{l.location}</div>
+                  <div className="font-semibold text-fg-muted">{l.location}</div>
                   <div className="break-all text-rose-300">
                     actual: {l.actual || "(empty)"}
                   </div>

@@ -293,12 +293,12 @@ function Index({ user }: { user: User & { partner: Partner } }) {
         />
       )}
 
-      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="min-h-screen w-full bg-surface font-Poppins text-fg">
         <header className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 px-4 py-10 text-center sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
             Infrastructure
           </p>
-          <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-fg md:text-5xl">
             <span className="text-main-color">D</span>omains
           </h1>
           {(user.role === "admin" ||
@@ -309,7 +309,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 document.body.style.overflow = "hidden";
                 setTriggerCreateDomain(() => true);
               }}
-              className="rounded-full border border-white bg-white px-12 py-2.5 text-base font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-105"
+              className="rounded-full border border-fg bg-fg px-12 py-2.5 text-base font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-105"
             >
               Create
             </button>
@@ -320,7 +320,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 type="button"
                 disabled={runSpeedSweep.isPending}
                 onClick={handleRunSpeedSweep}
-                className="rounded-full border border-white/40 bg-transparent px-8 py-2 text-sm font-semibold text-white transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
+                className="rounded-full border border-line-strong bg-transparent px-8 py-2 text-sm font-semibold text-fg transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
               >
                 {runSpeedSweep.isPending ? "Queuing…" : "Probe all domains"}
               </button>
@@ -328,7 +328,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 type="button"
                 disabled={republishAll.isPending}
                 onClick={handleRepublishAll}
-                className="rounded-full border border-white/40 bg-transparent px-8 py-2 text-sm font-semibold text-white transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
+                className="rounded-full border border-line-strong bg-transparent px-8 py-2 text-sm font-semibold text-fg transition hover:border-main-color hover:bg-main-color/10 active:scale-105 disabled:opacity-50"
               >
                 {republishAll.isPending ? "Queuing…" : "Republish all landers"}
               </button>
@@ -336,7 +336,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
           )} */}
           <div className="flex w-full flex-wrap justify-center gap-5">
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal text-white/70">
+              <label className="text-sm font-normal text-fg-muted">
                 Search Domain
               </label>
               <SearchField
@@ -349,13 +349,13 @@ function Index({ user }: { user: User & { partner: Partner } }) {
               >
                 <Input
                   placeholder="Search Domain Name Or Note"
-                  className="h-10 w-full appearance-none rounded-full border border-white/15 bg-black/40 p-5 pl-10 text-sm text-zinc-100 outline-0 ring-2 ring-main-color/30 lg:w-full"
+                  className="h-10 w-full appearance-none rounded-full border border-line-strong bg-surface/40 p-5 pl-10 text-sm text-fg outline-0 ring-2 ring-main-color/30 lg:w-full"
                 />
                 <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
               </SearchField>
             </div>
             <div className="flex flex-col items-start gap-1">
-              <label className="text-sm font-normal text-white/70">
+              <label className="text-sm font-normal text-fg-muted">
                 Select Partner
               </label>
               <Dropdown
@@ -373,7 +373,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   <div className="n flex w-full items-center gap-2">
                     <IoMdPerson />
                     <span>{partner.name}</span>
-                    <span className="rounded-md bg-gray-700 px-2 py-1 text-xs text-white">
+                    <span className="rounded-md bg-panel-raised px-2 py-1 text-xs text-fg">
                       Total {partner.responsibilityOnPartner.length}
                     </span>
                   </div>
@@ -382,7 +382,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 loading={partners.isLoading}
                 options={partners.data ?? []}
                 placeholder="Select Partner"
-                className="h-10 w-96 rounded-full border border-white/15 bg-black/40 text-left text-sm text-zinc-100 outline-0 ring-2 ring-main-color/30"
+                className="h-10 w-96 rounded-full border border-line-strong bg-surface/40 text-left text-sm text-fg outline-0 ring-2 ring-main-color/30"
+                panelClassName="oxy-overlay-panel"
               />
             </div>
           </div>
@@ -390,16 +391,16 @@ function Index({ user }: { user: User & { partner: Partner } }) {
 
         <main className="mx-auto mt-2 flex w-full max-w-7xl flex-col items-center justify-center gap-5 px-4 pb-20 sm:px-6 lg:px-8">
           {focusDomainId && (
-            <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-none">
+            <div className="w-full overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-none">
               <DomainLinkAudit domainId={focusDomainId} />
             </div>
           )}
           {domains.isFetching && <SpinLoading />}
-          <div className="h-96 w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 md:h-[36rem]">
+          <div className="h-96 w-full overflow-hidden rounded-2xl border border-line bg-panel text-fg md:h-[36rem]">
             <div className="h-full w-full overflow-auto">
               <table className="w-max min-w-full border-collapse text-left text-sm">
-                <thead className="border-b border-white/10 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
-                  <tr className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur">
+                <thead className="border-b border-line text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">
+                  <tr className="sticky top-0 z-40 bg-surface/95 backdrop-blur">
                     <th className="px-4 py-3.5 font-semibold">Domain Name</th>
                     <th className="px-3 py-3.5 font-semibold">Updated At</th>
                     <th className="px-3 py-3.5 font-semibold">Site Status</th>
@@ -420,7 +421,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                       <button
                         type="button"
                         onClick={handleToggleLoadSort}
-                        className="flex items-center gap-1 text-zinc-400 transition hover:text-main-color"
+                        className="flex items-center gap-1 text-fg-muted transition hover:text-main-color"
                         title="Sort by worst load time across regions"
                       >
                         Worst load
@@ -434,12 +435,12 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-line">
                   {domains.isError && (
                     <tr>
                       <td
                         colSpan={11}
-                        className="px-4 py-8 text-center text-zinc-500"
+                        className="px-4 py-8 text-center text-fg-subtle"
                       >
                         No domain found
                       </td>
@@ -460,7 +461,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
             </div>
           </div>
           <div className="flex w-full justify-center">
-            <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+            <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
               <Pagination
                 onChange={(e, page) => setPage(page)}
                 page={page}
@@ -468,8 +469,8 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                 color="primary"
                 sx={{
                   "& .MuiPaginationItem-root": {
-                    color: "#ffffff",
-                    borderColor: "rgba(255,255,255,0.35)",
+                    color: "rgb(var(--fg))",
+                    borderColor: "var(--line-strong)",
                   },
                   "& .MuiPaginationItem-root.Mui-selected": {
                     backgroundColor: "#00ABE4",
@@ -479,7 +480,7 @@ function Index({ user }: { user: User & { partner: Partner } }) {
                   "& .MuiPaginationItem-root:hover": {
                     backgroundColor: "rgba(0, 171, 228, 0.2)",
                   },
-                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
                 }}
               />
             </div>

@@ -10,18 +10,18 @@ const POLL_MS = 3_000;
 function label(status: Status | null, publishedAt: string | null, error: string | null) {
   switch (status) {
     case "queued":
-      return { text: "Queued", cls: "bg-gray-100 text-gray-700" };
+      return { text: "Queued", cls: "bg-panel-raised text-fg-muted" };
     case "publishing":
-      return { text: "Publishing…", cls: "bg-blue-100 text-blue-700" };
+      return { text: "Publishing…", cls: "bg-blue-500/15 text-blue-700 dark:text-blue-400" };
     case "live":
       return {
         text: `Live since ${publishedAt ? new Date(publishedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "now"}`,
-        cls: "bg-green-100 text-green-700",
+        cls: "bg-green-500/15 text-green-700 dark:text-green-400",
       };
     case "published_unverified":
-      return { text: "Published, not reachable yet", cls: "bg-yellow-100 text-yellow-800" };
+      return { text: "Published, not reachable yet", cls: "bg-yellow-500/15 text-yellow-800 dark:text-yellow-400" };
     case "failed":
-      return { text: `Failed: ${error ?? "unknown error"}`, cls: "bg-red-100 text-red-700" };
+      return { text: `Failed: ${error ?? "unknown error"}`, cls: "bg-red-500/15 text-red-700 dark:text-red-400" };
     default:
       return null;
   }
@@ -82,17 +82,17 @@ export default function LanderPublishStatus({
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-gray-500">Live site:</span>
+      <span className="text-fg-muted">Live site:</span>
       <span className={`rounded-full px-3 py-1 font-medium ${shown.cls}`}>{shown.text}</span>
       {data.status === "published_unverified" && (
-        <span className="text-xs text-gray-500">Check that the domain&apos;s DNS points at Netlify.</span>
+        <span className="text-xs text-fg-muted">Check that the domain&apos;s DNS points at Netlify.</span>
       )}
       {data.status === "failed" && (
         <button
           type="button"
           disabled={request.isPending}
           onClick={handleRetry}
-          className="rounded-full border border-red-600 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="rounded-full border border-red-600 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
         >
           Retry
         </button>

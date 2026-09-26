@@ -62,13 +62,14 @@ function DuplicatePayslip({
     <div className=" fixed bottom-0 left-0 right-0 top-0 z-50 flex h-screen w-screen items-center justify-center">
       <Form
         onSubmit={handleDulicatePayslip}
-        className="mt-5 flex  w-96 flex-col  items-center gap-5 rounded-lg bg-gray-200 p-5 ring-1 ring-gray-400"
+        className="mt-5 flex  w-96 flex-col  items-center gap-5 rounded-lg bg-panel-raised p-5 ring-1 ring-line-strong"
       >
         <TextField className="flex flex-col items-start justify-center gap-2">
           <Label className="">
             Pick Target Date (เลือกเดืิอนที่จะทำการ copy)
           </Label>
           <Calendar
+        panelClassName="oxy-overlay-panel"
             value={targetRecord}
             onChange={(e) => {
               if (!e.value) return;
@@ -85,7 +86,7 @@ function DuplicatePayslip({
 
         <Button
           type="submit"
-          className="rounded-lg bg-blue-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+          className="rounded-lg bg-blue-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-blue-600 active:scale-105 active:ring-2"
         >
           Create
@@ -93,7 +94,7 @@ hover:bg-blue-600 active:scale-105 active:ring-2"
       </Form>
       <footer
         onClick={() => setTriggerDuplicatePayslip(() => false)}
-        className="fixed bottom-0 left-0 right-0 top-0 -z-10  h-screen w-screen bg-black/20 backdrop-blur-sm "
+        className="fixed bottom-0 left-0 right-0 top-0 -z-10  h-screen w-screen bg-scrim backdrop-blur-sm "
       ></footer>
     </div>
   );

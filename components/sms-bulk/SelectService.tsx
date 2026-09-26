@@ -28,7 +28,7 @@ function SelectService({ activeNumbers }: Props) {
   const serviceTemplate = (option: SmsBulkServiceItem) => (
     <div className="flex w-96 justify-between gap-2">
       <span>{option.name}</span>
-      <span className="text-gray-500">
+      <span className="text-fg-muted">
         {option.code}
         {option.minPrice ? ` · from $${Number(option.minPrice).toFixed(2)}` : ""}
       </span>
@@ -42,7 +42,7 @@ function SelectService({ activeNumbers }: Props) {
           <Image src={flagUrl(option.isoCode)} fill alt="flag" className="object-contain" />
         </div>
         <span>{option.name}</span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-fg-subtle">
           {option.stock} in stock{option.speedTier ? ` · ${option.speedTier}` : ""}
         </span>
       </div>
@@ -71,8 +71,9 @@ function SelectService({ activeNumbers }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-gray-100 p-5 font-Poppins">
+    <div className="flex flex-col gap-2 rounded-lg border bg-panel-raised p-5 font-Poppins">
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={service}
         onChange={(e: DropdownChangeEvent) => {
           setService(e.value);
@@ -88,6 +89,7 @@ function SelectService({ activeNumbers }: Props) {
         itemTemplate={serviceTemplate}
       />
       <Dropdown
+        panelClassName="oxy-overlay-panel"
         value={country}
         onChange={(e: DropdownChangeEvent) => setCountry(e.value)}
         filter
@@ -100,7 +102,7 @@ function SelectService({ activeNumbers }: Props) {
         className="w-96 border"
         itemTemplate={countryTemplate}
       />
-      <div className="flex h-6 w-96 items-center justify-end text-sm text-gray-600">
+      <div className="flex h-6 w-96 items-center justify-end text-sm text-fg-muted">
         {country ? `Price: $${Number(country.price).toFixed(2)}` : ""}
       </div>
       <button

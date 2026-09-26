@@ -67,13 +67,13 @@ function ReportBox({ onClose, sim, simCards }: Props) {
     }
   };
   return (
-    <div className="h-max w-96 overflow-hidden rounded-lg bg-white ">
+    <div className="h-max w-96 overflow-hidden rounded-lg bg-panel ">
       <header className="flex w-full flex-col gap-2 border-b p-3 pb-5">
         <section className="flex w-full justify-between">
           <h1 className="text-lg font-semibold">Report SIM Issue</h1>
           <button
             onClick={() => onClose()}
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-200/50 text-black hover:bg-gray-200/70"
+            className="flex h-7 w-7 items-center justify-center rounded-lg bg-panel-raised text-fg hover:bg-hover"
           >
             <MdClose />
           </button>
@@ -98,7 +98,7 @@ function ReportBox({ onClose, sim, simCards }: Props) {
                 };
               })
             }
-            className="h-10 w-full rounded-lg border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="h-10 w-full rounded-lg border border-line p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           >
             {issue_types.map((c, index) => (
               <option key={index} value={c}>
@@ -119,7 +119,7 @@ function ReportBox({ onClose, sim, simCards }: Props) {
                 };
               })
             }
-            className="h-40 w-full resize-none rounded-lg border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="h-40 w-full resize-none rounded-lg border border-line p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
         </section>
         <section className="flex flex-col gap-1">
@@ -134,7 +134,7 @@ function ReportBox({ onClose, sim, simCards }: Props) {
                 };
               })
             }
-            className="h-10 w-full rounded-lg border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="h-10 w-full rounded-lg border border-line p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           >
             {priorities.map((c, index) => (
               <option key={index} value={c}>
@@ -144,10 +144,10 @@ function ReportBox({ onClose, sim, simCards }: Props) {
           </select>
         </section>
       </main>
-      <footer className="flex h-20 w-full items-center justify-end gap-3 border-t bg-gray-100 p-2">
+      <footer className="flex h-20 w-full items-center justify-end gap-3 border-t bg-panel-raised p-2">
         <button
           onClick={() => onClose()}
-          className="flex h-10 w-32 items-center justify-center rounded-md border bg-white hover:bg-gray-100"
+          className="flex h-10 w-32 items-center justify-center rounded-md border bg-panel hover:bg-hover"
         >
           Cancel
         </button>

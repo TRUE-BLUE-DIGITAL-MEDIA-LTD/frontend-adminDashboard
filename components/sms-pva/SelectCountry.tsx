@@ -42,8 +42,8 @@ function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
   }, [selectCountry]);
   return (
     <section
-      className="w-max rounded-lg border border-gray-100  bg-gradient-to-r 
- from-gray-50 to-gray-200 p-5 drop-shadow-xl"
+      className="w-max rounded-lg border border-line  bg-panel 
+ p-5 drop-shadow-xl"
     >
       <h2 className="text-lg font-semibold">Select Country</h2>
       <SearchField className="relative mb-2 flex w-full flex-col">
@@ -53,7 +53,7 @@ function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
             handleFilterCountry(e.target.value);
           }}
           placeholder="Search Country"
-          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-gray-500
+          className="h-10 appearance-none rounded-md p-5 pl-10 outline-0  ring-1 ring-line-strong
        placeholder:text-sm lg:w-full"
         />
         <IoSearchCircleSharp className="text-super-main-color absolute bottom-0 left-2 top-0 m-auto text-3xl" />
@@ -65,7 +65,7 @@ function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
             onClick={() => onSelectCountry(country.code as string)}
             key={index}
             className={`grid cursor-pointer grid-cols-4 items-center justify-between  
-           hover:bg-gray-200 ${selectCountry === country.code ? "bg-gray-200" : ""}`}
+           hover:bg-hover ${selectCountry === country.code ? "bg-panel-raised" : ""}`}
           >
             <div className="relative h-10 w-10 overflow-hidden">
               <Image
@@ -78,13 +78,13 @@ function SelectCountry({ selectCountry, onSelectCountry }: SelectCountryProps) {
             </div>
             <div className="col-span-2 flex items-center justify-between gap-2">
               <span>{country.country}</span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-fg-muted">
                 {country.countryCode}
               </span>
             </div>
             <div className="flex justify-end pr-5">
               {selectCountry === country.code ? (
-                <FaRegCircleDot className="text-gray-800" />
+                <FaRegCircleDot className="text-fg" />
               ) : (
                 <FaRegCircle />
               )}

@@ -23,8 +23,8 @@ function DomainSettingsSection({
   canEnableMail,
 }: DomainSettingsSectionProps) {
   return (
-    <section className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-6 flex items-center gap-2 border-b pb-3 text-xl font-semibold text-gray-800">
+    <section className="rounded-xl border bg-panel p-6 shadow-sm">
+      <h2 className="mb-6 flex items-center gap-2 border-b pb-3 text-xl font-semibold text-fg">
         <MdSettings className="text-blue-600" /> Domain Settings
       </h2>
       {getDomain.isFetching && !getDomain.data ? (
@@ -47,40 +47,40 @@ function DomainSettingsSection({
           <TextField
             disabled
             value={getDomain.data?.domain.sitemap_status || ""}
-            className="w-full bg-gray-50"
+            className="w-full bg-panel-raised"
             label="Google Site Status"
             variant="outlined"
           />
           <TextField
             disabled
             value={getDomain.data?.domain.google_domain_id || ""}
-            className="w-full bg-gray-50"
+            className="w-full bg-panel-raised"
             label="Google ID Verify"
             variant="outlined"
           />
           <TextField
             disabled
             value={getDomain.data?.domain.netlify_dns_zoneId || ""}
-            className="w-full bg-gray-50"
+            className="w-full bg-panel-raised"
             label="Netlify DNSZone ID"
             variant="outlined"
           />
           <TextField
             disabled
             value={getDomain.data?.domain.netlify_siteId || ""}
-            className="w-full bg-gray-50"
+            className="w-full bg-panel-raised"
             label="Netlify Site ID"
             variant="outlined"
           />
           <TextField
             disabled
             value={getDomain.data?.domain.dns_servers?.join(" - ") || ""}
-            className="w-full bg-gray-50"
+            className="w-full bg-panel-raised"
             label="Netlify DNS Server"
             variant="outlined"
           />
           <div className="col-span-1 md:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-fg-muted">
               Note
             </label>
             <textarea
@@ -91,34 +91,34 @@ function DomainSettingsSection({
                 }))
               }
               value={domainData?.note || ""}
-              className="h-32 w-full resize-none rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-32 w-full resize-none rounded-md border border-line p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               name="note"
               placeholder="Add notes about this domain..."
             />
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4 md:col-span-2">
+          <div className="flex items-center justify-between rounded-lg border bg-panel-raised p-4 md:col-span-2">
             <div>
-              <p className="font-medium text-gray-800">Inbound Mail</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-medium text-fg">Inbound Mail</p>
+              <p className="text-sm text-fg-muted">
                 {getDomain.data?.domain.mailEnabled
                   ? "Enabled — mail to any address on this domain appears in the Inbox."
                   : "Disabled — this domain cannot receive mail."}
               </p>
             </div>
             {getDomain.data?.domain.mailEnabled ? (
-              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+              <span className="rounded-full bg-green-500/15 px-3 py-1 text-sm font-medium text-green-700 dark:text-green-400">
                 Enabled
               </span>
             ) : canEnableMail ? (
               <button
                 onClick={onEnableMail}
-                className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 active:scale-95"
+                className="rounded-lg bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-400 transition hover:bg-blue-500/15 active:scale-95"
               >
                 Enable mail
               </button>
             ) : (
-              <span className="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-600">
+              <span className="rounded-full bg-panel-raised px-3 py-1 text-sm text-fg-muted">
                 Disabled
               </span>
             )}

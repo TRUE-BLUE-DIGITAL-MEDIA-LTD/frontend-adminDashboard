@@ -81,17 +81,17 @@ function AiAnalysisPanel({
   const showLoading = analysis.isPending || analysis.isFetching;
 
   return (
-    <div className="w-full rounded-2xl border border-white/10 border-l-violet-500/40 bg-zinc-900 p-4 md:p-5">
+    <div className="w-full rounded-2xl border border-line border-l-violet-500/40 bg-panel p-4 md:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold text-white">
+        <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold text-fg">
           <BsStars className="text-violet-400" />
           AI Analysis
-          <span className="text-sm font-normal text-zinc-500">
+          <span className="text-sm font-normal text-fg-subtle">
             {analyzedRange.start} → {analyzedRange.end}
           </span>
         </h2>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex overflow-hidden rounded-full border border-white/10 bg-black/30 text-sm">
+          <div className="flex overflow-hidden rounded-full border border-line bg-surface/30 text-sm">
             {(["en", "th"] as const).map((lang) => (
               <button
                 key={lang}
@@ -99,8 +99,8 @@ function AiAnalysisPanel({
                 disabled={showLoading}
                 className={`px-3 py-1.5 font-semibold uppercase transition ${
                   language === lang
-                    ? "bg-white/10 text-white"
-                    : "text-zinc-400 hover:text-white"
+                    ? "bg-panel-raised text-fg"
+                    : "text-fg-muted hover:text-fg"
                 }`}
               >
                 {lang}
@@ -110,13 +110,13 @@ function AiAnalysisPanel({
           <button
             onClick={handleReanalyze}
             disabled={showLoading}
-            className="rounded-full border border-white/15 px-3 py-1.5 text-sm font-medium text-zinc-200 transition hover:bg-white/5 disabled:opacity-50"
+            className="rounded-full border border-line-strong px-3 py-1.5 text-sm font-medium text-fg transition hover:bg-hover disabled:opacity-50"
           >
             Re-analyze
           </button>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-white/5 hover:text-white"
+            className="rounded-lg p-1.5 text-fg-muted transition hover:bg-hover hover:text-fg"
           >
             <IoMdClose size={20} />
           </button>
@@ -125,10 +125,10 @@ function AiAnalysisPanel({
 
       {showLoading && (
         <div className="mt-4 flex flex-col gap-2">
-          <div className="h-6 w-2/3 animate-pulse rounded-lg bg-white/10"></div>
-          <div className="h-4 w-full animate-pulse rounded-lg bg-white/5"></div>
-          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-white/10"></div>
-          <div className="h-4 w-4/6 animate-pulse rounded-lg bg-white/5"></div>
+          <div className="h-6 w-2/3 animate-pulse rounded-lg bg-panel-raised"></div>
+          <div className="h-4 w-full animate-pulse rounded-lg bg-panel-raised"></div>
+          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-panel-raised"></div>
+          <div className="h-4 w-4/6 animate-pulse rounded-lg bg-panel-raised"></div>
         </div>
       )}
 
@@ -139,62 +139,62 @@ function AiAnalysisPanel({
       )}
 
       {!showLoading && data?.noData && (
-        <p className="mt-4 text-zinc-400">No data for this date range.</p>
+        <p className="mt-4 text-fg-muted">No data for this date range.</p>
       )}
 
       {!showLoading && data && !data.noData && (
         <div className="mt-4 flex flex-col gap-4">
           {data.headline && (
-            <p className="text-base font-semibold text-white">{data.headline}</p>
+            <p className="text-base font-semibold text-fg">{data.headline}</p>
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {data.leaders.length > 0 && (
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <h3 className="mb-2 font-semibold text-white">
+              <div className="rounded-xl border border-line bg-surface/30 p-4">
+                <h3 className="mb-2 font-semibold text-fg">
                   🏆 Top performers
                 </h3>
                 <ul className="flex flex-col gap-2">
                   {data.leaders.map((leader, i) => (
-                    <li key={i} className="text-sm text-zinc-300">
-                      <span className="font-semibold text-white">
+                    <li key={i} className="text-sm text-fg-muted">
+                      <span className="font-semibold text-fg">
                         {leader.name}
                       </span>{" "}
                       — {formatPayout(leader.payout, data.currency)}
-                      <p className="text-zinc-500">{leader.note}</p>
+                      <p className="text-fg-subtle">{leader.note}</p>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             {data.countries.length > 0 && (
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <h3 className="mb-2 font-semibold text-white">
+              <div className="rounded-xl border border-line bg-surface/30 p-4">
+                <h3 className="mb-2 font-semibold text-fg">
                   🌍 Hot countries
                 </h3>
                 <ul className="flex flex-col gap-2">
                   {data.countries.map((country, i) => (
-                    <li key={i} className="text-sm text-zinc-300">
-                      <span className="font-semibold text-white">
+                    <li key={i} className="text-sm text-fg-muted">
+                      <span className="font-semibold text-fg">
                         {country.country}
                       </span>
-                      <p className="text-zinc-500">{country.note}</p>
+                      <p className="text-fg-subtle">{country.note}</p>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             {data.bestHours.length > 0 && (
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <h3 className="mb-2 font-semibold text-white">⏰ Best hours</h3>
+              <div className="rounded-xl border border-line bg-surface/30 p-4">
+                <h3 className="mb-2 font-semibold text-fg">⏰ Best hours</h3>
                 <ul className="flex flex-col gap-2">
                   {data.bestHours.map((hour, i) => (
-                    <li key={i} className="text-sm text-zinc-300">
-                      <span className="font-semibold text-white">
+                    <li key={i} className="text-sm text-fg-muted">
+                      <span className="font-semibold text-fg">
                         {hour.country
                           ? `${hour.country} · ${hour.range}`
                           : hour.range}
                       </span>
-                      <p className="text-zinc-500">{hour.note}</p>
+                      <p className="text-fg-subtle">{hour.note}</p>
                     </li>
                   ))}
                 </ul>
@@ -202,9 +202,9 @@ function AiAnalysisPanel({
             )}
           </div>
           {data.insights.length > 0 && (
-            <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-              <h3 className="mb-2 font-semibold text-white">💡 Insights</h3>
-              <ul className="list-inside list-disc text-sm text-zinc-300">
+            <div className="rounded-xl border border-line bg-surface/30 p-4">
+              <h3 className="mb-2 font-semibold text-fg">💡 Insights</h3>
+              <ul className="list-inside list-disc text-sm text-fg-muted">
                 {data.insights.map((insight, i) => (
                   <li key={i}>{insight}</li>
                 ))}

@@ -32,15 +32,15 @@ import { GetUser, SignInAsAnoterUserService } from "../../services/admin/user";
 import PartnerTable from "../../components/forms/partners/PartnerTable";
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 function Index({ user }: { user: User }) {
@@ -223,25 +223,25 @@ function Index({ user }: { user: User }) {
         />
       )}
 
-      <main className="flex min-h-screen w-full flex-col items-center bg-black p-5 font-Poppins text-zinc-100">
+      <main className="flex min-h-screen w-full flex-col items-center bg-surface p-5 font-Poppins text-fg">
         {user.role === "admin" && (
-          <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100">
+          <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-line bg-panel text-fg">
             {/* Toolbar */}
-            <header className="flex flex-col gap-4 border-b border-white/5 px-5 py-5 md:flex-row md:items-end md:justify-between">
+            <header className="flex flex-col gap-4 border-b border-line px-5 py-5 md:flex-row md:items-end md:justify-between">
               <div className="flex flex-col gap-1">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-main-color">
                   Control Center
                 </p>
-                <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-white">
+                <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-fg">
                   <FaPeopleGroup className="text-[#62C7D8]" />
                   Account Management
                 </h1>
-                <p className="text-sm text-zinc-500">
+                <p className="text-sm text-fg-subtle">
                   Manage team users, partners, and access in one place.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex rounded-full border border-white/10 bg-black/40 p-1">
+                <div className="inline-flex rounded-full border border-line bg-surface/40 p-1">
                   <button
                     onClick={() => {
                       setView("active");
@@ -250,7 +250,7 @@ function Index({ user }: { user: User }) {
                     className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                       view === "active"
                         ? "bg-main-color/20 text-main-color"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        : "text-fg-muted hover:text-fg"
                     }`}
                   >
                     Active
@@ -263,7 +263,7 @@ function Index({ user }: { user: User }) {
                     className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                       view === "suspended"
                         ? "bg-rose-500/20 text-rose-300"
-                        : "text-zinc-400 hover:text-zinc-200"
+                        : "text-fg-muted hover:text-fg"
                     }`}
                   >
                     Suspended
@@ -274,7 +274,7 @@ function Index({ user }: { user: User }) {
                     document.body.style.overflow = "hidden";
                     setTriggerCreateAccount(() => true);
                   }}
-                  className="inline-flex items-center gap-2 rounded-full border border-white bg-white px-4 py-2 text-sm font-semibold text-black transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-full border border-fg bg-fg px-4 py-2 text-sm font-semibold text-surface transition hover:border-main-color hover:bg-main-color hover:text-white active:scale-95"
                 >
                   <FiPlusCircle />
                   Create User
@@ -284,8 +284,8 @@ function Index({ user }: { user: User }) {
 
             <div className="max-h-[28rem] overflow-auto">
               <table className="w-full min-w-[720px] table-fixed text-left text-sm">
-                <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
-                  <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                <thead className="sticky top-0 z-20 border-b border-line bg-panel/95 backdrop-blur">
+                  <tr className="text-[11px] font-semibold uppercase tracking-wider text-fg-subtle">
                     <th className="px-5 py-3 font-semibold">User</th>
                     <th className="px-3 py-3 font-semibold">Role</th>
                     <th className="hidden px-3 py-3 font-semibold md:table-cell">
@@ -302,31 +302,31 @@ function Index({ user }: { user: User }) {
                     ? [...Array(5)].map((_, index) => (
                         <tr
                           key={index}
-                          className="animate-pulse border-b border-white/5"
+                          className="animate-pulse border-b border-line"
                         >
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="h-9 w-9 rounded-full bg-zinc-700" />
+                              <div className="h-9 w-9 rounded-full bg-panel-raised" />
                               <div className="space-y-2">
-                                <div className="h-3 w-28 rounded bg-zinc-700" />
-                                <div className="h-2.5 w-40 rounded bg-zinc-800" />
+                                <div className="h-3 w-28 rounded bg-panel-raised" />
+                                <div className="h-2.5 w-40 rounded bg-panel-raised" />
                               </div>
                             </div>
                           </td>
                           <td className="px-3 py-4">
-                            <div className="h-5 w-16 rounded-full bg-zinc-700" />
+                            <div className="h-5 w-16 rounded-full bg-panel-raised" />
                           </td>
                           <td className="hidden px-3 py-4 md:table-cell">
-                            <div className="h-3 w-24 rounded bg-zinc-700" />
+                            <div className="h-3 w-24 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="h-5 w-24 rounded-full bg-zinc-700" />
+                            <div className="h-5 w-24 rounded-full bg-panel-raised" />
                           </td>
                           <td className="px-5 py-4">
                             <div className="ml-auto flex justify-end gap-2">
-                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
-                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
-                              <div className="h-8 w-8 rounded-lg bg-zinc-700" />
+                              <div className="h-8 w-8 rounded-lg bg-panel-raised" />
+                              <div className="h-8 w-8 rounded-lg bg-panel-raised" />
+                              <div className="h-8 w-8 rounded-lg bg-panel-raised" />
                             </div>
                           </td>
                         </tr>
@@ -345,11 +345,11 @@ function Index({ user }: { user: User }) {
                         return (
                           <tr
                             key={account.id}
-                            className="border-b border-white/5 transition hover:bg-white/5"
+                            className="border-b border-line transition hover:bg-hover"
                           >
                             <td className="px-5 py-3.5">
                               <div className="flex items-center gap-3">
-                                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+                                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-line">
                                   <Image
                                     src={account.image}
                                     fill
@@ -358,21 +358,21 @@ function Index({ user }: { user: User }) {
                                   />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="truncate font-medium text-white">
+                                  <p className="truncate font-medium text-fg">
                                     {account.name || "—"}
                                   </p>
-                                  <p className="truncate text-xs text-zinc-500">
+                                  <p className="truncate text-xs text-fg-subtle">
                                     {account.email}
                                   </p>
                                 </div>
                               </div>
                             </td>
                             <td className="px-3 py-3.5">
-                              <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium capitalize text-zinc-300">
+                              <span className="inline-flex rounded-full border border-line bg-panel-raised px-2.5 py-0.5 text-[11px] font-medium capitalize text-fg-muted">
                                 {account.role}
                               </span>
                             </td>
-                            <td className="hidden px-3 py-3.5 text-xs text-zinc-500 md:table-cell">
+                            <td className="hidden px-3 py-3.5 text-xs text-fg-subtle md:table-cell">
                               {formattedDatecreateAt}
                             </td>
                             <td className="px-3 py-3.5">
@@ -385,7 +385,7 @@ function Index({ user }: { user: User }) {
                                 className={`inline-flex max-w-[10rem] items-center gap-1.5 truncate rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
                                   account.partner
                                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
-                                    : "border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10"
+                                    : "border-line bg-panel-raised text-fg-muted hover:bg-hover"
                                 }`}
                                 title={
                                   account.partner
@@ -443,7 +443,7 @@ function Index({ user }: { user: User }) {
                                     setTriggerEditAccount(() => true);
                                     document.body.style.overflow = "hidden";
                                   }}
-                                  className="rounded-lg p-2 text-main-color transition hover:bg-main-color/10 hover:text-white"
+                                  className="rounded-lg p-2 text-main-color transition hover:bg-main-color/10 hover:text-fg"
                                 >
                                   <FiEdit className="text-base" />
                                 </button>
@@ -482,8 +482,8 @@ function Index({ user }: { user: User }) {
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-center border-t border-white/5 px-5 py-4">
-              <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+            <div className="flex justify-center border-t border-line px-5 py-4">
+              <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
                 <Pagination
                   onChange={(e, page) => setPage(page)}
                   count={accounts?.data?.totalPages}

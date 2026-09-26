@@ -153,6 +153,7 @@ function PayslipGenerator() {
         <TextField className="flex flex-col items-start justify-center gap-2">
           <Label className="">Pick Record Date</Label>
           <Calendar
+        panelClassName="oxy-overlay-panel"
             className="rounded-md border ring-1"
             value={recordDate}
             onChange={(e) => {
@@ -191,14 +192,14 @@ function PayslipGenerator() {
           />
         )}
 
-        <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
+        <div className="w-full rounded-lg bg-panel-raised p-5 ring-1 ring-line-strong">
           <Form>
             <div className="flex w-full justify-center gap-5 border-b-2">
               <Button
                 onPress={() => {
                   setTriggerDuplicatePayslip(true);
                 }}
-                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
               >
                 <IoDuplicateSharp />
@@ -206,7 +207,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
               </Button>
               <Button
                 onPress={() => setTriggerCreatePayslip(true)}
-                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
               >
                 <IoCreateSharp />
@@ -218,7 +219,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
               <div className="flex w-full gap-5">
                 <Button
                   type="submit"
-                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-panel-raised px-10 py-2 font-bold text-fg ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
                 >
                   <FaPrint />
@@ -227,7 +228,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
 
                 <Button
                   type="submit"
-                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-gray-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-panel-raised px-10 py-2 font-bold text-fg ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
                 >
                   <SiMicrosoftexcel />
@@ -239,7 +240,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 <Link
                   role="button"
                   href={`/payslip/${moment(recordDate).toISOString()}?consultingFee=${overallData?.consultingFee && parseInt(overallData?.consultingFee.replace(/,/g, ""), 10)}&companySocialSecurity=${overallData?.companySocialSecurity && parseInt(overallData?.companySocialSecurity.replace(/,/g, ""), 10)}`}
-                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                  className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
                 >
                   <FaPrint />
@@ -247,7 +248,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 </Link>
                 {loadingExcel ? (
                   <div
-                    className="my-5 flex w-max animate-pulse items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                    className="my-5 flex w-max animate-pulse items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
                   >
                     <SiMicrosoftexcel />
@@ -256,7 +257,7 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 ) : (
                   <Button
                     onPress={handleDownloadExcelPayslip}
-                    className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-black transition duration-150
+                    className="my-5 flex w-max items-center justify-center gap-2 rounded-lg bg-green-400 px-10 py-2 font-bold text-black ring-line-strong transition duration-150
 hover:bg-green-600 active:scale-105 active:ring-2"
                   >
                     <SiMicrosoftexcel />
@@ -275,14 +276,14 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 <Label>ค่าปรึกษาบัญชี</Label>
                 <Input
                   placeholder="consultingFee"
-                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                   type="text"
                   value={overallData?.consultingFee}
                   onChange={handleChangePayslipData}
                   inputMode="numeric"
                   name="consultingFee"
                 />
-                <FieldError className="text-xs text-red-700" />
+                <FieldError className="text-xs text-red-700 dark:text-red-400" />
               </TextField>
               <TextField
                 isRequired
@@ -292,74 +293,74 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                 <Label>ค่าประกันสังคมจากบริษัท</Label>
                 <Input
                   placeholder="companySocialSecurity"
-                  className="rounded-lg border-2 border-gray-600 bg-white p-2 outline-none transition duration-75 focus:drop-shadow-md"
+                  className="rounded-lg border-2 border-line-strong bg-panel p-2 outline-none transition duration-75 focus:drop-shadow-md"
                   type="text"
                   value={overallData?.companySocialSecurity}
                   onChange={handleChangePayslipData}
                   inputMode="numeric"
                   name="companySocialSecurity"
                 />
-                <FieldError className="text-xs text-red-700" />
+                <FieldError className="text-xs text-red-700 dark:text-red-400" />
               </TextField>
             </div>
           </Form>
 
           <div className="h-96 w-full overflow-auto ">
-            <table className="mt-5 w-max table-auto border-collapse border-black ">
+            <table className="mt-5 w-max table-auto border-collapse border-line-strong ">
               <thead>
-                <tr className="sticky top-0 z-30 border-2 border-black bg-gray-200 drop-shadow-md">
-                  <th className="border-2 border-black px-4 py-2">Date</th>
-                  <th className="sticky left-0 border-2 border-black bg-gray-200 px-4 py-2">
+                <tr className="sticky top-0 z-30 border-2 border-line-strong bg-panel-raised drop-shadow-md">
+                  <th className="border-2 border-line-strong px-4 py-2">Date</th>
+                  <th className="sticky left-0 border-2 border-line-strong bg-panel-raised px-4 py-2">
                     Name / English Name
                   </th>
-                  <th className="border-2 border-black px-4 py-2">
+                  <th className="border-2 border-line-strong px-4 py-2">
                     Start Date
                   </th>
-                  <th className="border-2 border-black px-4 py-2">
+                  <th className="border-2 border-line-strong px-4 py-2">
                     Salary (THB)
                   </th>
-                  <th className="border-2 border-black px-4 py-2">
+                  <th className="border-2 border-line-strong px-4 py-2">
                     Social Security
                   </th>
-                  <th className="border-2 border-black px-4 py-2">
+                  <th className="border-2 border-line-strong px-4 py-2">
                     Commission /Allowance
                   </th>
-                  <th className="border-2 border-black px-4 py-2">Tax</th>
-                  <th className="border-2 border-black px-4 py-2">Deduction</th>
-                  <th className="border-2 border-black px-4 py-2">Note</th>
-                  <th className="border-2 border-black px-4 py-2">Options</th>
+                  <th className="border-2 border-line-strong px-4 py-2">Tax</th>
+                  <th className="border-2 border-line-strong px-4 py-2">Deduction</th>
+                  <th className="border-2 border-line-strong px-4 py-2">Note</th>
+                  <th className="border-2 border-line-strong px-4 py-2">Options</th>
                 </tr>
               </thead>
               <tbody>
                 {payslips.isLoading
                   ? [...Array(5)].map((_, index) => {
                       return (
-                        <tr key={index} className="bg-white">
-                          <td className="animate-pulse  border-2 border-black px-4 py-2">
+                        <tr key={index} className="bg-panel">
+                          <td className="animate-pulse  border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="sticky left-0 max-w-20 animate-pulse truncate border-2 border-black bg-white px-4 py-2 md:max-w-96">
+                          <td className="sticky left-0 max-w-20 animate-pulse truncate border-2 border-line-strong bg-panel px-4 py-2 md:max-w-96">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
-                          <td className="animate-pulse border-2 border-black px-4 py-2">
+                          <td className="animate-pulse border-2 border-line-strong px-4 py-2">
                             Loading...
                           </td>
                         </tr>
@@ -367,30 +368,30 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                     })
                   : payslips.data?.map((payslip, index) => {
                       return (
-                        <tr key={index} className="bg-white">
-                          <td className="border-2  border-black px-4 py-2">
+                        <tr key={index} className="bg-panel">
+                          <td className="border-2  border-line-strong px-4 py-2">
                             {moment(payslip.recordDate).format("MM/YYYY")}
                           </td>
-                          <td className="sticky left-0 max-w-20 truncate border-2 border-black bg-white px-4 py-2 md:max-w-96">
+                          <td className="sticky left-0 max-w-20 truncate border-2 border-line-strong bg-panel px-4 py-2 md:max-w-96">
                             {payslip.name}{" "}
                             {payslip.engName && `(/ ${payslip.engName})`}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             {moment(payslip.startDate).format("DD/MM/YYYY")}
                           </td>
-                          <td className="border-2 border-black px-4 py-2 font-bold text-green-600">
+                          <td className="border-2 border-line-strong px-4 py-2 font-bold text-green-600">
                             {payslip.salary.toLocaleString()}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             {payslip.socialSecurity.toLocaleString()}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             {payslip.bonus.toLocaleString()}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             {payslip.tax.toLocaleString()}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             {payslip.deductions.map((deduction, index) => {
                               return (
                                 <div key={index}>
@@ -400,10 +401,10 @@ hover:bg-green-600 active:scale-105 active:ring-2"
                               );
                             })}
                           </td>
-                          <td className="max-w-96 break-words border-2 border-black px-4 py-2">
+                          <td className="max-w-96 break-words border-2 border-line-strong px-4 py-2">
                             {payslip.note}
                           </td>
-                          <td className="border-2 border-black px-4 py-2">
+                          <td className="border-2 border-line-strong px-4 py-2">
                             <div className="flex w-full items-center justify-center gap-2">
                               <button
                                 onClick={() => {
@@ -436,8 +437,8 @@ hover:bg-green-600 active:scale-105 active:ring-2"
             </table>
           </div>
         </div>
-        <div className="w-full rounded-lg bg-gray-100 p-5 ring-1 ring-gray-300">
-          <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-black">
+        <div className="w-full rounded-lg bg-panel-raised p-5 ring-1 ring-line-strong">
+          <h2 className="flex items-center justify-start gap-2 text-xl font-semibold text-fg">
             <MdOutlineSummarize />
             Summary
           </h2>

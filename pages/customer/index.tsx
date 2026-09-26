@@ -31,7 +31,7 @@ function AnswersCell({
       {entries.map(([key, value]) => (
         <span
           key={key}
-          className="whitespace-nowrap rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-900"
+          className="whitespace-nowrap rounded-full bg-blue-500/10 px-2 py-0.5 text-xs text-blue-900 dark:text-blue-400"
         >
           {key}: {value}
         </span>
@@ -189,12 +189,12 @@ function Index({ user }: { user: User }) {
   };
   return (
     <DashboardLayout user={user}>
-      <div className="min-h-screen w-full bg-black font-Poppins text-white">
+      <div className="min-h-screen w-full bg-surface font-Poppins text-fg">
         <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-2 px-4 pt-10 sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-main-color">
             Leads
           </p>
-          <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-fg md:text-5xl">
             <span className="text-main-color">C</span>ustomers
           </h1>
         </header>
@@ -210,11 +210,11 @@ function Index({ user }: { user: User }) {
               {isExporting ? "Exporting..." : "Download Excel"}
             </Button>
           </div>
-          <div className="h-96 w-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100 shadow-none md:h-[36rem]">
+          <div className="h-96 w-full overflow-hidden rounded-2xl border border-line bg-panel text-fg shadow-none md:h-[36rem]">
             <div className="h-full w-full overflow-auto">
             <table className="w-max min-w-full table-auto text-left text-sm">
-              <thead className="h-12 border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                <tr className="sticky top-0 z-20 bg-zinc-900/95">
+              <thead className="h-12 border-b border-line text-xs font-semibold uppercase tracking-wide text-fg-muted">
+                <tr className="sticky top-0 z-20 bg-panel/95">
                   <th className="group flex h-14 items-center  gap-2">
                     <span>Email</span>
                     <div className={`flex items-center `}></div>
@@ -274,7 +274,7 @@ function Index({ user }: { user: User }) {
                       );
                       return (
                         <tr
-                          className="h-14 border-b border-white/5 transition hover:bg-zinc-900/5"
+                          className="h-14 border-b border-line transition hover:bg-hover"
                           key={index}
                         >
                           {customers.isFetching ? (
@@ -309,7 +309,7 @@ function Index({ user }: { user: User }) {
                               <Link
                                 href={`/landingpage/${list?.landingPageId}`}
                               >
-                                <span className="text-blue-700 underline">
+                                <span className="text-blue-700 dark:text-blue-400 underline">
                                   {list?.landingPage?.name}
                                 </span>
                               </Link>
@@ -329,7 +329,7 @@ function Index({ user }: { user: User }) {
                                   customerId: list.id,
                                 })
                               }
-                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                              className="text-3xl text-red-700 dark:text-red-400 transition duration-100 hover:scale-105 active:text-red-900"
                             >
                               <MdDelete />
                             </button>
@@ -352,8 +352,8 @@ function Index({ user }: { user: User }) {
                 showLastButton
                 sx={{
                   "& .MuiPaginationItem-root": {
-                    color: "#ffffff",
-                    borderColor: "rgba(255,255,255,0.35)",
+                    color: "rgb(var(--fg))",
+                    borderColor: "var(--line-strong)",
                   },
                   "& .MuiPaginationItem-root.Mui-selected": {
                     backgroundColor: "#00ABE4",
@@ -363,7 +363,7 @@ function Index({ user }: { user: User }) {
                   "& .MuiPaginationItem-root:hover": {
                     backgroundColor: "rgba(0, 171, 228, 0.2)",
                   },
-                  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+                  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
                 }}
               />
               <Box

@@ -23,10 +23,10 @@ function SmsTextVerified({ user }: Props) {
         </PopupLayout>
       )}
       <header className="mt-10 flex w-full flex-col items-center justify-center border-b pb-5">
-        <h1 className="text-4xl font-semibold text-gray-800">
+        <h1 className="text-4xl font-semibold text-fg">
           Oxy Textverified
         </h1>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-fg-muted">
           We are the premier one stop shop for all your SMS, text, and voice
           verification needs. Exceptional service and competitive pricing sets
           us apart from the rest.
@@ -45,7 +45,7 @@ function SmsTextVerified({ user }: Props) {
           <h1 className="text-lg font-semibold">My numbers</h1>
           {!activeNumbers.data ||
             (activeNumbers.data.data.length === 0 && (
-              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-white p-5 ring-1 ring-gray-400 drop-shadow-xl">
+              <div className="flex  w-96 flex-col items-center justify-center gap-5 rounded-md bg-panel p-5 ring-1 ring-line-strong drop-shadow-xl">
                 <RiErrorWarningLine className="text-5xl" />
                 <h3 className="text-xl">No operations.</h3>
                 <span className="text-sm">

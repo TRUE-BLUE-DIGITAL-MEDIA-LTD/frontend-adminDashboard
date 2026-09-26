@@ -12,17 +12,17 @@ type SeoPerformanceSectionProps = {
 
 const getScoreColor = (score: number | undefined | null) => {
   if (score === undefined || score === null)
-    return "text-gray-400 border-gray-200";
+    return "text-fg-subtle border-line";
   if (score >= 90) return "text-green-500 border-green-500";
   if (score >= 50) return "text-orange-500 border-orange-500";
   return "text-red-500 border-red-500";
 };
 
 const getScoreBgColor = (score: number | undefined | null) => {
-  if (score === undefined || score === null) return "bg-gray-50";
-  if (score >= 90) return "bg-green-50";
-  if (score >= 50) return "bg-orange-50";
-  return "bg-red-50";
+  if (score === undefined || score === null) return "bg-panel-raised";
+  if (score >= 90) return "bg-green-500/10";
+  if (score >= 50) return "bg-orange-500/10";
+  return "bg-red-500/10";
 };
 
 const CircularScore = ({
@@ -45,7 +45,7 @@ const CircularScore = ({
           {score !== undefined && score !== null ? percent.toFixed(0) : "N/A"}
         </span>
       </div>
-      <span className="mt-2 text-xs font-medium uppercase tracking-wider text-gray-500">
+      <span className="mt-2 text-xs font-medium uppercase tracking-wider text-fg-muted">
         {label}
       </span>
     </div>
@@ -58,15 +58,15 @@ function SeoPerformanceSection({
   onUpdateSeoScore,
 }: SeoPerformanceSectionProps) {
   return (
-    <section className="rounded-xl border bg-white p-6 shadow-sm">
+    <section className="rounded-xl border bg-panel p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between border-b pb-3">
-        <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-fg">
           <FaChartLine className="text-green-600" /> SEO Performance
         </h2>
         <button
           onClick={onUpdateSeoScore}
           disabled={isLoading}
-          className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-2 text-sm font-medium text-green-700 transition hover:bg-green-100 active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400 transition hover:bg-green-500/15 active:scale-95 disabled:opacity-50"
         >
           {isLoading ? (
             <SpinLoading />
@@ -78,8 +78,8 @@ function SeoPerformanceSection({
         </button>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
-          <span className="mb-4 text-center text-sm font-semibold text-gray-700">
+        <div className="flex flex-col rounded-xl border bg-panel p-5 shadow-sm transition hover:shadow-md">
+          <span className="mb-4 text-center text-sm font-semibold text-fg-muted">
             Performance
           </span>
           <div className="flex justify-around px-2">
@@ -87,15 +87,15 @@ function SeoPerformanceSection({
               score={domain?.performanceScoreDesktop}
               label="Desktop"
             />
-            <div className="mx-2 h-16 w-px bg-gray-200"></div>
+            <div className="mx-2 h-16 w-px bg-line"></div>
             <CircularScore
               score={domain?.performanceScoreMobile}
               label="Mobile"
             />
           </div>
         </div>
-        <div className="flex flex-col rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
-          <span className="mb-4 text-center text-sm font-semibold text-gray-700">
+        <div className="flex flex-col rounded-xl border bg-panel p-5 shadow-sm transition hover:shadow-md">
+          <span className="mb-4 text-center text-sm font-semibold text-fg-muted">
             Accessibility
           </span>
           <div className="flex justify-around px-2">
@@ -103,15 +103,15 @@ function SeoPerformanceSection({
               score={domain?.accessibilityScoreDesktop}
               label="Desktop"
             />
-            <div className="mx-2 h-16 w-px bg-gray-200"></div>
+            <div className="mx-2 h-16 w-px bg-line"></div>
             <CircularScore
               score={domain?.accessibilityScoreMobile}
               label="Mobile"
             />
           </div>
         </div>
-        <div className="flex flex-col rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
-          <span className="mb-4 text-center text-sm font-semibold text-gray-700">
+        <div className="flex flex-col rounded-xl border bg-panel p-5 shadow-sm transition hover:shadow-md">
+          <span className="mb-4 text-center text-sm font-semibold text-fg-muted">
             Best Practices
           </span>
           <div className="flex justify-around px-2">
@@ -119,20 +119,20 @@ function SeoPerformanceSection({
               score={domain?.bestPracticesScoreDesktop}
               label="Desktop"
             />
-            <div className="mx-2 h-16 w-px bg-gray-200"></div>
+            <div className="mx-2 h-16 w-px bg-line"></div>
             <CircularScore
               score={domain?.bestPracticesScoreMobile}
               label="Mobile"
             />
           </div>
         </div>
-        <div className="flex flex-col rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
-          <span className="mb-4 text-center text-sm font-semibold text-gray-700">
+        <div className="flex flex-col rounded-xl border bg-panel p-5 shadow-sm transition hover:shadow-md">
+          <span className="mb-4 text-center text-sm font-semibold text-fg-muted">
             SEO
           </span>
           <div className="flex justify-around px-2">
             <CircularScore score={domain?.seoScoreDesktop} label="Desktop" />
-            <div className="mx-2 h-16 w-px bg-gray-200"></div>
+            <div className="mx-2 h-16 w-px bg-line"></div>
             <CircularScore score={domain?.seoScoreMobile} label="Mobile" />
           </div>
         </div>

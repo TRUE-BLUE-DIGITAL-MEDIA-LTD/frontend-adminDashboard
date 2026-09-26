@@ -209,7 +209,7 @@ function UpdatePermissionPartner({ selectPartner, partners }: Props) {
               });
               await handleUpdatePermission(permission.slug, true);
             }}
-            className="flex w-full items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-left text-sm text-zinc-300 transition hover:bg-white/10"
+            className="flex w-full items-center justify-between gap-2 rounded-xl border border-line bg-panel-raised px-3 py-2.5 text-left text-sm text-fg-muted transition hover:bg-hover"
           >
             <span>{permission.title}</span>
             <MdClear className="shrink-0" />

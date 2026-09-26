@@ -87,10 +87,10 @@ function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
     }
   };
   return (
-    <div className=" w-full rounded-md bg-white p-3 ring-1 ring-gray-400 drop-shadow-xl">
+    <div className=" w-full rounded-md bg-panel p-3 ring-1 ring-line-strong drop-shadow-xl">
       {triggerHide === false && (
         <div className="flex flex-col gap-2 ">
-          <div className="flex  items-center justify-start gap-2 border-b border-gray-400 pb-2">
+          <div className="flex  items-center justify-start gap-2 border-b border-line-strong pb-2">
             <div className="relative h-5 w-7 overflow-hidden ">
               <Image
                 src={`/image/flags/1x1/${country?.short_name}.svg`}
@@ -102,7 +102,7 @@ function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
             <h3 className="text-lg font-semibold">{smsPool.phoneNumber}</h3>
           </div>
           <div className="flex items-center justify-start gap-2">
-            <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-200 p-1 px-3 text-sm font-normal">
+            <h3 className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-500/20 p-1 px-3 text-sm font-normal">
               <Countdown
                 date={new Date(smsPool.expireAt)}
                 intervalDelay={0}
@@ -121,20 +121,20 @@ function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
             <div className="flex items-center justify-center gap-1">
               <button
                 onClick={() => onCancel(smsPool.id)}
-                className="flex h-8 w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700"
+                className="flex h-8 w-16 items-center justify-center rounded-sm bg-red-300 p-1 px-3 text-red-700 dark:text-red-400"
               >
                 refund
               </button>
               <button
                 disabled={resend.isPending}
                 onClick={handleResend}
-                className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-300 p-1 px-3 text-green-700"
+                className="flex h-8 w-16 items-center justify-center rounded-sm bg-green-300 p-1 px-3 text-green-700 dark:text-green-400"
               >
                 <>{resend.isPending ? "Loading.." : "Resend"}</>
               </button>
               <button
                 onClick={handleReportSms}
-                className="flex h-8 w-max items-center justify-center rounded-sm bg-orange-300 p-1 px-3 text-orange-700"
+                className="flex h-8 w-max items-center justify-center rounded-sm bg-orange-300 p-1 px-3 text-orange-700 dark:text-orange-400"
               >
                 <MdReport /> report
               </button>
@@ -169,7 +169,7 @@ function ActiceNumber({ smsPool, sms, onBlock, onCancel }: Props) {
       <div className="flex h-5 w-full justify-end ">
         <button
           onClick={() => setTriggerHide((prev) => !prev)}
-          className="flex items-center justify-center gap-2 rounded-lg border p-1 px-2 hover:bg-gray-800 hover:text-white"
+          className="flex items-center justify-center gap-2 rounded-lg border p-1 px-2 hover:bg-hover hover:text-fg"
         >
           {triggerHide === false ? (
             <>

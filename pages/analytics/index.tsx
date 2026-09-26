@@ -41,51 +41,51 @@ const PRESET_OPTIONS: { label: string; value: RangePreset | "custom" }[] = [
 const PAGE_SIZE = 50;
 
 const paginationSx = {
-  "& .MuiPaginationItem-root": { color: "#ffffff" },
+  "& .MuiPaginationItem-root": { color: "rgb(var(--fg))" },
   "& .MuiPaginationItem-root.Mui-selected": {
     backgroundColor: "#00ABE4",
     color: "#ffffff",
   },
   "& .MuiPaginationItem-root:hover": {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--hover)",
   },
-  "& .MuiPaginationItem-icon": { color: "#ffffff" },
+  "& .MuiPaginationItem-icon": { color: "rgb(var(--fg))" },
 };
 
 const checkboxSx = {
-  color: "rgba(255,255,255,0.35)",
+  color: "rgb(var(--fg-subtle))",
   "&.Mui-checked": { color: "#00ABE4" },
   "&.MuiCheckbox-indeterminate": { color: "#00ABE4" },
-  "&.Mui-disabled": { color: "rgba(255,255,255,0.15)" },
+  "&.Mui-disabled": { color: "var(--line-strong)" },
 };
 
 const selectSx = {
-  color: "#e4e4e7",
+  color: "rgb(var(--fg))",
   fontSize: "0.875rem",
   borderRadius: "9999px",
-  backgroundColor: "rgba(0,0,0,0.4)",
+  backgroundColor: "rgb(var(--surface) / 0.4)",
   ".MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: "var(--line)",
     borderRadius: "9999px",
   },
   "&:hover .MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: "var(--line-strong)",
   },
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
     borderColor: "#00ABE4",
   },
-  ".MuiSvgIcon-root": { color: "#a1a1aa" },
+  ".MuiSvgIcon-root": { color: "rgb(var(--fg-muted))" },
 };
 
 const selectMenuProps = {
   PaperProps: {
     sx: {
-      bgcolor: "#18181b",
-      color: "#e4e4e7",
-      border: "1px solid rgba(255,255,255,0.1)",
+      bgcolor: "rgb(var(--panel))",
+      color: "rgb(var(--fg))",
+      border: "1px solid var(--line)",
       "& .MuiMenuItem-root": {
         fontSize: "0.875rem",
-        "&:hover": { bgcolor: "rgba(255,255,255,0.05)" },
+        "&:hover": { bgcolor: "var(--hover)" },
         "&.Mui-selected": {
           bgcolor: "rgba(0,171,228,0.15)",
           "&:hover": { bgcolor: "rgba(0,171,228,0.25)" },
@@ -96,7 +96,7 @@ const selectMenuProps = {
 };
 
 const dateInputClass =
-  "rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-sm text-zinc-200 outline-none [color-scheme:dark] focus:border-main-color";
+  "rounded-full border border-line bg-surface/40 px-3 py-1.5 text-sm text-fg outline-none focus:border-main-color";
 
 function Index({ user }: { user: User }) {
   const [preset, setPreset] = useState<RangePreset | "custom">("today");
@@ -227,18 +227,18 @@ function Index({ user }: { user: User }) {
 
   return (
     <DashboardLayout user={user}>
-      <main className="flex min-h-screen w-full flex-col items-center bg-black p-3 font-Poppins text-zinc-100 sm:p-5">
-        <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 text-zinc-100">
+      <main className="flex min-h-screen w-full flex-col items-center bg-surface p-3 font-Poppins text-fg sm:p-5">
+        <section className="w-full max-w-7xl overflow-hidden rounded-2xl border border-line bg-panel text-fg">
           {/* Toolbar */}
-          <header className="flex flex-col gap-4 border-b border-white/5 px-4 py-4 sm:px-5 sm:py-5 md:flex-row md:items-end md:justify-between">
+          <header className="flex flex-col gap-4 border-b border-line px-4 py-4 sm:px-5 sm:py-5 md:flex-row md:items-end md:justify-between">
             <div className="flex flex-col gap-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-main-color">
                 Analytics
               </p>
-              <h1 className="text-2xl font-semibold tracking-tight text-white">
+              <h1 className="text-2xl font-semibold tracking-tight text-fg">
                 Lander Analytics
               </h1>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-fg-subtle">
                 Views, clicks, and bounce rate per landing page. Bounce =
                 visitors who never clicked the main button.
               </p>
@@ -246,7 +246,7 @@ function Index({ user }: { user: User }) {
           </header>
 
           {/* Filters */}
-          <div className="flex flex-col gap-3 border-b border-white/5 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-5">
+          <div className="flex flex-col gap-3 border-b border-line px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-5">
             <Select
               size="small"
               value={preset}
@@ -276,7 +276,7 @@ function Index({ user }: { user: User }) {
                   }}
                   className={dateInputClass}
                 />
-                <span className="text-sm text-zinc-500">to</span>
+                <span className="text-sm text-fg-subtle">to</span>
                 <input
                   type="date"
                   value={customTo}
@@ -289,14 +289,14 @@ function Index({ user }: { user: User }) {
               </div>
             )}
 
-            <div className="inline-flex rounded-full border border-white/10 bg-black/40 p-1">
+            <div className="inline-flex rounded-full border border-line bg-surface/40 p-1">
               <button
                 type="button"
                 onClick={() => setView("landers")}
                 className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                   view === "landers"
                     ? "bg-main-color/20 text-main-color"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    : "text-fg-muted hover:text-fg"
                 }`}
               >
                 Landers
@@ -307,7 +307,7 @@ function Index({ user }: { user: User }) {
                 className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                   view === "domains"
                     ? "bg-main-color/20 text-main-color"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    : "text-fg-muted hover:text-fg"
                 }`}
               >
                 By domain
@@ -321,12 +321,12 @@ function Index({ user }: { user: User }) {
                 setSearch(v);
                 setPage(1);
               }}
-              className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-zinc-200 sm:max-w-xs"
+              className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-line bg-surface/40 px-3 py-1.5 text-fg sm:max-w-xs"
             >
-              <FiSearch className="shrink-0 text-zinc-500" size={16} />
+              <FiSearch className="shrink-0 text-fg-subtle" size={16} />
               <Input
                 placeholder="Search lander or domain"
-                className="w-full bg-transparent py-0.5 text-sm text-zinc-200 outline-none placeholder:text-zinc-500"
+                className="w-full bg-transparent py-0.5 text-sm text-fg outline-none placeholder:text-fg-subtle"
               />
             </SearchField>
           </div>
@@ -341,8 +341,8 @@ function Index({ user }: { user: User }) {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[720px] table-fixed text-left text-sm">
-                  <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
-                    <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                  <thead className="sticky top-0 z-20 border-b border-line bg-panel/95 backdrop-blur">
+                    <tr className="text-[11px] font-semibold uppercase tracking-wider text-fg-subtle">
                       <th className="px-4 py-3 font-semibold sm:px-5">
                         Domain
                       </th>
@@ -359,16 +359,16 @@ function Index({ user }: { user: User }) {
                       Array.from({ length: 6 }).map((_, i) => (
                         <tr
                           key={i}
-                          className="animate-pulse border-b border-white/5"
+                          className="animate-pulse border-b border-line"
                         >
                           <td className="px-4 py-4 sm:px-5">
-                            <div className="h-3 w-40 rounded bg-zinc-700" />
+                            <div className="h-3 w-40 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="ml-auto h-3 w-8 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-8 rounded bg-panel-raised" />
                           </td>
                           <td className="px-4 py-4 sm:px-5">
-                            <div className="ml-auto h-3 w-12 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-12 rounded bg-panel-raised" />
                           </td>
                         </tr>
                       ))}
@@ -377,7 +377,7 @@ function Index({ user }: { user: User }) {
                       <tr>
                         <td
                           colSpan={3}
-                          className="px-5 py-16 text-center text-sm text-zinc-500"
+                          className="px-5 py-16 text-center text-sm text-fg-subtle"
                         >
                           No visits recorded in this period.
                         </td>
@@ -388,7 +388,7 @@ function Index({ user }: { user: User }) {
                       domainGroups.map((g) => (
                         <tr
                           key={g.domainId}
-                          className={`cursor-pointer border-b border-white/5 transition hover:bg-white/5 ${
+                          className={`cursor-pointer border-b border-line transition hover:bg-hover ${
                             selectedDomainId === g.domainId
                               ? "bg-main-color/10"
                               : ""
@@ -400,14 +400,14 @@ function Index({ user }: { user: User }) {
                           }
                         >
                           <td className="px-4 py-3.5 sm:px-5">
-                            <p className="truncate font-medium text-white">
+                            <p className="truncate font-medium text-fg">
                               {g.domainName}
                             </p>
                           </td>
-                          <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                          <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                             {g.rows.length}
                           </td>
-                          <td className="px-4 py-3.5 text-right tabular-nums text-zinc-300 sm:px-5">
+                          <td className="px-4 py-3.5 text-right tabular-nums text-fg-muted sm:px-5">
                             {g.rows.reduce((s, r) => s + r.views, 0)}
                           </td>
                         </tr>
@@ -416,7 +416,7 @@ function Index({ user }: { user: User }) {
                 </table>
               </div>
               {selectedDomain && (
-                <div className="border-t border-white/5 px-4 py-4 sm:px-5">
+                <div className="border-t border-line px-4 py-4 sm:px-5">
                   <CompareTable
                     rows={selectedDomain.rows}
                     crossDomain={false}
@@ -427,7 +427,7 @@ function Index({ user }: { user: User }) {
           ) : (
             <>
               {compareRows.length >= 2 && (
-                <div className="border-b border-white/5 px-4 py-4 sm:px-5">
+                <div className="border-b border-line px-4 py-4 sm:px-5">
                   <CompareTable
                     rows={compareRows}
                     crossDomain={compareCrossDomain}
@@ -436,11 +436,11 @@ function Index({ user }: { user: User }) {
               )}
 
               {compareIds.length > 0 && (
-                <div className="flex items-center border-b border-white/5 px-4 py-2 sm:px-5">
+                <div className="flex items-center border-b border-line px-4 py-2 sm:px-5">
                   <button
                     type="button"
                     onClick={() => setCompareIds([])}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300 transition hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
+                    className="rounded-full border border-line bg-panel-raised px-3 py-1 text-xs font-semibold text-fg-muted transition hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
                   >
                     Clear selection ({compareIds.length})
                   </button>
@@ -449,8 +449,8 @@ function Index({ user }: { user: User }) {
 
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[720px] table-fixed text-left text-sm">
-                  <thead className="sticky top-0 z-20 border-b border-white/5 bg-zinc-900/95 backdrop-blur">
-                    <tr className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                  <thead className="sticky top-0 z-20 border-b border-line bg-panel/95 backdrop-blur">
+                    <tr className="text-[11px] font-semibold uppercase tracking-wider text-fg-subtle">
                       <th className="w-12 px-3 py-3 sm:px-4" />
                       <th className="px-3 py-3 font-semibold">Lander</th>
                       <th className="px-3 py-3 font-semibold">Domain</th>
@@ -478,37 +478,37 @@ function Index({ user }: { user: User }) {
                       Array.from({ length: 8 }).map((_, i) => (
                         <tr
                           key={i}
-                          className="animate-pulse border-b border-white/5"
+                          className="animate-pulse border-b border-line"
                         >
                           <td className="px-3 py-4 sm:px-4">
-                            <div className="h-4 w-4 rounded bg-zinc-700" />
+                            <div className="h-4 w-4 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="h-3 w-36 rounded bg-zinc-700" />
+                            <div className="h-3 w-36 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="h-5 w-24 rounded-full bg-zinc-700" />
+                            <div className="h-5 w-24 rounded-full bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                           <td className="px-3 py-4">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                           <td className="hidden px-3 py-4 lg:table-cell">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                           <td className="hidden px-3 py-4 lg:table-cell">
-                            <div className="ml-auto h-3 w-12 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-12 rounded bg-panel-raised" />
                           </td>
                           <td className="hidden px-3 py-4 lg:table-cell">
-                            <div className="ml-auto h-3 w-10 rounded bg-zinc-700" />
+                            <div className="ml-auto h-3 w-10 rounded bg-panel-raised" />
                           </td>
                         </tr>
                       ))}
@@ -517,7 +517,7 @@ function Index({ user }: { user: User }) {
                       <tr>
                         <td
                           colSpan={10}
-                          className="px-5 py-16 text-center text-sm text-zinc-500"
+                          className="px-5 py-16 text-center text-sm text-fg-subtle"
                         >
                           No visits recorded in this period.
                         </td>
@@ -528,7 +528,7 @@ function Index({ user }: { user: User }) {
                       pageRows.map((row) => (
                         <tr
                           key={row.landingPageId}
-                          className={`cursor-pointer border-b border-white/5 transition hover:bg-white/5 ${
+                          className={`cursor-pointer border-b border-line transition hover:bg-hover ${
                             selected === row.landingPageId
                               ? "bg-main-color/10"
                               : ""
@@ -561,12 +561,12 @@ function Index({ user }: { user: User }) {
                           </td>
                           <td className="px-3 py-3.5">
                             {row.landingPageName ? (
-                              <p className="truncate font-medium text-white">
+                              <p className="truncate font-medium text-fg">
                                 {row.landingPageName}
                               </p>
                             ) : (
                               <p
-                                className="truncate text-zinc-500"
+                                className="truncate text-fg-subtle"
                                 title={row.landingPageId}
                               >
                                 {row.landingPageId}
@@ -574,32 +574,32 @@ function Index({ user }: { user: User }) {
                             )}
                           </td>
                           <td className="px-3 py-3.5">
-                            <span className="inline-flex max-w-[10rem] truncate rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-zinc-300">
+                            <span className="inline-flex max-w-[10rem] truncate rounded-full border border-line bg-panel-raised px-2.5 py-0.5 text-[11px] font-medium text-fg-muted">
                               {row.domainName ?? "—"}
                             </span>
                           </td>
-                          <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                          <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                             {row.views}
                           </td>
-                          <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                          <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                             {row.clicks}
                           </td>
-                          <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                          <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                             {formatPct(row.ctr)}
                           </td>
-                          <td className="px-3 py-3.5 text-right tabular-nums text-zinc-300">
+                          <td className="px-3 py-3.5 text-right tabular-nums text-fg-muted">
                             {formatPct(row.bounceRate)}
                           </td>
-                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-zinc-400 lg:table-cell">
+                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-fg-muted lg:table-cell">
                             {formatReturningPct(
                               row.returningViews,
                               row.identifiedViews,
                             )}
                           </td>
-                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-zinc-400 lg:table-cell">
+                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-fg-muted lg:table-cell">
                             {formatDurationMs(row.avgTimeOnPageMs)}
                           </td>
-                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-zinc-400 lg:table-cell">
+                          <td className="hidden px-3 py-3.5 text-right tabular-nums text-fg-muted lg:table-cell">
                             {row.avgMaxScrollPct === null
                               ? "—"
                               : `${row.avgMaxScrollPct}%`}
@@ -611,8 +611,8 @@ function Index({ user }: { user: User }) {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex justify-center border-t border-white/5 px-5 py-4">
-                  <div className="rounded-full border border-white/15 bg-white/5 px-3 py-2">
+                <div className="flex justify-center border-t border-line px-5 py-4">
+                  <div className="rounded-full border border-line-strong bg-panel-raised px-3 py-2">
                     <Pagination
                       count={totalPages}
                       page={page}
@@ -626,18 +626,18 @@ function Index({ user }: { user: User }) {
 
               {selected && range && (
                 <div
-                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4"
                   onClick={() => setSelected(null)}
                 >
                   <div
-                    className="relative max-h-[85vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-white/10 bg-zinc-900 p-5 text-zinc-100 shadow-2xl sm:p-6"
+                    className="relative max-h-[85vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-line bg-panel p-5 text-fg shadow-2xl sm:p-6"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="mb-2 flex items-start justify-end">
                       <button
                         type="button"
                         aria-label="Close"
-                        className="rounded-lg p-2 text-zinc-400 transition hover:bg-white/10 hover:text-white"
+                        className="rounded-lg p-2 text-fg-muted transition hover:bg-hover hover:text-fg"
                         onClick={() => setSelected(null)}
                       >
                         <FiX className="text-xl" />

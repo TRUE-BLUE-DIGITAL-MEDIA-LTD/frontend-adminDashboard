@@ -98,7 +98,7 @@ function CreateDeviceUser({
       <Form
         onSubmit={handleCreateDeviceUser}
         className="flex h-max w-96 flex-col gap-5 rounded-lg border 
-         border-gray-100 bg-gradient-to-r from-gray-50  to-gray-200 
+         border-line bg-panel  
         p-5 drop-shadow-xl"
       >
         <Label className="text-center text-2xl font-bold">
@@ -121,9 +121,9 @@ function CreateDeviceUser({
             type="number"
             placeholder="Port Number"
             inputMode="numeric"
-            className="h-10 w-full rounded-md border border-gray-300 p-5"
+            className="h-10 w-full rounded-md border border-line p-5"
           />
-          <FieldError className="text-xs text-red-700" />
+          <FieldError className="text-xs text-red-700 dark:text-red-400" />
         </TextField>
         <TextField>
           <Label>Port URL</Label>
@@ -141,9 +141,9 @@ function CreateDeviceUser({
             required
             type="url"
             placeholder="Port Url"
-            className="h-10 w-full rounded-md border border-gray-300 p-5"
+            className="h-10 w-full rounded-md border border-line p-5"
           />
-          <FieldError className="text-xs text-red-700" />
+          <FieldError className="text-xs text-red-700 dark:text-red-400" />
         </TextField>
         <TextField>
           <Label>Port Username</Label>
@@ -161,9 +161,9 @@ function CreateDeviceUser({
             required
             type="text"
             placeholder="Port Username"
-            className="h-10 w-full rounded-md border border-gray-300 p-5"
+            className="h-10 w-full rounded-md border border-line p-5"
           />
-          <FieldError className="text-xs text-red-700" />
+          <FieldError className="text-xs text-red-700 dark:text-red-400" />
         </TextField>
         <TextField>
           <Label>Port Password</Label>
@@ -181,13 +181,14 @@ function CreateDeviceUser({
             required
             type="text"
             placeholder="Port Password"
-            className="h-10 w-full rounded-md border border-gray-300 p-5"
+            className="h-10 w-full rounded-md border border-line p-5"
           />
-          <FieldError className="text-xs text-red-700" />
+          <FieldError className="text-xs text-red-700 dark:text-red-400" />
         </TextField>
         <TextField>
           <Label>Select Country</Label>
           <Dropdown
+        panelClassName="oxy-overlay-panel"
             value={createData?.country}
             onChange={(e) => {
               setCreateData((prev) => {
@@ -199,7 +200,7 @@ function CreateDeviceUser({
             placeholder="Select a Country"
             className="md:w-14rem w-full"
           />
-          <FieldError className="text-xs text-red-700" />
+          <FieldError className="text-xs text-red-700 dark:text-red-400" />
         </TextField>
         <Button
           type="submit"
@@ -212,7 +213,7 @@ function CreateDeviceUser({
       <footer
         onClick={() => setTrigger(false)}
         className="fixed bottom-0 left-0 right-0 top-0 -z-10 m-auto h-screen w-screen
-        bg-white/30 backdrop-blur-md "
+        bg-scrim backdrop-blur-md "
       ></footer>
     </div>
   );

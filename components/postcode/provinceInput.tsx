@@ -63,7 +63,7 @@ function ProvinceInput({
         <div className="relative w-80 cursor-default text-left shadow-md ">
           <Combobox.Input
             name="province"
-            className="w-full appearance-none rounded-md border-none bg-white py-5 pl-3 pr-10 text-sm leading-5 text-black ring-2 ring-black focus:bg-icon-color"
+            className="w-full appearance-none rounded-md border-none bg-panel py-5 pl-3 pr-10 text-sm leading-5 text-fg ring-2 ring-line-strong focus:bg-icon-color focus:text-black"
             displayValue={(province: string) => {
               return province;
             }}
@@ -87,9 +87,9 @@ function ProvinceInput({
             })
           }
         >
-          <Combobox.Options className="absolute z-40 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="absolute z-40 mt-1 max-h-60 w-full overflow-auto rounded-md bg-panel py-1 text-base shadow-lg ring-1 ring-line focus:outline-none sm:text-sm">
             {filteredProvince.length === 0 && queryPostcode.province !== "" ? (
-              <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+              <div className="relative cursor-default select-none px-4 py-2 text-fg-muted">
                 Nothing found.
               </div>
             ) : (
@@ -98,7 +98,7 @@ function ProvinceInput({
                   key={index}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-icon-color text-white" : "text-gray-900"
+                      active ? "bg-icon-color text-white" : "text-fg"
                     }`
                   }
                   value={province}
@@ -115,7 +115,7 @@ function ProvinceInput({
                       {selected ? (
                         <span
                           className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? "text-white" : "text-teal-600"
+                            active ? "text-white" : "text-teal-600" // active row is bg-icon-color — theme-audit-ignore
                           }`}
                         >
                           <FaCheck />

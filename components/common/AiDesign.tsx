@@ -61,19 +61,19 @@ function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
   };
 
   return (
-    <div className="mx-auto mt-5 flex w-11/12 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-blue-400 bg-blue-50 p-6 shadow-sm transition-all hover:border-blue-500">
+    <div className="mx-auto mt-5 flex w-11/12 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-blue-400 bg-blue-500/10 p-6 shadow-sm transition-all hover:border-blue-500">
       <div className="flex w-full flex-col gap-2">
-        <h3 className="text-xl font-bold text-blue-800">
+        <h3 className="text-xl font-bold text-blue-800 dark:text-blue-400">
           ✨ AI Design Generator
         </h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-fg-muted">
           Describe the landing page you want to create and let AI design it for
           you.
         </p>
       </div>
 
       <textarea
-        className="w-full resize-none rounded-lg border border-gray-300 p-4 shadow-inner focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full resize-none rounded-lg border border-line bg-panel p-4 text-fg shadow-inner placeholder:text-fg-subtle focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         rows={4}
         placeholder="e.g., A modern landing page for a coffee shop with a hero section, about us, and a contact form..."
         value={context}
@@ -86,9 +86,9 @@ function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
       )}
 
       {streamedResponse && (
-        <div className="relative w-full overflow-hidden rounded-lg bg-gray-900 p-4 shadow-inner">
+        <div className="relative w-full overflow-hidden rounded-lg bg-panel-raised p-4 shadow-inner">
           <div className="absolute left-0 top-0 h-1 w-full animate-pulse bg-blue-500"></div>
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-fg-subtle">
             AI is thinking...
           </h4>
           <pre className="scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 max-h-[300px] overflow-y-auto whitespace-pre-wrap font-mono text-sm text-green-400">
@@ -101,7 +101,7 @@ function AiDesign({ onSuccess, landingPageId }: AiDesignProps) {
         <button
           onClick={handleGenerate}
           disabled={isLoading || !context.trim()}
-          className="flex min-w-[150px] items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 font-Poppins text-lg font-medium text-white shadow-md transition duration-150 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-400"
+          className="flex min-w-[150px] items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 font-Poppins text-lg font-medium text-white shadow-md transition duration-150 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-400" // mid-gray + white reads in both themes — theme-audit-ignore
         >
           {isLoading ? <SpinLoading /> : "Generate Design"}
         </button>

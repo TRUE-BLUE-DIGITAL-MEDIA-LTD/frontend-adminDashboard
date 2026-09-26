@@ -13,6 +13,8 @@ import { useGetSearchAnalytics } from "../../../react-query/domain";
 import { SearchAnalyticsRow } from "../../../services/admin/domain";
 import SpinLoading from "../../loadings/spinLoading";
 import { buildGscDateRange } from "./dateRange";
+import { useTheme } from "../../../hooks/useTheme";
+import { chartColors } from "../../../utils/theme";
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +33,7 @@ function sum(rows: SearchAnalyticsRow[], key: "clicks" | "impressions") {
 
 function GscErrorBanner({ error }: { error: any }) {
   return (
-    <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
+    <div className="rounded-lg border border-yellow-300 bg-yellow-500/10 p-4 text-sm text-yellow-800 dark:text-yellow-400">
       {error?.message?.toString() ??
         "Could not load Search Console data for this domain."}
     </div>
@@ -49,12 +51,12 @@ function RowsTable({
 }) {
   return (
     <div className="rounded-lg border">
-      <h3 className="border-b bg-gray-50 px-4 py-2 font-medium text-gray-700">
+      <h3 className="border-b bg-panel-raised px-4 py-2 font-medium text-fg-muted">
         {title}
       </h3>
       <div className="max-h-80 overflow-auto">
         <table className="w-full text-left text-sm">
-          <thead className="sticky top-0 bg-gray-100 text-gray-700">
+          <thead className="sticky top-0 bg-panel-raised text-fg-muted">
             <tr>
               <th className="px-4 py-2">{keyLabel}</th>
               <th className="px-2 py-2 text-right">Clicks</th>
@@ -66,13 +68,13 @@ function RowsTable({
           <tbody className="divide-y">
             {rows.length === 0 && (
               <tr>
-                <td className="px-4 py-3 text-gray-400" colSpan={5}>
+                <td className="px-4 py-3 text-fg-subtle" colSpan={5}>
                   No search data yet
                 </td>
               </tr>
             )}
             {rows.slice(0, 50).map((row) => (
-              <tr key={row.keys[0]} className="hover:bg-gray-50">
+              <tr key={row.keys[0]} className="hover:bg-hover">
                 <td className="max-w-xs truncate px-4 py-2">{row.keys[0]}</td>
                 <td className="px-2 py-2 text-right">{row.clicks}</td>
                 <td className="px-2 py-2 text-right">{row.impressions}</td>
@@ -92,6 +94,8 @@ function RowsTable({
 }
 
 function GscPerformanceTab({ domainId }: { domainId: string }) {
+  const { resolved } = useTheme();
+  const cc = chartColors(resolved);
   const [days, setDays] = useState<(typeof PRESETS)[number]>(28);
   const { startDate, endDate } = buildGscDateRange(days);
 
@@ -149,7 +153,7 @@ function GscPerformanceTab({ domainId }: { domainId: string }) {
             className={`rounded-full px-4 py-1 text-sm font-medium transition ${
               days === preset
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-panel-raised text-fg-muted hover:bg-hover"
             }`}
           >
             Last {preset} days
@@ -158,29 +162,29 @@ function GscPerformanceTab({ domainId }: { domainId: string }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-lg border bg-blue-50 p-4">
-          <div className="text-xs uppercase text-blue-700">Total Clicks</div>
-          <div className="text-2xl font-bold text-blue-900">{totalClicks}</div>
+        <div className="rounded-lg border bg-blue-500/10 p-4">
+          <div className="text-xs uppercase text-blue-700 dark:text-blue-400">Total Clicks</div>
+          <div className="text-2xl font-bold text-blue-900 dark:text-blue-400">{totalClicks}</div>
         </div>
-        <div className="rounded-lg border bg-purple-50 p-4">
-          <div className="text-xs uppercase text-purple-700">
+        <div className="rounded-lg border bg-purple-500/10 p-4">
+          <div className="text-xs uppercase text-purple-700 dark:text-purple-400">
             Total Impressions
           </div>
-          <div className="text-2xl font-bold text-purple-900">
+          <div className="text-2xl font-bold text-purple-900 dark:text-purple-400">
             {totalImpressions}
           </div>
         </div>
-        <div className="rounded-lg border bg-green-50 p-4">
-          <div className="text-xs uppercase text-green-700">Average CTR</div>
-          <div className="text-2xl font-bold text-green-900">
+        <div className="rounded-lg border bg-green-500/10 p-4">
+          <div className="text-xs uppercase text-green-700 dark:text-green-400">Average CTR</div>
+          <div className="text-2xl font-bold text-green-900 dark:text-green-400">
             {avgCtr.toFixed(1)}%
           </div>
         </div>
-        <div className="rounded-lg border bg-orange-50 p-4">
-          <div className="text-xs uppercase text-orange-700">
+        <div className="rounded-lg border bg-orange-500/10 p-4">
+          <div className="text-xs uppercase text-orange-700 dark:text-orange-400">
             Average Position
           </div>
-          <div className="text-2xl font-bold text-orange-900">
+          <div className="text-2xl font-bold text-orange-900 dark:text-orange-400">
             {avgPosition.toFixed(1)}
           </div>
         </div>
@@ -188,6 +192,7 @@ function GscPerformanceTab({ domainId }: { domainId: string }) {
 
       <div className="rounded-lg border p-4">
         <Line
+          key={resolved}
           data={{
             labels: dateRows.map((row) => row.keys[0]),
             datasets: [
@@ -210,12 +215,21 @@ function GscPerformanceTab({ domainId }: { domainId: string }) {
           options={{
             responsive: true,
             interaction: { mode: "index", intersect: false },
+            color: cc.text,
+            plugins: { legend: { labels: { color: cc.text } } },
             scales: {
-              y: { type: "linear", position: "left" },
+              x: { ticks: { color: cc.text }, grid: { color: cc.grid } },
+              y: {
+                type: "linear",
+                position: "left",
+                ticks: { color: cc.text },
+                grid: { color: cc.grid },
+              },
               y1: {
                 type: "linear",
                 position: "right",
-                grid: { drawOnChartArea: false },
+                ticks: { color: cc.text },
+                grid: { drawOnChartArea: false, color: cc.grid },
               },
             },
           }}

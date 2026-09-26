@@ -21,7 +21,7 @@ function SmsBulk({ user }: SmsBulkProps) {
 
   const tabClass = (t: Tab) =>
     `h-10 w-40 rounded-t-lg border-b-2 text-sm font-semibold ${
-      tab === t ? "border-gray-800 text-gray-900" : "border-transparent text-gray-400"
+      tab === t ? "border-fg text-fg" : "border-transparent text-fg-subtle"
     }`;
 
   return (
@@ -37,8 +37,8 @@ function SmsBulk({ user }: SmsBulkProps) {
             <SmsBulkAccountForm />
           </div>
         )}
-        <h1 className="text-4xl font-semibold text-gray-800">Oxy Bulk</h1>
-        <span className="text-sm text-gray-500">
+        <h1 className="text-4xl font-semibold text-fg">Oxy Bulk</h1>
+        <span className="text-sm text-fg-muted">
           Temporary phone numbers and email addresses for receiving verification codes.
         </span>
         {showBalance && (

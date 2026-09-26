@@ -136,8 +136,8 @@ export default function LandingPageLists() {
       <main className="mt-10 flex w-full flex-col items-center justify-center gap-5 pb-20  ">
         <div className="lg:w-10/12 xl:w-9/12 ">
           <table className="w-full table-auto border-collapse">
-            <thead className="h-14 border-b-2 border-black font-bold text-blue-700   drop-shadow-md ">
-              <tr className="sticky top-0 z-40 bg-white ">
+            <thead className="h-14 border-b-2 border-line-strong font-bold text-blue-700 dark:text-blue-400   drop-shadow-md ">
+              <tr className="sticky top-0 z-40 bg-panel ">
                 <td className=" px-5">Name</td>
                 <td>Domain</td>
                 <td>Language</td>
@@ -241,13 +241,13 @@ export default function LandingPageLists() {
                                   landingPageId: list.id,
                                 })
                               }
-                              className="text-3xl text-green-700 transition duration-100 hover:scale-105 active:text-green-900"
+                              className="text-3xl text-green-700 dark:text-green-400 transition duration-100 hover:scale-105 active:text-green-900"
                             >
                               <BiCopyAlt />
                             </button>
                             <Link
                               href={`/landingpage/${list.id}`}
-                              className="text-3xl text-blue-700 transition duration-100 hover:scale-105 active:text-blue-900"
+                              className="text-3xl text-blue-700 dark:text-blue-400 transition duration-100 hover:scale-105 active:text-blue-900"
                             >
                               <BiSolidMessageSquareEdit />
                             </Link>
@@ -258,7 +258,7 @@ export default function LandingPageLists() {
                                   landingPageId: list.id,
                                 })
                               }
-                              className="text-3xl text-red-700 transition duration-100 hover:scale-105 active:text-red-900"
+                              className="text-3xl text-red-700 dark:text-red-400 transition duration-100 hover:scale-105 active:text-red-900"
                             >
                               <MdDelete />
                             </button>

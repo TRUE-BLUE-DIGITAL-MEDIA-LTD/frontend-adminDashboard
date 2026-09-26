@@ -8,8 +8,8 @@ import SpinLoading from "../../loadings/spinLoading";
 function ResultRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex justify-between gap-4 border-b py-2 text-sm last:border-b-0">
-      <span className="text-gray-500">{label}</span>
-      <span className="text-right font-medium text-gray-800">
+      <span className="text-fg-muted">{label}</span>
+      <span className="text-right font-medium text-fg">
         {value ?? "—"}
       </span>
     </div>
@@ -39,14 +39,14 @@ function GscUrlInspectionTab({
 
   const verdictStyle =
     indexResult?.verdict === "PASS"
-      ? "bg-green-100 text-green-800"
+      ? "bg-green-500/15 text-green-800 dark:text-green-400"
       : indexResult?.verdict === "FAIL"
-        ? "bg-red-100 text-red-800"
-        : "bg-yellow-100 text-yellow-800";
+        ? "bg-red-500/15 text-red-800 dark:text-red-400"
+        : "bg-yellow-500/15 text-yellow-800 dark:text-yellow-400";
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-fg-muted">
         Checks how Google sees a page on{" "}
         <span className="font-medium">{domainName}</span>. Limited to ~2,000
         inspections per day.
@@ -56,7 +56,7 @@ function GscUrlInspectionTab({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder={`https://${domainName}/page`}
-          className="h-11 flex-1 rounded-lg border border-gray-300 px-4 focus:border-blue-500 focus:outline-none"
+          className="h-11 flex-1 rounded-lg border border-line px-4 focus:border-blue-500 focus:outline-none"
         />
         <button
           disabled={inspect.isPending}
@@ -75,7 +75,7 @@ function GscUrlInspectionTab({
             >
               {indexResult.verdict ?? "UNKNOWN"}
             </span>
-            <span className="font-medium text-gray-800">
+            <span className="font-medium text-fg">
               {indexResult.coverageState}
             </span>
           </div>

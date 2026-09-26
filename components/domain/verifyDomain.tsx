@@ -13,16 +13,16 @@ function VerifyDomain({ domainName }: { domainName: string }) {
   return (
     <div className="font-Poppins">
       {verify.isLoading && (
-        <div className="font-extrabold text-gray-600">Loading...</div>
+        <div className="font-extrabold text-fg-muted">Loading...</div>
       )}
       {verify.data?.results[0].result === true ? (
-        <div className=" flex w-max  items-center  justify-center gap-2  rounded-lg bg-green-300 px-1 text-center font-bold uppercase  text-green-800">
+        <div className=" flex w-max  items-center  justify-center gap-2  rounded-lg bg-green-300 px-1 text-center font-bold uppercase  text-green-800 dark:text-green-400">
           <FaCheckCircle />
           Netlify DNS
         </div>
       ) : (
         verify.data?.results[0].result === false && (
-          <div className=" flex w-max items-center justify-center gap-2  rounded-lg bg-red-300 px-1 text-center font-bold uppercase  text-red-800">
+          <div className=" flex w-max items-center justify-center gap-2  rounded-lg bg-red-300 px-1 text-center font-bold uppercase  text-red-800 dark:text-red-400">
             <FaTimesCircle />
             Verification Failed
           </div>

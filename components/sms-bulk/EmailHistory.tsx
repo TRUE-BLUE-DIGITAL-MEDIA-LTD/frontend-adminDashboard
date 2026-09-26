@@ -17,12 +17,12 @@ function EmailHistory({ onReorder }: Props) {
   return (
     <>
       <header className="flex flex-col items-center">
-        <h1 className="text-xl font-semibold text-black">Email History</h1>
+        <h1 className="text-xl font-semibold text-fg">Email History</h1>
       </header>
       <div className="mt-1 overflow-auto lg:w-10/12 xl:w-10/12 2xl:w-7/12">
         <table className="w-max min-w-full border">
           <thead>
-            <tr className="bg-gray-300">
+            <tr className="bg-panel-raised">
               <th>Date</th>
               <th>Email</th>
               <th>Site</th>
@@ -35,7 +35,7 @@ function EmailHistory({ onReorder }: Props) {
                 <td>
                   <section className="flex flex-col gap-1 px-2">
                     <span className="font-semibold leading-none">{moment(email.createAt).format("DD MMMM YYYY")}</span>
-                    <span className="text-xs text-gray-500">At {moment(email.createAt).format("HH:mm")}</span>
+                    <span className="text-xs text-fg-muted">At {moment(email.createAt).format("HH:mm")}</span>
                   </section>
                 </td>
                 <td>
@@ -48,13 +48,13 @@ function EmailHistory({ onReorder }: Props) {
                   <div className="flex w-64 items-center justify-center gap-2 text-center">
                     {email.isGetSms ? (
                       <>
-                        <div className="rounded-md bg-green-200 px-2 py-1 text-sm text-green-600">
+                        <div className="rounded-md bg-green-500/20 px-2 py-1 text-sm text-green-600">
                           ${email.price.toFixed(2)} - {email.otpValue}
                         </div>
                         {email.htmlMessage && (
                           <button
                             onClick={() => setViewHtml(email.htmlMessage as string)}
-                            className="rounded border px-2 text-xs hover:bg-gray-800 hover:text-white"
+                            className="rounded border px-2 text-xs hover:bg-hover hover:text-fg"
                           >
                             view
                           </button>
@@ -62,13 +62,13 @@ function EmailHistory({ onReorder }: Props) {
                         <button
                           onClick={() => onReorder(email.id)}
                           title="Re-open this address for another OTP (charged again)"
-                          className="rounded bg-blue-100 px-2 text-xs font-semibold text-blue-700 hover:bg-blue-200"
+                          className="rounded bg-blue-500/15 px-2 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-500/20"
                         >
                           Reorder
                         </button>
                       </>
                     ) : (
-                      <div className="w-20 rounded-md bg-red-200 px-2 text-sm text-red-600">NO OTP</div>
+                      <div className="w-20 rounded-md bg-red-500/20 px-2 text-sm text-red-600">NO OTP</div>
                     )}
                   </div>
                 </td>

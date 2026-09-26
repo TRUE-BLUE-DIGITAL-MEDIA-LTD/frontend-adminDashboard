@@ -95,7 +95,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
     });
   };
   return (
-    <div className="h-5/6 overflow-hidden rounded-md bg-white p-3 font-Poppins xl:w-5/12">
+    <div className="h-5/6 overflow-hidden rounded-md bg-panel p-3 font-Poppins xl:w-5/12">
       <div className="flex items-center justify-between border-b pb-2">
         <h2 className="text-lg font-bold">Add Sim Card From Excel</h2>
         <button
@@ -103,7 +103,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
             document.body.style.overflow = "auto";
             onClose();
           }}
-          className="flex h-7 w-7 items-center justify-center rounded-md border hover:bg-gray-100"
+          className="flex h-7 w-7 items-center justify-center rounded-md border hover:bg-hover"
         >
           <GrFormClose />
         </button>
@@ -113,7 +113,7 @@ function AddSimCardFromExcel({ onClose }: Props) {
           <div ref={tableRef} className="h-96 w-full overflow-auto">
             <table className="w-max min-w-full">
               <thead>
-                <tr className="sticky top-0 h-10 bg-gray-200">
+                <tr className="sticky top-0 h-10 bg-panel-raised">
                   <th className="text-left">ICCID</th>
                   <th className="text-left">Phone Number</th>
                   <th className="text-left">Provider</th>
@@ -261,7 +261,7 @@ const ListPhoneNumber = React.memo(
             <button
               title="Delete Row"
               type="button"
-              className="rounded bg-red-100 p-1 text-red-500"
+              className="rounded bg-red-500/15 p-1 text-red-500"
               onClick={() => {
                 setData((prev) => {
                   return prev.filter((simPrev) => simPrev.id !== data.id);
@@ -275,7 +275,7 @@ const ListPhoneNumber = React.memo(
               <button
                 title="Add Row"
                 type="button"
-                className="rounded bg-green-100 p-1 text-green-500"
+                className="rounded bg-green-500/15 p-1 text-green-500"
                 onClick={() => {
                   setData((prev) => {
                     return [

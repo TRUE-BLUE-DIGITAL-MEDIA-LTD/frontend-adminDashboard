@@ -13,16 +13,16 @@ function NewsPartnerLeague() {
   const news = useGetNewsPartnerLeagueTable();
   return (
     <div className="h-max min-h-96  w-full max-w-7xl overflow-hidden rounded-lg border">
-      <section className="flex w-full items-center justify-between bg-gradient-to-l from-slate-50 to-slate-300 p-3">
+      <section className="flex w-full items-center justify-between bg-panel-raised p-3">
         <div className="flex items-center justify-center gap-3">
-          <MdNewspaper className="text-gray-800" />
+          <MdNewspaper className="text-fg" />
           <span className="text-lg font-semibold">
             Regional Performance News
           </span>
         </div>
         <div className="flex items-center justify-center gap-3">
           <div className="h-2 w-2 animate-ping rounded-full bg-green-400" />
-          <span className="text-sm font-normal text-gray-400">
+          <span className="text-sm font-normal text-fg-subtle">
             Last Update:{" "}
             {timeAgo({
               pastTime: new Date(news.dataUpdatedAt).toISOString(),
@@ -38,8 +38,8 @@ function NewsPartnerLeague() {
                 <span className="text-lg font-semibold">{data.country}</span>
               </div>
               <section className="flex flex-col gap-3">
-                <div className="flex min-h-40 w-full flex-col gap-3 rounded-lg border bg-gray-100 p-3">
-                  <div className="flex items-center justify-start gap-2 font-semibold text-gray-700">
+                <div className="flex min-h-40 w-full flex-col gap-3 rounded-lg border bg-panel-raised p-3">
+                  <div className="flex items-center justify-start gap-2 font-semibold text-fg-muted">
                     <MdAlignHorizontalLeft /> <span>Top 5 Regions - EVR%</span>
                   </div>
                   <ul className="flex w-full flex-col gap-3">
@@ -54,8 +54,8 @@ function NewsPartnerLeague() {
                     })}
                   </ul>
                 </div>
-                <div className="flex min-h-40 w-full flex-col gap-3 rounded-lg border bg-gray-100 p-3">
-                  <div className="flex items-center justify-start gap-2 font-semibold text-gray-700">
+                <div className="flex min-h-40 w-full flex-col gap-3 rounded-lg border bg-panel-raised p-3">
+                  <div className="flex items-center justify-start gap-2 font-semibold text-fg-muted">
                     <MdAlignHorizontalLeft /> <span>Top 5 Regions - CVR%</span>
                   </div>
                   <ul className="flex w-full flex-col gap-3">
@@ -92,11 +92,11 @@ function ListNews({ list, index }: PropsListNews) {
   if (position === 1) {
     text_color = "text-yellow-600";
   } else if (position === 2) {
-    text_color = "text-gray-400";
+    text_color = "text-fg-subtle";
   } else if (position === 3) {
     text_color = "text-orange-500";
   } else {
-    text_color = "text-black";
+    text_color = "text-fg";
   }
   return (
     <li key={index} className="flex w-full items-center justify-between">
@@ -129,7 +129,7 @@ function ListNews({ list, index }: PropsListNews) {
             </i>
           </div>
         ) : (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-panel-raised text-sm font-semibold text-fg-muted">
             {position}
           </div>
         )}
@@ -139,7 +139,7 @@ function ListNews({ list, index }: PropsListNews) {
         <span className={`${text_color} font-bold`}>
           {list.percent.toFixed(2)}%
         </span>{" "}
-        <span className="text-xs font-light text-gray-600">
+        <span className="text-xs font-light text-fg-muted">
           ({list.number})
         </span>
       </div>
