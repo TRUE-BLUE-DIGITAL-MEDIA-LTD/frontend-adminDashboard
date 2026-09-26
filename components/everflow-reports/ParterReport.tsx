@@ -553,7 +553,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Parent
                 </label>
                 <Dropdown
-        panelClassName="oxy-overlay-panel"
+                  panelClassName="oxy-overlay-panel"
                   showClear
                   value={selectColumns.parent}
                   onChange={(e) =>
@@ -589,7 +589,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Child
                 </label>
                 <Dropdown
-        panelClassName="oxy-overlay-panel"
+                  panelClassName="oxy-overlay-panel"
                   value={selectColumns.child}
                   showClear
                   onChange={(e) =>
@@ -619,7 +619,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Grandchild
                 </label>
                 <Dropdown
-        panelClassName="oxy-overlay-panel"
+                  panelClassName="oxy-overlay-panel"
                   value={selectColumns.grandchild}
                   showClear
                   onChange={(e) =>
@@ -649,7 +649,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
                   Date range <CiCalendarDate />
                 </label>
                 <Calendar
-        panelClassName="oxy-overlay-panel"
+                  panelClassName="oxy-overlay-panel"
                   value={dates}
                   onChange={(e) => {
                     setDates(e.value);
@@ -721,7 +721,7 @@ function ParterReport({ user }: { user: User & { partner: Partner | null } }) {
           <div className="max-h-[70vh] w-full overflow-auto">
             <table className="w-max min-w-full border-collapse">
               <thead className="sticky top-0 z-30">
-                <tr className="h-12 bg-panel">
+                <tr className="h-20 bg-panel">
                   {menuTables
                     .filter((list) => {
                       if (user.role === "admin") {
