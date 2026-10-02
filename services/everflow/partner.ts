@@ -416,16 +416,17 @@ export async function GetPartnerSummaryStatsService(
 export type UpdateBulkExchangeRateDto = {
   startDate: string;
   endDate: string;
-  startTime?: string;
-  endTime?: string;
-  timezone?: string;
-  country: string;
+  startTime: string;
+  endTime: string;
+  timezone: string;
+  countries: string[];
   rate: number;
   isFixRate: boolean;
-  currency_id: string;
+  currency_ids: string[];
   currency_converted_id: string;
-  campaign_id?: string;
-  everflow_partner_ids?: string[];
+  // Empty or omitted means any smart link.
+  campaign_ids?: string[];
+  everflow_partner_ids: string[];
 };
 
 export async function UpdateBulkExchangeRateService(
