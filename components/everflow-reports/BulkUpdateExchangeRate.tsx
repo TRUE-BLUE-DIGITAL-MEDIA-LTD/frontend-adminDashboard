@@ -86,13 +86,15 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   );
   const smartLinks = useGetCampaigns({ campaign_name: "TH" });
   const createAdjustLeadRateMutation = useCreateAdjustLeadRate();
-  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  // Multi-select in "once" mode; "live" mode uses only the first item.
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
   const [selectPartner, setSelectPartner] = useState<Partner[]>([]);
-  const [selectedSmartLink, setSelectedSmartLink] =
-    useState<ResponseCampaign | null>(null);
+  const [selectedSmartLinks, setSelectedSmartLinks] = useState<
+    ResponseCampaign[]
+  >([]);
   const [rate, setRate] = useState<string>("");
   const [results, setResults] = useState<ConversionRawData[] | null>(null);
-  const [currencyTarget, setCurrencyTarget] = useState<string>("");
+  const [currencyTargets, setCurrencyTargets] = useState<string[]>([]);
   const [currentcyConverted, setCurrencyConverted] = useState<string>("");
   const [updateType, setUpdateType] = useState<"once" | "live">("once");
   const currencies = [
@@ -105,16 +107,39 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
   const { mutateAsync } = useUpdateBulkExchangeRate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const switchToLive = () => {
+    setUpdateType("live");
+    setSelectRateType("Custom");
+    setSelectedCountries((prev) => prev.slice(0, 1));
+    setSelectedSmartLinks((prev) => prev.slice(0, 1));
+    setCurrencyTargets((prev) => prev.slice(0, 1));
+  };
+
   const handleSubmit = async () => {
     if (updateType === "once") {
       if (!dates || dates.length !== 2 || !dates[0] || !dates[1]) {
         alert("Please select a date range");
         return;
       }
+
+      if (!startTime || !endTime) {
+        alert("Please select a start and end time");
+        return;
+      }
+
+      if (!timezone) {
+        alert("Please select a timezone");
+        return;
+      }
+
+      if (selectPartner.length === 0) {
+        alert("Please select at least one partner");
+        return;
+      }
     }
 
-    if (!selectedCountry) {
-      alert("Please select a country");
+    if (selectedCountries.length === 0) {
+      alert("Please select at least one country");
       return;
     }
 
@@ -123,8 +148,8 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
       return;
     }
 
-    if (!currencyTarget) {
-      alert("Please select a target currency");
+    if (currencyTargets.length === 0) {
+      alert("Please select at least one target currency");
       return;
     }
 
@@ -136,6 +161,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
     setIsSubmitting(true);
     try {
       if (updateType === "live") {
+        const selectedSmartLink = selectedSmartLinks[0];
         if (!selectedSmartLink) {
           alert("Please select a smart link");
           return;
@@ -167,36 +193,33 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
         }
 
         await createAdjustLeadRateMutation.mutateAsync({
-          country: selectedCountry.country,
+          country: selectedCountries[0].country,
           rate: Number(rate),
           type: selectRateType === "Fixed" ? "fixed" : "exchange",
-          targetCurrency: currencyTarget,
+          targetCurrency: currencyTargets[0],
           convertedCurrency: currentcyConverted,
           campaignId: String(selectedSmartLink.network_campaign_id),
           ...(liveStartDate && { startDate: liveStartDate.toISOString() }),
           ...(liveEndDate && { endDate: liveEndDate.toISOString() }),
         });
       } else {
-        if (!dates || !dates[0] || !dates[1]) return;
+        if (!dates || !dates[0] || !dates[1] || !startTime || !endTime) return;
         const data = await mutateAsync({
           startDate: moment(dates[0]).format("YYYY-MM-DD"),
           endDate: moment(dates[1]).format("YYYY-MM-DD"),
-          startTime: startTime
-            ? moment(startTime).format("HH:mm:ss")
-            : undefined,
-          endTime: endTime ? moment(endTime).format("HH:mm:ss") : undefined,
+          startTime: moment(startTime).format("HH:mm:ss"),
+          endTime: moment(endTime).format("HH:mm:ss"),
           timezone: timezone,
-          country: selectedCountry.country,
+          countries: selectedCountries.map((c) => c.country),
           rate: Number(rate),
           isFixRate: selectRateType === "Fixed" ? true : false,
-          currency_id: currencyTarget,
+          currency_ids: currencyTargets,
           currency_converted_id: currentcyConverted,
-          ...(selectPartner.length > 0 && {
-            everflow_partner_ids: selectPartner.map((a) => a.affiliateId),
-          }),
-          ...(selectedSmartLink && {
-            campaign_id: selectedSmartLink.network_campaign_id.toString(),
-          }),
+          everflow_partner_ids: selectPartner.map((a) => a.affiliateId),
+          // Empty means any smart link.
+          campaign_ids: selectedSmartLinks.map((s) =>
+            s.network_campaign_id.toString(),
+          ),
         });
         setResults(data);
       }
@@ -344,10 +367,7 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
             />
             <ChoiceCard
               selected={updateType === "live"}
-              onClick={() => {
-                setUpdateType("live");
-                setSelectRateType("Custom");
-              }}
+              onClick={switchToLive}
               title="Live"
               description="Create an ongoing adjust-lead-rate rule"
             />
@@ -385,9 +405,11 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                   className={`flex-1 ${fieldClass}`}
                   inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
-                  placeholder="Start (optional)"
+                  placeholder={
+                    updateType === "live" ? "Start (optional)" : "Start"
+                  }
                 />
-                <span className="text-fg-subtle">โ€“</span>
+                <span className="text-fg-subtle">€“</span>
                 <Calendar
                   value={endTime}
                   onChange={(e) => setEndTime(e.value as Date | null)}
@@ -395,7 +417,9 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                   className={`flex-1 ${fieldClass}`}
                   inputClassName="w-full rounded-lg border-0 bg-transparent px-3 py-2.5 text-sm text-fg"
                   panelClassName={panelClass}
-                  placeholder="End (optional)"
+                  placeholder={
+                    updateType === "live" ? "End (optional)" : "End"
+                  }
                 />
               </div>
             </div>
@@ -419,42 +443,75 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
           <h3 className={sectionLabelClass}>Targeting</h3>
           {updateType === "once" && (
             <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-200/90">
-              For one-time updates, choose either a Smart Link or Partner(s) โ€”
-              not both as primary filters when conflicting.
+              Leave Smart Link empty to match any smart link.
             </div>
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <label className={labelClass}>Country</label>
-              <Dropdown
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.value)}
-                options={countries}
-                optionLabel="country"
-                placeholder="Select a country"
-                filter
-                valueTemplate={selectedCountryTemplate}
-                itemTemplate={countryOptionTemplate}
-                className={fieldClass}
-                panelClassName={panelClass}
-              />
+              {updateType === "once" ? (
+                <MultiSelect
+                  value={selectedCountries}
+                  onChange={(e) => setSelectedCountries(e.value)}
+                  options={countries}
+                  optionLabel="country"
+                  placeholder="Select country(s)"
+                  filter
+                  showClear
+                  display="chip"
+                  itemTemplate={countryOptionTemplate}
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                />
+              ) : (
+                <Dropdown
+                  value={selectedCountries[0] ?? null}
+                  onChange={(e) =>
+                    setSelectedCountries(e.value ? [e.value] : [])
+                  }
+                  options={countries}
+                  optionLabel="country"
+                  placeholder="Select a country"
+                  filter
+                  valueTemplate={selectedCountryTemplate}
+                  itemTemplate={countryOptionTemplate}
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                />
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelClass}>Smart Link</label>
-              <Dropdown
-                value={selectedSmartLink}
-                onChange={(e) => {
-                  setSelectedSmartLink(e.value);
-                }}
-                options={smartLinks.data}
-                optionLabel="campaign_name"
-                placeholder="Select a smart link"
-                filter
-                showClear
-                className={fieldClass}
-                panelClassName={panelClass}
-                loading={smartLinks.isLoading}
-              />
+              {updateType === "once" ? (
+                <MultiSelect
+                  value={selectedSmartLinks}
+                  onChange={(e) => setSelectedSmartLinks(e.value)}
+                  options={smartLinks.data}
+                  optionLabel="campaign_name"
+                  placeholder="Any smart link"
+                  filter
+                  showClear
+                  display="chip"
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                  loading={smartLinks.isLoading}
+                />
+              ) : (
+                <Dropdown
+                  value={selectedSmartLinks[0] ?? null}
+                  onChange={(e) =>
+                    setSelectedSmartLinks(e.value ? [e.value] : [])
+                  }
+                  options={smartLinks.data}
+                  optionLabel="campaign_name"
+                  placeholder="Select a smart link"
+                  filter
+                  showClear
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                  loading={smartLinks.isLoading}
+                />
+              )}
             </div>
             {updateType === "once" && (
               <div className="flex flex-col gap-1.5 md:col-span-2">
@@ -492,21 +549,34 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
               onClick={() => setSelectRateType("Fixed")}
               title="Fixed"
               description="Pay a fixed amount per conversion"
-              disabled={updateType === "live"}
             />
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <label className={labelClass}>Target currency</label>
-              <Dropdown
-                value={currencyTarget}
-                onChange={(e) => setCurrencyTarget(e.value)}
-                options={currencies}
-                optionLabel="label"
-                placeholder="Select target currency"
-                className={fieldClass}
-                panelClassName={panelClass}
-              />
+              {updateType === "once" ? (
+                <MultiSelect
+                  value={currencyTargets}
+                  onChange={(e) => setCurrencyTargets(e.value)}
+                  options={currencies}
+                  optionLabel="label"
+                  placeholder="Select target currency(s)"
+                  showClear
+                  display="chip"
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                />
+              ) : (
+                <Dropdown
+                  value={currencyTargets[0] ?? null}
+                  onChange={(e) => setCurrencyTargets(e.value ? [e.value] : [])}
+                  options={currencies}
+                  optionLabel="label"
+                  placeholder="Select target currency"
+                  className={fieldClass}
+                  panelClassName={panelClass}
+                />
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelClass}>Convert to</label>
@@ -532,13 +602,13 @@ function BulkUpdateExchangeRate({ onClose }: Props) {
                     ? "Enter fixed amount"
                     : "Enter rate"
                 }
-                className="h-11 w-full max-w-xs rounded-lg border border-line bg-surface/40 px-3 py-2 text-sm text-fg placeholder:text-fg-subtle outline-none focus:border-main-color focus:ring-1 focus:ring-main-color/40"
+                className="h-11 w-full max-w-xs rounded-lg border border-line bg-surface/40 px-3 py-2 text-sm text-fg outline-none placeholder:text-fg-subtle focus:border-main-color focus:ring-1 focus:ring-main-color/40"
                 value={rate}
                 onChange={(e) => setRate(e.target.value)}
               />
               {selectRateType === "Fixed" && (
                 <p className="text-xs text-fg-subtle">
-                  Example: Italy โฌ4 = pay partner 70 THB. Enter 70.
+                  Example: pay partner 70 THB. Enter 70.
                 </p>
               )}
             </div>
