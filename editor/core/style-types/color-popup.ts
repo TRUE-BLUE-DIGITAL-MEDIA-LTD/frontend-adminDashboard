@@ -224,6 +224,11 @@ interface ColorFieldHandle {
    * underlying model changes for some other reason (loadDesign, undo, etc.).
    */
   setValue: (value: string) => void;
+  /**
+   * Show the color the element actually renders with when it has no value
+   * of its own (inherited from a parent). Display only — never committed.
+   */
+  setInherited: (value: string) => void;
 }
 
 /**
@@ -243,7 +248,7 @@ function createOxyColorField(opts: ColorFieldOptions): ColorFieldHandle {
     <input
       type="text"
       class="oxy-color-hex"
-      placeholder="#000000"
+      placeholder="Not set"
       spellcheck="false"
       autocomplete="off"
     />
@@ -252,10 +257,16 @@ function createOxyColorField(opts: ColorFieldOptions): ColorFieldHandle {
   const swatch = root.querySelector(".oxy-color-swatch") as HTMLButtonElement;
   const hex = root.querySelector(".oxy-color-hex") as HTMLInputElement;
 
+  let inherited = "";
   const setSwatch = (value: string) => {
+    swatch.classList.remove("is-inherited");
     if (value) {
       swatch.style.background = value;
       swatch.classList.remove("is-empty");
+    } else if (inherited) {
+      swatch.style.background = inherited;
+      swatch.classList.remove("is-empty");
+      swatch.classList.add("is-inherited");
     } else {
       swatch.style.background = "transparent";
       swatch.classList.add("is-empty");
@@ -275,7 +286,7 @@ function createOxyColorField(opts: ColorFieldOptions): ColorFieldHandle {
       closePopup();
       return;
     }
-    openPopup({ swatch, commit }, hex.value);
+    openPopup({ swatch, commit }, hex.value || inherited);
   });
 
   hex.addEventListener("change", () => commit(hex.value));
@@ -306,10 +317,16 @@ function createOxyColorField(opts: ColorFieldOptions): ColorFieldHandle {
     }
   };
 
+  const setInherited = (value: string) => {
+    inherited = value ?? "";
+    hex.placeholder = inherited ? `${inherited} (inherited)` : "Not set";
+    if (!hex.value) setSwatch("");
+  };
+
   // Initial paint.
   setValue(opts.initial);
 
-  return { root, setValue };
+  return { root, setValue, setInherited };
 }
 
 /**
@@ -330,6 +347,7 @@ export function registerColorPopupType(editor: GrapesEditor): void {
   type ChangePayload = { value: string; partial?: boolean };
   type ElWithSetter = HTMLElement & {
     __oxySetValue?: (value: string) => void;
+    __oxySetInherited?: (value: string) => void;
   };
 
   const definition = {
@@ -338,11 +356,12 @@ export function registerColorPopupType(editor: GrapesEditor): void {
     }: {
       change: (payload: ChangePayload) => void;
     }) {
-      const { root, setValue } = createOxyColorField({
+      const { root, setValue, setInherited } = createOxyColorField({
         initial: "",
         onCommit: (value) => change({ value }),
       });
       (root as ElWithSetter).__oxySetValue = setValue;
+      (root as ElWithSetter).__oxySetInherited = setInherited;
       return root;
     },
     emit(
@@ -355,8 +374,10 @@ export function registerColorPopupType(editor: GrapesEditor): void {
     ) {
       updateStyle(value, { partial });
     },
-    update({ value, el }: { value: string; el: HTMLElement }) {
-      const setter = (el as ElWithSetter).__oxySetValue;
+    // GrapesJS passes the property view's wrapper as `el`; the node returned
+    // by create() (which carries the setter) arrives as `createdEl`.
+    update({ value, createdEl }: { value: string; createdEl?: HTMLElement }) {
+      const setter = (createdEl as ElWithSetter | undefined)?.__oxySetValue;
       if (setter) setter(value ?? "");
     },
   };

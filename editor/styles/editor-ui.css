@@ -1745,6 +1745,12 @@
   border-color: var(--oxy-accent);
 }
 
+/* No own value — swatch previews the color inherited from a parent. */
+.oxy-properties-panel .oxy-color-swatch.is-inherited {
+  border-style: dashed;
+  opacity: 0.6;
+}
+
 .oxy-properties-panel .oxy-color-swatch.is-empty {
   background: linear-gradient(45deg, var(--oxy-bg-hover) 25%, transparent 25%),
     linear-gradient(-45deg, var(--oxy-bg-hover) 25%, transparent 25%),

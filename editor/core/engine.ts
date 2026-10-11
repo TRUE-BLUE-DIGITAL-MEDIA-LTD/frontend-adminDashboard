@@ -21,6 +21,8 @@ import { appendQuizRuntime } from "./tools/quiz/runtime-inject";
 import { registerI18nKeysPlugin } from "./plugins/i18n-keys";
 import { uploadAndIndexImage } from "./upload-image";
 import { attachFitZoom } from "./fit-zoom";
+import { adoptBodyRules } from "./body-rule";
+import { attachStyleDisplaySync } from "./style-display-sync";
 
 export interface EngineMountOptions {
   container: HTMLElement;
@@ -137,7 +139,9 @@ const STYLE_SECTORS = [
         type: "select",
         property: "background-repeat",
         label: "Repeat",
-        default: "no-repeat",
+        // Defaults mirror the CSS initial values so an unset property shows
+        // what the browser actually renders.
+        default: "repeat",
         options: [
           { id: "no-repeat", label: "No repeat" },
           { id: "repeat", label: "Tile" },
@@ -151,7 +155,7 @@ const STYLE_SECTORS = [
         type: "select",
         property: "background-position",
         label: "Position",
-        default: "center center",
+        default: "top left",
         options: [
           { id: "top left", label: "Top left" },
           { id: "top center", label: "Top center" },
@@ -363,6 +367,7 @@ export function mountEngine(opts: EngineMountOptions): Engine {
         grapes.loadProjectData(opts.initialDesign);
       }
     }
+    adoptBodyRules(grapes);
   });
   // Belt-and-braces: clear anything the renderer might have added to the
   // stack during the initial bootstrap.
@@ -385,6 +390,7 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       um.skip(() => {
         if (isGrapesProjectData(parsed)) {
           grapes.loadProjectData(parsed);
+          adoptBodyRules(grapes);
           return;
         }
         throw new Error(
@@ -394,7 +400,10 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       um.clear();
     },
     setHtml(html: string) {
-      um.skip(() => grapes.setComponents(html));
+      um.skip(() => {
+        grapes.setComponents(html);
+        adoptBodyRules(grapes);
+      });
       um.clear();
     },
     saveDesign(cb: (design: DesignJson) => void) {
@@ -434,11 +443,13 @@ export function mountEngine(opts: EngineMountOptions): Engine {
 
   const teardownI18n = registerI18nKeysPlugin(grapes);
   const teardownFitZoom = attachFitZoom(grapes, opts.container);
+  const teardownStyleSync = attachStyleDisplaySync(grapes);
 
   return {
     instance,
     grapes,
     destroy() {
+      teardownStyleSync();
       teardownFitZoom();
       teardownI18n();
       grapes.destroy();

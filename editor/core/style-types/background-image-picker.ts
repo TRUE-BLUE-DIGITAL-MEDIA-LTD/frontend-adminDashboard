@@ -190,10 +190,18 @@ export function registerBackgroundImagePickerType(editor: GrapesEditor): void {
     ) {
       updateStyle(value, { partial });
     },
-    update({ value, el }: { value: string; el: HTMLElement }) {
-      const setter = (el as HTMLElement & {
+    // GrapesJS passes the property view's wrapper as `el`; the node returned
+    // by create() (which carries the setter) arrives as `createdEl`.
+    update({
+      value,
+      createdEl,
+    }: {
+      value: string;
+      createdEl?: HTMLElement;
+    }) {
+      const setter = (createdEl as HTMLElement & {
         __oxySetValue?: (value: string) => void;
-      }).__oxySetValue;
+      } | undefined)?.__oxySetValue;
       if (setter) setter(value ?? "");
     },
   });
