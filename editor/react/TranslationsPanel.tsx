@@ -70,7 +70,7 @@ export function TranslationsPanel({
               value={value}
               placeholder={missing ? "(missing)" : ""}
               onChange={(e) => onChange(lang, i18nKey, e.target.value)}
-              className="text-black"
+              className="text-white"
               style={{
                 flex: 1,
                 padding: "2px 6px",

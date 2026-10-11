@@ -34,6 +34,11 @@ import type {
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TranslationsPanel } from "./TranslationsPanel";
 import { QuizPanel } from "./QuizPanel";
+import {
+  replaceOwnText,
+  restoreOwnText,
+  type OwnTextMemo,
+} from "../core/i18n-text";
 
 export type OxyDeviceId = "desktop" | "mobile";
 
@@ -132,6 +137,7 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
     const [hasSelection, setHasSelection] = useState<boolean>(false);
     const [device, setDevice] = useState<OxyDeviceId>(initialDevice);
     const [selectedI18nKey, setSelectedI18nKey] = useState<string | null>(null);
+    const ownTextMemoRef = useRef<OwnTextMemo>(new WeakMap());
     const [quizSelected, setQuizSelected] = useState<any | null>(null);
 
     // Image library modal. `onSelect` is supplied by whoever opened it
@@ -380,20 +386,24 @@ export const OxyEditor = forwardRef<OxyEditorRef, OxyEditorProps>(
       const doc = engine.grapes.Canvas.getDocument();
       if (!doc) return;
 
+      // Swap only each node's own text so child elements (styled spans,
+      // <br>, …) and attributes survive the language preview.
+      const memo = ownTextMemoRef.current;
       doc.querySelectorAll("[data-i18n]").forEach((node) => {
         const tag = node.tagName.toLowerCase();
         if (tag === "script" || tag === "style") return;
         const key = node.getAttribute("data-i18n");
         if (!key) return;
 
+        restoreOwnText(node, memo);
         const target = translations[currentLanguage]?.strings?.[key];
         if (typeof target === "string" && target.length > 0) {
-          node.textContent = target;
+          replaceOwnText(node, target, memo);
           return;
         }
         const primary = translations[primaryLanguage]?.strings?.[key];
         if (typeof primary === "string" && primary.length > 0) {
-          node.textContent = primary;
+          replaceOwnText(node, primary, memo);
         }
       });
     }, [currentLanguage, translations, primaryLanguage, instance]);
