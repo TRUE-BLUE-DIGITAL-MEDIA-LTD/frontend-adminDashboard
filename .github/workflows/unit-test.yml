@@ -19,7 +19,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # npm 11 (bundled with Node 24) wrote package-lock.json; npm 10 rejects
+          # it as out of sync because it resolves the react-spring peer tree differently.
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
