@@ -34,7 +34,13 @@ export function useLandingPageChat({
       });
     });
     socket.on("disconnect", () => dispatch({ type: "disconnected" }));
-    socket.on("auth.error", () => dispatch({ type: "joinFailed", error: "Your session expired. Reload the page." }));
+    // The server rejects bad tokens in the handshake. socket.io doesn't retry
+    // those, so surface it; other connect errors (network) retry on their own.
+    socket.on("connect_error", (err: Error) => {
+      if (err.message === "Unauthorized") {
+        dispatch({ type: "joinFailed", error: "Your session expired. Reload the page." });
+      }
+    });
     socket.on("message.created", (message: ChatMessage) => dispatch({ type: "messageCreated", message }));
     socket.on("message.delta", (p: { messageId: string; text: string }) => dispatch({ type: "messageDelta", ...p }));
     socket.on("message.updated", (p: { messageId: string; status?: MessageStatus; content?: MessageContent; usage?: ChatUsage | null }) =>
