@@ -46,6 +46,7 @@
     "react-icons": "^4.12.0",
     "react-intersection-observer": "^9.10.2",
     "react-spring": "^9.7.3",
+    "socket.io-client": "^4.8.4",
     "sweetalert2": "^11.10.1",
     "tinymce": "^7.1.1",
     "uuid": "^9.0.1",
