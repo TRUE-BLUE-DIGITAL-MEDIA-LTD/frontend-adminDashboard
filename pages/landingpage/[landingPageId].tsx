@@ -364,6 +364,10 @@ function Index({ user }: { user: User }) {
           </button>
         </div>
         <main className="relative my-10   font-Poppins 2xl:w-full">
+          <LandingPageChat
+            landingPageId={landingPage.data?.id}
+            editorRef={emailEditorRef}
+          >
           {blurEditor ? (
             <div
               className="z-10  flex h-full min-h-[40rem] w-full  items-center
@@ -425,13 +429,7 @@ function Index({ user }: { user: User }) {
               <SpinLoading />
             </div>
           )}
-
-          {landingPage.data && (
-            <LandingPageChat
-              landingPageId={landingPage.data.id}
-              editorRef={emailEditorRef}
-            />
-          )}
+          </LandingPageChat>
           <TranslateAllDialog
             open={translateDialogOpen}
             primary={landingPageData.primaryLanguage}

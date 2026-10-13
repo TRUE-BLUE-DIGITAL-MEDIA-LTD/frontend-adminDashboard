@@ -1,76 +1,84 @@
-import { RefObject, useState } from "react";
-import Swal from "sweetalert2";
+import { RefObject, useCallback, useEffect, useState, type ReactNode } from "react";
+import { LuPanelRightOpen, LuSparkles } from "react-icons/lu";
 import type { OxyEditorRef } from "../../editor/react/OxyEditor";
-import { useLandingPageChat } from "../../hooks/useLandingPageChat";
-import ChatBanners from "./ChatBanners";
-import ChatComposer from "./ChatComposer";
-import ChatHeader from "./ChatHeader";
-import ChatMessageList from "./ChatMessageList";
-import { assistantName, contextLevel, isTurnRunning } from "./chatState";
-import type { Ack } from "./chatTypes";
+import ChatPanel, { type ChatStatus } from "./ChatPanel";
+
+const COLLAPSED_KEY = "lp-chat:collapsed";
 
 interface Props {
-  landingPageId: string;
+  landingPageId?: string;
   editorRef: RefObject<OxyEditorRef | null>;
+  /** The editor area; the chat docks to its right. */
+  children: ReactNode;
 }
 
-export default function LandingPageChat({ landingPageId, editorRef }: Props) {
-  const { state, send, stop, clear, sync } = useLandingPageChat({ landingPageId, editorRef });
-  const [model, setModel] = useState("");
-  const [actionError, setActionError] = useState("");
+/**
+ * Lays the editor out with the AI chat docked on the right. Collapsing only
+ * hides the panel: it stays mounted so its socket keeps applying AI edits.
+ */
+export default function LandingPageChat({ landingPageId, editorRef, children }: Props) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [status, setStatus] = useState<ChatStatus>({ running: false, assistant: "AI" });
 
-  const selectedModel = model || state.models[0]?.id || "";
-  const assistant = assistantName(state.thread?.model ?? selectedModel, state.models);
-  const level = contextLevel(state);
-  const running = isTurnRunning(state);
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem(COLLAPSED_KEY) === "1");
+    } catch {
+      // Storage unavailable (private mode): default to open.
+    }
+  }, []);
 
-  const run = async (action: () => Promise<Ack<unknown>>): Promise<boolean> => {
-    setActionError("");
-    const ack = await action();
-    if (ack.ok === false) setActionError(ack.error);
-    return ack.ok;
+  const toggle = (next: boolean) => {
+    setCollapsed(next);
+    try {
+      localStorage.setItem(COLLAPSED_KEY, next ? "1" : "0");
+    } catch {
+      // Not persisting is fine.
+    }
   };
 
-  const confirm = async (title: string, text: string, confirmButtonText: string) =>
-    (await Swal.fire({ title, text, icon: "warning", showCancelButton: true, confirmButtonText })).isConfirmed;
-
-  const handleClear = async () => {
-    if (await confirm(
-      "Clear this conversation?",
-      "Everyone in this chat will see an empty thread and queued prompts are cancelled. The design on the canvas is not affected.",
-      "Clear",
-    )) await run(clear);
-  };
-
-  const handleSync = async () => {
-    if (await confirm(
-      "Replace your canvas?",
-      "This loads the AI's latest version of the page and replaces your canvas, including unsaved manual changes.",
-      "Sync",
-    )) await run(sync);
-  };
+  const onStatusChange = useCallback((next: ChatStatus) => {
+    setStatus((prev) => (prev.running === next.running && prev.assistant === next.assistant ? prev : next));
+  }, []);
 
   return (
-    <div className="mx-auto mt-5 flex w-11/12 flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-sm">
-      <ChatHeader
-        state={state}
-        selectedModel={selectedModel}
-        onModelChange={setModel}
-        onClear={handleClear}
-        clearDisabled={running}
-      />
-      <ChatBanners state={state} level={level} running={running} assistant={assistant} onClear={handleClear} onSync={handleSync} />
-      <ChatMessageList messages={state.messages} queue={state.queue} assistant={assistant} />
-      {(actionError || state.error) && <p className="px-4 pb-2 text-sm text-red-500">{actionError || state.error}</p>}
-      {state.status === "connecting" && <p className="px-4 pb-2 text-xs text-fg-subtle">Connecting to the chat…</p>}
-      <ChatComposer
-        disabled={state.status !== "ready"}
-        promptBlocked={level === "blocked"}
-        running={running}
-        assistant={assistant}
-        onStop={() => void run(stop)}
-        onSend={(kind, text) => run(() => send(kind, text, state.thread ? undefined : selectedModel))}
-      />
+    <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-stretch">
+      <div className={`relative min-w-0 flex-1 rounded-xl transition-shadow ${status.running ? "ring-2 ring-blue-500/50" : ""}`}>
+        {children}
+        {status.running && (
+          <div className="pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
+            {status.assistant} is editing…
+          </div>
+        )}
+      </div>
+
+      {landingPageId && (
+        <>
+          {collapsed && (
+            <button
+              type="button"
+              onClick={() => toggle(false)}
+              aria-label="Open AI chat"
+              title="Open AI chat"
+              className="flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl border border-line bg-panel text-fg-muted hover:text-fg lg:h-[40rem] lg:w-11 lg:flex-col lg:justify-start lg:py-3"
+            >
+              <LuPanelRightOpen className="h-4 w-4" />
+              <LuSparkles className="h-4 w-4 text-blue-500" />
+              {status.running && <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />}
+              <span className="text-xs lg:[writing-mode:vertical-rl]">AI Design</span>
+            </button>
+          )}
+          <div className={collapsed ? "hidden" : "h-[40rem] w-full shrink-0 lg:w-[380px]"}>
+            <ChatPanel
+              landingPageId={landingPageId}
+              editorRef={editorRef}
+              onCollapse={() => toggle(true)}
+              onStatusChange={onStatusChange}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
