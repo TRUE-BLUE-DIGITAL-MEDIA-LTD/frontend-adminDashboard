@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Flags hardcoded neutral Tailwind colors that should be theme tokens.
 // Usage: node scripts/theme-audit.mjs <file|dir>...   (exit 1 when offenders exist)
 import { readFileSync, readdirSync, statSync } from "node:fs";
