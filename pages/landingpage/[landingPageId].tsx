@@ -40,7 +40,7 @@ import { MdDomainVerification } from "react-icons/md";
 import SpinLoading from "../../components/loadings/spinLoading";
 import LanderPublishStatus from "../../components/domain/landerPublishStatus";
 import { GetAllCategories } from "../../services/admin/categories";
-import AiDesign from "../../components/common/AiDesign";
+import LandingPageChat from "../../components/landingPageChat/LandingPageChat";
 import { TranslateAllDialog } from "@/editor/react/TranslateAllDialog";
 import ImportDesignDialog from "../../components/landingPages/ImportDesignDialog";
 import {
@@ -67,7 +67,7 @@ interface UpdateLandingPageData {
 }
 
 function Index({ user }: { user: User }) {
-  // Kept the variable name to minimize churn in the AiDesign + save call
+  // Kept the variable name to minimize churn in the chat + save call
   // sites below. OxyEditorRef has the same `{ editor }` shape as
   // react-email-editor's EditorRef, so existing accessors keep working.
   const emailEditorRef = useRef<OxyEditorRef | null>(null);
@@ -427,11 +427,9 @@ function Index({ user }: { user: User }) {
           )}
 
           {landingPage.data && (
-            <AiDesign
+            <LandingPageChat
               landingPageId={landingPage.data.id}
-              onSuccess={(html: string) => {
-                emailEditorRef.current?.editor?.setHtml(html);
-              }}
+              editorRef={emailEditorRef}
             />
           )}
           <TranslateAllDialog
