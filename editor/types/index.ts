@@ -31,6 +31,10 @@ export interface EditorInstance {
   onHistoryChange(cb: () => void): () => void;
   /** Drop the entire history stack. Useful after loading a new design. */
   clearHistory(): void;
+  /** Apply one AI design op to the live canvas. Undoable like a manual edit. */
+  applyDesignOp(op: DesignOp): ApplyResult;
+  /** Raw canvas HTML/CSS (no injected runtimes): the AI's working copy. */
+  getSnapshot(): { html: string; css: string };
 }
 
 export interface ToolDefinition<TValues = Record<string, unknown>> {
@@ -69,3 +73,15 @@ export interface LandingPageTranslation {
 }
 
 export type Translations = Partial<Record<Language, LandingPageTranslation>>;
+
+export type InsertPosition = "before" | "after" | "inside_start" | "inside_end";
+
+/** An AI edit broadcast by the server (mirrors server design/types.ts). */
+export type DesignOp =
+  | { kind: "replace"; ref: string; html: string }
+  | { kind: "insert"; ref: string; position: InsertPosition; html: string }
+  | { kind: "remove"; ref: string }
+  | { kind: "css"; css: string }
+  | { kind: "full"; html: string; css: string };
+
+export type ApplyResult = { status: "applied" } | { status: "skipped"; reason: string };

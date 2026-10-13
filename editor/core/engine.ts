@@ -1,6 +1,7 @@
 import grapesjs, { type Editor as GrapesEditor } from "grapesjs";
 import type {
   DesignJson,
+  DesignOp,
   EditorInstance,
   EditorMode,
   ExportCallback,
@@ -23,6 +24,7 @@ import { uploadAndIndexImage } from "./upload-image";
 import { attachFitZoom } from "./fit-zoom";
 import { adoptBodyRules } from "./body-rule";
 import { attachStyleDisplaySync } from "./style-display-sync";
+import { applyDesignOp } from "./design-ops";
 
 export interface EngineMountOptions {
   container: HTMLElement;
@@ -408,6 +410,12 @@ export function mountEngine(opts: EngineMountOptions): Engine {
     },
     saveDesign(cb: (design: DesignJson) => void) {
       cb(grapes.getProjectData());
+    },
+    applyDesignOp(op: DesignOp) {
+      return applyDesignOp(grapes, op);
+    },
+    getSnapshot() {
+      return { html: grapes.getHtml(), css: grapes.getCss() ?? "" };
     },
     registerCallback(event, cb) {
       grapes.on(event, cb as (...args: unknown[]) => void);
