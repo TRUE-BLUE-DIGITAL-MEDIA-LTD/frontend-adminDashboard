@@ -64,7 +64,9 @@ export function chatReducer(state: ChatState, event: ChatEvent): ChatState {
     case "joinFailed":
       return { ...state, status: "error", error: event.error };
     case "disconnected":
-      return { ...state, status: "connecting" };
+      // Keep a fatal error (e.g. auth.error, which the server follows with a
+      // disconnect) visible instead of showing "Connecting…" forever.
+      return state.status === "error" ? state : { ...state, status: "connecting" };
     case "messageCreated":
       return state.messages.some((m) => m.id === event.message.id)
         ? state

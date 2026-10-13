@@ -72,6 +72,8 @@ describe("chatReducer", () => {
     expect(s.presence).toHaveLength(1);
     expect(chatReducer(s, { type: "disconnected" }).status).toBe("connecting");
     expect(chatReducer(s, { type: "joinFailed", error: "nope" })).toMatchObject({ status: "error", error: "nope" });
+    const failed = chatReducer(s, { type: "joinFailed", error: "nope" });
+    expect(chatReducer(failed, { type: "disconnected" })).toMatchObject({ status: "error", error: "nope" });
   });
 });
 
