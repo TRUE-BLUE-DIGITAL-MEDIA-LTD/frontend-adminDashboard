@@ -370,7 +370,7 @@ export const countries = [
   },
   {
     flag: "https://twemoji.maxcdn.com/2/svg/1f1e8-1f1ff.svg",
-    country: "Czech",
+    country: "Czech Republic",
     code: "cz",
     countryCode: "+420",
   },
