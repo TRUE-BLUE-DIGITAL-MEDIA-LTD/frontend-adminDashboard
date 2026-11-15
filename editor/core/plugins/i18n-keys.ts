@@ -51,15 +51,18 @@ function hasOwnText(comp: any): boolean {
   return false;
 }
 
-// Quiz blocks (core/tools/quiz) stamp their own deterministic keys
-// (quiz.<stepId>.…) in render.ts. Auto-keying must leave the whole quiz
-// subtree alone: the seenKeys dedupe below would otherwise re-key those
-// nodes on every config re-render, orphaning saved translations.
+// Quiz blocks (core/tools/quiz) and signup blocks (core/tools/signup) stamp
+// their own deterministic keys (quiz.<stepId>.… / signup.…) in render.ts.
+// Auto-keying must leave those subtrees alone: the seenKeys dedupe below
+// would otherwise re-key the nodes on every re-render, orphaning saved
+// translations.
 function isInsideQuiz(comp: any): boolean {
   let cur = comp;
   while (cur) {
-    const cls = String(cur.getAttributes?.()?.class ?? '');
-    if (cls.split(/\s+/).includes('oxy-quiz')) return true;
+    const classes = String(cur.getAttributes?.()?.class ?? '').split(/\s+/);
+    if (classes.includes('oxy-quiz') || classes.includes('oxy-signup')) {
+      return true;
+    }
     cur = cur.parent?.();
   }
   return false;
@@ -106,6 +109,10 @@ export function registerI18nKeysPlugin(grapes: GrapesEditor): () => void {
   const onClone = (comp: any) => {
     // Force fresh keys on the clone subtree so duplicates don't share keys.
     walk(comp, (c) => {
+      // Quiz / signup subtrees own their keys (see isInsideQuiz): stripping
+      // them here would leave the copy untranslatable, since ensureKey
+      // never re-keys those nodes.
+      if (isInsideQuiz(c)) return;
       c.removeAttributes?.(['data-i18n']);
       ensureKey(c, nextKey, seenKeys);
     });

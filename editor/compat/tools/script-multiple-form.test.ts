@@ -13,11 +13,14 @@ type OxyMultipleFormApi = {
     answers: Record<string, string>,
     email: string,
     landingPageId: string,
+    countryCode?: string,
   ): {
     email: string;
     landingPageId: string;
     formAnswers: Record<string, string>;
+    countryCode?: string;
   };
+  customersUrl(apiOrigin: string): string;
   buildRedirectUrl(
     answerUrl: string,
     link: string,
@@ -82,6 +85,31 @@ describe("buildSubmitPayload", () => {
       landingPageId: "lp123",
       formAnswers: { gender: "male" },
     });
+  });
+
+  it("adds the country code only when the lander stamped one", () => {
+    expect(
+      api.buildSubmitPayload({}, "a@b.co", "lp123", "DE").countryCode,
+    ).toBe("DE");
+    expect(
+      "countryCode" in api.buildSubmitPayload({}, "a@b.co", "lp123", ""),
+    ).toBe(false);
+  });
+});
+
+describe("customersUrl", () => {
+  it("posts to the central lander API when the lander stamped its origin", () => {
+    expect(api.customersUrl("https://lander-api.example")).toBe(
+      "https://lander-api.example/v1/customers",
+    );
+    expect(api.customersUrl("http://localhost:8282/")).toBe(
+      "http://localhost:8282/v1/customers",
+    );
+  });
+
+  it("keeps the lander's own route for pages without a stamp", () => {
+    expect(api.customersUrl("")).toBe("/api/v1/customers");
+    expect(api.customersUrl("javascript:alert(1)")).toBe("/api/v1/customers");
   });
 });
 

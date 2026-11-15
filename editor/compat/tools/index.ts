@@ -23,12 +23,14 @@ import {
   BiTask,
   BiListUl,
   BiListCheck,
+  BiUserPlus,
 } from "react-icons/bi";
 import { MdHorizontalRule, MdSubtitles } from "react-icons/md";
 import type { Editor as GrapesEditor } from "grapesjs";
 import { registerMultipleFormBlock } from "./multiple-form";
 import { registerFormBlock } from "./form";
 import { registerQuizBlock } from "../../core/tools/quiz/block";
+import { registerSignupBlock } from "../../core/tools/signup/block";
 
 export const builtInToolNames = [
   // Content
@@ -54,6 +56,7 @@ export const builtInToolNames = [
   // Extra / custom
   "multiple-form",
   "quiz",
+  "dating-signup",
 ] as const;
 
 export type BuiltInToolName = (typeof builtInToolNames)[number];
@@ -88,6 +91,7 @@ const ICONS: Record<BuiltInToolName, string> = {
   label: iconHtml(BiTask),
   "multiple-form": iconHtml(BiListUl),
   quiz: iconHtml(BiListCheck),
+  "dating-signup": iconHtml(BiUserPlus),
 };
 
 const CATEGORY_CONTENT = "Content";
@@ -445,6 +449,12 @@ export function registerBuiltInTools(
     registerQuizBlock(grapes, {
       blockCategory: CATEGORY_EXTRA,
       icon: ICONS.quiz,
+    });
+  }
+  if (include.has("dating-signup")) {
+    registerSignupBlock(grapes, {
+      blockCategory: CATEGORY_EXTRA,
+      icon: ICONS["dating-signup"],
     });
   }
 }

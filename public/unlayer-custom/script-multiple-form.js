@@ -7,8 +7,9 @@
  *     script — option buttons navigate between `.form_step` divs and the
  *     last step's button opens its own `url` in a new tab.
  *   • Upgraded forms: option answers accumulate in memory; the submission
- *     step's CTA validates email + consent, POSTs everything to
- *     /api/v1/customers, then redirects to the final answer's `url`
+ *     step's CTA validates email + consent, POSTs everything to the
+ *     central lander API (see customersUrl), then redirects to the final
+ *     answer's `url`
  *     (fallbacks: page-level form link, then the page's main link) with
  *     `sub3` = base64 email.
  *
@@ -32,8 +33,22 @@
     function isValidEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
-    function buildSubmitPayload(answers, email, landingPageId) {
-        return { email, landingPageId, formAnswers: answers };
+    function buildSubmitPayload(answers, email, landingPageId, countryCode) {
+        const payload = { email, landingPageId, formAnswers: answers };
+        if (countryCode)
+            payload.countryCode = countryCode;
+        return payload;
+    }
+    /**
+     * Where the lead is saved. Landers stamp the central lander API's origin
+     * on the form root (data-oxy-api). A lander built before the central API
+     * existed has no stamp and still serves its own /api/v1/customers route;
+     * keep this fallback until every lander has been redeployed.
+     */
+    function customersUrl(apiOrigin) {
+        return /^https?:\/\//.test(apiOrigin)
+            ? `${apiOrigin.replace(/\/+$/, "")}/v1/customers`
+            : "/api/v1/customers";
     }
     function buildRedirectUrl(answerUrl, link, fallbackLink, email) {
         const target = answerUrl || link || fallbackLink;
@@ -53,6 +68,7 @@
         recordAnswer,
         isValidEmail,
         buildSubmitPayload,
+        customersUrl,
         buildRedirectUrl,
     };
     if (typeof document === "undefined")
@@ -81,6 +97,8 @@
         if (steps.length === 0)
             return;
         const landingPageId = rootEl?.getAttribute("data-oxy-lp-id") ?? "";
+        const apiOrigin = rootEl?.getAttribute("data-oxy-api") ?? "";
+        const countryCode = rootEl?.getAttribute("data-oxy-country") ?? "";
         const fallbackLink = rootEl?.getAttribute("data-oxy-fallback-link") ?? "";
         const hasSubmitStep = scope.getElementsByClassName("oxy-form-submit-step").length > 0;
         let answers = {};
@@ -195,10 +213,10 @@
                 const controller = new AbortController();
                 const timer = setTimeout(() => controller.abort(), 5000);
                 try {
-                    await fetch("/api/v1/customers", {
+                    await fetch(customersUrl(apiOrigin), {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(buildSubmitPayload(answers, email, landingPageId)),
+                        body: JSON.stringify(buildSubmitPayload(answers, email, landingPageId, countryCode)),
                         signal: controller.signal,
                     });
                 }
