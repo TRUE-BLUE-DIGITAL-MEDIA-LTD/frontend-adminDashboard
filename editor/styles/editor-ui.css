@@ -1122,6 +1122,30 @@
   opacity: 1;
 }
 
+/* "Replace image" button injected into Image rows (see engine.ts). */
+.oxy-layers-panel .oxy-layer-replace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #456882;
+  cursor: pointer;
+}
+
+.oxy-layers-panel .oxy-layer-replace:hover {
+  background: rgba(69, 104, 130, 0.15);
+}
+
+.oxy-layers-panel .gjs-layer.gjs-selected > .gjs-layer-item .oxy-layer-replace {
+  color: #f4eee6;
+}
+
 /* Inline rename input — GrapesJS renders an <input> when the user double-
  * clicks a layer to rename. Without an explicit color it inherits the OS
  * default which is often invisible against our white panel. */

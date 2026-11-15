@@ -266,7 +266,39 @@ export function mountEngine(opts: EngineMountOptions): Engine {
       ? { appendTo: opts.propertiesPanelEl }
       : undefined,
     layerManager: opts.layersPanelEl
-      ? { appendTo: opts.layersPanelEl }
+      ? {
+          appendTo: opts.layersPanelEl,
+          // Image rows get a "replace" button that opens the image library.
+          // GrapesJS types `onRender` as `() => void` but calls it with
+          // `{ component, el }`, hence the cast.
+          onRender: (({ component, el }: { component: any; el: HTMLElement }) => {
+            if (!component?.is?.("image")) return;
+            const right = el.querySelector(
+              ":scope > .gjs-layer-item .gjs-layer-item-right",
+            );
+            if (!right || right.querySelector(".oxy-layer-replace")) return;
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "oxy-layer-replace";
+            btn.title = "Replace image";
+            btn.setAttribute("aria-label", "Replace image");
+            btn.innerHTML =
+              '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>';
+            btn.addEventListener("click", (e) => {
+              // Keep the row's own select/rename handlers out of it.
+              e.stopPropagation();
+              if (!grapesInstance) return;
+              grapesInstance.select(component);
+              grapesInstance.trigger("oxy:open-image-library", {
+                onSelect: (url: string) => {
+                  component.set("src", url);
+                  component.addAttributes({ src: url });
+                },
+              });
+            });
+            right.prepend(btn);
+          }) as () => void,
+        }
       : undefined,
     deviceManager: {
       devices: [
